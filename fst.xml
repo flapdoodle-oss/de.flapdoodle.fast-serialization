@@ -139,10 +139,14 @@
     <!-- Perform any build initialization in this target -->
   </target>
   
-  <target name="clean" depends="clean.module.fst" description="cleanup all"/>
+  <target name="clean" depends="clean.module.fst" description="cleanup all">
+      <deltree dir="${module.fst.basedir}/build" />
+  </target>
   
   <target name="build.modules" depends="init, clean, compile.module.fst" description="build all modules">
       <jar basedir="${fst.output.dir}" file="./build/fst-${version}.jar" />
+      <jar basedir="${module.fst.basedir}/src" file="./build/fst-${version}-src.jar" />
+      <jar basedir="${module.fst.basedir}/test" file="./build/fst-${version}-src-test-benchmarks.jar" />
   </target>
   
   <target name="all" depends="build.modules" description="build all"/>
