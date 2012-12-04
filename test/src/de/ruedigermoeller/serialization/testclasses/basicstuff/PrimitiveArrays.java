@@ -1,0 +1,78 @@
+package de.ruedigermoeller.serialization.testclasses.basicstuff;
+
+import de.ruedigermoeller.serialization.annotations.EqualnessIsBinary;
+import de.ruedigermoeller.serialization.annotations.Flat;
+import de.ruedigermoeller.serialization.annotations.Predict;
+import de.ruedigermoeller.serialization.annotations.Thin;
+
+import java.awt.*;
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: ruedi
+ * Date: 12.11.12
+ * Time: 22:01
+ * To change this template use File | Settings | File Templates.
+ */
+@Predict(PrimitiveArrays.Dim.class)
+public class PrimitiveArrays implements Serializable {
+    @Flat byte b[] = {1,2,3,4,5,6,7,8,-1,-2,127,1,2,3,4,5,6,7,8,-1,-2,127,1,2,3,4,5,6,7,8,-1,-2,127,1,2,3,4,5,6,7,8,-1,-2,127,1,2,3,-4,5,6,7,8,-1,-2,127};
+    @Flat int i[] = {1,2,3,4,5,6,7,8,-1,-2,127,1,2,345645665,4,5,6,7,8,-1,-2,127,1,66662,3,4,-5,6,7,8,-1,-2,127,1-666662,3,4,5,6,7,8,-1,-2,127,1,-2,3,4,5,6,7,8,-1,-2,188,1,2,3,4,5,6,7,8,-1,-2,127};
+    @Thin @Flat int ia1[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,345645665,0,0,0,0,0,-1,-2,127,0,66662,3,0,0,0,0,0,-1,-2,0,0,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,-2,127};
+    @Flat char c[] = {1,2,3,4,333,7777,7,8,0,6666,127};
+
+    @Flat Object o0 = new byte[] {1,2,3,4,5,6,7,8,-1,-2,127};
+    @Flat Object o1 = new int[] {1,2,3,4,5,6,7,8,-1,-2,127,1,2,3,4,5,6,7,8,-1,-2,127,1,2,3,4,5,6,7,8,-1,-2,127,1,2,3,4,5,6,7,8,-1,-2,127,1,2,3,4,5,6,7,8,-1,-2,127,1,2,3,4,5,6,7,8,-1,-2,127,888888,-8888888,888888,-8888888,888888,-8888888,888888,-8888888,888888,-8888888,888888,-8888888};
+    @Flat Object o2 = new char[] {1,2,3,4,333,7777,7,8,0,6666,127};
+
+    @Flat Object i1 = new Integer[] {1,2,3,4,5,6,7,8,-1,-2,127};
+
+    @Flat int iii[][][] = new int[][][] { { {1,2,3}, {4,5,6} }, { {7,8,9}, {10,11,12} } };
+    @Flat Object oiii = new int[][][] { { {1,2,3}, {4,5,6} }, { {7,8,9}, {10,11,12} } };
+
+    Dim dim[][][] = new Dim[][][] {{{new Dim(11,10)},{new Dim(9,10),new Dim(1666661,11)}}};
+    Object dimo[][][] = new Object[][][] {{{new Dim(11,10)},{new Dim(10,8),new Dim(6,11)}}};
+    Object dimonotype0 = new Object[][][] {{{new Date(),new Dim(10,777)},{new Dim(1666661,11),new Dim(6,11)}}};
+    Object dimonotype1 = new Object[] { new Date(), new Object[]{ new Dim[]{ new Dim(1666661,11)},new Object[]{new Dim(66,10),new Dim(1666661,11)}}};
+
+    @Flat @Thin Object nul[] = { null, null, null, null,null, null,null, null, "pok", null, null, null, null, null,null, null, null, null, null,null, null, null, null, null,null, null, null, null, null,null, null, null, null, null };
+
+    // to avoid measurement of stream init performance
+    public static PrimitiveArrays[] createPrimArray() {
+        PrimitiveArrays res[] = new PrimitiveArrays[20];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = new PrimitiveArrays();
+        }
+        return res;
+    }
+
+    @EqualnessIsBinary
+    static class Dim implements Serializable {
+        int x;
+        int y;
+        long z;
+
+        // kryo
+        public Dim() {
+        }
+
+        Dim(int x, int y) {
+            this.x = x;
+            this.y = y;
+            z = x*y*x*y;
+        }
+
+        public int hashCode() {
+            return x+y;
+        }
+        public boolean equals( Object other ) {
+            if ( other instanceof Dim) {
+                return ((Dim) other).x == x && ((Dim) other).y == y;
+            }
+            return false;
+        }
+    }
+
+}

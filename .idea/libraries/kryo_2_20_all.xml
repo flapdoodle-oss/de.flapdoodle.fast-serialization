@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="kryo-2.20-all">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/test/lib/kryo-2.20-all.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
