@@ -121,6 +121,10 @@ public final class FSTConfiguration {
         return conf;
     }
 
+    public void registerSerializer(Class clazz, FSTObjectSerializer ser, boolean alsoForAllSubclasses ) {
+        serializationInfoRegistry.serializerRegistry.putSerializer(clazz, ser, alsoForAllSubclasses);
+    }
+
     public static FSTConfiguration createMinimalConfiguration() {
         FSTConfiguration conf = new FSTConfiguration();
         conf.addDefaultClazzes();

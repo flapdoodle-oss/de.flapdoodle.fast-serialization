@@ -28,10 +28,32 @@ import java.io.IOException;
  * Time: 12:33
  * To change this template use File | Settings | File Templates.
  */
+
+/**
+ * @see FSTBasicObjectSerializer
+ */
 public interface FSTObjectSerializer {
-    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException;
-    public void readObject(FSTObjectInput in, Object toRead, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException;
+    /**
+     * write the contents of a given object
+     */
+    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy)
+            throws IOException;
+
+    /**
+     * read the content to an already instantiated object
+     */
+    public void readObject(FSTObjectInput in, Object toRead, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy)
+            throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException;
+
+    /**
+     * useful if you register for a class and its subclasses, but want to exclude a specific subclass
+     */
     public boolean willHandleClass(Class cl);
-    // return an object or null for default instantiation
-    public Object instantiate(Class objectClass, FSTObjectInput fstObjectInput, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo referencee, int streamPositioin) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException;
+
+    /**
+     * return null to delegate object instantiation to FST. If you want to implement object instantiation yourself, usually you leave the readObject method empty
+     * and handle instantiation and reading the object here. You must call registerObject immediately after creating it on the FSTObjectInput
+     */
+    public Object instantiate(Class objectClass, FSTObjectInput fstObjectInput, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo referencee, int streamPositioin)
+            throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException;
 }
