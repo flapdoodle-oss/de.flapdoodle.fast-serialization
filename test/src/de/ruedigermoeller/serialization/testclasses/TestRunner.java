@@ -400,17 +400,38 @@ public class TestRunner {
 
         runner.charter.openDoc();
 
-//        WarmUP = 100000; Run = WarmUP+1;
+        WarmUP = 100000; Run = WarmUP+1;
         runner.runAll(new Primitives(0).createPrimArray());
         runner.runAll(new CommonCollections());
         runner.runAll(new PrimitiveArrays().createPrimArray());
         runner.runAll(Trader.generateTrader(101, true));
         runner.runAll(ManyClasses.getArray() );
         runner.runAll(new ExternalizableTest());
-//        runner.runAll(new ShortRemoteCall());
 //        WarmUP = 0; Run = WarmUP+1;
 //        runner.runAll(new Swing() );
         runner.charter.closeDoc();
+
+        try {
+            String fnam = "F:\\tmp\\test.oos";
+            FileOutputStream out = new FileOutputStream(fnam);
+            FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
+            FSTObjectOutput fstout = new FSTObjectOutput(out, conf);
+            Trader initial = Trader.generateTrader(101, true);
+            fstout.writeObject(initial);
+            fstout.close();
+
+            FileInputStream fin = new FileInputStream(fnam);
+            FSTObjectInput fstin = new FSTObjectInput(fin,conf);
+            Object res = fstin.readObject();
+            fstin.close();
+            System.out.println("file test success "+DeepEquals.deepEquals(res,initial));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
     }
 }

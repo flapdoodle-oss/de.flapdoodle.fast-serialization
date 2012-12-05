@@ -103,7 +103,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
     @Override
     public Object readObject() throws ClassNotFoundException, IOException {
         try {
-            return readObject((Class) null);
+            return readObject((Class[]) null);
         } catch (IllegalAccessException e) {
             dumpDebugStack();
             throw new IOException(e);

@@ -118,7 +118,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
     @Override
     public void writeObject(Object obj) throws IOException {
-        writeObject(obj,null);
+        writeObject(obj,(Class[])null);
     }
 
     public void writeObject(Object obj, Class... possibles) throws IOException {
