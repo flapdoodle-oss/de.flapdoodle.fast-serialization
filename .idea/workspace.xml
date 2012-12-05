@@ -4,10 +4,6 @@
     <list default="true" readonly="true" id="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fst.properties" afterPath="$PROJECT_DIR$/fst.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/result.html" afterPath="$PROJECT_DIR$/result.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" afterPath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
     </list>
     <ignored path="FST.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -128,7 +124,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fst.properties" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="fst.properties" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fst.properties">
           <provider selected="true" editor-type-id="text-editor">
             <state line="0" column="12" selection-start="12" selection-end="12" vertical-scroll-proportion="0.0">
@@ -146,10 +142,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestRunner.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="TestRunner.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="411" column="34" selection-start="14472" selection-end="14472" vertical-scroll-proportion="0.26915887">
+            <state line="411" column="34" selection-start="14472" selection-end="14472" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -177,10 +173,10 @@
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectSerializer.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java" />
         <option value="$PROJECT_DIR$/test/src/com/software/util/DeepEquals.java" />
-        <option value="$PROJECT_DIR$/fst.properties" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" />
         <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
+        <option value="$PROJECT_DIR$/fst.properties" />
       </list>
     </option>
   </component>
@@ -574,7 +570,11 @@
       <created>1354732225102</created>
       <updated>1354732225102</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="0.52">
+      <created>1354734877302</created>
+      <updated>1354734877302</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -592,13 +592,13 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299435" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3299435" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2496977" sideWeight="0.6700565" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3299435" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299435" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -644,7 +644,7 @@
     <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="comments" />
+    <option name="LAST_COMMIT_MESSAGE" value="0.52" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -660,6 +660,7 @@
     <MESSAGE value="initial import" />
     <MESSAGE value="added license headers" />
     <MESSAGE value="comments" />
+    <MESSAGE value="0.52" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -756,13 +757,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fst.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="12" selection-start="12" selection-end="12" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/fst.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
@@ -793,7 +787,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="411" column="34" selection-start="14472" selection-end="14472" vertical-scroll-proportion="0.26915887">
+        <state line="411" column="34" selection-start="14472" selection-end="14472" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fst.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="12" selection-start="12" selection-end="12" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
