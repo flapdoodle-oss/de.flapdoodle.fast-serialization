@@ -27,6 +27,10 @@ public class HtmlCharter {
         out.println("<html>");
     }
 
+    public void text(String s) {
+        out.println(s+"<br>");
+    }
+
     public void heading(String title) {
         out.println("<br><h4>" + title + "</h4>");
     }
