@@ -50,7 +50,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     static final byte HANDLE = -7;
     static final byte ENUM = -6;
     static final byte OBJECT_ARRAY = -5;
-    static final byte STRING = -4;
+//    static final byte STRING = -4;
     static final byte TYPED = -3; // var class == object written class
     //static final byte PRIMITIVE_ARRAY = -2;
     static final byte NULL = -1;
@@ -229,9 +229,9 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         if (clazz.isArray()) {
             writeFByte(OBJECT_ARRAY);
             writeArray(referencee, toWrite);
-        } else if ( toWrite instanceof String ) {
-            writeFByte(STRING);
-            writeStringUTF((String) toWrite);
+//        } else if ( toWrite instanceof String ) {
+//            writeFByte(STRING);
+//            writeStringUTF((String) toWrite);
         } else if ( toWrite instanceof Enum ) {
             writeFByte(ENUM);
             writeClass(toWrite);
@@ -595,7 +595,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         }
     }
 
-    protected void writeStringUTF(String str) throws IOException {
+    public void writeStringUTF(String str) throws IOException {
         final int strlen = str.length();
 
         writeCInt(strlen);
@@ -835,6 +835,14 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             writeFByte(-126);
             writeFLong(anInt);
         }
+    }
+
+    /**
+     * for internal use only, the state of the outputstream is not reset properly
+     */
+    void reset() {
+        written = 0;
+        buffout.reset();
     }
 
     public FSTClazzInfoRegistry getClassInfoRegistry() {

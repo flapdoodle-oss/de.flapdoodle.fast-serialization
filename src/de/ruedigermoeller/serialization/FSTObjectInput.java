@@ -253,13 +253,6 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
                 }
                 return res;
             }
-            case FSTObjectOutput.STRING: {
-                Object res = readStringUTF();
-                if ( ! referencee.isFlat() ) {
-                    objects.registerObjectForRead(res, readPos);
-                }
-                return res;
-            }
             case FSTObjectOutput.TYPED: {
                 c = referencee.getType();
                 break;
@@ -556,7 +549,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
 
     char[] charBuf;
 
-    protected String readStringUTF() throws IOException {
+    public String readStringUTF() throws IOException {
         int len = readCInt();
         if (charBuf == null || charBuf.length < len * 3) {
             charBuf = new char[len * 3];
@@ -719,6 +712,10 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         } else {
             return readFInt();
         }
+    }
+
+    public void reset() throws IOException {
+        input.reset();
     }
 
     public final int readFInt() throws IOException {

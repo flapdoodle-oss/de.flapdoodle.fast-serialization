@@ -41,7 +41,7 @@ public final class FSTInputStream extends InputStream {
         initFromStream(in);
     }
 
-    private void initFromStream(InputStream in) throws IOException {
+    public void initFromStream(InputStream in) throws IOException {
         this.in = in;
         if (buf==null) {
             buf = new byte[chunk_size];
@@ -140,6 +140,8 @@ public final class FSTInputStream extends InputStream {
     }
 
     public void reset() {
+        count = 0;
+        pos = 0;
     }
 
     public void close() throws IOException {
