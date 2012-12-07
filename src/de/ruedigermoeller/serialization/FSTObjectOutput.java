@@ -39,12 +39,6 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
     static final byte BIG_BOOLEAN_FALSE = -17;
     static final byte BIG_BOOLEAN_TRUE = -16;
-    static final byte BIG_CHAR   = -15;
-    static final byte BIG_DOUBLE = -14;
-    static final byte BIG_FLOAT = -13;
-    static final byte BIG_BYTE = -12;
-    static final byte BIG_SHORT = -11;
-    static final byte BIG_LONG = -10;
     static final byte BIG_INT = -9;
     static final byte COPYHANDLE = -8;
     static final byte HANDLE = -7;
@@ -164,42 +158,10 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             }
             return;
         } else
-        if ( toWrite instanceof Number ) {
-            if ( clazz == Integer.class ) {
-                writeFByte(BIG_INT);
-                writeCInt(((Integer) toWrite).intValue());
-                return;
-            } else
-            if ( clazz == Long.class ) {
-                writeFByte(BIG_LONG);
-                writeCLong(((Long) toWrite).longValue());
-                return;
-            } else
-            if ( clazz == Byte.class ) {
-                writeFByte(BIG_BYTE);
-                writeFByte(((Byte) toWrite).byteValue());
-                return;
-            } else
-            if ( clazz == Double.class ) {
-                writeFByte(BIG_DOUBLE);
-                writeCDouble(((Double) toWrite).doubleValue());
-                return;
-            } else
-            if ( clazz == Float.class ) {
-                writeFByte(BIG_FLOAT);
-                writeCFloat(((Float) toWrite).floatValue());
-                return;
-            } else
-            if ( clazz == Character.class ) {
-                writeFByte(BIG_CHAR);
-                writeCChar(((Character) toWrite).charValue());
-                return;
-            } else
-            if ( clazz == Short.class ) {
-                writeFByte(BIG_SHORT);
-                writeCShort(((Short) toWrite).shortValue());
-                return;
-            }
+        if ( clazz == Integer.class ) {
+            writeFByte(BIG_INT);
+            writeCInt(((Integer) toWrite).intValue());
+            return;
         }
         FSTClazzInfo serializationInfo = null;
         if ( referencee.lastInfo != null && referencee.lastInfo.getClazz() == clazz ) {
@@ -843,6 +805,13 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     void reset() {
         written = 0;
         buffout.reset();
+    }
+
+    public void resetForReUse( OutputStream out ) {
+        reset();
+        this.out = out;
+        objects.clearForWrite();
+        clnames.clear();
     }
 
     public FSTClazzInfoRegistry getClassInfoRegistry() {

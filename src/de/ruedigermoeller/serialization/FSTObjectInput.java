@@ -75,6 +75,10 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         super(new FSTInputStream(in));
         input = (FSTInputStream) this.in;
         this.conf = conf;
+        initRegistries();
+    }
+
+    void initRegistries() {
         objects = (FSTObjectRegistry) conf.getCachedObject(FSTObjectRegistry.class);
         if (objects == null) {
             objects = new FSTObjectRegistry(conf);
@@ -194,35 +198,11 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
                 }
                 return new Integer(val);
             }
-            case FSTObjectOutput.BIG_LONG: {
-                long val = readCLong();
-                return new Long(val);
-            }
-            case FSTObjectOutput.BIG_DOUBLE: {
-                double val = readCDouble();
-                return new Double(val);
-            }
             case FSTObjectOutput.BIG_BOOLEAN_FALSE: {
                 return Boolean.FALSE;
             }
             case FSTObjectOutput.BIG_BOOLEAN_TRUE: {
                 return Boolean.TRUE;
-            }
-            case FSTObjectOutput.BIG_FLOAT: {
-                float val = readCFloat();
-                return new Float(val);
-            }
-            case FSTObjectOutput.BIG_CHAR: {
-                char val = readCChar();
-                return new Character(val);
-            }
-            case FSTObjectOutput.BIG_BYTE: {
-                byte val = readFByte();
-                return new Byte(val);
-            }
-            case FSTObjectOutput.BIG_SHORT: {
-                short val = readCShort();
-                return new Short(val);
             }
             case FSTObjectOutput.NULL: {
                 return null;
@@ -276,8 +256,6 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         }
         if (DEBUGSTACK) {
             debugStack.push("" + referencee.getDesc() + " code:" + code);
-        }
-        if (DEBUGSTACK) {
             debugStack.push("" + referencee.getDesc() + " " + c);
         }
         FSTClazzInfo serializationInfo = null;
@@ -289,12 +267,14 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         try {
             Object newObj = null;
             FSTObjectSerializer ser = serializationInfo.getSer();
+            boolean serInstance = false;
             if (ser != null) {
                 newObj = ser.instantiate(c, this, serializationInfo, referencee, readPos);
             }
             if (newObj == null) {
                 newObj = serializationInfo.newInstance();
-            }
+            } else
+                serInstance = true;
             if (newObj == null) {
                 throw new IOException(referencee.getDesc() + ":Failed to instantiate '" + c.getName() + "'. Register a custom serializer implementing instantiate.");
             }
@@ -306,7 +286,8 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
                 serializationInfo = conf.getCLInfoRegistry().getCLInfo(c);
             }
             if (ser != null) {
-                ser.readObject(this, newObj, serializationInfo, referencee);
+                if ( !serInstance )
+                    ser.readObject(this, newObj, serializationInfo, referencee);
             } else if ( serializationInfo.isExternalizable() ) {
                 ((Externalizable)newObj).readExternal(this);
             } else if (serializationInfo.useCompatibleMode()) {
@@ -716,6 +697,13 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
 
     public void reset() throws IOException {
         input.reset();
+    }
+
+    public void resetForReuse(InputStream in) throws IOException {
+        input.reset();
+        this.in = in;
+        input.initFromStream(in);
+        objects.clearForRead(); clnames.clear();
     }
 
     public final int readFInt() throws IOException {

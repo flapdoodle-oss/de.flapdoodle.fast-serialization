@@ -56,11 +56,6 @@ public class FSTEnumSetSerializer extends FSTBasicObjectSerializer {
     }
 
     @Override
-    public void readObject(FSTObjectInput in, Object toRead, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-        // empty, is done in instantiate
-    }
-
-    @Override
     public Object instantiate(Class objectClass, FSTObjectInput in, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo referencee, int streamPositioin) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         int len = in.readCInt();
         Class elemCl = in.readClass();

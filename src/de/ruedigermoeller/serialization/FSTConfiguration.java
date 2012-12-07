@@ -110,6 +110,13 @@ public final class FSTConfiguration {
 
         // serializers
         conf.serializationInfoRegistry.serializerRegistry.putSerializer(String.class, new FSTStringSerializer(), false);
+        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
+        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Character.class, new FSTBigNumberSerializers.FSTCharSerializer(), false);
+        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Short.class, new FSTBigNumberSerializers.FSTShortSerializer(), false);
+        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Long.class, new FSTBigNumberSerializers.FSTLongSerializer(), false);
+        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Float.class, new FSTBigNumberSerializers.FSTFloatSerializer(), false);
+        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Double.class, new FSTBigNumberSerializers.FSTDoubleSerializer(), false);
+
         conf.serializationInfoRegistry.serializerRegistry.putSerializer(Date.class, new FSTDateSerializer(), false);
         conf.serializationInfoRegistry.serializerRegistry.putSerializer(StringBuffer.class, new FSTStringBufferSerializer(), true);
         conf.serializationInfoRegistry.serializerRegistry.putSerializer(StringBuilder.class, new FSTStringBuilderSerializer(), true);
@@ -134,6 +141,12 @@ public final class FSTConfiguration {
         // serializers
         conf.serializationInfoRegistry.serializerRegistry.putSerializer(EnumSet.class, new FSTEnumSetSerializer(), true);
         conf.serializationInfoRegistry.serializerRegistry.putSerializer(String.class, new FSTStringSerializer(), false);
+        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
+        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Character.class, new FSTBigNumberSerializers.FSTCharSerializer(), false);
+        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Short.class, new FSTBigNumberSerializers.FSTShortSerializer(), false);
+        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Long.class, new FSTBigNumberSerializers.FSTLongSerializer(), false);
+        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Float.class, new FSTBigNumberSerializers.FSTFloatSerializer(), false);
+        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Double.class, new FSTBigNumberSerializers.FSTDoubleSerializer(), false);
         return conf;
     }
 
@@ -254,6 +267,38 @@ public final class FSTConfiguration {
     }
 
     void addDefaultClazzes() {
+        classRegistry.registerClass(Byte.class);
+        classRegistry.registerClass(Short.class);
+        classRegistry.registerClass(Integer.class);
+        classRegistry.registerClass(Long.class);
+        classRegistry.registerClass(Float.class);
+        classRegistry.registerClass(Double.class);
+        classRegistry.registerClass(BigDecimal.class);
+        classRegistry.registerClass(BigInteger.class);
+        classRegistry.registerClass(Character.class);
+        classRegistry.registerClass(Boolean.class);
+        classRegistry.registerClass(TreeMap.class);
+        classRegistry.registerClass(HashMap.class);
+        classRegistry.registerClass(ArrayList.class);
+        classRegistry.registerClass(ConcurrentHashMap.class);
+        classRegistry.registerClass(Color.class);
+        classRegistry.registerClass(Dimension.class);
+        classRegistry.registerClass(Point.class);
+        classRegistry.registerClass(Rectangle.class);
+        classRegistry.registerClass(Font.class);
+        classRegistry.registerClass(URL.class);
+        classRegistry.registerClass(Date.class);
+        classRegistry.registerClass(java.sql.Date.class);
+        classRegistry.registerClass(SimpleDateFormat.class);
+        classRegistry.registerClass(TreeSet.class);
+        classRegistry.registerClass(LinkedList.class);
+        classRegistry.registerClass(SimpleTimeZone.class);
+        classRegistry.registerClass(GregorianCalendar.class);
+        classRegistry.registerClass(Vector.class);
+        classRegistry.registerClass(Hashtable.class);
+        classRegistry.registerClass(BitSet.class);
+        classRegistry.registerClass(Locale.class);
+
         classRegistry.registerClass(StringBuffer.class);
         classRegistry.registerClass(StringBuilder.class);
         classRegistry.registerClass(Object.class);
@@ -313,37 +358,6 @@ public final class FSTConfiguration {
         classRegistry.registerClass(double[][][][][][].class);
         classRegistry.registerClass(double[][][][][][][].class);
 
-        classRegistry.registerClass(Byte.class);
-        classRegistry.registerClass(Short.class);
-        classRegistry.registerClass(Integer.class);
-        classRegistry.registerClass(Long.class);
-        classRegistry.registerClass(Float.class);
-        classRegistry.registerClass(Double.class);
-        classRegistry.registerClass(BigDecimal.class);
-        classRegistry.registerClass(BigInteger.class);
-        classRegistry.registerClass(Character.class);
-        classRegistry.registerClass(Boolean.class);
-        classRegistry.registerClass(TreeMap.class);
-        classRegistry.registerClass(HashMap.class);
-        classRegistry.registerClass(ArrayList.class);
-        classRegistry.registerClass(ConcurrentHashMap.class);
-        classRegistry.registerClass(Color.class);
-        classRegistry.registerClass(Dimension.class);
-        classRegistry.registerClass(Point.class);
-        classRegistry.registerClass(Rectangle.class);
-        classRegistry.registerClass(Font.class);
-        classRegistry.registerClass(URL.class);
-        classRegistry.registerClass(Date.class);
-        classRegistry.registerClass(java.sql.Date.class);
-        classRegistry.registerClass(SimpleDateFormat.class);
-        classRegistry.registerClass(TreeSet.class);
-        classRegistry.registerClass(LinkedList.class);
-        classRegistry.registerClass(SimpleTimeZone.class);
-        classRegistry.registerClass(GregorianCalendar.class);
-        classRegistry.registerClass(Vector.class);
-        classRegistry.registerClass(Hashtable.class);
-        classRegistry.registerClass(BitSet.class);
-        classRegistry.registerClass(Locale.class);
 
         classRegistry.addSingleSnippet("java.lang");
         classRegistry.addSingleSnippet("java.util");
