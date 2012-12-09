@@ -6,7 +6,6 @@ import de.ruedigermoeller.serialization.FSTObjectInput;
 import de.ruedigermoeller.serialization.FSTObjectOutput;
 
 import java.io.IOException;
-import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,7 +18,7 @@ public class FSTBigNumberSerializers {
 
     public static class FSTByteSerializer extends FSTBasicObjectSerializer {
         @Override
-        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException {
+        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
             out.writeFByte(((Byte)toWrite).byteValue());
         }
 
@@ -33,7 +32,7 @@ public class FSTBigNumberSerializers {
 
     static public class FSTCharSerializer extends FSTBasicObjectSerializer {
         @Override
-        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException {
+        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
             out.writeCChar(((Character)toWrite).charValue());
         }
 
@@ -47,7 +46,7 @@ public class FSTBigNumberSerializers {
 
     static public class FSTShortSerializer extends FSTBasicObjectSerializer {
         @Override
-        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException {
+        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
             out.writeCShort(((Short)toWrite).shortValue());
         }
 
@@ -60,7 +59,7 @@ public class FSTBigNumberSerializers {
 
     static public class FSTLongSerializer extends FSTBasicObjectSerializer {
         @Override
-        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException {
+        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
             out.writeCLong(((Long) toWrite).longValue());
         }
 
@@ -73,7 +72,7 @@ public class FSTBigNumberSerializers {
 
     static public class FSTFloatSerializer extends FSTBasicObjectSerializer {
         @Override
-        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException {
+        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
             out.writeFFloat(((Float) toWrite).floatValue());
         }
 
@@ -86,7 +85,7 @@ public class FSTBigNumberSerializers {
 
     static public class FSTDoubleSerializer extends FSTBasicObjectSerializer {
         @Override
-        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException {
+        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
             out.writeFDouble(((Double) toWrite).doubleValue());
         }
 

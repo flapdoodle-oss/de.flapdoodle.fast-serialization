@@ -1,5 +1,6 @@
 package de.ruedigermoeller.serialization.testclasses.basicstuff;
 
+import de.ruedigermoeller.serialization.annotations.Compress;
 import de.ruedigermoeller.serialization.annotations.EqualnessIsIdentity;
 import de.ruedigermoeller.serialization.annotations.Flat;
 import de.ruedigermoeller.serialization.annotations.Predict;
@@ -73,21 +74,21 @@ public class Primitives extends PrivatePrimitive implements Serializable {
     Boolean bol1 = Boolean.TRUE;
     Boolean bol2 = new Boolean(false);
 
-    @Flat Date date = new Date(1);
-    @Flat Date date1 = new Date();
+    Date date = new Date(1);
+    Date date1 = new Date(2);
 
     SampleEnum en1 = SampleEnum.Predesignated_GiveUp_Allowed;
-    @Flat EnumSet<SampleEnum> enSet = EnumSet.of(SampleEnum.Predesignated,SampleEnum.Complete);
+    EnumSet<SampleEnum> enSet = EnumSet.of(SampleEnum.Predesignated,SampleEnum.Complete);
 
-    @Flat String st;
-    @Flat String st1;
-    @Flat String st2;
-    @Flat String hidden;
-    @Flat String st3;
-    @Flat String st4;
-    @Flat String st5;
-    @Flat String st6;
-    @Flat String st7;
+    @Compress String st;
+    @Compress String st1;
+    @Compress @Flat String st2;
+    @Compress String hidden;
+    @Compress @Flat String st3;
+    @Compress String st4;
+    @Compress @Flat String st5;
+    @Compress @Flat String st6;
+    @Compress @Flat String st7;
 
     StyleSheet on = null;
     URL on1 = null;
@@ -100,9 +101,9 @@ public class Primitives extends PrivatePrimitive implements Serializable {
         st = "String"+num;
         st1 = "String1"+num;
         st2 = st+"1"+num;
-        hidden = "Visible"+num;
-        st3 = "Visible blablabla Visible blablabla Visible blablabla "+num;
-        st4 = "Etwas Deutsch läuft.. "+num;
+        hidden = "Visible";
+        st3 = "visible its a hurdle this may be its a hurdle "+num;
+        st4 = "etwas deutsch läuft.. "+num;
         st5 = st+"1"+num;
         st6 = "Some english, text; fragment. "+num;
         st7 = st6+" paokasd 1"+num;

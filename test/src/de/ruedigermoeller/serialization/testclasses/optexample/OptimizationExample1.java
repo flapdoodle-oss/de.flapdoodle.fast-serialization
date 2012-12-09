@@ -27,8 +27,8 @@ public class OptimizationExample1 implements Serializable {
 
     @EqualnessIsIdentity
     class Person implements Serializable {
-        String name;
-        String prename;
+        @Compress String name;
+        @Compress String prename;
         long makemebigger=7777l;
 
         Person(String name, String prename) {

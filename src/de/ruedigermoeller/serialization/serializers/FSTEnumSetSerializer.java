@@ -37,7 +37,7 @@ public class FSTEnumSetSerializer extends FSTBasicObjectSerializer {
 
     Field elemType;
     @Override
-    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException {
+    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
         EnumSet enset = (EnumSet) toWrite;
         int count = 0;
         out.writeCInt(enset.size());
@@ -60,7 +60,7 @@ public class FSTEnumSetSerializer extends FSTBasicObjectSerializer {
         int len = in.readCInt();
         Class elemCl = in.readClass();
         EnumSet enSet = EnumSet.noneOf(elemCl);
-        in.registerObject(enSet,streamPositioin,serializationInfo); // IMPORTANT, else tracking double objects will fail
+        in.registerObject(enSet,streamPositioin,serializationInfo, referencee); // IMPORTANT, else tracking double objects will fail
         for (int i = 0; i < len; i++)
             enSet.add(in.readObjectInternal(Enum.class));
         return enSet;

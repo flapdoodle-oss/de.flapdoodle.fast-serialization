@@ -36,7 +36,7 @@ import java.io.IOException;
  */
 public class FSTStringBufferSerializer extends FSTBasicObjectSerializer {
     @Override
-    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException {
+    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
         out.writeUTF(toWrite.toString()); // cruel slow stuff
     }
 
@@ -44,7 +44,7 @@ public class FSTStringBufferSerializer extends FSTBasicObjectSerializer {
     public Object instantiate(Class objectClass, FSTObjectInput in, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo referencee, int streamPositioin) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         String s = in.readUTF();
         StringBuffer stringBuffer = new StringBuffer(s);
-        in.registerObject(stringBuffer, streamPositioin, serializationInfo);
+        in.registerObject(stringBuffer, streamPositioin, serializationInfo, referencee);
         return stringBuffer;
     }
 }

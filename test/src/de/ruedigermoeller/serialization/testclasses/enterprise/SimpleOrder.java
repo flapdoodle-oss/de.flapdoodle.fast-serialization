@@ -20,14 +20,14 @@ public class SimpleOrder implements Serializable {
         return new SimpleOrder(
                 new Date(rand.nextLong()),
                 rand.nextBoolean() ? new ObjectOrientedDataType("HipHop") : new ObjectOrientedDataType("BeBop"),
-                rand.nextBoolean() ? new ObjectOrientedDataType("MORUDDH") : new ObjectOrientedDataType("********"),
-                rand.nextBoolean() ? new ObjectOrientedDataType("POK a asudh ") : new ObjectOrientedDataType("Wacka Wacka"),
-                rand.nextBoolean() ? new ObjectOrientedDataType("KILLBILL") : new ObjectOrientedDataType("FILLORKILL"),
+                rand.nextBoolean() ? new ObjectOrientedDataType("some special text") : new ObjectOrientedDataType("********"),
+                rand.nextBoolean() ? new ObjectOrientedDataType("pok a asudh ") : new ObjectOrientedDataType("wacka wacka"),
+                rand.nextBoolean() ? new ObjectOrientedDataType("killbill not yet") : new ObjectOrientedDataType("fillorkill"),
                 rand.nextBoolean() ? new ObjectOrientedInt(-1) : new ObjectOrientedInt(rand.nextInt()),
                 rand.nextBoolean() ? new ObjectOrientedInt(0) : new ObjectOrientedInt(rand.nextInt()),
                 rand.nextBoolean() ? new ObjectOrientedInt(100) : new ObjectOrientedInt(rand.nextInt()),
                 rand.nextLong(),
-                rand.nextBoolean() ? new ObjectOrientedDataType("It ahs been reported longer may text occur") : new ObjectOrientedDataType("and contain special chars äöü??")
+                rand.nextBoolean() ? new ObjectOrientedDataType("it has been reported longer may text occur here and there") : new ObjectOrientedDataType("and contain special chars äöü??")
         );
     }
 

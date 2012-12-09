@@ -34,7 +34,7 @@ import java.util.*;
  */
 public class FSTMapSerializer extends FSTBasicObjectSerializer {
     @Override
-    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException {
+    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
         Map col = (Map)toWrite;
         out.writeCInt(col.size());
         Class[] possibleClasses = referencedBy.getPossibleClasses();
@@ -76,7 +76,7 @@ public class FSTMapSerializer extends FSTBasicObjectSerializer {
         {
             res = objectClass.newInstance();
         }
-        in.registerObject(res, streamPositioin,serializationInfo);
+        in.registerObject(res, streamPositioin,serializationInfo, referencee);
         Map col = (Map)res;
         Class[] possibleClasses = referencee.getPossibleClasses();
         if ( (possibleClasses == null || possibleClasses.length == 0) ) {

@@ -220,11 +220,12 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 writeObjectCompatible(referencee, toWrite, serializationInfo);
             } else {
                 // Object header (nothing written till here)
+                int pos = written;
                 writeObjectHeader(serializationInfo, referencee, toWrite);
 
                 // write object depending on type (custom, externalizable, serializable/java, default)
                 if ( ser != null ) {
-                    ser.writeObject(this, toWrite, serializationInfo, referencee);
+                    ser.writeObject(this, toWrite, serializationInfo, referencee, pos);
                 } else {
                     if ( serializationInfo.isExternalizable() ) {
                         ((Externalizable) toWrite).writeExternal(this);
@@ -555,6 +556,87 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 writeArray(new FSTClazzInfo.FSTFieldInfo(referencee.getPossibleClasses(), null, conf.getCLInfoRegistry().isIgnoreAnnotations()), subArr);
             }
         }
+    }
+
+    static int charMap[] = new int[256];
+    static String enc = "e itsanhurdmwgvl";//fbkopjxczyq";
+    static {
+        charMap[32] = 0;
+        for (int i = 0; i < charMap.length; i++) {
+            charMap[i] =999;
+        }
+        for (int i=0; i < enc.length();i++) {
+            charMap[enc.charAt(i)] = i;
+        }
+    }
+
+    public int writeStringCompressed(String str) throws IOException {
+        final int strlen = str.length();
+
+        writeCInt(strlen);
+        buffout.ensureFree(strlen*3);
+        int fourBitCnt = 0;
+
+        final byte[] bytearr = buffout.buf;
+        int count = buffout.pos;
+        int initpos = count;
+        int compressBuffIdx = count;
+
+        for (int i=0; i<strlen; i++) {
+            final int c = str.charAt(i);
+            if ( c < 254 ) {
+                int mapped = charMap[c];
+                if ( mapped < 16 )
+                {
+                    fourBitCnt++;
+                } else {
+                    if ( fourBitCnt > 5 ) {
+                        count = reEncodeStr(str, fourBitCnt, bytearr, compressBuffIdx, i);
+                    }
+                    fourBitCnt = 0;
+                    compressBuffIdx = count+1;
+                }
+            } else {
+                if ( fourBitCnt > 5 ) {
+                    count = reEncodeStr(str, fourBitCnt, bytearr, compressBuffIdx, i);
+                }
+                fourBitCnt = 0;
+                compressBuffIdx = count+1;
+            }
+            if ( c < 254 ) {
+                bytearr[count++] = (byte)c;
+            } else {
+                bytearr[count++] = (byte) 255;
+                bytearr[count++] = (byte) ((c >>> 8) & 0xFF);
+                bytearr[count++] = (byte) ((c >>> 0) & 0xFF);
+            }
+        }
+        if ( fourBitCnt > 5 ) {
+            count = reEncodeStr(str, fourBitCnt, bytearr, compressBuffIdx, str.length());
+        }
+        int required = count - initpos;
+        buffout.pos = count;
+        written = count;
+        return required;
+    }
+
+    private int reEncodeStr(String str, int minMaxCount, byte[] bytearr, int compressBuffIdx, int i) {
+        bytearr[compressBuffIdx++] = (byte)254;
+        bytearr[compressBuffIdx++] = (byte)minMaxCount;
+        int bc = 0;
+        for ( int ii=minMaxCount; ii>0; ii-- ) {
+            int cc = charMap[str.charAt(i-ii)];
+            if ( (bc&1) == 0 ) {
+                bytearr[compressBuffIdx] = (byte)cc;
+                if ( bc == minMaxCount-1 ) {
+                    compressBuffIdx++;
+                }
+            } else {
+                bytearr[compressBuffIdx++] |= cc<<4;
+            }
+            bc++;
+        }
+        return compressBuffIdx;
     }
 
     public void writeStringUTF(String str) throws IOException {
@@ -1032,5 +1114,34 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
     public byte[] getBuffer() {
         return buffout.buf;
+    }
+
+    public FSTConfiguration getConf() {
+        return conf;
+    }
+
+    public static void main(String arg[]) throws IOException {
+        ByteArrayOutputStream out1 = new ByteArrayOutputStream(5000);
+        FSTObjectOutput ou = new FSTObjectOutput(out1, FSTConfiguration.createDefaultConfiguration() );
+        String str = "word frequencies, tend to vary. More recent analyses show that letter frequencies, like word frequencies, tend to vary, both by writer and by subject. This is a standard text sequence which might get packed. One cannot write an essay about x-rays without using frequent Xs, and the essay will have an especially strange letter frequency if the essay is about the frequent use of x-rays to treat zebras in Qatar.";
+        System.out.println(str.length()+" => "+ou.writeStringCompressed(str));
+        String str1 = "Kann auch mal ein deutscher Text sein, oder ?";
+        System.out.println(str1.length()+" => "+ou.writeStringCompressed(str1));
+        String str2 = "Imagine is a song written and performed by English musician John Lennon. The best selling single of his solo career, its lyrical statement is one of idealistic collectivism. It challenges the listener to imagine a world at peace, without the divisiveness and barriers of borders, religious denominations and nationalities, and to consider the possibility that the focus of humanity should be living a life unattached to material possessions. Lennon and Yoko Ono co-produced the song and album of the same name with Phil Spector. One month after the September 1971 release of the LP, Lennon released Imagine as a single in the United States; the song peaked at number 3 on the Billboard Hot 100 and the album became the most commercially successful and critically acclaimed of his solo career. Lennon released \"Imagine\" as a single in the United Kingdom in 1975, and the song has since sold more than 1.6 million copies in the UK. It earned a Grammy Hall of Fame Award, was inducted into the Rock and Roll Hall of Fame's 500 Songs that Shaped Rock and Roll, and Rolling Stone ranked it number 3 in their list of \"The 500 Greatest Songs of All Time\". (Full article...)";
+        System.out.println(str2.length()+" => "+ou.writeStringCompressed(str2));
+        String str3 = "standard default waiting state init finish end";
+        System.out.println(str3.length()+" => "+ou.writeStringCompressed(str3));
+        ou.close();
+
+        FSTObjectInput inp = new FSTObjectInput(new ByteArrayInputStream(out1.toByteArray()),ou.getConf() );
+        String ins = inp.readStringCompressed();
+        System.out.println(str.equals(ins));
+        System.out.println(str1.equals(inp.readStringCompressed()));
+        System.out.println(str2.equals(inp.readStringCompressed()));
+        System.out.println(str3.equals(inp.readStringCompressed()));
+    }
+
+    public int getWritten() {
+        return written;
     }
 }

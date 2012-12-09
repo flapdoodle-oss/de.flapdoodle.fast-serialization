@@ -186,9 +186,12 @@ public class TestRunner {
         }
     };
 
-    SerTest optFST = new SerTest("FST optimized conf") {
+    static FSTConfiguration optconf;
+    static {
+        optconf = FSTConfiguration.createDefaultConfiguration();
+    }
 
-        FSTConfiguration conf;
+    SerTest optFST = new SerTest("FST optimized conf") {
         FSTObjectInput.ConditionalCallback conditionalCallback = new FSTObjectInput.ConditionalCallback() {
             @Override
             public boolean shouldSkip(Object halfDecoded, int streamPosition, Field field) {
@@ -204,7 +207,7 @@ public class TestRunner {
         protected void readTest(ByteArrayInputStream bin, Class cl) {
             FSTObjectInput in = null;
             try {
-                in = new FSTObjectInput(bin, conf);
+                in = new FSTObjectInput(bin, optconf);
                 in.setConditionalCallback(conditionalCallback);
                 Object res = in.readObject(cl);
                 if ( res instanceof Swing && WarmUP == 0) {
@@ -222,10 +225,7 @@ public class TestRunner {
         FSTObjectOutput out;
         @Override
         protected void writeTest(Object toWrite, OutputStream bout, Class aClass) {
-            if ( conf == null ) {
-                conf = FSTConfiguration.createDefaultConfiguration(); // copy of default
-            }
-            out = new FSTObjectOutput(bout, conf);
+            out = new FSTObjectOutput(bout, optconf);
             try {
                 out.writeObject(toWrite, aClass);
                 out.flush();
@@ -241,18 +241,19 @@ public class TestRunner {
         }
     };
 
+    static FSTConfiguration defconf;
+    static {
+        defconf = FSTConfiguration.createDefaultConfiguration();
+        // dont do this, just for testing
+        defconf.getCLInfoRegistry().setIgnoreAnnotations(true);
+    }
+
     SerTest defFST = new SerTest("FST default conf") {
-        FSTConfiguration conf;
-        {
-            conf = FSTConfiguration.createDefaultConfiguration();
-            // dont do this, just for testing
-            conf.getCLInfoRegistry().setIgnoreAnnotations(true);
-        }
         @Override
         protected void readTest(ByteArrayInputStream bin, Class cl) {
             FSTObjectInput in = null;
             try {
-                in = new FSTObjectInput(bin, conf);
+                in = new FSTObjectInput(bin, defconf);
                 Object res = in.readObject(cl);
                 if ( res instanceof Swing && WarmUP == 0) {
                     ((Swing) res).showInFrame("FST Copy");
@@ -269,7 +270,7 @@ public class TestRunner {
         FSTObjectOutput out;
         @Override
         protected void writeTest(Object toWrite, OutputStream bout, Class aClass) {
-            out = new FSTObjectOutput(bout, conf);
+            out = new FSTObjectOutput(bout, defconf);
             try {
                 out.writeObject(toWrite, aClass);
                 out.flush();
@@ -285,22 +286,23 @@ public class TestRunner {
         }
     };
 
+    static FSTConfiguration minconf;
+    static {
+        minconf = FSTConfiguration.createMinimalConfiguration();
+        // dont do this, just for testing
+        minconf.getCLInfoRegistry().setIgnoreAnnotations(true);
+    }
+
     SerTest minFST = new SerTest("FST compatibility conf") {
 
         public String getColor() {
             return "#9090ff";
         }
-        FSTConfiguration conf;
-        {
-            conf = FSTConfiguration.createMinimalConfiguration();
-            // dont do this, just for testing
-            conf.getCLInfoRegistry().setIgnoreAnnotations(true);
-        }
         @Override
         protected void readTest(ByteArrayInputStream bin, Class cl) {
             FSTObjectInput in = null;
             try {
-                in = new FSTObjectInput(bin, conf);
+                in = new FSTObjectInput(bin, minconf);
                 Object res = in.readObject(cl);
                 if ( res instanceof Swing && WarmUP == 0) {
                     minFSTSwing = res;
@@ -318,7 +320,7 @@ public class TestRunner {
         FSTObjectOutput out;
         @Override
         protected void writeTest(Object toWrite, OutputStream bout, Class aClass) {
-            out = new FSTObjectOutput(bout, conf);
+            out = new FSTObjectOutput(bout, minconf);
             try {
                 out.writeObject(toWrite, aClass);
                 out.flush();
@@ -401,7 +403,7 @@ public class TestRunner {
         runner.charter.text("<i>intel i7 3,4 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
-        WarmUP = 1000; Run = WarmUP+1;
+        WarmUP = 30000; Run = WarmUP+1;
         runner.runAll(new Primitives(0).createPrimArray());
         runner.runAll(new CommonCollections());
         runner.runAll(new PrimitiveArrays().createPrimArray());

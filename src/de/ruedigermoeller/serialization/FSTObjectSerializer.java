@@ -36,7 +36,7 @@ public interface FSTObjectSerializer {
     /**
      * write the contents of a given object
      */
-    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy)
+    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition)
             throws IOException;
 
     /**

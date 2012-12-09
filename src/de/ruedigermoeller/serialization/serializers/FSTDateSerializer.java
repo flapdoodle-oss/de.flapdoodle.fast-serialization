@@ -37,14 +37,14 @@ import java.util.*;
  */
 public class FSTDateSerializer extends FSTBasicObjectSerializer {
     @Override
-    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException {
+    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
         out.writeFLong(((Date)toWrite).getTime());
     }
 
     @Override
     public Object instantiate(Class objectClass, FSTObjectInput in, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo referencee, int streamPositioin) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         Object res = new Date(in.readFLong());
-        in.registerObject(res,streamPositioin,serializationInfo);
+        in.registerObject(res,streamPositioin,serializationInfo, referencee);
         return res;
     }
 

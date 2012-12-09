@@ -44,7 +44,7 @@ public class FSTSerializerRegistry {
 
     static class NULLSerializer implements FSTObjectSerializer {
         @Override
-        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) {
+        public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) {
         }
 
         @Override

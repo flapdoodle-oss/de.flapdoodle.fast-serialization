@@ -528,8 +528,46 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         }
     }
 
-    char[] charBuf;
+    public String readStringCompressed() throws IOException {
+        int len = readCInt();
+        if (charBuf == null || charBuf.length < len * 3) {
+            charBuf = new char[len * 3];
+        }
+        input.ensureReadAhead(len * 3);
+        byte buf[] = input.buf;
+        int count = input.pos;
+        int chcount = 0;
+        while ( chcount < len ) {
+            char head = (char) ((buf[count++] + 256) &0xff);
+            if (head >= 0 && head < 254) {
+                charBuf[chcount++] = head;
+            } else {
+                if ( head == 254 ) {
+                    int nibbles = ((buf[count++] + 256) &0xff);
+                    for ( int ii = 0; ii < nibbles; ii++) {
+                        int bufVal = ((buf[count]+256)&0xff);
+                        if ((ii&1) == 0 ) {
+                            charBuf[chcount++] = FSTObjectOutput.enc.charAt(bufVal &0xf);
+                            if (ii==nibbles-1) {
+                                count++;
+                            }
+                        } else {
+                            charBuf[chcount++] = FSTObjectOutput.enc.charAt((bufVal>>>4)&0xf);
+                            count++;
+                        }
+                    }
+                } else {
+                    int ch1 = ((buf[count++] + 256) &0xff);
+                    int ch2 = ((buf[count++] + 256) &0xff);
+                    charBuf[chcount++] = (char) ((ch1 << 8) + (ch2 << 0));
+                }
+            }
+        }
+        input.pos = count;
+        return new String(charBuf, 0, chcount);
+    }
 
+    char[] charBuf;
     public String readStringUTF() throws IOException {
         int len = readCInt();
         if (charBuf == null || charBuf.length < len * 3) {
@@ -674,8 +712,10 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         }
     }
 
-    public void registerObject(Object o, int streamPosition, FSTClazzInfo info) {
-        objects.registerObjectForRead(o, streamPosition);
+    public void registerObject(Object o, int streamPosition, FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo referencee) {
+        if (!referencee.isFlat()) {
+            objects.registerObjectForRead(o, streamPosition);
+        }
     }
 
     public Class readClass() throws IOException, ClassNotFoundException {

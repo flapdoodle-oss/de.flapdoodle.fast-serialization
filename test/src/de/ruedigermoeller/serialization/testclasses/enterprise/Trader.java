@@ -22,15 +22,15 @@ public class Trader implements Serializable {
                 null,
                 null, //mHiddenBusinessUnitID
                 rand.nextBoolean() ? new ObjectOrientedDataType(""+rand.nextInt()) : new ObjectOrientedDataType("Bob "+rand.nextInt()),
-                new ObjectOrientedDataType("JimBob"+rand.nextInt(788)),
+                new ObjectOrientedDataType("lucky luke"+rand.nextInt(788)),
                 new ObjectOrientedInt(rand.nextInt(200)),
                 new ObjectOrientedInt(rand.nextInt(4)),
-                new ObjectOrientedDataType("POKPOK"+rand.nextInt()),
+                new ObjectOrientedDataType("bill jolly"+rand.nextInt()),
                 new ObjectOrientedInt(rand.nextInt()),
-                new ObjectOrientedDataType("Jonny Jim Bob"+rand.nextInt()),
+                new ObjectOrientedDataType("Jonny not Jim Bob"+rand.nextInt()),
                 rand.nextBoolean(),
                 new ObjectOrientedInt(rand.nextInt()),
-                new ObjectOrientedDataType("POKPOK Aber Hallo"+rand.nextInt())
+                new ObjectOrientedDataType("pokpok aber hallo"+rand.nextInt())
         );
         int orders = 10;
         for ( int i = 0; i < orders; i++ ) {

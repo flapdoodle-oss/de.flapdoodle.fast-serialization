@@ -35,7 +35,7 @@ import java.util.*;
 public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
 
     @Override
-    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy) throws IOException {
+    public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
         Collection col = (Collection)toWrite;
         out.writeCInt(col.size());
         Class[] possibleClasses = referencedBy.getPossibleClasses();
@@ -89,7 +89,7 @@ public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
             } else {
                 res = objectClass.newInstance();
             }
-            in.registerObject(res, streamPositioin,serializationInfo);
+            in.registerObject(res, streamPositioin,serializationInfo, referencee);
             Collection col = (Collection)res;
             if ( col instanceof ArrayList ) {
                 ((ArrayList)col).ensureCapacity(len);

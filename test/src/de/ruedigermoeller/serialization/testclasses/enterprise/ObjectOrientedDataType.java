@@ -1,6 +1,7 @@
 package de.ruedigermoeller.serialization.testclasses.enterprise;
 
 import de.ruedigermoeller.serialization.*;
+import de.ruedigermoeller.serialization.annotations.Compress;
 import de.ruedigermoeller.serialization.annotations.EqualnessIsIdentity;
 
 import java.io.*;
@@ -16,6 +17,7 @@ import java.io.*;
 public class ObjectOrientedDataType implements Serializable {
 
     // encapsulate like a boss
+    @Compress
     private String aString="";
     private boolean isCapableOfDoingAnythingMeaningful;
     public ObjectOrientedDataType() {}

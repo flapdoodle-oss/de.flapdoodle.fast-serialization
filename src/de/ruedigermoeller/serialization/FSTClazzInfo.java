@@ -57,6 +57,7 @@ public final class FSTClazzInfo {
     public FSTClazzInfo(Class clazz, FSTClazzInfoRegistry infoRegistry, boolean ignoreAnnotations) {
         this.clazz = clazz;
         reg = infoRegistry;
+        ignoreAnn = ignoreAnnotations;
         createFields(clazz);
         if (Externalizable.class.isAssignableFrom(clazz)) {
             externalizable = true;
@@ -65,7 +66,6 @@ public final class FSTClazzInfo {
             externalizable = false;
             cons = FSTUtil.findConstructorForSerializable(clazz);
         }
-        ignoreAnn = ignoreAnnotations;
         if ( ! ignoreAnnotations ) {
             Predict annotation = (Predict) clazz.getAnnotation(Predict.class);
             if (annotation != null) {
@@ -345,7 +345,8 @@ public final class FSTClazzInfo {
         boolean flat = false;
         boolean thin = false;
         boolean isArr = false;
-        boolean isConditional;
+        boolean isConditional = false;
+        boolean isCompressed = false;
         int integralType;
         FSTClazzInfo lastInfo;
 
@@ -368,11 +369,16 @@ public final class FSTClazzInfo {
                 flat = fi.isAnnotationPresent(Flat.class);
                 thin = fi.isAnnotationPresent(Thin.class);
                 isConditional = fi.isAnnotationPresent(Conditional.class);
+                isCompressed = fi.isAnnotationPresent(Compress.class);
                 if (isIntegral()) {
                     isConditional = false;
                 }
             }
 
+        }
+
+        public boolean isCompressed() {
+            return isCompressed;
         }
 
         public boolean isConditional() {
