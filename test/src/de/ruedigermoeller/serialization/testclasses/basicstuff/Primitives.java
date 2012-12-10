@@ -19,7 +19,7 @@ import java.util.*;
  * Time: 03:13
  * To change this template use File | Settings | File Templates.
  */
-@Predict(Primitives.SampleEnum.class)
+@Predict({Primitives.SampleEnum.class,PrivatePrimitive.class})
 public class Primitives extends PrivatePrimitive implements Serializable {
 
 
@@ -35,11 +35,11 @@ public class Primitives extends PrivatePrimitive implements Serializable {
                 GiveUp_Allowed("X","Give-Up Allowed",8),
                 Position_Transaction_Allowed("Y","Position Transaction Allowed",9);
 
-        private String value;
-        private String stringRepresentation;
-        private int nativeEnumValue;
+         String value;
+         String stringRepresentation;
+         int nativeEnumValue;
 
-        private SampleEnum(String value, String stringRepresentation, int nativeEnumValue)
+         SampleEnum(String value, String stringRepresentation, int nativeEnumValue)
         {
             this.value=value;
             this.stringRepresentation = stringRepresentation;
@@ -47,27 +47,27 @@ public class Primitives extends PrivatePrimitive implements Serializable {
         }
     }
 
-    private char w = 234, x = 33344;
-    private byte y = -34, z = 126;
+     char w = 234, x = 33344;
+     byte y = -34, z = 126;
     short sh0 = 127;
 
-    private int gg = -122;
-    private int zz = 99999;
-    private int ii = -23424;
-    private int jj = 0;
-    private int kk = Integer.MIN_VALUE;
-    private int hh = Integer.MAX_VALUE;
+     int gg = -122;
+     int zz = 99999;
+     int ii = -23424;
+     int jj = 0;
+     int kk = Integer.MIN_VALUE;
+     int hh = Integer.MAX_VALUE;
 
-    private long lll = 123;
-    private long mmm = 99999;
+     long lll = 123;
+     long mmm = 99999;
 
-    private double dq = 300.0;
-    private float t = 300.0f;
+     double dq = 300.0;
+     float t = 300.0f;
 
-    private boolean a0 = true;
-    private boolean a1 = false;
-    private boolean a2 = false;
-    private boolean a3 = true;
+     boolean a0 = true;
+     boolean a1 = false;
+     boolean a2 = false;
+     boolean a3 = true;
 
     Integer i0 = 1, i1 = 2, i3 = 23894, i4 = 238475638;
     Double  d1 = 2334234.0;
@@ -120,6 +120,6 @@ public class Primitives extends PrivatePrimitive implements Serializable {
 }
 
 class PrivatePrimitive {
-    private String hidden = "Hidden";
+     String hidden = "Hidden";
 }
 

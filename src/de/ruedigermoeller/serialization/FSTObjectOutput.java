@@ -482,7 +482,11 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             if ( componentType == int.class ) {
                 if ( referencee.isThin() ) {
                     writeFIntThin((int[]) array);
-                } else {
+                } else
+                if ( referencee.isCompressed() ) {
+                    writeIntArrCompressed((int[]) array);
+                } else
+                {
                     writeFInt((int[])array);
                 }
             } else
@@ -779,7 +783,84 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 writeCInt(anInt);
             }
         }
-        writeCInt(length);
+        writeCInt(length); // stop marker
+    }
+
+    public void writeIntArrCompressed( int v[] ) throws IOException {
+        final int length = v.length;
+        int min = Integer.MAX_VALUE; int max = Integer.MIN_VALUE;
+        int sizeNorm = 0, sizDiff = 0, sizOffs = 0, sizeThin = 0;
+        for (int i = 0; i < length; i++) {
+            final int anInt = v[i];
+            if ( anInt != 0 ) {
+                sizeThin++;
+                if ( i > 128 ) {
+                    sizeThin+=2;
+                }
+            }
+            if ( anInt < 127 ) {
+                sizeNorm++;
+                if (anInt!=0) {
+                    sizeThin++;
+                }
+            } else if ( anInt < 32767 ) {
+                sizeNorm+=3;
+                sizeThin+=3;
+            } else {
+                sizeNorm+=5;
+                sizeThin+=3;
+            }
+            min = Math.min(anInt,min);
+            max = Math.max(anInt,max);
+            if ( i > 0 ) {
+                int diff = Math.abs(anInt-v[i-1]);
+                if ( diff < 127 ) {
+                    sizDiff++;
+                } else if ( diff < 32767 ) {
+                    sizDiff+=3;
+                } else {
+                    sizDiff+=5;
+                }
+            }
+        }
+        int range = Math.abs(max-min);
+        if ( range < 127 ) {
+            sizOffs = v.length;
+        } else if ( range < 32767 ) {
+            sizOffs = v.length*2;
+        } else {
+            sizOffs = v.length*5;
+        }
+        if ( sizDiff <= sizeNorm && sizDiff <= sizeThin && sizDiff <= sizOffs ) {
+            writeFByte(0);
+            writeDiffArr(v);
+        } else
+        if ( sizeNorm <= sizDiff && sizeNorm <= sizeThin && sizeNorm <= sizOffs ) {
+            writeFByte(1);
+            writeFInt(v);
+        } else
+        if ( sizeThin <= sizeNorm && sizeThin <= sizDiff && sizeThin <= sizOffs ) {
+            writeFByte(2);
+            writeFIntThin(v);
+        } else
+        if ( sizOffs <= sizeNorm && sizOffs <= sizeThin && sizOffs <= sizDiff ) {
+            writeFByte(3);
+            writeShortOffsArr(min,v);
+        }
+    }
+
+    private void writeShortOffsArr(int min, int[] v) throws IOException {
+        writeCInt(min);
+        for (int i = 0; i < v.length; i++) {
+            writeFShort(v[i] - min);
+        }
+    }
+
+    private void writeDiffArr(int[] v) throws IOException {
+        writeCInt(v[0]);
+        for (int i = 1; i < v.length; i++) {
+            writeCInt(v[i]-v[i-1]);
+        }
     }
 
     public void writeFInt( int v[] ) {
@@ -791,23 +872,20 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             final int anInt = v[i];
             if ( anInt > -127 && anInt <=127 ) {
                 buffout.buf[count++] = (byte)anInt;
-                written++;
             } else
             if ( anInt >= Short.MIN_VALUE && anInt <= Short.MAX_VALUE ) {
                 buf[count++] = -128;
                 buf[count++] = (byte) ((anInt >>>  8) & 0xFF);
                 buf[count++] = (byte) ((anInt >>> 0) & 0xFF);
-                written += 3;
             } else {
                 buf[count++] = -127;
                 buf[count++] = (byte) ((anInt >>> 24) & 0xFF);
                 buf[count++] = (byte) ((anInt >>> 16) & 0xFF);
                 buf[count++] = (byte) ((anInt >>>  8) & 0xFF);
                 buf[count++] = (byte) ((anInt >>> 0) & 0xFF);
-                written += 5;
             }
         }
-        buffout.pos = count;
+        buffout.pos = written = count;
     }
 
 

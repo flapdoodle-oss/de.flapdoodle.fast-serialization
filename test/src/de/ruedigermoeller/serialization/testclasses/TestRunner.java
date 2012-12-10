@@ -14,6 +14,7 @@ import de.ruedigermoeller.serialization.util.FSTUtil;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -80,7 +81,7 @@ public class TestRunner {
                 System.out.println(""+title+" FAILURE in read "+e.getMessage());
             }
             if ( resObject != null ) {
-                if ( ! DeepEquals.deepEquals(resObject,toWrite) ) {
+                if ( ! DeepEquals.deepEquals(resObject, toWrite) ) {
                     System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! EqualTest failed !!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     length = 0;
                     timRead = 0;
@@ -119,9 +120,12 @@ public class TestRunner {
         }
     }
 
-    SerTest kryo = new SerTest("kryo") {
+    static Kryo kryo = new Kryo();
+    static {
+        kryo.register(Primitives.class);
+    }
+    SerTest kryotest = new SerTest("kryo") {
 
-        Kryo kryo = new Kryo();
         @Override
         protected void readTest(ByteArrayInputStream bin, Class cl) {
             Input out = new Input(bin);
@@ -351,11 +355,11 @@ public class TestRunner {
         System.out.println();
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
-        SerTest tests[] = { optFST, defFST, kryo, minFST, defser};
-//        SerTest tests[] = { optFST, defFST, kryo};
-//        SerTest tests[] = { defser, kryo, defFST};
-//        SerTest tests[] = { kryo};
-//        SerTest tests[] = { kryo, defFST};
+        SerTest tests[] = { optFST, defFST, kryotest, minFST, defser};
+//        SerTest tests[] = { optFST, defFST, kryotest};
+//        SerTest tests[] = { defser, kryotest, defFST};
+//        SerTest tests[] = { kryotest};
+//        SerTest tests[] = { kryotest, defFST};
 //        SerTest tests[] = { defFST};
 //        SerTest tests[] = { defser, minFST };
         for (int i = 0; i < tests.length; i++) {
@@ -403,7 +407,7 @@ public class TestRunner {
         runner.charter.text("<i>intel i7 3,4 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
-        WarmUP = 30000; Run = WarmUP+1;
+        WarmUP = 100000; Run = WarmUP+1;
         runner.runAll(new Primitives(0).createPrimArray());
         runner.runAll(new CommonCollections());
         runner.runAll(new PrimitiveArrays().createPrimArray());

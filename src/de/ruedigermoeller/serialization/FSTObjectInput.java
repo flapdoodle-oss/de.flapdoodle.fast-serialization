@@ -618,14 +618,9 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
                 } else if (arrType == int.class) {
                     final int[] arr = (int[]) array;
                     if ( referencee.isThin() ) {
-                        for (int i = 0; i < len; i++) {
-                            final int index = readCInt();
-                            if ( index == len ) {
-                                break;
-                            }
-                            final int val = readCInt();
-                            arr[index] = val;
-                        }
+                        readThinArray(len, arr);
+                    } else if (referencee.isCompressed() ) {
+                        readCompressedArray(len,arr);
                     } else {
                         readCIntArr(len, arr);
                     }
@@ -709,6 +704,42 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
                 }
             }
             return array;
+        }
+    }
+
+    public void readCompressedArray(int len, int arr[]) throws IOException {
+        int type = readFByte();
+        switch (type) {
+            case 0: readDiffArr(len,arr); break;
+            case 1: readCIntArr(len, arr); break;
+            case 2: readThinArray(len, arr); break;
+            case 3: readOffsShortArr(len, arr); break;
+        }
+    }
+
+    private void readOffsShortArr(int len, int[] arr) throws IOException {
+        int min = readCInt();
+        for ( int i=0; i < len; i++) {
+            arr[i]= min + readShort();
+        }
+    }
+
+    private void readDiffArr(int len, int[] arr) throws IOException {
+        int start = readCInt();
+        arr[0] = start;
+        for ( int i=1; i < len; i++) {
+            arr[i]= arr[i-1] + readCInt();
+        }
+    }
+
+    private void readThinArray(int len, int[] arr) throws IOException {
+        for (int i = 0; i < len; i++) {
+            final int index = readCInt();
+            if ( index == len ) {
+                break;
+            }
+            final int val = readCInt();
+            arr[index] = val;
         }
     }
 
