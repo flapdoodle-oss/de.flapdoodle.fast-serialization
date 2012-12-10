@@ -22,6 +22,7 @@ package de.ruedigermoeller.serialization;
 import de.ruedigermoeller.serialization.util.FSTInputStream;
 import de.ruedigermoeller.serialization.util.FSTInt2ObjectMap;
 import de.ruedigermoeller.serialization.util.FSTUtil;
+import sun.misc.Unsafe;
 
 import java.io.*;
 import java.lang.reflect.Array;
@@ -569,6 +570,9 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
 
     char[] charBuf;
     public String readStringUTF() throws IOException {
+        if ( FSTUtil.unsafe != null ) {
+            return readStringUTFUnsafe();
+        }
         int len = readCInt();
         if (charBuf == null || charBuf.length < len * 3) {
             charBuf = new char[len * 3];
@@ -589,6 +593,32 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         }
         input.pos = count;
         return new String(charBuf, 0, chcount);
+    }
+
+    private String readStringUTFUnsafe() throws IOException {
+        final Unsafe unsafe = FSTUtil.unsafe;
+        int len = readCIntUnsafe();
+        if (charBuf == null || charBuf.length < len * 3) {
+            charBuf = new char[len * 3];
+        }
+        input.ensureReadAhead(len * 3);
+        final byte buf[] = input.buf;
+        long count = input.pos+bufoff;
+        long chcount = choff;
+        for (int i = 0; i < len; i++) {
+            char head = (char) ((unsafe.getByte(buf,count++) + 256) &0xff);
+            if (head >= 0 && head < 255) {
+                unsafe.putChar(charBuf,chcount,head);
+                chcount+=chscal;
+            } else {
+                int ch1 = ((unsafe.getByte(buf,count++) + 256) &0xff);
+                int ch2 = ((unsafe.getByte(buf,count++) + 256) &0xff);
+                unsafe.putChar(charBuf,chcount,(char) ((ch1 << 8) + (ch2 << 0)));
+                chcount+=chscal;
+            }
+        }
+        input.pos = (int) (count-bufoff);
+        return new String(charBuf, 0, (int) ((chcount-choff)/chscal));
     }
 
     protected Object readArray(FSTClazzInfo.FSTFieldInfo referencee) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
@@ -778,7 +808,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
     }
 
     public final int readFInt() throws IOException {
-        input.ensureReadAhead(5);
+        input.ensureReadAhead(4);
         int count = input.pos;
         final byte buf[] = input.buf;
         int ch1 = (buf[count++]+256)&0xff;
@@ -804,6 +834,10 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
     }
 
     private void readCIntArr(int len, int[] arr) throws IOException {
+        if ( FSTUtil.unsafe != null ) {
+            readCIntArrUnsafe(len,arr);
+            return;
+        }
         input.ensureReadAhead(5 * len);
         final byte buf[] = input.buf;
         int count = input.pos;
@@ -830,7 +864,64 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         input.pos = count;
     }
 
-    public int readCInt() throws IOException {
+    final static int bufoff;
+    final static int choff;
+    final static int intoff;
+    final static int intscal;
+    final static int chscal;
+
+    static {
+        if ( FSTUtil.unsafe != null ) {
+            bufoff = FSTUtil.unsafe.arrayBaseOffset(byte[].class);
+            intoff = FSTUtil.unsafe.arrayBaseOffset(int[].class);
+            intscal = FSTUtil.unsafe.arrayIndexScale(int[].class);
+            chscal = FSTUtil.unsafe.arrayIndexScale(char[].class);
+            choff = FSTUtil.unsafe.arrayBaseOffset(char[].class);
+        } else {
+            bufoff = 0;
+            intoff = 0;
+            intscal = 0;
+            choff = 0;
+            chscal = 0;
+        }
+    }
+    private void readCIntArrUnsafe(final int len, final int[] arr) {
+        final Unsafe unsafe = FSTUtil.unsafe;
+        input.ensureReadAhead(5 * len);
+        final byte buf[] = input.buf;
+        long count = input.pos+bufoff;
+        final int max = len * intscal + intoff;
+        int cn = input.pos;
+        for (long j = intoff; j < max; j+=intscal) {
+            final byte head = unsafe.getByte(buf,count++);
+            cn++;
+            // -128 = short byte, -127 == 4 byte
+            if (head > -127 && head <= 127) {
+                unsafe.putInt(arr,j,head);
+                continue;
+            }
+            if (head == -128) {
+                final int ch1 = (unsafe.getByte(buf,count++)+256)&0xff;
+                final int ch2 = (unsafe.getByte(buf,count++)+256)&0xff;
+                unsafe.putInt(arr,j,(short)((ch1 << 8) + (ch2 << 0)));
+                cn+=2;
+                continue;
+            } else {
+                int ch1 = (unsafe.getByte(buf,count++)+256)&0xff;
+                int ch2 = (unsafe.getByte(buf,count++)+256)&0xff;
+                int ch3 = (unsafe.getByte(buf,count++)+256)&0xff;
+                int ch4 = (unsafe.getByte(buf,count++)+256)&0xff;
+                cn+=4;
+                unsafe.putInt(arr,j,((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0)));
+            }
+        }
+        input.pos = cn;
+    }
+
+    public final int readCInt() throws IOException {
+        if ( FSTUtil.unsafe != null ) {
+            return readCIntUnsafe();
+        }
         input.ensureReadAhead(5);
         final byte buf[] = input.buf;
         int count = input.pos;
@@ -851,6 +942,32 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
             int ch3 = (buf[count++]+256)&0xff;
             int ch4 = (buf[count++]+256)&0xff;
             input.pos = count;
+            return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
+        }
+    }
+
+    private final int readCIntUnsafe() {
+        final Unsafe unsafe = FSTUtil.unsafe;
+        input.ensureReadAhead(5);
+        final byte buf[] = input.buf;
+        long count = input.pos+bufoff;
+        final byte head = unsafe.getByte(buf,count++);
+        // -128 = short byte, -127 == 4 byte
+        if (head > -127 && head <= 127) {
+            input.pos = (int) (count-bufoff);
+            return head;
+        }
+        if (head == -128) {
+            final int ch1 = (unsafe.getByte(buf,count++)+256)&0xff;
+            final int ch2 = (unsafe.getByte(buf,count++)+256)&0xff;
+            input.pos = (int) (count-bufoff);
+            return (short)((ch1 << 8) + (ch2 << 0));
+        } else {
+            int ch1 = (unsafe.getByte(buf,count++)+256)&0xff;
+            int ch2 = (unsafe.getByte(buf,count++)+256)&0xff;
+            int ch3 = (unsafe.getByte(buf,count++)+256)&0xff;
+            int ch4 = (unsafe.getByte(buf,count++)+256)&0xff;
+            input.pos = (int) (count-bufoff);
             return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
         }
     }

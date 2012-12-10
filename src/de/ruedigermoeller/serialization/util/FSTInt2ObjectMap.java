@@ -30,7 +30,7 @@ public class FSTInt2ObjectMap<V>
     public Object  mValues[];
     public int     mNumberOfElements;
     FSTInt2ObjectMap<V> next;
-    private static final int GROWFAC = 3;
+    private static final int GROWFAC = 2;
 
     public FSTInt2ObjectMap(int initialSize)
     {
@@ -57,13 +57,27 @@ public class FSTInt2ObjectMap<V>
         if ( key == 0 && value == null) {
             throw new RuntimeException("key value pair not supported "+key+" "+value);
         }
-        putHash(key, value, hash);
+        putHash(key, value, hash, this);
     }
 
-    final void putHash(int key, V value, int hash) {
+    final void putHash(int key, V value, int hash, FSTInt2ObjectMap<V> parent) {
         if (mNumberOfElements*GROWFAC > mKeys.length)
         {
-            resize(mKeys.length * GROWFAC);
+            if ( parent != null ) {
+                if ( (parent.mNumberOfElements+mNumberOfElements)*GROWFAC > parent.mKeys.length ) {
+                    parent.resize(parent.mKeys.length*GROWFAC);
+                    parent.put(key,value);
+                    return;
+                } else if ( 5*mNumberOfElements > parent.mNumberOfElements ) {
+                    parent.resize(parent.mKeys.length+1);
+                    parent.put(key,value);
+                    return;
+                } else {
+                    resize(mKeys.length * GROWFAC);
+                }
+            } else {
+                resize(mKeys.length * GROWFAC);
+            }
         }
 
         int idx = hash % mKeys.length;
@@ -87,7 +101,7 @@ public class FSTInt2ObjectMap<V>
             int newSiz = mNumberOfElements/3;
             next = new FSTInt2ObjectMap<V>(newSiz);
         }
-        next.putHash(key,value,hash);
+        next.putHash(key,value,hash,this);
     }
 
     final public V get(int key) {

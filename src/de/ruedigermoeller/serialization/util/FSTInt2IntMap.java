@@ -33,7 +33,7 @@ public class FSTInt2IntMap {
     public int  mValues[];
     public int     mNumberOfElements;
     FSTInt2IntMap next;
-    private static final int GROWFAC = 3;
+    private static final int GROWFAC = 2;
 
     public FSTInt2IntMap(int initialSize)
     {
@@ -84,12 +84,25 @@ public class FSTInt2IntMap {
         // end inline
     }
 
-    final void putHash(int key, int value, int hash) {
+    final void putHash(int key, int value, int hash, FSTInt2IntMap parent) {
         if (mNumberOfElements*GROWFAC > mKeys.length)
         {
-            resize(mKeys.length * GROWFAC);
+            if ( parent != null ) {
+                if ( (parent.mNumberOfElements+mNumberOfElements)*GROWFAC > parent.mKeys.length ) {
+                    parent.resize(parent.mKeys.length*GROWFAC);
+                    parent.put(key,value);
+                    return;
+                } else if ( 5*mNumberOfElements > parent.mNumberOfElements ) {
+                    parent.resize(parent.mKeys.length+1);
+                    parent.put(key,value);
+                    return;
+                } else {
+                    resize(mKeys.length * GROWFAC);
+                }
+            } else {
+                resize(mKeys.length * GROWFAC);
+            }
         }
-
         int idx = hash % mKeys.length;
 
         final int mKey = mKeys[idx];
@@ -112,7 +125,7 @@ public class FSTInt2IntMap {
             int newSiz = mNumberOfElements/3;
             next = new FSTInt2IntMap(newSiz);
         }
-        next.putHash(key,value,hash);
+        next.putHash(key,value,hash,this);
     }
 
     final public int get(int key) {

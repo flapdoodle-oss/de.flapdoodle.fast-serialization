@@ -359,8 +359,8 @@ public class TestRunner {
 //        SerTest tests[] = { optFST, defFST, kryotest};
 //        SerTest tests[] = { defser, kryotest, defFST};
 //        SerTest tests[] = { kryotest};
-//        SerTest tests[] = { kryotest, defFST};
-        SerTest tests[] = { defFST};
+        SerTest tests[] = { kryotest, defFST};
+//        SerTest tests[] = { defFST};
 //        SerTest tests[] = { defser, minFST };
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];

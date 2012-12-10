@@ -20,8 +20,6 @@
 
 package de.ruedigermoeller.serialization.util;
 
-import sun.misc.Unsafe;
-
 import java.util.HashMap;
 
 /**
@@ -36,9 +34,11 @@ public class FSTObject2IntMap<K>
     static int[] prim = {
             3,5,7, 11, 13, 17, 19, 23, 29, 37, 67, 97, 139,
             211, 331, 641, 1097, 1531, 2207, 3121, 5059, 7607, 10891,
-            15901, 19993, 30223, 50077, 74231,99991, 150001,300017
+            15901, 19993, 30223, 50077, 74231,99991, 150001, 300017,
+            1000033,1500041,200033,3000077,5000077,10000019
+
     };
-    private static final int GROFAC = 3;
+    private static final int GROFAC = 2;
 
     static int adjustSize(int size) {
         for (int i = 0; i < prim.length-1; i++) {
@@ -78,13 +78,27 @@ public class FSTObject2IntMap<K>
     final public void put(K key, int value)
     {
         int hash = key.hashCode() & 0x7FFFFFFF;
-        putHash(key, value, hash);
+        putHash(key, value, hash, this);
     }
 
-    final void putHash(K key, int value, int hash) {
+    final void putHash(K key, int value, int hash, FSTObject2IntMap<K> parent) {
         if (mNumberOfElements*GROFAC > mKeys.length)
         {
-            resize(mKeys.length * GROFAC);
+            if ( parent != null ) {
+                if ( (parent.mNumberOfElements+mNumberOfElements)*GROFAC > parent.mKeys.length ) {
+                    parent.resize(parent.mKeys.length*GROFAC);
+                    parent.put(key,value);
+                    return;
+                } else if ( 5*mNumberOfElements > parent.mNumberOfElements ) {
+                    parent.resize(parent.mKeys.length+1);
+                    parent.put(key,value);
+                    return;
+                } else {
+                    resize(mKeys.length * GROFAC);
+                }
+            } else {
+                resize(mKeys.length * GROFAC);
+            }
         }
 
         int idx = hash % mKeys.length;
@@ -134,7 +148,7 @@ public class FSTObject2IntMap<K>
             int newSiz = mNumberOfElements/3;
             next = new FSTObject2IntMap<K>(newSiz,checkClazzOnEquals);
         }
-        next.putHash(key,value,hash);
+        next.putHash(key,value,hash, this);
     }
 
     final public int get(final K key) {
