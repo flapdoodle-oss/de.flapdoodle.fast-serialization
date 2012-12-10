@@ -30,6 +30,7 @@ public class FSTInt2ObjectMap<V>
     public Object  mValues[];
     public int     mNumberOfElements;
     FSTInt2ObjectMap<V> next;
+    private static final int GROWFAC = 3;
 
     public FSTInt2ObjectMap(int initialSize)
     {
@@ -60,9 +61,9 @@ public class FSTInt2ObjectMap<V>
     }
 
     final void putHash(int key, V value, int hash) {
-        if (mNumberOfElements*2 > mKeys.length)
+        if (mNumberOfElements*GROWFAC > mKeys.length)
         {
-            resize(mKeys.length * 2);
+            resize(mKeys.length * GROWFAC);
         }
 
         int idx = hash % mKeys.length;
@@ -83,7 +84,7 @@ public class FSTInt2ObjectMap<V>
 
     final void putNext(int hash, int key, V value) {
         if ( next == null ) {
-            int newSiz = mKeys.length/12;
+            int newSiz = mNumberOfElements/3;
             next = new FSTInt2ObjectMap<V>(newSiz);
         }
         next.putHash(key,value,hash);

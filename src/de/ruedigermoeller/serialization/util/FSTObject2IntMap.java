@@ -38,6 +38,7 @@ public class FSTObject2IntMap<K>
             211, 331, 641, 1097, 1531, 2207, 3121, 5059, 7607, 10891,
             15901, 19993, 30223, 50077, 74231,99991, 150001,300017
     };
+    private static final int GROFAC = 3;
 
     static int adjustSize(int size) {
         for (int i = 0; i < prim.length-1; i++) {
@@ -81,9 +82,9 @@ public class FSTObject2IntMap<K>
     }
 
     final void putHash(K key, int value, int hash) {
-        if (mNumberOfElements*2 > mKeys.length)
+        if (mNumberOfElements*GROFAC > mKeys.length)
         {
-            resize(mKeys.length * 2);
+            resize(mKeys.length * GROFAC);
         }
 
         int idx = hash % mKeys.length;
@@ -130,7 +131,7 @@ public class FSTObject2IntMap<K>
 
     final void putNext(final int hash, final K key, final int value) {
         if ( next == null ) {
-            int newSiz = mKeys.length/10;
+            int newSiz = mNumberOfElements/3;
             next = new FSTObject2IntMap<K>(newSiz,checkClazzOnEquals);
         }
         next.putHash(key,value,hash);
@@ -235,7 +236,8 @@ public class FSTObject2IntMap<K>
             Object obs[] = new Object[count];
 
             for ( int i = 0; i < count;  i++ ) {
-                obs[i] = ""+i;
+//                obs[i] = ""+i;
+                obs[i] = ""+Math.random();
             }
 
             long tim = System.currentTimeMillis();
@@ -254,17 +256,17 @@ public class FSTObject2IntMap<K>
             for ( int j = 0; j < 10;  j++ ) {
                 for ( int i = 0; i < count;  i++ ) {
                     if ( map.get(obs[i]) != i ) {
-                        System.out.println("bug "+i);
+                        //System.out.println("bug "+i);
                     }
                 }
             }
-            System.out.println("fst GET "+(System.currentTimeMillis()-tim));
+            System.out.println("fst GET "+(System.currentTimeMillis()-tim)+" "+map.size());
 
             tim = System.currentTimeMillis();
             for ( int j = 0; j < 10;  j++ ) {
                 for ( int i = 0; i < count;  i++ ) {
                     if ( hm.get(obs[i]) != i ) {
-                        System.out.println("bug "+i);
+                        //System.out.println("bug "+i);
                     }
                 }
             }
@@ -274,7 +276,7 @@ public class FSTObject2IntMap<K>
             for ( int j = 0; j < 10;  j++ ) {
                 for ( int i = 0; i < count;  i++ ) {
                     if ( map.get("Poki") == i ) {
-                        System.out.println("bug "+i);
+                        //System.out.println("bug "+i);
                     }
                 }
             }
@@ -285,7 +287,7 @@ public class FSTObject2IntMap<K>
             for ( int j = 0; j < 10;  j++ ) {
                 for ( int i = 0; i < count;  i++ ) {
                     if ( hm.get("Poki") == someInt ) {
-                        System.out.println("bug "+i);
+                        //System.out.println("bug "+i);
                     }
                 }
             }

@@ -33,6 +33,7 @@ public class FSTInt2IntMap {
     public int  mValues[];
     public int     mNumberOfElements;
     FSTInt2IntMap next;
+    private static final int GROWFAC = 3;
 
     public FSTInt2IntMap(int initialSize)
     {
@@ -60,9 +61,9 @@ public class FSTInt2IntMap {
             throw new RuntimeException("key value pair not supported "+key+" "+value);
         }
         //putHash(key, value, hash); inline ..
-        if (mNumberOfElements*2 > mKeys.length)
+        if (mNumberOfElements*GROWFAC > mKeys.length)
         {
-            resize(mKeys.length * 2);
+            resize(mKeys.length * GROWFAC);
         }
 
         int idx = hash % mKeys.length;
@@ -84,9 +85,9 @@ public class FSTInt2IntMap {
     }
 
     final void putHash(int key, int value, int hash) {
-        if (mNumberOfElements*2 > mKeys.length)
+        if (mNumberOfElements*GROWFAC > mKeys.length)
         {
-            resize(mKeys.length * 2);
+            resize(mKeys.length * GROWFAC);
         }
 
         int idx = hash % mKeys.length;
@@ -108,7 +109,7 @@ public class FSTInt2IntMap {
 
     final void putNext(int hash, int key, int value) {
         if ( next == null ) {
-            int newSiz = mKeys.length/12;
+            int newSiz = mNumberOfElements/3;
             next = new FSTInt2IntMap(newSiz);
         }
         next.putHash(key,value,hash);

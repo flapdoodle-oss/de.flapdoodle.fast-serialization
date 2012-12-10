@@ -35,6 +35,7 @@ public final class FSTObject2ObjectMap<K,V> implements Cloneable, java.io.Serial
     FSTObject2ObjectMap<K,V> next;
     int level;
     FSTObject2ObjectMap parent;
+    private static final int GROWFAC = 3;
 
     public FSTObject2ObjectMap(int initialSize) {
         this(initialSize,0,null);
@@ -68,9 +69,9 @@ public final class FSTObject2ObjectMap<K,V> implements Cloneable, java.io.Serial
     }
 
     final void putHash(K key, V value, int hash) {
-        if (mNumberOfElements*2 > mKeys.length)
+        if (mNumberOfElements*GROWFAC > mKeys.length)
         {
-            resize(mKeys.length * 2);
+            resize(mKeys.length * GROWFAC);
         }
 
         int idx = hash % mKeys.length;
@@ -91,7 +92,7 @@ public final class FSTObject2ObjectMap<K,V> implements Cloneable, java.io.Serial
 
     final void putNext(int hash, K key, V value) {
         if ( next == null ) {
-            int newSiz = mKeys.length/12;
+            int newSiz = mNumberOfElements/3;
             next = new FSTObject2ObjectMap<K,V>(newSiz,level+1,this);
         }
         next.putHash(key,value,hash);
