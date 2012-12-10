@@ -20,6 +20,8 @@
 
 package de.ruedigermoeller.serialization.util;
 
+import sun.misc.Unsafe;
+
 import java.util.HashMap;
 
 /**
@@ -126,25 +128,25 @@ public class FSTObject2IntMap<K>
         }
     }
 
-    final void putNext(int hash, K key, int value) {
+    final void putNext(final int hash, final K key, final int value) {
         if ( next == null ) {
-            int newSiz = mKeys.length/12;
+            int newSiz = mKeys.length/10;
             next = new FSTObject2IntMap<K>(newSiz,checkClazzOnEquals);
         }
         next.putHash(key,value,hash);
     }
 
-    final public int get(K key) {
-        int hash = key.hashCode() & 0x7FFFFFFF;
+    final public int get(final K key) {
+        final int hash = key.hashCode() & 0x7FFFFFFF;
         //return getHash(key,hash); inline =>
         final int idx = hash % mKeys.length;
 
-        final Object mKey = mKeys[idx];
-        if (mKey == null ) // not found
+        final Object mapsKey = mKeys[idx];
+        if (mapsKey == null ) // not found
         {
             return Integer.MIN_VALUE;
         }
-        else if (mKey.equals(key) && (!checkClazzOnEquals||mKeys[idx].getClass() == key.getClass()) )  // found
+        else if (mapsKey.equals(key) && (!checkClazzOnEquals||mapsKey.getClass() == key.getClass()) )  // found
         {
             return mValues[idx];
         } else {
@@ -159,16 +161,16 @@ public class FSTObject2IntMap<K>
 
     static int miss = 0;
     static int hit = 0;
-    final int getHash(K key, int hash)
+    final int getHash(final K key, final int hash)
     {
         final int idx = hash % mKeys.length;
 
-        final Object mKey = mKeys[idx];
-        if (mKey == null ) // not found
+        final Object mapsKey = mKeys[idx];
+        if (mapsKey == null ) // not found
         {
             return Integer.MIN_VALUE;
         }
-        else if (mKey.equals(key) && (!checkClazzOnEquals||mKeys[idx].getClass() == key.getClass()))  // found
+        else if (mapsKey.equals(key) && (!checkClazzOnEquals||mapsKey.getClass() == key.getClass()))  // found
         {
             return mValues[idx];
         } else {
@@ -227,7 +229,7 @@ public class FSTObject2IntMap<K>
 
     public static void main( String arg[] ) {
         for ( int jj = 0; jj < 100; jj++ ) {
-            int count = 100000; hit = miss = 0;
+            int count = 500000; hit = miss = 0;
             FSTObject2IntMap map = new FSTObject2IntMap(count/10,false);
             HashMap<Object,Integer> hm = new HashMap<Object, Integer>(count/10);
             Object obs[] = new Object[count];
@@ -240,13 +242,13 @@ public class FSTObject2IntMap<K>
             for ( int i = 0; i < count;  i++ ) {
                 map.put(obs[i],i);
             }
-            System.out.println("fst "+(System.currentTimeMillis()-tim));
+            System.out.println("-----------fst PUT "+(System.currentTimeMillis()-tim));
 
             tim = System.currentTimeMillis();
             for ( int i = 0; i < count;  i++ ) {
                 hm.put(obs[i],i);
             }
-            System.out.println("hmap "+(System.currentTimeMillis()-tim));
+            System.out.println("hmap PUT "+(System.currentTimeMillis()-tim));
 
             tim = System.currentTimeMillis();
             for ( int j = 0; j < 10;  j++ ) {
@@ -256,8 +258,7 @@ public class FSTObject2IntMap<K>
                     }
                 }
             }
-            System.out.println("h"+hit+" m "+miss);
-            System.out.println("fst read "+(System.currentTimeMillis()-tim));
+            System.out.println("fst GET "+(System.currentTimeMillis()-tim));
 
             tim = System.currentTimeMillis();
             for ( int j = 0; j < 10;  j++ ) {
@@ -267,7 +268,29 @@ public class FSTObject2IntMap<K>
                     }
                 }
             }
-            System.out.println("hmap read "+(System.currentTimeMillis()-tim));
+            System.out.println("hmap GET "+(System.currentTimeMillis()-tim));
+
+            tim = System.currentTimeMillis();
+            for ( int j = 0; j < 10;  j++ ) {
+                for ( int i = 0; i < count;  i++ ) {
+                    if ( map.get("Poki") == i ) {
+                        System.out.println("bug "+i);
+                    }
+                }
+            }
+            System.out.println("fst FAIL "+(System.currentTimeMillis()-tim));
+
+            tim = System.currentTimeMillis();
+            Integer someInt = -134;
+            for ( int j = 0; j < 10;  j++ ) {
+                for ( int i = 0; i < count;  i++ ) {
+                    if ( hm.get("Poki") == someInt ) {
+                        System.out.println("bug "+i);
+                    }
+                }
+            }
+
+            System.out.println("hmap FAIL "+(System.currentTimeMillis()-tim));
         }
     }
 }

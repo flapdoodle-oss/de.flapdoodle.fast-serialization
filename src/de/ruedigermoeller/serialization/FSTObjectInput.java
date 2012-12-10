@@ -789,6 +789,20 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
     }
 
+    private void readPlainIntArr(int len, int[] arr) throws IOException {
+        input.ensureReadAhead(4 * len);
+        final byte buf[] = input.buf;
+        int count = input.pos;
+        for (int j = 0; j < len; j++) {
+            int ch1 = (buf[count++]+256)&0xff;
+            int ch2 = (buf[count++]+256)&0xff;
+            int ch3 = (buf[count++]+256)&0xff;
+            int ch4 = (buf[count++]+256)&0xff;
+            arr[j] = ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
+        }
+        input.pos = count;
+    }
+
     private void readCIntArr(int len, int[] arr) throws IOException {
         input.ensureReadAhead(5 * len);
         final byte buf[] = input.buf;

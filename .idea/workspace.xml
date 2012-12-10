@@ -2,20 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/remoting" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/src/com/software/util" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/src/com/software" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/remoting/Benchmark.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/src/com/software/util/DeepEquals.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/com" afterPath="$PROJECT_DIR$/test/src/com" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/result.html" afterPath="$PROJECT_DIR$/result.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2IntMap.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2IntMap.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTUtil.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTUtil.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" afterPath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/basicstuff/PrimitiveArrays.java" afterPath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/basicstuff/PrimitiveArrays.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/basicstuff/Primitives.java" afterPath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/basicstuff/Primitives.java" />
     </list>
     <ignored path="FST.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -26,11 +20,6 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
-  <component name="Commander">
-    <leftPanel url="file://$PROJECT_DIR$" />
-    <rightPanel url="file://$PROJECT_DIR$/src" />
-    <splitter proportion="0.5" />
-  </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
@@ -38,34 +27,6 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <line_breakpoints>
-      <breakpoint url="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" line="1216" class="de.ruedigermoeller.serialization.FSTObjectOutput" package="de.ruedigermoeller.serialization">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="false" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" line="604" class="de.ruedigermoeller.serialization.FSTObjectOutput" package="de.ruedigermoeller.serialization">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="false" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-    </line_breakpoints>
     <breakpoint_any>
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -106,50 +67,72 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="PrimitiveArrays.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/basicstuff/PrimitiveArrays.java">
+      <file leaf-file-name="FSTObjectInput.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="81" column="0" selection-start="4082" selection-end="4082" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TestRunner.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="409" column="19" selection-start="14319" selection-end="14319" vertical-scroll-proportion="0.15088758">
+            <state line="624" column="29" selection-start="26041" selection-end="26041" vertical-scroll-proportion="0.0">
               <folding>
-                <element signature="e#6731#6942#0" expanded="true" />
-                <element signature="e#6931#6932#0" expanded="true" />
+                <element signature="e#4060#4250#0" expanded="true" />
+                <element signature="e#4239#4240#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Unsafe.class" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://C:/Java/jdk1.7.0_02/jre/lib/rt.jar!/sun/misc/Unsafe.class">
+      <file leaf-file-name="FSTClazzNameRegistry.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzNameRegistry.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="85" column="0" selection-start="3066" selection-end="3066" vertical-scroll-proportion="0.0">
+            <state line="96" column="0" selection-start="3183" selection-end="3183" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Objects.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://C:/Java/jdk1.7.0_02/src.zip!/java/util/Objects.java">
+      <file leaf-file-name="FSTObjectOutput.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="65" column="24" selection-start="1721" selection-end="1721" vertical-scroll-proportion="0.0">
+            <state line="485" column="50" selection-start="21133" selection-end="21133" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#40855#40871#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fst.properties" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fst.properties">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="12" selection-start="12" selection-end="12" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Benchmark.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/remoting/Benchmark.java">
+      <file leaf-file-name="fst.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fst.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="53" column="5" selection-start="1506" selection-end="1506" vertical-scroll-proportion="0.0">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TestRunner.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="360" column="18" selection-start="12591" selection-end="12591" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FSTOutputStream.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTOutputStream.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="141" column="0" selection-start="3396" selection-end="3396" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#0#3396#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -157,44 +140,35 @@
       <file leaf-file-name="FSTClazzInfo.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="211" column="5" selection-start="7553" selection-end="7553" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="55" column="0" selection-start="1967" selection-end="1967" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#0#22786#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Primitives.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/basicstuff/Primitives.java">
+      <file leaf-file-name="FSTUtil.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTUtil.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="63" column="6" selection-start="2111" selection-end="2111" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="45" column="0" selection-start="1467" selection-end="1467" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#0#6531#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FSTDateSerializer.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/serializers/FSTDateSerializer.java">
+      <file leaf-file-name="FSTObject2IntMap.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2IntMap.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="37" column="13" selection-start="1322" selection-end="1322" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="OptimizationExample.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/optexample/OptimizationExample.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="46" selection-start="2071" selection-end="2071" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FSTConfiguration.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTConfiguration.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="201" column="0" selection-start="10288" selection-end="10567" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="72" column="5" selection-start="2123" selection-end="2123" vertical-scroll-proportion="-0.379771">
+              <folding>
+                <element signature="e#0#8895#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#6679#6696#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -209,30 +183,30 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/serializers/FSTMapSerializer.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/serializers/FSTStringBufferSerializer.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTBasicObjectSerializer.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfoRegistry.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzNameRegistry.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTConfiguration.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Compress.java" />
-        <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/enterprise/SimpleOrder.java" />
-        <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/enterprise/Trader.java" />
-        <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/enterprise/ObjectOrientedDataType.java" />
-        <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/optexample/OptimizationExample1.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/serializers/FSTStringSerializer.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" />
-        <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/basicstuff/PrimitiveArrays.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectCopy.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectRegistry.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectSerializer.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java" />
+        <option value="$PROJECT_DIR$/test/src/com/software/util/DeepEquals.java" />
+        <option value="$PROJECT_DIR$/fst.properties" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/remoting/Benchmark.java" />
-        <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/basicstuff/Primitives.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTUtil.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2IntMap.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" />
         <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1382" />
-    <option name="height" value="784" />
+    <option name="x" value="39" />
+    <option name="y" value="3" />
+    <option name="width" value="1718" />
+    <option name="height" value="1045" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -245,7 +219,7 @@
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectReloadState">
-    <option name="STATE" value="0" />
+    <option name="STATE" value="2" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
@@ -253,23 +227,13 @@
       <showMembers />
       <showModules />
       <showLibraryContents />
-      <hideEmptyPackages ProjectPane="false" />
+      <hideEmptyPackages />
       <abbreviatePackageNames />
       <autoscrollToSource />
       <autoscrollFromSource />
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="PackagesPane">
         <subPane>
           <PATH>
@@ -284,6 +248,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -320,18 +285,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="de" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ruedigermoeller" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="serialization" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="testclasses" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -351,94 +304,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="de" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ruedigermoeller" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="serialization" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testclasses" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="basicstuff" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Primitives.java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="de" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ruedigermoeller" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="serialization" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testclasses" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="basicstuff" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="software" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -474,10 +339,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="de" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="ruedigermoeller" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -500,7 +361,29 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="de" />
+              <option name="myItemId" value="ruedigermoeller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="serialization" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="util" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FST" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FST" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -508,7 +391,69 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="remoting" />
+              <option name="myItemId" value="serialization" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="serializers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FST" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FST" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ruedigermoeller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="serialization" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="annotations" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FST" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FST" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ruedigermoeller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FST" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FST" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="build" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -538,15 +483,196 @@
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
   </component>
+  <component name="RecentsManager">
+    <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="de.ruedigermoeller.serialization.util.FSTUtil" />
+    </key>
+  </component>
+  <component name="RestoreUpdateTree">
+    <UpdateInfo date="Moments ago" ActionInfo="_Update">
+      <UpdatedFiles>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Updated from server" />
+          <option name="myStatusName" value="Changed on server" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="CHANGED_ON_SERVER" />
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Updated" />
+            <option name="myStatusName" value="Changed" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="UPDATED" />
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\FSTBasicObjectSerializer.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\FSTClazzInfo.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\FSTConfiguration.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\FSTObjectInput.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\FSTObjectOutput.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\FSTObjectSerializer.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\FSTSerializerRegistry.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\serializers\FSTCollectionSerializer.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\serializers\FSTDateSerializer.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\serializers\FSTEnumSetSerializer.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\serializers\FSTMapSerializer.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\serializers\FSTStringBufferSerializer.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\serializers\FSTStringBuilderSerializer.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\util\FSTInputStream.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\test\src\de\ruedigermoeller\serialization\testclasses\enterprise\Trader.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\test\src\de\ruedigermoeller\serialization\testclasses\enterprise\SimpleOrder.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\test\src\de\ruedigermoeller\serialization\testclasses\enterprise\ObjectOrientedDataType.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\test\src\de\ruedigermoeller\serialization\testclasses\basicstuff\PrimitiveArrays.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\test\src\de\ruedigermoeller\serialization\testclasses\basicstuff\Primitives.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\test\src\de\ruedigermoeller\serialization\testclasses\HtmlCharter.java</PATH>
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Created" />
+            <option name="myStatusName" value="Created" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="CREATED" />
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\annotations\Compress.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\serializers\FSTBigNumberSerializers.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\serialization\serializers\FSTStringSerializer.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\remoting</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\src\de\ruedigermoeller\remoting\Benchmark.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\test\src\de\ruedigermoeller\serialization\testclasses\optexample</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\test\src\de\ruedigermoeller\serialization\testclasses\optexample\OptimizationExample.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\test\src\de\ruedigermoeller\serialization\testclasses\optexample\OptimizationExample1.java</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\test\src\com\software</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\test\src\com\software\util</PATH>
+            <PATH vcs="svn" revision="63">F:\work\FST\test\src\com\software\util\DeepEquals.java</PATH>
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Deleted" />
+            <option name="myStatusName" value="Deleted" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="true" />
+            <option name="myId" value="REMOVED_FROM_REPOSITORY" />
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Restored" />
+            <option name="myStatusName" value="Will be restored" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="RESTORED" />
+          </FILE-GROUP>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Modified" />
+          <option name="myStatusName" value="Modified" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MODIFIED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Skipped" />
+          <option name="myStatusName" value="Skipped" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="SKIPPED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with conflicts" />
+          <option name="myStatusName" value="Will be merged with conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_CONFLICTS" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with tree conflicts" />
+          <option name="myStatusName" value="Merged with tree conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
+          <PATH vcs="svn" revision="63">F:\work\FST\out</PATH>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged" />
+          <option name="myStatusName" value="Will be merged" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED" />
+          <PATH vcs="svn" revision="63">F:\work\FST\test\src\de\ruedigermoeller\serialization\testclasses\TestRunner.java</PATH>
+          <PATH vcs="svn" revision="63">F:\work\FST\.idea\workspace.xml</PATH>
+          <PATH vcs="svn" revision="63">F:\work\FST\result.html</PATH>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Not in repository" />
+          <option name="myStatusName" value="Not in repository" />
+          <option name="mySupportsDeletion" value="true" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="UNKNOWN" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Locally added" />
+          <option name="myStatusName" value="Locally added" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="LOCALLY_ADDED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Locally removed" />
+          <option name="myStatusName" value="Locally removed" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="LOCALLY_REMOVED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Switched" />
+          <option name="myStatusName" value="Switched" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="SWITCHED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with property conflicts" />
+          <option name="myStatusName" value="Will be merged with property conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Replaced" />
+          <option name="myStatusName" value="Replaced" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="true" />
+          <option name="myId" value="replaced" />
+          <PATH vcs="svn" revision="63">F:\work\FST\test\src\com</PATH>
+        </FILE-GROUP>
+      </UpdatedFiles>
+    </UpdateInfo>
+  </component>
   <component name="RunManager" selected="Application.TestRunner">
-    <configuration default="false" name="OptimizationExample1" type="Application" factoryName="Application" temporary="true">
+    <configuration default="false" name="TestRunner" type="Application" factoryName="Application" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="de.ruedigermoeller.serialization.testclasses.optexample.*" />
+          <option name="PATTERN" value="de.ruedigermoeller.serialization.testclasses.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="MAIN_CLASS_NAME" value="de.ruedigermoeller.serialization.testclasses.optexample.OptimizationExample1" />
+      <option name="MAIN_CLASS_NAME" value="de.ruedigermoeller.serialization.testclasses.TestRunner" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="FST" />
+      <envs />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="FSTObject2IntMap" type="Application" factoryName="Application" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="de.ruedigermoeller.serialization.util.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="de.ruedigermoeller.serialization.util.FSTObject2IntMap" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -564,56 +690,6 @@
       </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="FSTObjectOutput" type="Application" factoryName="Application" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="de.ruedigermoeller.serialization.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="MAIN_CLASS_NAME" value="de.ruedigermoeller.serialization.FSTObjectOutput" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="FST" />
-      <envs />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="Benchmark" type="Application" factoryName="Application" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="de.ruedigermoeller.remoting.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="MAIN_CLASS_NAME" value="de.ruedigermoeller.remoting.Benchmark" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="FST" />
-      <envs />
-      <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -651,6 +727,39 @@
       <option name="VM_PARAMETERS" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -715,68 +824,9 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="false" name="TestRunner" type="Application" factoryName="Application">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="de.ruedigermoeller.serialization.testclasses.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="MAIN_CLASS_NAME" value="de.ruedigermoeller.serialization.testclasses.TestRunner" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="FST" />
-      <envs />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="OptimizationExample" type="Application" factoryName="Application">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="de.ruedigermoeller.serialization.testclasses.optexample.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="MAIN_CLASS_NAME" value="de.ruedigermoeller.serialization.testclasses.optexample.OptimizationExample" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="FST" />
-      <envs />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <list size="5">
+    <list size="2">
       <item index="0" class="java.lang.String" itemvalue="Application.TestRunner" />
-      <item index="1" class="java.lang.String" itemvalue="Application.OptimizationExample" />
-      <item index="2" class="java.lang.String" itemvalue="Application.OptimizationExample1" />
-      <item index="3" class="java.lang.String" itemvalue="Application.FSTObjectOutput" />
-      <item index="4" class="java.lang.String" itemvalue="Application.Benchmark" />
+      <item index="1" class="java.lang.String" itemvalue="Application.FSTObject2IntMap" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -808,20 +858,20 @@
     <option name="myMappingRoots">
       <list>
         <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="D:\work\FST" />
-          <option name="myCopyRoot" value="D:\work\FST" />
+          <option name="myVcsRoot" value="F:\work\FST" />
+          <option name="myCopyRoot" value="F:\work\FST" />
         </SvnCopyRootSimple>
         <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="D:\work\FST\.idea" />
-          <option name="myCopyRoot" value="D:\work\FST\.idea" />
+          <option name="myVcsRoot" value="F:\work\FST\.idea" />
+          <option name="myCopyRoot" value="F:\work\FST\.idea" />
         </SvnCopyRootSimple>
       </list>
     </option>
     <option name="myMoreRealMappingRoots">
       <list>
         <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="D:\work\FST" />
-          <option name="myCopyRoot" value="D:\work\FST" />
+          <option name="myVcsRoot" value="F:\work\FST" />
+          <option name="myCopyRoot" value="F:\work\FST" />
         </SvnCopyRootSimple>
       </list>
     </option>
@@ -853,55 +903,39 @@
       <updated>1354734877302</updated>
     </task>
     <task id="LOCAL-00006" summary="0.52">
-      <created>1354788242181</created>
-      <updated>1354788242181</updated>
+      <created>1354737390102</created>
+      <updated>1354737390102</updated>
     </task>
-    <task id="LOCAL-00007" summary="0.52">
-      <created>1354831705139</created>
-      <updated>1354831705139</updated>
-    </task>
-    <task id="LOCAL-00008" summary="move string from built in to serializer, optimization example stuff">
-      <created>1354885944130</created>
-      <updated>1354885944130</updated>
-    </task>
-    <task id="LOCAL-00009" summary="move numbers from built in to serializer, optimization example stuff">
-      <created>1354913057139</created>
-      <updated>1354913057139</updated>
-    </task>
-    <task id="LOCAL-00010" summary="string compression, fix ignore annot">
-      <created>1355056034139</created>
-      <updated>1355056034139</updated>
-    </task>
-    <option name="localTasksCounter" value="11" />
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
+    <frame x="39" y="3" width="1718" height="1045" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4713376" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2496977" sideWeight="0.6700565" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5875796" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299435" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22309552" sideWeight="0.6576271" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32961783" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299435" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299435" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39984825" sideWeight="0.5429936" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24734446" sideWeight="0.6305733" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962063" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.36942676" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2496977" sideWeight="0.6576271" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3423729" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="SVN Repositories" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3299435" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -942,7 +976,7 @@
     <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="string compression, fix ignore annot" />
+    <option name="LAST_COMMIT_MESSAGE" value="0.52" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -959,9 +993,6 @@
     <MESSAGE value="added license headers" />
     <MESSAGE value="comments" />
     <MESSAGE value="0.52" />
-    <MESSAGE value="move string from built in to serializer, optimization example stuff" />
-    <MESSAGE value="move numbers from built in to serializer, optimization example stuff" />
-    <MESSAGE value="string compression, fix ignore annot" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -980,117 +1011,130 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/optexample/OptimizationExample1.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="14" selection-start="320" selection-end="320" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/basicstuff/CommonCollections.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="13" selection-start="387" selection-end="387" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfoRegistry.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="26" selection-start="1823" selection-end="1823" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/serializers/FSTStringSerializer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="22" selection-start="1451" selection-end="1451" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="726" column="0" selection-start="30369" selection-end="30369" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="834" column="26" selection-start="33172" selection-end="33172" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/basicstuff/PrimitiveArrays.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="0" selection-start="4082" selection-end="4082" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/optexample/OptimizationExample.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="46" selection-start="2071" selection-end="2071" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTConfiguration.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="201" column="0" selection-start="10288" selection-end="10567" vertical-scroll-proportion="0.0">
+        <state line="24" column="0" selection-start="983" selection-end="983" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Java/jdk1.7.0_02/src.zip!/java/util/Objects.java">
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectCopy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="24" selection-start="1721" selection-end="1721" vertical-scroll-proportion="0.0">
+        <state line="19" column="0" selection-start="818" selection-end="818" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Java/jdk1.7.0_02/jre/lib/rt.jar!/sun/misc/Unsafe.class">
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectRegistry.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="85" column="0" selection-start="3066" selection-end="3066" vertical-scroll-proportion="0.0">
+        <state line="19" column="0" selection-start="818" selection-end="818" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectSerializer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="0" selection-start="1371" selection-end="1371" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="28" selection-start="287" selection-end="287" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/com/software/util/DeepEquals.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="60" selection-start="1049" selection-end="1049" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fst.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzNameRegistry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="96" column="0" selection-start="3183" selection-end="3183" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fst.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="12" selection-start="12" selection-end="12" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="211" column="5" selection-start="7553" selection-end="7553" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="55" column="0" selection-start="1967" selection-end="1967" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#0#22786#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/remoting/Benchmark.java">
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTUtil.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="53" column="5" selection-start="1506" selection-end="1506" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="45" column="0" selection-start="1467" selection-end="1467" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#0#6531#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/serializers/FSTDateSerializer.java">
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="13" selection-start="1322" selection-end="1322" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="485" column="50" selection-start="21133" selection-end="21133" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#40855#40871#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/basicstuff/Primitives.java">
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTOutputStream.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="6" selection-start="2111" selection-end="2111" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="141" column="0" selection-start="3396" selection-end="3396" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#0#3396#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="409" column="19" selection-start="14319" selection-end="14319" vertical-scroll-proportion="0.15088758">
+        <state line="360" column="18" selection-start="12591" selection-end="12591" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="624" column="29" selection-start="26041" selection-end="26041" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#6731#6942#0" expanded="true" />
-            <element signature="e#6931#6932#0" expanded="true" />
+            <element signature="e#4060#4250#0" expanded="true" />
+            <element signature="e#4239#4240#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2IntMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="72" column="5" selection-start="2123" selection-end="2123" vertical-scroll-proportion="-0.379771">
+          <folding>
+            <element signature="e#0#8895#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#6679#6696#0" expanded="true" />
           </folding>
         </state>
       </provider>

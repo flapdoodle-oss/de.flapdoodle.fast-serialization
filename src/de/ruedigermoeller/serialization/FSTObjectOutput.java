@@ -487,7 +487,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                     writeIntArrCompressed((int[]) array);
                 } else
                 {
-                    writeFInt((int[])array);
+                    writeCIntArr((int[]) array);
                 }
             } else
             if ( componentType == double.class ) {
@@ -837,7 +837,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         } else
         if ( sizeNorm <= sizDiff && sizeNorm <= sizeThin && sizeNorm <= sizOffs ) {
             writeFByte(1);
-            writeFInt(v);
+            writeCIntArr(v);
         } else
         if ( sizeThin <= sizeNorm && sizeThin <= sizDiff && sizeThin <= sizOffs ) {
             writeFByte(2);
@@ -863,7 +863,22 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         }
     }
 
-    public void writeFInt( int v[] ) {
+    public void writePlainInt( int v[] ) {
+        final int free = 4 * v.length;
+        buffout.ensureFree(free);
+        final byte[] buf = buffout.buf;
+        int count = buffout.pos;
+        for (int i = 0; i < v.length; i++) {
+            final int anInt = v[i];
+            buf[count++] = (byte) ((anInt >>> 24) & 0xFF);
+            buf[count++] = (byte) ((anInt >>> 16) & 0xFF);
+            buf[count++] = (byte) ((anInt >>>  8) & 0xFF);
+            buf[count++] = (byte) ((anInt >>> 0) & 0xFF);
+        }
+        buffout.pos = written = count;
+    }
+
+    public void writeCIntArr(int v[]) {
         final int free = 5 * v.length;
         buffout.ensureFree(free);
         final byte[] buf = buffout.buf;

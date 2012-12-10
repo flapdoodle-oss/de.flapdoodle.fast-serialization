@@ -19,6 +19,7 @@
  */
 package de.ruedigermoeller.serialization.util;
 
+import sun.misc.Unsafe;
 import sun.reflect.ReflectionFactory;
 
 import java.io.ObjectStreamField;
@@ -37,6 +38,11 @@ public class FSTUtil {
     static int[] EmptyIntArray = new int[1000];
     static Object[] EmptyObjArray = new Object[1000];
     static ObjectStreamField[] NO_FIELDS = new ObjectStreamField[0];
+    public static Unsafe unsafe;
+
+    static {
+        FSTUtil.unsafe = FSTUtil.getUnsafe();
+    }
 
     static void clear(int[] arr) {
         int count = 0;
@@ -187,4 +193,12 @@ public class FSTUtil {
         return isPrimitiveArray(c.getComponentType());
     }
 
+    public static Unsafe getUnsafe() {
+        try {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            return (Unsafe)f.get(null);
+        } catch (Exception e) { /* ... */ }
+        return null;
+    }
 }
