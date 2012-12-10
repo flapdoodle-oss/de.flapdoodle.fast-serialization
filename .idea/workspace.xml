@@ -4,11 +4,6 @@
     <list default="true" readonly="true" id="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/result.html" afterPath="$PROJECT_DIR$/result.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInt2IntMap.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInt2IntMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInt2ObjectMap.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInt2ObjectMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2IntMap.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2IntMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2ObjectMap.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2ObjectMap.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" afterPath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
     </list>
     <ignored path="FST.iws" />
@@ -67,10 +62,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="FSTObjectInput.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="FSTObjectInput.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="598" column="20" selection-start="24721" selection-end="24721" vertical-scroll-proportion="0.36450383">
+            <state line="598" column="20" selection-start="24721" selection-end="24721" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="e#4084#4274#0" expanded="true" />
                 <element signature="e#4263#4264#0" expanded="true" />
@@ -79,10 +74,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestRunner.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="TestRunner.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="409" column="22" selection-start="14322" selection-end="14322" vertical-scroll-proportion="0.0">
+            <state line="364" column="6" selection-start="12754" selection-end="12754" vertical-scroll-proportion="0.41221374">
               <folding />
             </state>
           </provider>
@@ -186,8 +181,8 @@
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInt2ObjectMap.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInt2IntMap.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2ObjectMap.java" />
-        <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" />
+        <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
       </list>
     </option>
   </component>
@@ -909,7 +904,11 @@
       <created>1355168561103</created>
       <updated>1355168561103</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="unsafe ^^">
+      <created>1355174232103</created>
+      <updated>1355174232103</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -979,7 +978,7 @@
     <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="minor tweaks" />
+    <option name="LAST_COMMIT_MESSAGE" value="unsafe ^^" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -997,6 +996,7 @@
     <MESSAGE value="comments" />
     <MESSAGE value="0.52" />
     <MESSAGE value="minor tweaks" />
+    <MESSAGE value="unsafe ^^" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1131,20 +1131,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="409" column="22" selection-start="14322" selection-end="14322" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="598" column="20" selection-start="24721" selection-end="24721" vertical-scroll-proportion="0.36450383">
+        <state line="598" column="20" selection-start="24721" selection-end="24721" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="e#4084#4274#0" expanded="true" />
             <element signature="e#4263#4264#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="364" column="6" selection-start="12754" selection-end="12754" vertical-scroll-proportion="0.41221374">
+          <folding />
         </state>
       </provider>
     </entry>
