@@ -62,7 +62,7 @@ public final class FSTInputStream extends InputStream {
         final int target = count+len;
         if ( eof ) {
             if ( buf.length < target ) {
-                byte newBuf[] = new byte[target];
+                byte newBuf[] = new byte[target+1];
                 System.arraycopy(buf,0,newBuf,0,buf.length);
                 buf = newBuf;
 //                for (int i=count; i < target; i++ ) {
