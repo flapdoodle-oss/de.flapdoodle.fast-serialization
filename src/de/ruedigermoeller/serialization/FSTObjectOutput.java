@@ -21,6 +21,7 @@ package de.ruedigermoeller.serialization;
 
 import de.ruedigermoeller.serialization.util.FSTOutputStream;
 import de.ruedigermoeller.serialization.util.FSTUtil;
+import sun.misc.*;
 
 import java.io.*;
 import java.lang.reflect.Array;
@@ -644,6 +645,10 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     }
 
     public void writeStringUTF(String str) throws IOException {
+        if ( FSTUtil.unsafe != null ) {
+            writeStringUTFUnsafe(str);
+            return;
+        }
         final int strlen = str.length();
 
         writeCInt(strlen);
@@ -665,6 +670,32 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             }
         }
         buffout.pos = count;
+    }
+
+    public void writeStringUTFUnsafe(String str) throws IOException {
+        final Unsafe unsafe = FSTUtil.unsafe;
+        final byte buf[] = buffout.buf;
+        final int strlen = str.length();
+
+        writeCInt(strlen);
+        buffout.ensureFree(strlen*3);
+
+        final byte[] bytearr = buffout.buf;
+        long count = buffout.pos+bufoff;
+
+        for (int i=0; i<strlen; i++) {
+            final int c = str.charAt(i);
+            if ( c < 255 ) {
+                unsafe.putByte(bytearr,count++,(byte)c);
+                written++;
+            } else {
+                unsafe.putByte(bytearr,count++, (byte) 255);
+                unsafe.putByte(bytearr,count++, (byte) ((c >>> 8) & 0xFF));
+                unsafe.putByte(bytearr,count++, (byte) ((c >>> 0) & 0xFF));
+                written += 3;
+            }
+        }
+        buffout.pos = (int) (count-bufoff);
     }
 
     public final void writeClass(Object toWrite) throws IOException {
@@ -738,10 +769,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     }
 
     public final void writeFByte( int v ) {
-        if ( buffout.buf.length <= buffout.pos +1 )
-        {
-            buffout.ensureFree(1);
-        }
+        buffout.ensureFree(1);
         buffout.buf[buffout.pos++] = (byte)v;
         written++;
     }
@@ -879,6 +907,10 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     }
 
     public void writeCIntArr(int v[]) {
+        if (FSTUtil.unsafe!=null) {
+            writeCIntArrUnsafe(v);
+            return;
+        }
         final int free = 5 * v.length;
         buffout.ensureFree(free);
         final byte[] buf = buffout.buf;
@@ -903,8 +935,37 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         buffout.pos = written = count;
     }
 
+    public void writeCIntArrUnsafe(int v[]) {
+        final int free = 5 * v.length;
+        buffout.ensureFree(free);
+        final Unsafe unsafe = FSTUtil.unsafe;
+        final byte buf[] = buffout.buf;
+        long count = buffout.pos+bufoff;
+        for (int i = 0; i < v.length; i++) {
+            final int anInt = v[i];
+            if ( anInt > -127 && anInt <=127 ) {
+                unsafe.putByte(buf,count++,(byte)anInt);
+            } else
+            if ( anInt >= Short.MIN_VALUE && anInt <= Short.MAX_VALUE ) {
+                unsafe.putByte(buf,count++,(byte)-128);
+                unsafe.putByte(buf,count++,(byte) ((anInt >>>  8) & 0xFF));
+                unsafe.putByte(buf,count++,(byte) ((anInt >>>  0) & 0xFF));
+            } else {
+                unsafe.putByte(buf,count++,(byte)-127);
+                unsafe.putByte(buf,count++,(byte) ((anInt >>> 24) & 0xFF));
+                unsafe.putByte(buf,count++,(byte) ((anInt >>> 16) & 0xFF));
+                unsafe.putByte(buf,count++,(byte) ((anInt >>>  8) & 0xFF));
+                unsafe.putByte(buf,count++,(byte) ((anInt >>>  0) & 0xFF));
+            }
+        }
+        buffout.pos = written = (int) (count-bufoff);
+    }
 
     public void writeCInt(int anInt) throws IOException {
+        if ( FSTUtil.unsafe != null ) {
+            writeCIntUnsafe(anInt);
+            return;
+        }
         // -128 = short byte, -127 == 4 byte
         if ( anInt > -127 && anInt <=127 ) {
             if ( buffout.buf.length <= buffout.pos +1 )
@@ -938,6 +999,56 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             buffout.pos = count;
             written += 5;
         }
+    }
+
+    final static int bufoff;
+    final static int choff;
+    final static int intoff;
+    final static int intscal;
+    final static int chscal;
+
+    static {
+        if ( FSTUtil.unsafe != null ) {
+            bufoff = FSTUtil.unsafe.arrayBaseOffset(byte[].class);
+            intoff = FSTUtil.unsafe.arrayBaseOffset(int[].class);
+            intscal = FSTUtil.unsafe.arrayIndexScale(int[].class);
+            chscal = FSTUtil.unsafe.arrayIndexScale(char[].class);
+            choff = FSTUtil.unsafe.arrayBaseOffset(char[].class);
+        } else {
+            bufoff = 0;
+            intoff = 0;
+            intscal = 0;
+            choff = 0;
+            chscal = 0;
+        }
+    }
+
+    private void writeCIntUnsafe(int anInt) {
+        final Unsafe unsafe = FSTUtil.unsafe;
+        buffout.ensureFree(5);
+        final byte buf[] = buffout.buf;
+        long count = buffout.pos+bufoff;
+        if ( anInt > -127 && anInt <=127 ) {
+            unsafe.putByte(buf,count,(byte)anInt);
+            buffout.pos++;
+            written++;
+        } else
+        if ( anInt >= Short.MIN_VALUE && anInt <= Short.MAX_VALUE ) {
+            unsafe.putByte(buf,count++,(byte)-128);
+            unsafe.putByte(buf,count++,(byte) ((anInt >>>  8) & 0xFF));
+            unsafe.putByte(buf,count++,(byte) ((anInt >>> 0) & 0xFF));
+            buffout.pos += 3;
+            written += 3;
+        } else {
+            unsafe.putByte(buf,count++,(byte)-127);
+            unsafe.putByte(buf,count++,(byte) ((anInt >>> 24) & 0xFF));
+            unsafe.putByte(buf,count++,(byte) ((anInt >>> 16) & 0xFF));
+            unsafe.putByte(buf,count++,(byte) ((anInt >>> 8) & 0xFF));
+            unsafe.putByte(buf,count++,(byte) ((anInt >>> 0) & 0xFF));
+            buffout.pos += 5;
+            written += 5;
+        }
+
     }
 
     public void writeFFloat (float value) throws IOException {

@@ -77,10 +77,11 @@ public final class FSTOutputStream extends OutputStream {
     }
 
     public final void ensureFree(int free) {
-        ensureCapacity(pos +free);
+        if (pos+free - buf.length > 0)
+            grow(pos+free);
     }
 
-    public void ensureCapacity(int minCapacity) {
+    public final void ensureCapacity(int minCapacity) {
         if (minCapacity - buf.length > 0)
             grow(minCapacity);
     }
