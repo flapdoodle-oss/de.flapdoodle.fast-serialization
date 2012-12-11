@@ -31,7 +31,7 @@ import java.io.InputStream;
  */
 public final class FSTInputStream extends InputStream {
 
-    public int chunkSize = 63000;
+    public int chunkSize = 500;
     public byte buf[];
     public  int pos;
     public  int count;
@@ -65,9 +65,9 @@ public final class FSTInputStream extends InputStream {
                 byte newBuf[] = new byte[target];
                 System.arraycopy(buf,0,newBuf,0,buf.length);
                 buf = newBuf;
-                for (int i=count; i < target; i++ ) {
-                    buf[i] = -1;
-                }
+//                for (int i=count; i < target; i++ ) {
+//                    buf[i] = -1;
+//                }
                 count = target;
             }
             return;
@@ -90,9 +90,9 @@ public final class FSTInputStream extends InputStream {
                         System.arraycopy(buf,0,newBuf,0,buf.length);
                         buf = newBuf;
                     }
-                    for (int i=count; i < target; i++ ) {
-                        buf[i] = -1;
-                    }
+//                    for (int i=count; i < target; i++ ) {
+//                        buf[i] = -1;
+//                    }
                     count = target;
                 }
                 return;
