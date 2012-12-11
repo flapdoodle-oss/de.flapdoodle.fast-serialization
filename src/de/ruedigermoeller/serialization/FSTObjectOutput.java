@@ -61,6 +61,8 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
     int curDepth = 0;
 
+    int writeExternalWriteAhead = 5000;
+
     /**
      * Creates a new FSTObjectOutput stream to write data to the specified
      * underlying output stream. The counter <code>written</code> is
@@ -103,6 +105,15 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         conf.returnObject(buffout,objects,clnames);
     }
 
+    /**
+     * enable block/streaming mode by setting the size when written data should get flushed to
+     * the stream automatically. Default is Int.Max
+     * @param bytes
+     */
+    public void setChunkSize(int bytes) {
+        buffout.setChunkSize(bytes);
+    }
+
 //    private void reUse(OutputStream out) {
 //        buffout.reset();
 //        buffout.setOutstream(out);
@@ -110,6 +121,25 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 //        clnames.clear();
 //        written = 0;
 //    }
+
+    public int getWriteExternalWriteAhead() {
+        return writeExternalWriteAhead;
+    }
+
+    /**
+     * since the stock writeXX methods on InputStream are final, i can't ensure sufficient bufferSize on the output buffer
+     * before calling writeExternal. Default value is 5000 bytes. If you make use of the externalizable interface
+     * and write larger Objects a) cast the ObjectOutput in readExternal to FSTObjectOutput and call ensureFree on this
+     * in your writeExternal method or b) statically set a sufficient maximum using this method.
+     * @param writeExternalWriteAhead
+     */
+    public void setWriteExternalWriteAhead(int writeExternalWriteAhead) {
+        this.writeExternalWriteAhead = writeExternalWriteAhead;
+    }
+
+    public void ensureFree(int bytes) throws IOException {
+        buffout.ensureFree(bytes);
+    }
 
     @Override
     public void writeObject(Object obj) throws IOException {
@@ -229,6 +259,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                     ser.writeObject(this, toWrite, serializationInfo, referencee, pos);
                 } else {
                     if ( serializationInfo.isExternalizable() ) {
+                        buffout.ensureFree(writeExternalWriteAhead);
                         ((Externalizable) toWrite).writeExternal(this);
                     } else {
                         FSTClazzInfo.FSTFieldInfo[] fieldInfo = serializationInfo.getFieldInfo();
@@ -487,6 +518,9 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 if ( referencee.isCompressed() ) {
                     writeIntArrCompressed((int[]) array);
                 } else
+                if ( referencee.isPlain() ) {
+                    writePlainInt((int[]) array);
+                } else
                 {
                     writeCIntArr((int[]) array);
                 }
@@ -620,8 +654,8 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             count = reEncodeStr(str, fourBitCnt, bytearr, compressBuffIdx, str.length());
         }
         int required = count - initpos;
+        written += required;
         buffout.pos = count;
-        written = count;
         return required;
     }
 
@@ -748,7 +782,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         }
     }
 
-    public void writeFChar( int v ) {
+    public void writeFChar( int v ) throws IOException {
         buffout.ensureFree(2);
         byte[] buf = buffout.buf;
         int count = buffout.pos;
@@ -758,7 +792,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         written += 2;
     }
 
-    public void writeFShort( int v ) {
+    public void writeFShort( int v ) throws IOException {
         buffout.ensureFree(2);
         byte[] buf = buffout.buf;
         int count = buffout.pos;
@@ -768,13 +802,13 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         written += 2;
     }
 
-    public final void writeFByte( int v ) {
+    public final void writeFByte( int v ) throws IOException {
         buffout.ensureFree(1);
         buffout.buf[buffout.pos++] = (byte)v;
         written++;
     }
 
-    public void writeFInt( int v ) {
+    public void writeFInt( int v ) throws IOException {
         buffout.ensureFree(4);
         byte[] buf = buffout.buf;
         int count = buffout.pos;
@@ -786,7 +820,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         written += 4;
     }
 
-    public void writeFLong( long v ) {
+    public void writeFLong( long v ) throws IOException {
         buffout.ensureFree(8);
         byte[] buf = buffout.buf;
         int count = buffout.pos;
@@ -891,7 +925,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         }
     }
 
-    public void writePlainInt( int v[] ) {
+    public void writePlainInt( int v[] ) throws IOException {
         final int free = 4 * v.length;
         buffout.ensureFree(free);
         final byte[] buf = buffout.buf;
@@ -903,10 +937,11 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             buf[count++] = (byte) ((anInt >>>  8) & 0xFF);
             buf[count++] = (byte) ((anInt >>> 0) & 0xFF);
         }
-        buffout.pos = written = count;
+        written += count-buffout.pos;
+        buffout.pos = count;
     }
 
-    public void writeCIntArr(int v[]) {
+    public void writeCIntArr(int v[]) throws IOException {
         if (FSTUtil.unsafe!=null) {
             writeCIntArrUnsafe(v);
             return;
@@ -919,23 +954,26 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             final int anInt = v[i];
             if ( anInt > -127 && anInt <=127 ) {
                 buffout.buf[count++] = (byte)anInt;
+                written++;
             } else
             if ( anInt >= Short.MIN_VALUE && anInt <= Short.MAX_VALUE ) {
                 buf[count++] = -128;
                 buf[count++] = (byte) ((anInt >>>  8) & 0xFF);
                 buf[count++] = (byte) ((anInt >>> 0) & 0xFF);
+                written+=3;
             } else {
                 buf[count++] = -127;
                 buf[count++] = (byte) ((anInt >>> 24) & 0xFF);
                 buf[count++] = (byte) ((anInt >>> 16) & 0xFF);
                 buf[count++] = (byte) ((anInt >>>  8) & 0xFF);
                 buf[count++] = (byte) ((anInt >>> 0) & 0xFF);
+                written += 5;
             }
         }
-        buffout.pos = written = count;
+        buffout.pos = count;
     }
 
-    public void writeCIntArrUnsafe(int v[]) {
+    public void writeCIntArrUnsafe(int v[]) throws IOException {
         final int free = 5 * v.length;
         buffout.ensureFree(free);
         final Unsafe unsafe = FSTUtil.unsafe;
@@ -958,7 +996,9 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 unsafe.putByte(buf,count++,(byte) ((anInt >>>  0) & 0xFF));
             }
         }
-        buffout.pos = written = (int) (count-bufoff);
+        int i = (int) (count - bufoff);
+        written += i-buffout.pos;
+        buffout.pos = i;
     }
 
     public void writeCInt(int anInt) throws IOException {
@@ -1023,7 +1063,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         }
     }
 
-    private void writeCIntUnsafe(int anInt) {
+    private void writeCIntUnsafe(int anInt) throws IOException {
         final Unsafe unsafe = FSTUtil.unsafe;
         buffout.ensureFree(5);
         final byte buf[] = buffout.buf;
@@ -1236,11 +1276,13 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
             @Override
             public void write(byte[] buf) throws IOException {
+                buffout.ensureFree(buf.length);
                 FSTObjectOutput.this.write(buf);
             }
 
             @Override
             public void write(byte[] buf, int off, int len) throws IOException {
+                buffout.ensureFree(len);
                 FSTObjectOutput.this.write(buf, off, len);
             }
 
@@ -1255,6 +1297,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
             @Override
             public void writeBoolean(boolean val) throws IOException {
+                buffout.ensureFree(1);
                 FSTObjectOutput.this.writeBoolean(val);
             }
 
@@ -1295,17 +1338,19 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
             @Override
             public void writeBytes(String str) throws IOException {
+                buffout.ensureFree(str.length()*4);
                 FSTObjectOutput.this.writeBytes(str);
             }
 
             @Override
             public void writeChars(String str) throws IOException {
+                buffout.ensureFree(str.length()*4);
                 FSTObjectOutput.this.writeChars(str);
             }
 
             @Override
             public void writeUTF(String str) throws IOException {
-                FSTObjectOutput.this.writeUTF(str);
+                FSTObjectOutput.this.writeStringUTF(str);
             }
         };
 

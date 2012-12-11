@@ -31,10 +31,11 @@ import java.io.InputStream;
  */
 public final class FSTInputStream extends InputStream {
 
-    public int chunk_size = 8192;
+    public int chunkSize = 63000;
     public byte buf[];
     public  int pos;
     public  int count;
+    boolean eof = false;
     InputStream in;
 
     public FSTInputStream(InputStream in) throws IOException {
@@ -44,23 +45,59 @@ public final class FSTInputStream extends InputStream {
     public void initFromStream(InputStream in) throws IOException {
         this.in = in;
         if (buf==null) {
-            buf = new byte[chunk_size];
+            buf = new byte[chunkSize];
         }
-        int read = in.read(buf);
-        count+=read;
-        while( read == chunk_size ) {
-            if ( buf.length < count+chunk_size ) {
+        ensureReadAhead(chunkSize);
+    }
+
+    public int getChunkSize() {
+        return chunkSize;
+    }
+
+    public void setChunkSize(int chunk_size) {
+        this.chunkSize = chunk_size;
+    }
+
+    public void ensureReadAhead(int len) throws IOException {
+        final int target = count+len;
+        if ( eof ) {
+            if ( buf.length < target ) {
+                byte newBuf[] = new byte[target];
+                System.arraycopy(buf,0,newBuf,0,buf.length);
+                buf = newBuf;
+                for (int i=count; i < target; i++ ) {
+                    buf[i] = -1;
+                }
+                count = target;
+            }
+            return;
+        }
+        while( count < target ) {
+            if ( buf.length < count+ chunkSize) {
                 byte newBuf[] = new byte[buf.length*2];
                 System.arraycopy(buf,0,newBuf,0,buf.length);
                 buf = newBuf;
             }
-            read = in.read(buf,count,chunk_size);
-            count += read;
+            int read = in.read(buf,count, chunkSize);
+            if ( read >= 0 ) {
+                count += read;
+            }
+            if ( read != chunkSize) {
+                eof = true;
+                if ( count < target ) {
+                    if ( buf.length < target ) {
+                        byte newBuf[] = new byte[target];
+                        System.arraycopy(buf,0,newBuf,0,buf.length);
+                        buf = newBuf;
+                    }
+                    for (int i=count; i < target; i++ ) {
+                        buf[i] = -1;
+                    }
+                    count = target;
+                }
+                return;
+            }
         }
-    }
-
-    public void ensureReadAhead(int len) {
-        // do nothing for now (need chunked mode)
     }
 
     public FSTInputStream(byte buf[]) {
@@ -142,6 +179,7 @@ public final class FSTInputStream extends InputStream {
     public void reset() {
         count = 0;
         pos = 0;
+        eof = false;
     }
 
     public void close() throws IOException {

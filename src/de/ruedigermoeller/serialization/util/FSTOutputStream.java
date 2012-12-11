@@ -32,10 +32,13 @@ import java.util.Arrays;
  * To change this template use File | Settings | File Templates.
  */
 public final class FSTOutputStream extends OutputStream {
+
     /**
      * The buffer where data is stored.
      */
     public byte buf[];
+
+    int chunkSize = Integer.MAX_VALUE;
 
     /**
      * The number of valid bytes in the buffer.
@@ -60,6 +63,18 @@ public final class FSTOutputStream extends OutputStream {
         this.outstream = outstream;
     }
 
+    public int getChunkSize() {
+        return chunkSize;
+    }
+
+    /**
+     * define the size a flush (write) is triggered from the buffer to the real output stream. Default is Int.MAX
+     * @param chunkSize
+     */
+    public void setChunkSize(int chunkSize) {
+        this.chunkSize = chunkSize;
+    }
+
     public byte[] getBuf() {
         return buf;
     }
@@ -76,12 +91,19 @@ public final class FSTOutputStream extends OutputStream {
         this.pos = pos;
     }
 
-    public final void ensureFree(int free) {
+    public final void ensureFree(int free) throws IOException {
+        if ( pos > chunkSize ) {
+            flush();
+        }
+        // inline ..
         if (pos+free - buf.length > 0)
             grow(pos+free);
     }
 
-    public final void ensureCapacity(int minCapacity) {
+    public final void ensureCapacity(int minCapacity) throws IOException {
+        if ( pos > chunkSize ) {
+            flush();
+        }
         if (minCapacity - buf.length > 0)
             grow(minCapacity);
     }
@@ -99,13 +121,13 @@ public final class FSTOutputStream extends OutputStream {
         buf = Arrays.copyOf(buf, newCapacity);
     }
 
-    public void write(int b) {
+    public void write(int b) throws IOException {
         ensureCapacity(pos + 1);
         buf[pos] = (byte) b;
         pos += 1;
     }
 
-    public void write(byte b[], int off, int len) {
+    public void write(byte b[], int off, int len) throws IOException {
         ensureCapacity(pos + len);
         System.arraycopy(b, off, buf, pos, len);
         pos += len;

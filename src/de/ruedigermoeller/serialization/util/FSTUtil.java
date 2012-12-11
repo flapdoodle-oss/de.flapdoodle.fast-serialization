@@ -41,7 +41,9 @@ public class FSTUtil {
     public static Unsafe unsafe;
 
     static {
-        FSTUtil.unsafe = FSTUtil.getUnsafe();
+        if ( System.getProperty("fst.nounsafe","true").equals("true") ) {
+            FSTUtil.unsafe = FSTUtil.getUnsafe();
+        }
     }
 
     static void clear(int[] arr) {
