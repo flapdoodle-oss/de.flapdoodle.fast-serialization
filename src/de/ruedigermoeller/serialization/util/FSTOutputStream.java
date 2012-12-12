@@ -155,7 +155,7 @@ public final class FSTOutputStream extends OutputStream {
     }
 
     public void flush() throws IOException {
-        if ( pos > 0 && outstream != null) {
+        if ( pos > 0 && outstream != null && outstream != this) {
             copyTo(outstream);
             reset();
         }

@@ -19,6 +19,7 @@
  */
 package de.ruedigermoeller.serialization;
 
+import com.esotericsoftware.kryo.io.ByteBufferInputStream;
 import de.ruedigermoeller.serialization.util.FSTInputStream;
 import de.ruedigermoeller.serialization.util.FSTInt2ObjectMap;
 import de.ruedigermoeller.serialization.util.FSTUtil;
@@ -52,6 +53,8 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
     ConditionalCallback conditionalCallback;
     int readExternalReadAHead = 5000;
 
+    static ByteArrayInputStream empty = new ByteArrayInputStream(new byte[0]);
+
     static class CallbackEntry {
         ObjectInputValidation cb;
         int prio;
@@ -65,8 +68,13 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
     public static interface ConditionalCallback {
         public boolean shouldSkip(Object halfDecoded, int streamPosition, Field field);
     }
+
+    public FSTObjectInput(FSTConfiguration conf) throws IOException {
+        this(empty, conf);
+    }
+
     /**
-     * Creates a DataInputStream that uses the specified
+     * Creates a FSTObjectInput that uses the specified
      * underlying InputStream.
      *
      * @param in the specified input stream
@@ -164,14 +172,6 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
                 System.err.println(i + ":" + s);
             }
         }
-    }
-
-    /**
-     * defines the size of chunks when reading ahead to memory. default is 63000.
-     * @param bytes
-     */
-    public void setChunkSize(int bytes) {
-        input.setChunkSize(bytes);
     }
 
     public Object readObject(Class... possibles) throws ClassNotFoundException, IOException, IllegalAccessException, InstantiationException {
@@ -466,7 +466,11 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
                     } else if (subInfTzpe == short.class) {
                         serializationInfo.setShortValue(newObj, subInfo, readCShort());
                     } else if (subInfTzpe == int.class) {
-                        serializationInfo.setIntValue(newObj, subInfo, readCInt());
+                        if ( subInfo.isPlain() ) {
+                            serializationInfo.setIntValue(newObj, subInfo, readInt());
+                        } else {
+                            serializationInfo.setIntValue(newObj, subInfo, readCInt());
+                        }
                     } else if (subInfTzpe == double.class) {
                         serializationInfo.setDoubleValue(newObj, subInfo, readCDouble());
                     } else if (subInfTzpe == float.class) {
@@ -554,8 +558,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         }
     }
 
-    public void ensureReadAhead( int bytes ) throws IOException {
-        input.ensureReadAhead(bytes);
+    final void ensureReadAhead( int bytes ) throws IOException {
     }
 
     public String readStringCompressed() throws IOException {
@@ -563,7 +566,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         if (charBuf == null || charBuf.length < len * 3) {
             charBuf = new char[len * 3];
         }
-        input.ensureReadAhead(len * 3);
+        ensureReadAhead(len * 3);
         byte buf[] = input.buf;
         int count = input.pos;
         int chcount = 0;
@@ -606,7 +609,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         if (charBuf == null || charBuf.length < len * 3) {
             charBuf = new char[len * 3];
         }
-        input.ensureReadAhead(len * 3);
+        ensureReadAhead(len * 3);
         byte buf[] = input.buf;
         int count = input.pos;
         int chcount = 0;
@@ -630,7 +633,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         if (charBuf == null || charBuf.length < len * 3) {
             charBuf = new char[len * 3];
         }
-        input.ensureReadAhead(len * 3);
+        ensureReadAhead(len * 3);
         final byte buf[] = input.buf;
         long count = input.pos+bufoff;
         long chcount = choff;
@@ -663,7 +666,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
             if (arrCl.getComponentType().isPrimitive()) {
                 if (arrType == byte.class) {
                     byte[] arr = (byte[]) array;
-                    input.ensureReadAhead(arr.length); // fixme: move this stuff to the stream !
+                    ensureReadAhead(arr.length); // fixme: move this stuff to the stream !
                     read(arr);
                 } else if (arrType == char.class) {
                     char[] arr = (char[]) array;
@@ -672,7 +675,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
                     }
                 } else if (arrType == short.class) {
                     short[] arr = (short[]) array;
-                    input.ensureReadAhead(arr.length*2);
+                    ensureReadAhead(arr.length*2);
                     for (int j = 0; j < len; j++) {
                         arr[j] = readShort();
                     }
@@ -689,25 +692,25 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
                     }
                 } else if (arrType == float.class) {
                     float[] arr = (float[]) array;
-                    input.ensureReadAhead(arr.length*4);
+                    ensureReadAhead(arr.length*4);
                     for (int j = 0; j < len; j++) {
                         arr[j] = readFloat();
                     }
                 } else if (arrType == double.class) {
                     double[] arr = (double[]) array;
-                    input.ensureReadAhead(arr.length*8);
+                    ensureReadAhead(arr.length*8);
                     for (int j = 0; j < len; j++) {
                         arr[j] = readDouble();
                     }
                 } else if (arrType == long.class) {
                     long[] arr = (long[]) array;
-                    input.ensureReadAhead(arr.length*8);
+                    ensureReadAhead(arr.length*8);
                     for (int j = 0; j < len; j++) {
                         arr[j] = readLong();
                     }
                 } else if (arrType == boolean.class) {
                     boolean[] arr = (boolean[]) array;
-                    input.ensureReadAhead(arr.length);
+                    ensureReadAhead(arr.length);
                     for (int j = 0; j < len; j++) {
                         arr[j] = readBoolean();
                     }
@@ -845,7 +848,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
     }
 
     public final int readFInt() throws IOException {
-        input.ensureReadAhead(4);
+        ensureReadAhead(4);
         int count = input.pos;
         final byte buf[] = input.buf;
         int ch1 = (buf[count++]+256)&0xff;
@@ -857,7 +860,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
     }
 
     private void readPlainIntArr(int len, int[] arr) throws IOException {
-        input.ensureReadAhead(4 * len);
+        ensureReadAhead(4 * len);
         final byte buf[] = input.buf;
         int count = input.pos;
         for (int j = 0; j < len; j++) {
@@ -875,7 +878,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
             readCIntArrUnsafe(len,arr);
             return;
         }
-        input.ensureReadAhead(5 * len);
+        ensureReadAhead(5 * len);
         final byte buf[] = input.buf;
         int count = input.pos;
         for (int j = 0; j < len; j++) {
@@ -924,7 +927,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
     }
     private void readCIntArrUnsafe(final int len, final int[] arr) throws IOException {
         final Unsafe unsafe = FSTUtil.unsafe;
-        input.ensureReadAhead(5 * len);
+        ensureReadAhead(5 * len);
         final byte buf[] = input.buf;
         long count = input.pos+bufoff;
         final int max = len * intscal + intoff;
@@ -959,7 +962,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         if ( FSTUtil.unsafe != null ) {
             return readCIntUnsafe();
         }
-        input.ensureReadAhead(5);
+        ensureReadAhead(5);
         final byte buf[] = input.buf;
         int count = input.pos;
         final byte head = buf[count++];
@@ -985,7 +988,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
 
     private final int readCIntUnsafe() throws IOException {
         final Unsafe unsafe = FSTUtil.unsafe;
-        input.ensureReadAhead(5);
+        ensureReadAhead(5);
         final byte buf[] = input.buf;
         long count = input.pos+bufoff;
         final byte head = unsafe.getByte(buf,count++);
@@ -1010,7 +1013,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
     }
 
     public final byte readFByte() throws IOException {
-        input.ensureReadAhead(1);
+        ensureReadAhead(1);
         return input.buf[input.pos++];
     }
 
@@ -1019,7 +1022,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
     }
 
     public long readCLong() throws IOException {
-        input.ensureReadAhead(9);
+        ensureReadAhead(9);
         byte head = readFByte();
         // -128 = short byte, -127 == 4 byte
         if (head > -126 && head <= 127) {
@@ -1041,7 +1044,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
     }
 
     public char readCChar() throws IOException {
-        input.ensureReadAhead(3);
+        ensureReadAhead(3);
         char head = (char) ((readFByte() + 256) &0xff);
         // -128 = short byte, -127 == 4 byte
         if (head >= 0 && head < 255) {
@@ -1061,12 +1064,12 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
      * Reads an 8 bytes double.
      */
     public double readCDouble() throws IOException {
-        input.ensureReadAhead(8);
+        ensureReadAhead(8);
         return Double.longBitsToDouble(readLong());
     }
 
     public short readCShort() throws IOException {
-        input.ensureReadAhead(3);
+        ensureReadAhead(3);
         int head = ((int) readFByte() + 256) &0xff;
         // -128 = short byte, -127 == 4 byte
         if (head >= 0 && head < 255) {
@@ -1227,13 +1230,13 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
 
             @Override
             public int read() throws IOException {
-                input.ensureReadAhead(1);
+                ensureReadAhead(1);
                 return FSTObjectInput.this.read();
             }
 
             @Override
             public int read(byte[] buf, int off, int len) throws IOException {
-                input.ensureReadAhead(len);
+                ensureReadAhead(len);
                 return FSTObjectInput.this.read(buf, off, len);
             }
 
@@ -1248,37 +1251,37 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
 
             @Override
             public boolean readBoolean() throws IOException {
-                input.ensureReadAhead(1);
+                ensureReadAhead(1);
                 return FSTObjectInput.this.readBoolean();
             }
 
             @Override
             public byte readByte() throws IOException {
-                input.ensureReadAhead(1);
+                ensureReadAhead(1);
                 return FSTObjectInput.this.readFByte();
             }
 
             @Override
             public int readUnsignedByte() throws IOException {
-                input.ensureReadAhead(1);
+                ensureReadAhead(1);
                 return FSTObjectInput.this.readUnsignedByte();
             }
 
             @Override
             public char readChar() throws IOException {
-                input.ensureReadAhead(2);
+                ensureReadAhead(2);
                 return FSTObjectInput.this.readChar();
             }
 
             @Override
             public short readShort() throws IOException {
-                input.ensureReadAhead(2);
+                ensureReadAhead(2);
                 return FSTObjectInput.this.readShort();
             }
 
             @Override
             public int readUnsignedShort() throws IOException {
-                input.ensureReadAhead(2);
+                ensureReadAhead(2);
                 return FSTObjectInput.this.readUnsignedShort();
             }
 
@@ -1289,37 +1292,37 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
 
             @Override
             public long readLong() throws IOException {
-                input.ensureReadAhead(8);
+                ensureReadAhead(8);
                 return FSTObjectInput.this.readLong();
             }
 
             @Override
             public float readFloat() throws IOException {
-                input.ensureReadAhead(4);
+                ensureReadAhead(4);
                 return FSTObjectInput.this.readFloat();
             }
 
             @Override
             public double readDouble() throws IOException {
-                input.ensureReadAhead(8);
+                ensureReadAhead(8);
                 return FSTObjectInput.this.readDouble();
             }
 
             @Override
             public void readFully(byte[] buf) throws IOException {
-                input.ensureReadAhead(buf.length);
+                ensureReadAhead(buf.length);
                 FSTObjectInput.this.readFully(buf);
             }
 
             @Override
             public void readFully(byte[] buf, int off, int len) throws IOException {
-                input.ensureReadAhead(len);
+                ensureReadAhead(len);
                 FSTObjectInput.this.readFully(buf, off, len);
             }
 
             @Override
             public int skipBytes(int len) throws IOException {
-                input.ensureReadAhead(len);
+                ensureReadAhead(len);
                 return FSTObjectInput.this.skipBytes(len);
             }
 
@@ -1330,19 +1333,19 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
 
             @Override
             public String readLine() throws IOException {
-                input.ensureReadAhead(1000);
+                ensureReadAhead(1000);
                 return FSTObjectInput.this.readLine();
             }
 
             @Override
             public int read(byte[] b) throws IOException {
-                input.ensureReadAhead(b.length);
+                ensureReadAhead(b.length);
                 return FSTObjectInput.this.read(b);
             }
 
             @Override
             public long skip(long n) throws IOException {
-                input.ensureReadAhead((int) n);
+                ensureReadAhead((int) n);
                 return FSTObjectInput.this.skip(n);
             }
 

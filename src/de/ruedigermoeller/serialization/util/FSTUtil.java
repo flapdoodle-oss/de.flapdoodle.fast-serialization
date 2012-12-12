@@ -41,7 +41,7 @@ public class FSTUtil {
     public static Unsafe unsafe;
 
     static {
-        if ( System.getProperty("fst.nounsafe","true").equals("true") ) {
+        if ( System.getProperty("fst.nounsafe","false").equals("false") ) {
             FSTUtil.unsafe = FSTUtil.getUnsafe();
         }
     }

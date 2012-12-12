@@ -99,6 +99,20 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         }
     }
 
+    static ByteArrayOutputStream empty = new ByteArrayOutputStream(0);
+
+    /**
+     * serialize without an underlying stream, the resulting byte array of writing to
+     * this FSTObjectOutput can be accessed using getBuffer(), the size using getWritten()
+     * @param conf
+     * @throws IOException
+     */
+
+    public FSTObjectOutput(FSTConfiguration conf) {
+        this(null,conf);
+        buffout.setOutstream(buffout);
+    }
+
     @Override
     public void close() throws IOException {
         super.close();
@@ -340,7 +354,12 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                             writeCShort((short) serializationInfo.getShortValue(toWrite, subInfo));
                             break;
                         case FSTClazzInfo.FSTFieldInfo.INT:
-                            writeCInt(serializationInfo.getIntValue(toWrite, subInfo));
+                            if ( subInfo.isPlain() ) {
+                                buffout.ensureFree(4);
+                                writeInt(serializationInfo.getIntValue(toWrite, subInfo));
+                            } else {
+                                writeCInt(serializationInfo.getIntValue(toWrite, subInfo));
+                            }
                             break;
                         case FSTClazzInfo.FSTFieldInfo.LONG:
                             writeCLong(serializationInfo.getLongValue(toWrite, subInfo));
@@ -1135,7 +1154,11 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
     public void resetForReUse( OutputStream out ) {
         reset();
-        this.out = out;
+        if ( out != null ) {
+            this.out = out;
+        } else {
+            this.out = buffout;
+        }
         objects.clearForWrite();
         clnames.clear();
     }

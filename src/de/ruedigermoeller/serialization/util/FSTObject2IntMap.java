@@ -89,10 +89,6 @@ public class FSTObject2IntMap<K>
                     parent.resize(parent.mKeys.length*GROFAC);
                     parent.put(key,value);
                     return;
-                } else if ( 5*mNumberOfElements > parent.mNumberOfElements ) {
-                    parent.resize(parent.mKeys.length+1);
-                    parent.put(key,value);
-                    return;
                 } else {
                     resize(mKeys.length * GROFAC);
                 }

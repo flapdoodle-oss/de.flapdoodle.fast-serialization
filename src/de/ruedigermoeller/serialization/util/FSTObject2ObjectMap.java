@@ -76,10 +76,6 @@ public final class FSTObject2ObjectMap<K,V> implements Cloneable, java.io.Serial
                     parent.resize(parent.mKeys.length*GROWFAC);
                     parent.put(key,value);
                     return;
-                } else if ( 5*mNumberOfElements > parent.mNumberOfElements ) {
-                    parent.resize(parent.mKeys.length+1);
-                    parent.put(key,value);
-                    return;
                 } else {
                     resize(mKeys.length * GROWFAC);
                 }
