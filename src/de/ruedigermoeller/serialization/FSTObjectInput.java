@@ -847,6 +847,13 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         objects.clearForRead(); clnames.clear();
     }
 
+    public void resetForReuse(byte bytes[], int off, int len) throws IOException {
+        input.reset();
+        objects.clearForRead(); clnames.clear();
+        input.ensureCapacity(len);
+        System.arraycopy(bytes,off,input.buf,0,len);
+    }
+
     public final int readFInt() throws IOException {
         ensureReadAhead(4);
         int count = input.pos;

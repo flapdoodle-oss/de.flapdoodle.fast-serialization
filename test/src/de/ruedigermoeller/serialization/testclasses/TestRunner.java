@@ -355,8 +355,8 @@ public class TestRunner {
         System.out.println();
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
-//        SerTest tests[] = { optFST, defFST, kryotest, minFST, defser};
-        SerTest tests[] = { optFST, defFST, kryotest};
+        SerTest tests[] = { optFST, defFST, kryotest, minFST, defser};
+//        SerTest tests[] = { optFST, defFST, kryotest};
 //        SerTest tests[] = { defser, kryotest, defFST};
 //        SerTest tests[] = { kryotest};
 //        SerTest tests[] = { kryotest, defFST};

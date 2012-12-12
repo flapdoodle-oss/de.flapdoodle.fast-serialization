@@ -2,22 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Plain.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/result.html" afterPath="$PROJECT_DIR$/result.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffheap.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffheap.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Compress.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Compress.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Conditional.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Conditional.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/EqualnessIsBinary.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/EqualnessIsBinary.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/EqualnessIsIdentity.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/EqualnessIsIdentity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Flat.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Flat.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Predict.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Predict.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Thin.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Thin.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInputStream.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInputStream.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTOutputStream.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTOutputStream.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTUtil.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTUtil.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" afterPath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
     </list>
     <ignored path="FST.iws" />
@@ -51,6 +39,19 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
       <breakpoint url="jar://C:/jdk1.7.0_07/src.zip!/java/io/EOFException.java" line="62" class="java.io.EOFException" package="java.io">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffheap.java" line="149" class="de.ruedigermoeller.heapoff.FSTOffheap" package="de.ruedigermoeller.heapoff">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -104,93 +105,103 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Compress.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Compress.java">
+      <file leaf-file-name="FSTOffheap.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffheap.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="0" selection-start="1021" selection-end="1021" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Conditional.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Conditional.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="48" column="33" selection-start="2029" selection-end="2029" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="EqualnessIsBinary.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/EqualnessIsBinary.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="55" column="83" selection-start="2613" selection-end="2613" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="EqualnessIsIdentity.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/EqualnessIsIdentity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="49" column="51" selection-start="2217" selection-end="2217" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Plain.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Plain.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="31" column="58" selection-start="1331" selection-end="1331" vertical-scroll-proportion="0.0">
+            <state line="66" column="26" selection-start="2584" selection-end="2584" vertical-scroll-proportion="0.52008927">
               <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#2032#2222#0" expanded="true" />
+                <element signature="e#2215#2216#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FSTObjectInput.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="469" column="0" selection-start="18943" selection-end="18943" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#0#58471#0" expanded="true" />
                 <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Thin.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Thin.java">
+      <file leaf-file-name="EOFException.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://C:/jdk1.7.0_07/src.zip!/java/io/EOFException.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="45" column="3" selection-start="1781" selection-end="1781" vertical-scroll-proportion="0.0">
+            <state line="51" column="5" selection-start="958" selection-end="958" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FSTBigNumberSerializers.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/serializers/FSTBigNumberSerializers.java">
+      <file leaf-file-name="FSTInputStream.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInputStream.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="17" selection-start="385" selection-end="385" vertical-scroll-proportion="0.0">
+            <state line="137" column="16" selection-start="3608" selection-end="3608" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Benchmark.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/remoting/Benchmark.java">
+      <file leaf-file-name="FSTConfiguration.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTConfiguration.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="26" selection-start="563" selection-end="563" vertical-scroll-proportion="0.0">
+            <state line="181" column="5" selection-start="9638" selection-end="9638" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestRunner.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
+      <file leaf-file-name="FSTObject2IntMap.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2IntMap.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="359" column="32" selection-start="12546" selection-end="12546" vertical-scroll-proportion="0.19750519">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#0#9498#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FSTInt2ObjectMap.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInt2ObjectMap.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="70" column="0" selection-start="2199" selection-end="2199" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Rectangle.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://C:/jdk1.7.0_07/src.zip!/java/awt/Rectangle.java">
+      <file leaf-file-name="FSTInt2IntMap.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInt2IntMap.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="118" column="13" selection-start="4809" selection-end="4809" vertical-scroll-proportion="0.0">
+            <state line="94" column="0" selection-start="2908" selection-end="2908" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FSTObject2ObjectMap.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2ObjectMap.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="78" column="0" selection-start="2426" selection-end="2426" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#0#8065#0" expanded="true" />
+                <element signature="e#6492#6508#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ByteBuffer.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://C:/jdk1.7.0_07/src.zip!/java/nio/ByteBuffer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="256" column="22" selection-start="7710" selection-end="7710" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -206,22 +217,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzNameRegistry.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTOutputStream.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInputStream.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTUtil.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Flat.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Predict.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Compress.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Conditional.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/EqualnessIsBinary.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/EqualnessIsIdentity.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Plain.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Thin.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTUtil.java" />
         <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
+        <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/enterprise/ObjectOrientedDataType.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTOutputStream.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2IntMap.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInt2ObjectMap.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInt2IntMap.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2ObjectMap.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInputStream.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffheap.java" />
       </list>
     </option>
   </component>
@@ -300,108 +311,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testclasses" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="util" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ruedigermoeller" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="serialization" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ruedigermoeller" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="remoting" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="build" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -413,6 +322,7 @@
   <component name="PropertiesComponent">
     <property name="GenerateAntBuildDialog.generateIdeaHomeProperty" value="false" />
     <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="OverrideImplement.combined" value="true" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.lastSelected" value="fileTemplates" />
     <property name="recentsLimit" value="5" />
@@ -591,7 +501,7 @@
       </UpdatedFiles>
     </UpdateInfo>
   </component>
-  <component name="RunManager" selected="Application.TestRunner">
+  <component name="RunManager" selected="Application.FSTOffheap">
     <configuration default="false" name="TestRunner" type="Application" factoryName="Application" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -600,11 +510,11 @@
         </pattern>
       </extension>
       <option name="MAIN_CLASS_NAME" value="de.ruedigermoeller.serialization.testclasses.TestRunner" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="VM_PARAMETERS" value="-D_fst.nounsafe=true" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
@@ -628,6 +538,34 @@
         </pattern>
       </extension>
       <option name="MAIN_CLASS_NAME" value="de.ruedigermoeller.serialization.util.FSTObject2IntMap" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="FST" />
+      <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="FSTOffheap" type="Application" factoryName="Application" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="de.ruedigermoeller.heapoff.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="de.ruedigermoeller.heapoff.FSTOffheap" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -779,9 +717,10 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <list size="2">
+    <list size="3">
       <item index="0" class="java.lang.String" itemvalue="Application.TestRunner" />
       <item index="1" class="java.lang.String" itemvalue="Application.FSTObject2IntMap" />
+      <item index="2" class="java.lang.String" itemvalue="Application.FSTOffheap" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -881,7 +820,27 @@
       <created>1355250229102</created>
       <updated>1355250229102</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="doc + block mode">
+      <created>1355258318104</created>
+      <updated>1355258318104</updated>
+    </task>
+    <task id="LOCAL-00013" summary="read performance broken">
+      <created>1355259350102</created>
+      <updated>1355259350102</updated>
+    </task>
+    <task id="LOCAL-00014" summary="read performance broken">
+      <created>1355259540102</created>
+      <updated>1355259540102</updated>
+    </task>
+    <task id="LOCAL-00015" summary="fixed performance blockmode not ok">
+      <created>1355261291102</created>
+      <updated>1355261291102</updated>
+    </task>
+    <task id="LOCAL-00016" summary="map fix, removed block mode from input">
+      <created>1355276661102</created>
+      <updated>1355276661102</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -905,9 +864,9 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2496977" sideWeight="0.60903955" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16989118" sideWeight="0.60903955" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39096045" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2496977" sideWeight="0.55706215" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17230955" sideWeight="0.55706215" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.44293785" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="SVN Repositories" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3299435" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -951,7 +910,7 @@
     <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="unsafe ^^" />
+    <option name="LAST_COMMIT_MESSAGE" value="map fix, removed block mode from input" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -970,6 +929,10 @@
     <MESSAGE value="0.52" />
     <MESSAGE value="minor tweaks" />
     <MESSAGE value="unsafe ^^" />
+    <MESSAGE value="doc + block mode" />
+    <MESSAGE value="read performance broken" />
+    <MESSAGE value="fixed performance blockmode not ok" />
+    <MESSAGE value="map fix, removed block mode from input" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -988,126 +951,131 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Flat.java">
+    <entry file="jar://$PROJECT_DIR$/test/lib/kryo-2.20-all.jar!/com/esotericsoftware/kryo/io/ByteBufferInputStream.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="0" selection-start="1777" selection-end="1777" vertical-scroll-proportion="0.0">
+        <state line="8" column="11" selection-start="278" selection-end="278" vertical-scroll-proportion="-4.76">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Predict.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="0" selection-start="1777" selection-end="1777" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="413" column="25" selection-start="15605" selection-end="15605" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#0#23042#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTOutputStream.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="0" selection-start="866" selection-end="866" vertical-scroll-proportion="0.0">
+        <state line="61" column="16" selection-start="1679" selection-end="1679" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#0#4008#0" expanded="true" />
+            <element signature="e#0#4029#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/jdk1.7.0_07/src.zip!/java/io/DataOutputStream.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="196" column="37" selection-start="6235" selection-end="6235" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/jdk1.7.0_07/src.zip!/java/io/FilterOutputStream.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="39" selection-start="992" selection-end="992" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/jdk1.7.0_07/src.zip!/java/io/OutputStream.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="70" column="55" selection-start="2031" selection-end="2031" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="521" column="0" selection-start="22506" selection-end="22506" vertical-scroll-proportion="-9.52">
+        <state line="175" column="0" selection-start="5955" selection-end="5955" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#46664#46680#0" expanded="true" />
+            <element signature="e#47463#47479#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInt2ObjectMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="70" column="0" selection-start="2199" selection-end="2199" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInt2IntMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="94" column="0" selection-start="2908" selection-end="2908" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2ObjectMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="78" column="0" selection-start="2426" selection-end="2426" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#0#8065#0" expanded="true" />
+            <element signature="e#6492#6508#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2IntMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#0#9498#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/jdk1.7.0_07/src.zip!/java/nio/ByteBuffer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="256" column="22" selection-start="7710" selection-end="7710" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTConfiguration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="181" column="5" selection-start="9638" selection-end="9638" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="685" column="0" selection-start="28510" selection-end="28510" vertical-scroll-proportion="0.0">
+        <state line="469" column="0" selection-start="18943" selection-end="18943" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#0#58240#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Compress.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="0" selection-start="1021" selection-end="1021" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Conditional.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="33" selection-start="2029" selection-end="2029" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/jdk1.7.0_07/src.zip!/java/awt/Rectangle.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="118" column="13" selection-start="4809" selection-end="4809" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/EqualnessIsBinary.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="55" column="83" selection-start="2613" selection-end="2613" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/EqualnessIsIdentity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="49" column="51" selection-start="2217" selection-end="2217" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Plain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="58" selection-start="1331" selection-end="1331" vertical-scroll-proportion="0.0">
-          <folding>
+            <element signature="e#0#58471#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/annotations/Thin.java">
+    <entry file="jar://C:/jdk1.7.0_07/src.zip!/java/io/EOFException.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="3" selection-start="1781" selection-end="1781" vertical-scroll-proportion="0.0">
+        <state line="51" column="5" selection-start="958" selection-end="958" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/serializers/FSTBigNumberSerializers.java">
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTInputStream.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="17" selection-start="385" selection-end="385" vertical-scroll-proportion="0.0">
+        <state line="137" column="16" selection-start="3608" selection-end="3608" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/remoting/Benchmark.java">
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffheap.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="26" selection-start="563" selection-end="563" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="359" column="32" selection-start="12546" selection-end="12546" vertical-scroll-proportion="0.19750519">
-          <folding />
+        <state line="66" column="26" selection-start="2584" selection-end="2584" vertical-scroll-proportion="0.52008927">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2032#2222#0" expanded="true" />
+            <element signature="e#2215#2216#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

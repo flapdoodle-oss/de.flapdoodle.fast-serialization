@@ -50,12 +50,18 @@ public final class FSTInputStream extends InputStream {
         count+=read;
         while( read == chunk_size ) {
             if ( buf.length < count+chunk_size ) {
-                byte newBuf[] = new byte[buf.length*2];
-                System.arraycopy(buf,0,newBuf,0,buf.length);
-                buf = newBuf;
+                ensureCapacity(buf.length*2);
             }
             read = in.read(buf,count,chunk_size);
             count += read;
+        }
+    }
+
+    public void ensureCapacity(int siz) {
+        if ( buf.length < siz ) {
+            byte newBuf[] = new byte[siz];
+            System.arraycopy(buf,0,newBuf,0,buf.length);
+            buf = newBuf;
         }
     }
 
