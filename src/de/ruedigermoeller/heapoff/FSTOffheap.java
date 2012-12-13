@@ -4,10 +4,8 @@ import de.ruedigermoeller.serialization.*;
 import de.ruedigermoeller.serialization.annotations.Conditional;
 import de.ruedigermoeller.serialization.annotations.Flat;
 import de.ruedigermoeller.serialization.annotations.Predict;
-import de.ruedigermoeller.serialization.testclasses.enterprise.Trader;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -161,38 +159,38 @@ public class FSTOffheap {
         Object tag;
     }
 
-    public static void main( String arg[]) throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-        FSTOffheap off = new FSTOffheap(100);
-        int location = 0;
-
-
-        Trader t = Trader.generateTrader(101, false);
-//        int siz = FSTConfiguration.createDefaultConfiguration().calcObjectSizeBytesNotAUtility(t);
-//        System.out.println("size "+siz);
-        int i1 = 90000;
-//        System.out.println("size "+(siz*i1)/1000000+"mb");
-        long tim = System.currentTimeMillis();
-
-        int handle = off.add(t, null);
-
-        Object ttag = off.getTag(handle);
-        System.out.println(ttag);
-        Object traderRead = off.getObject(handle);
-        System.out.println(traderRead);
-
-        for ( int i = 0; i < i1; i++ ) {
-            location = off.add(t, "hallo" + i);
-        }
-        System.out.println("TIM "+(System.currentTimeMillis()-tim));
-        tim = System.currentTimeMillis();
-        Iterator it = off.iterator();
-        while( it.hasNext() ) {
-            Object tag = it.next();
-        }
-        System.out.println("TIMITER "+(System.currentTimeMillis()-tim));
-//        it = off.iterator();
-//        while( it.hasNext() ) {
-//            System.out.println(it.next());
+//    public static void main( String arg[]) throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//        FSTOffheap off = new FSTOffheap(100);
+//        int location = 0;
+//
+//
+//        Trader t = Trader.generateTrader(101, false);
+////        int siz = FSTConfiguration.createDefaultConfiguration().calcObjectSizeBytesNotAUtility(t);
+////        System.out.println("size "+siz);
+//        int i1 = 90000;
+////        System.out.println("size "+(siz*i1)/1000000+"mb");
+//        long tim = System.currentTimeMillis();
+//
+//        int handle = off.add(t, null);
+//
+//        Object ttag = off.getTag(handle);
+//        System.out.println(ttag);
+//        Object traderRead = off.getObject(handle);
+//        System.out.println(traderRead);
+//
+//        for ( int i = 0; i < i1; i++ ) {
+//            location = off.add(t, "hallo" + i);
 //        }
-    }
+//        System.out.println("TIM "+(System.currentTimeMillis()-tim));
+//        tim = System.currentTimeMillis();
+//        Iterator it = off.iterator();
+//        while( it.hasNext() ) {
+//            Object tag = it.next();
+//        }
+//        System.out.println("TIMITER "+(System.currentTimeMillis()-tim));
+////        it = off.iterator();
+////        while( it.hasNext() ) {
+////            System.out.println(it.next());
+////        }
+//    }
 }

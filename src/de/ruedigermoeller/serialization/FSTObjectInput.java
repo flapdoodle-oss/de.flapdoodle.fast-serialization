@@ -19,7 +19,6 @@
  */
 package de.ruedigermoeller.serialization;
 
-import com.esotericsoftware.kryo.io.ByteBufferInputStream;
 import de.ruedigermoeller.serialization.util.FSTInputStream;
 import de.ruedigermoeller.serialization.util.FSTInt2ObjectMap;
 import de.ruedigermoeller.serialization.util.FSTUtil;
