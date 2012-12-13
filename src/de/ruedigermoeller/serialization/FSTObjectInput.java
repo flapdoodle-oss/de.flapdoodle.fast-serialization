@@ -211,7 +211,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
 
     }
 
-    Object readObjectWithHeader(FSTClazzInfo.FSTFieldInfo referencee) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
+    public Object readObjectWithHeader(FSTClazzInfo.FSTFieldInfo referencee) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
         final int readPos = input.pos;
         byte code = readFByte();
         Class c = null;
@@ -303,12 +303,12 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
             if (newObj == null) {
                 throw new IOException(referencee.getDesc() + ":Failed to instantiate '" + c.getName() + "'. Register a custom serializer implementing instantiate.");
             }
-            if ( ! referencee.isFlat() ) {
-                objects.registerObjectForRead(newObj, readPos);
-            }
             if (newObj.getClass() != c) {//FIXME
                 c = newObj.getClass();
                 serializationInfo = conf.getCLInfoRegistry().getCLInfo(c);
+            }
+            if ( ! referencee.isFlat() && ! serializationInfo.isFlat() ) {
+                objects.registerObjectForRead(newObj, readPos);
             }
             if (ser != null) {
                 if ( !serInstance )
@@ -367,7 +367,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
 //            fstObjectOutput.writeObject(toCopy, null);
 //            fstObjectOutput.close();
 //            buf = copyStream.toByteArray();
-//            mCopyHash.put(streamPosition,buf);
+//            mCopyHash.add(streamPosition,buf);
 //        }
         try {
             input.push(buf, pos, buf.length);
@@ -433,7 +433,13 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         }
     }
 
-    protected void readObjectFields(FSTClazzInfo.FSTFieldInfo referencee, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo, Object newObj) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public void defaultReadObject(FSTClazzInfo.FSTFieldInfo referencee, FSTClazzInfo serializationInfo, Object newObj)
+            throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException
+    {
+        readObjectFields(referencee,serializationInfo,serializationInfo.getFieldInfo(),newObj);
+    }
+
+    void readObjectFields(FSTClazzInfo.FSTFieldInfo referencee, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo, Object newObj) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         int booleanMask = 0;
         int boolcount = 8;
         final int length = fieldInfo.length;
@@ -814,7 +820,7 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
     }
 
     public void registerObject(Object o, int streamPosition, FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo referencee) {
-        if (!referencee.isFlat()) {
+        if (!referencee.isFlat() && ! info.isFlat() ) {
             objects.registerObjectForRead(o, streamPosition);
         }
     }
@@ -847,11 +853,19 @@ public final class FSTObjectInput extends DataInputStream implements ObjectInput
         objects.clearForRead(); clnames.clear();
     }
 
-    public void resetForReuse(byte bytes[], int off, int len) throws IOException {
+    public void resetForReuseCopyArray(byte bytes[], int off, int len) throws IOException {
         input.reset();
         objects.clearForRead(); clnames.clear();
         input.ensureCapacity(len);
+        input.count = len;
         System.arraycopy(bytes,off,input.buf,0,len);
+    }
+
+    public void resetForReuseUseArray(byte bytes[], int off, int len) throws IOException {
+        input.reset();
+        objects.clearForRead(); clnames.clear();
+        input.count = len;
+        input.buf = bytes;
     }
 
     public final int readFInt() throws IOException {

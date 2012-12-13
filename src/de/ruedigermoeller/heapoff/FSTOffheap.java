@@ -1,11 +1,8 @@
 package de.ruedigermoeller.heapoff;
 
-import com.sun.jmx.remote.util.OrderClassLoaders;
-import de.ruedigermoeller.serialization.FSTConfiguration;
-import de.ruedigermoeller.serialization.FSTObjectInput;
-import de.ruedigermoeller.serialization.FSTObjectOutput;
+import de.ruedigermoeller.serialization.*;
 import de.ruedigermoeller.serialization.annotations.Conditional;
-import de.ruedigermoeller.serialization.annotations.Plain;
+import de.ruedigermoeller.serialization.annotations.Flat;
 import de.ruedigermoeller.serialization.annotations.Predict;
 import de.ruedigermoeller.serialization.testclasses.enterprise.Trader;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -14,7 +11,6 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
@@ -54,15 +50,27 @@ public class FSTOffheap {
             return true;
         }
     };
+    byte tmpBuf[] = new byte[100];
 
     public FSTOffheap(int size) throws IOException {
         buffer = ByteBuffer.allocateDirect(size*1000*1000);
         in = new FSTObjectInput(conf);
         out = new FSTObjectOutput(conf);
+        conf.registerSerializer(ByteBufferEntry.class, new FSTBasicObjectSerializer() {
+            @Override
+            public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
+                out.defaultWriteObject(toWrite,clzInfo);
+            }
+
+            @Override
+            public Object instantiate(Class objectClass, FSTObjectInput in, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo referencee, int streamPositioin) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+                in.defaultReadObject(referencee, serializationInfo, entry);
+                return entry;
+            }
+        }, false);
     }
 
-    public int put(Object o, Object tag) throws IOException {
-        buffer.position(currPosition);
+    public int add(Object o, Object tag) throws IOException {
         int res = currPosition;
         entry.content = o;
         entry.prevPosition = lastPosition;
@@ -70,22 +78,45 @@ public class FSTOffheap {
         entry.tag = tag;
         lastPosition = res;
         out.resetForReUse(null);
+        buffer.position(currPosition+4); // length
         out.writeObject(entry,entry.getClass());
         buffer.put(out.getBuffer(),0,out.getWritten());
         currPosition = buffer.position();
+        buffer.putInt(res,currPosition-res);
         return res;
     }
 
-    public Object getObject( int handle ) {
-        return null;
+    public Object getObject( int handle ) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+        in.setConditionalCallback(null);
+        return getEntry(handle).content;
     }
 
-    public Iterator iterator() {
+    public Object getTag( int handle ) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+        in.setConditionalCallback(alwaysSkip);
+        return getEntry(handle).tag;
+    }
+
+    ByteBufferEntry getEntry( int handle ) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+        int len = buffer.getInt(handle);
+        byte[] buf = getTmpBuf(len);
+        buffer.position(handle+4);
+        buffer.get(buf);
+        in.resetForReuseUseArray(buf, 0, len);
+        return (ByteBufferEntry) in.readObject(ByteBufferEntry.class);
+    }
+
+    public byte[] getTmpBuf(int siz) {
+        if ( tmpBuf.length < siz ) {
+            tmpBuf = new byte[siz];
+        }
+        return tmpBuf;
+    }
+
+    public OffHeapIterator iterator() {
         return new OffHeapIterator(lastPosition);
     }
 
-    class OffHeapIterator implements Iterator {
-        byte tmp[] = new byte[100];
+    public class OffHeapIterator implements Iterator {
         int position;
 
         OffHeapIterator(int position) {
@@ -99,12 +130,9 @@ public class FSTOffheap {
 
         @Override
         public Object next() {
-            in.setConditionalCallback(alwaysSkip);
-            buffer.position(position);
-            buffer.get(tmp);
             try {
-                in.resetForReuse(tmp, 0, tmp.length);
-                ByteBufferEntry en = (ByteBufferEntry) in.readObject(ByteBufferEntry.class);
+                in.setConditionalCallback(alwaysSkip);
+                ByteBufferEntry en = (ByteBufferEntry) getEntry(position);
                 position = en.prevPosition;
                 return en.tag;
             } catch (IOException e) {
@@ -123,27 +151,37 @@ public class FSTOffheap {
         public void remove() {
             throw new NotImplementedException();
         }
+
     }
 
-    @Predict(ByteBufferEntry.class)
+    @Predict(ByteBufferEntry.class) @Flat
     static class ByteBufferEntry implements Serializable {
         int prevPosition;
         @Conditional Object content;
         Object tag;
     }
 
-    public static void main( String arg[]) throws IOException {
+    public static void main( String arg[]) throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException {
         FSTOffheap off = new FSTOffheap(100);
-        JButton button = new JButton("hallo");
-        int location = off.put(button,"hallo");
-        Trader t = Trader.generateTrader(101,false);
-        int siz = FSTConfiguration.createDefaultConfiguration().calcObjectSizeBytesNotAUtility(t);
-        System.out.println("size "+siz);
+        int location = 0;
+
+
+        Trader t = Trader.generateTrader(101, false);
+//        int siz = FSTConfiguration.createDefaultConfiguration().calcObjectSizeBytesNotAUtility(t);
+//        System.out.println("size "+siz);
         int i1 = 90000;
-        System.out.println("size "+(siz*i1)/1000000+"mb");
+//        System.out.println("size "+(siz*i1)/1000000+"mb");
         long tim = System.currentTimeMillis();
+
+        int handle = off.add(t, null);
+
+        Object ttag = off.getTag(handle);
+        System.out.println(ttag);
+        Object traderRead = off.getObject(handle);
+        System.out.println(traderRead);
+
         for ( int i = 0; i < i1; i++ ) {
-            location = off.put(t,"hallo"+i);
+            location = off.add(t, "hallo" + i);
         }
         System.out.println("TIM "+(System.currentTimeMillis()-tim));
         tim = System.currentTimeMillis();

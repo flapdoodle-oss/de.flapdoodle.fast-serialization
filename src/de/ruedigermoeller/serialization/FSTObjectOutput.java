@@ -189,7 +189,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     }
 
     int tmp[] = {0};
-    protected void writeObjectWithContext(FSTClazzInfo.FSTFieldInfo referencee, Object toWrite) throws IOException {
+    void writeObjectWithContext(FSTClazzInfo.FSTFieldInfo referencee, Object toWrite) throws IOException {
         if ( toWrite == null ) {
             writeFByte(NULL);
             return;
@@ -216,7 +216,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             referencee.lastInfo = serializationInfo;
         }
         int handle = Integer.MIN_VALUE;
-        if ( ! referencee.isFlat() ) {
+        if ( ! referencee.isFlat() && ! serializationInfo.isFlat() ) {
             handle = objects.registerObject(toWrite, false, written,serializationInfo,tmp);
             // determine class header
             if ( handle >= 0 ) {
@@ -272,15 +272,19 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 if ( ser != null ) {
                     ser.writeObject(this, toWrite, serializationInfo, referencee, pos);
                 } else {
-                    if ( serializationInfo.isExternalizable() ) {
-                        buffout.ensureFree(writeExternalWriteAhead);
-                        ((Externalizable) toWrite).writeExternal(this);
-                    } else {
-                        FSTClazzInfo.FSTFieldInfo[] fieldInfo = serializationInfo.getFieldInfo();
-                        writeObjectFields(toWrite, serializationInfo, fieldInfo);
-                    }
+                    defaultWriteObject(toWrite, serializationInfo);
                 }
             }
+        }
+    }
+
+    public void defaultWriteObject(Object toWrite, FSTClazzInfo serializationInfo) throws IOException {
+        if ( serializationInfo.isExternalizable() ) {
+            buffout.ensureFree(writeExternalWriteAhead);
+            ((Externalizable) toWrite).writeExternal(this);
+        } else {
+            FSTClazzInfo.FSTFieldInfo[] fieldInfo = serializationInfo.getFieldInfo();
+            writeObjectFields(toWrite, serializationInfo, fieldInfo);
         }
     }
 
@@ -375,6 +379,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                     if (subInfo.isConditional()) {
                         conditional = buffout.pos;
                         buffout.pos +=4;
+                        written+=4;
                     }
                     // object
                     Object subObject = serializationInfo.getObjectValue(toWrite,subInfo);

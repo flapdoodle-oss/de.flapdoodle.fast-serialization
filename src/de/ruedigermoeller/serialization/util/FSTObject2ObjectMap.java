@@ -244,13 +244,13 @@ public final class FSTObject2ObjectMap<K,V> implements Cloneable, java.io.Serial
             for ( int i = 0; i < count;  i++ ) {
                 map.put(obs[i],i);
             }
-            System.out.println("fst put"+(System.currentTimeMillis()-tim));
+            System.out.println("fst add"+(System.currentTimeMillis()-tim));
 
             tim = System.currentTimeMillis();
             for ( int i = 0; i < count;  i++ ) {
                 hm.put(obs[i],i);
             }
-            System.out.println("hmap put"+(System.currentTimeMillis()-tim));
+            System.out.println("hmap add"+(System.currentTimeMillis()-tim));
 
             tim = System.currentTimeMillis();
             for ( int j = 0; j < 10;  j++ ) {

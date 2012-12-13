@@ -39,6 +39,7 @@ public final class FSTObjectRegistry {
     FSTClazzInfoRegistry reg;
 
     private static final boolean DUMP = false;
+    private int lastRegisteredReadPos; // last registered streampos wg. double register
 
     public FSTObjectRegistry(FSTConfiguration conf) {
         this.conf = conf;
@@ -54,6 +55,7 @@ public final class FSTObjectRegistry {
     }
 
     public void clearForRead() {
+        lastRegisteredReadPos = 0;
         idToObject.clear();
         disabled = !conf.isShareReferences();
     }
@@ -71,12 +73,13 @@ public final class FSTObjectRegistry {
     }
 
     public void registerObjectForRead(Object o, int streamPosition) {
-        if (disabled) {
+        if (disabled || streamPosition <= lastRegisteredReadPos) {
             return;
         }
         if ( DUMP ) {
             System.out.println("for read "+o.getClass()+" "+streamPosition);
         }
+        lastRegisteredReadPos = streamPosition;
         idToObject.put(streamPosition,o);
     }
 
@@ -101,7 +104,7 @@ public final class FSTObjectRegistry {
         int handle = objects.get(sysid);
         if ( handle != Integer.MIN_VALUE ) {
 //            if ( idToObject.get(handle) == null ) { // (*) (can get improved)
-//                idToObject.put(handle, o);
+//                idToObject.add(handle, o);
 //            }
             reUseType[0] = 0;
             return handle;
@@ -118,7 +121,7 @@ public final class FSTObjectRegistry {
             }
         }
         objects.put(sysid, streamPosition);
-        //idToObject.put(streamPosition, o); only required for equalsness, moved to (*)
+        //idToObject.add(streamPosition, o); only required for equalsness, moved to (*)
         if ( DUMP )
             System.out.println("REGISTER "+o.getClass()+" pos:"+streamPosition+" handle:"+streamPosition+" id:"+System.identityHashCode(o));
         if ( reUseEquals ) {
