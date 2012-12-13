@@ -2,13 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2ObjectMap.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2ObjectMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectRegistry.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectRegistry.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffheap.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffheap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fst.properties" afterPath="$PROJECT_DIR$/fst.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/result.html" afterPath="$PROJECT_DIR$/result.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -20,6 +13,7 @@
     <file path="/FSTObjectOutput.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355430952520" ignored="false" />
     <file path="/FSTObjectRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355431045111" ignored="false" />
     <file path="/a.dummy" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355430504138" ignored="false" />
+    <file path="/Dummy.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355431575943" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,10 +103,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="FSTOffheap.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="FSTOffheap.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffheap.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="145" column="13" selection-start="5560" selection-end="5560" vertical-scroll-proportion="4.417563">
+            <state line="145" column="13" selection-start="5560" selection-end="5560" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1829#2019#0" expanded="true" />
@@ -183,16 +177,16 @@
       <file leaf-file-name="FSTObjectRegistry.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectRegistry.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="81" column="47" selection-start="2748" selection-end="2748" vertical-scroll-proportion="0.0">
+            <state line="75" column="23" selection-start="2518" selection-end="2518" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FSTObjectInput.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="FSTObjectInput.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="822" column="0" selection-start="34338" selection-end="34338" vertical-scroll-proportion="0.0">
+            <state line="859" column="0" selection-start="35400" selection-end="35400" vertical-scroll-proportion="0.1053391">
               <folding />
             </state>
           </provider>
@@ -231,8 +225,8 @@
         <option value="$PROJECT_DIR$/fst.properties" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectRegistry.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffheap.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectRegistry.java" />
       </list>
     </option>
   </component>
@@ -671,7 +665,15 @@
       <created>1355345388102</created>
       <updated>1355345388102</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="fixed conditional bug, off-heap continued">
+      <created>1355431284110</created>
+      <updated>1355431284110</updated>
+    </task>
+    <task id="LOCAL-00019" summary="fixed conditional bug, off-heap continued">
+      <created>1355431586103</created>
+      <updated>1355431586103</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -683,8 +685,8 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32882884" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2228261" sideWeight="0.6959459" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6880631" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2228261" sideWeight="0.847973" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6858108" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -696,8 +698,8 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19323671" sideWeight="0.6959459" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30405405" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19323671" sideWeight="0.847973" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15202703" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -744,7 +746,7 @@
     <option name="MAXIMUM_HISTORY_ROWS" value="1000" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="map fix, removed block mode from input" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed conditional bug, off-heap continued" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -767,6 +769,7 @@
     <MESSAGE value="read performance broken" />
     <MESSAGE value="fixed performance blockmode not ok" />
     <MESSAGE value="map fix, removed block mode from input" />
+    <MESSAGE value="fixed conditional bug, off-heap continued" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -864,13 +867,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="822" column="0" selection-start="34338" selection-end="34338" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="218" column="63" selection-start="7666" selection-end="7666" vertical-scroll-proportion="0.0">
@@ -887,21 +883,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectRegistry.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="47" selection-start="2748" selection-end="2748" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffheap.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="145" column="13" selection-start="5560" selection-end="5560" vertical-scroll-proportion="4.417563">
+        <state line="145" column="13" selection-start="5560" selection-end="5560" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1829#2019#0" expanded="true" />
             <element signature="e#2012#2013#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectRegistry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="75" column="23" selection-start="2518" selection-end="2518" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectInput.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="859" column="0" selection-start="35400" selection-end="35400" vertical-scroll-proportion="0.1053391">
+          <folding />
         </state>
       </provider>
     </entry>
