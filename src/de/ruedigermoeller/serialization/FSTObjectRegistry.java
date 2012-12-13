@@ -73,7 +73,7 @@ public final class FSTObjectRegistry {
     }
 
     public void registerObjectForRead(Object o, int streamPosition) {
-        if (disabled || streamPosition <= lastRegisteredReadPos) {
+        if (disabled /*|| streamPosition <= lastRegisteredReadPos*/) {
             return;
         }
         if ( DUMP ) {
