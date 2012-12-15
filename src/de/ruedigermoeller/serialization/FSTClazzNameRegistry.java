@@ -39,15 +39,15 @@ public class FSTClazzNameRegistry {
     static boolean ENABLE_SNIPPETS = true;
     private static final boolean DEBUG_CLNAMES = false;
 
-    FSTObject2IntMap<Class> clzToId = new FSTObject2IntMap<Class>(97,false);
-    FSTInt2ObjectMap idToClz = new FSTInt2ObjectMap(97);
+    FSTObject2IntMap<Class> clzToId = new FSTObject2IntMap<Class>(13,false);
+    FSTInt2ObjectMap idToClz = new FSTInt2ObjectMap(13);
     int classIdCount = 3;
     FSTClazzNameRegistry parent;
 
     // snippet stuff
-    HashSet<Class> visitedClasses = new HashSet<Class>();
-    FSTObject2IntMap<String> stringSnippets = new FSTObject2IntMap<String>(97,false);
-    FSTInt2ObjectMap stringSnippetsReverse = new FSTInt2ObjectMap(97);
+    HashSet<Class> visitedClasses = new HashSet<Class>(13);
+    FSTObject2IntMap<String> stringSnippets = new FSTObject2IntMap<String>(13,false);
+    FSTInt2ObjectMap stringSnippetsReverse = new FSTInt2ObjectMap(13);
     int snippetCount = 3;
 
     private FSTConfiguration conf;

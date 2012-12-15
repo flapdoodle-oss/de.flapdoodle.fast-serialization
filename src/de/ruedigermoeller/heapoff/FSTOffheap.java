@@ -1,19 +1,3 @@
-package de.ruedigermoeller.heapoff;
-
-import de.ruedigermoeller.serialization.*;
-import de.ruedigermoeller.serialization.annotations.Conditional;
-import de.ruedigermoeller.serialization.annotations.Flat;
-import de.ruedigermoeller.serialization.annotations.Predict;
-import de.ruedigermoeller.serialization.testclasses.enterprise.SimpleOrder;
-import de.ruedigermoeller.serialization.testclasses.enterprise.Trader;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
-import java.util.Iterator;
-
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
  * <p/>
@@ -36,8 +20,23 @@ import java.util.Iterator;
  * Time: 01:12
  * To change this template use File | Settings | File Templates.
  */
+package de.ruedigermoeller.heapoff;
+
+import de.ruedigermoeller.serialization.*;
+import de.ruedigermoeller.serialization.annotations.Conditional;
+import de.ruedigermoeller.serialization.annotations.Flat;
+import de.ruedigermoeller.serialization.annotations.Predict;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
+import java.util.Iterator;
+
 public class FSTOffheap {
 
+    String lock = "Lock";
     ByteBuffer buffer;
     ByteBufferEntry entry = new ByteBufferEntry();
     FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
@@ -52,11 +51,12 @@ public class FSTOffheap {
     };
     byte tmpBuf[] = new byte[100];
 
-    public FSTOffheap(int size) throws IOException {
-        buffer = ByteBuffer.allocateDirect(size*1000*1000);
+    public FSTOffheap(ByteBuffer buffer) throws IOException {
+        this.buffer = buffer;
         in = new FSTObjectInput(conf);
         out = new FSTObjectOutput(conf);
         conf.registerSerializer(ByteBufferEntry.class, new FSTBasicObjectSerializer() {
+
             @Override
             public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
                 out.defaultWriteObject(toWrite,clzInfo);
@@ -64,24 +64,40 @@ public class FSTOffheap {
 
             @Override
             public Object instantiate(Class objectClass, FSTObjectInput in, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo referencee, int streamPositioin) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-                in.defaultReadObject(referencee, serializationInfo, entry);
+                if ( in == FSTOffheap.this.in ) {
+                    in.defaultReadObject(referencee, serializationInfo, entry);
+                } else {
+                    ByteBufferEntry res = new ByteBufferEntry();
+                    in.defaultReadObject(referencee, serializationInfo, res);
+                    return res;
+                }
                 return entry;
             }
         }, false);
     }
 
-    public int add(Object o, Object tag) throws IOException {
+    public int getLastPosition() {
+        return lastPosition;
+    }
+
+    public FSTOffheap(int size) throws IOException {
+        this(ByteBuffer.allocateDirect(size * 1000 * 1000));
+    }
+
+    public int add(Object toSave, Object tag) throws IOException {
         int res = currPosition;
-        entry.content = o;
+        entry.content = toSave;
         entry.prevPosition = lastPosition;
-        entry.content = o;
+        entry.content = toSave;
         entry.tag = tag;
         lastPosition = res;
         out.resetForReUse(null);
-        buffer.position(currPosition+4); // length
-        out.writeObject(entry,entry.getClass());
-        buffer.put(out.getBuffer(),0,out.getWritten());
-        currPosition = buffer.position();
+        synchronized (lock) {
+            buffer.position(currPosition+4); // length
+            out.writeObject(entry,entry.getClass());
+            buffer.put(out.getBuffer(),0,out.getWritten());
+            currPosition = buffer.position();
+        }
         buffer.putInt(res,currPosition-res);
         return res;
     }
@@ -99,8 +115,10 @@ public class FSTOffheap {
     ByteBufferEntry getEntry( int handle ) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
         int len = buffer.getInt(handle);
         byte[] buf = getTmpBuf(len);
-        buffer.position(handle+4);
-        buffer.get(buf);
+        synchronized (lock) {
+            buffer.position(handle+4);
+            buffer.get(buf);
+        }
         in.resetForReuseUseArray(buf, 0, len);
         return (ByteBufferEntry) in.readObject(ByteBufferEntry.class);
     }
@@ -118,9 +136,24 @@ public class FSTOffheap {
 
     public class OffHeapIterator implements Iterator {
         int position;
+        ByteBufferEntry currentEntry;
+        FSTObjectInput in;
+        byte tmpBuf[];
+
+        public byte[] getTmpBuf(int siz) {
+            if ( tmpBuf == null || tmpBuf.length < siz ) {
+                tmpBuf = new byte[siz];
+            }
+            return tmpBuf;
+        }
 
         OffHeapIterator(int position) {
             this.position = position;
+            try {
+                in = new FSTObjectInput(conf);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Override
@@ -128,13 +161,62 @@ public class FSTOffheap {
             return position > 0;
         }
 
+        public Object getCurrentTag() {
+            return currentEntry.tag;
+        }
+
+        /**
+         * @return null if iterated using next(), the saved object if iterated using nextEntry
+         */
+        public Object getCurrentEntry() {
+            return currentEntry.content;
+        }
+
+        /**
+         *
+         * @param callback - if null always read the full object (tag+value), else
+         *                 the callback is called to decide wether to decode the content or not
+         * @return
+         */
+        public Object nextEntry(FSTObjectInput.ConditionalCallback callback) {
+            try {
+                in.setConditionalCallback(callback);
+                currentEntry = getEntry(position);
+                position = currentEntry.prevPosition;
+                return currentEntry.tag;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        public ByteBufferEntry getEntry(int handle) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+            int len = buffer.getInt(handle);
+            byte[] buf = getTmpBuf(len);
+            synchronized (lock) {
+                buffer.position(handle+4);
+                buffer.get(buf);
+            }
+            in.resetForReuseUseArray(buf, 0, len);
+            return (ByteBufferEntry) in.readObject(ByteBufferEntry.class);
+        }
+
+        /**
+         * @return the 'tag' of the next entry. Use nextEntry to obtain the full entry (
+         */
         @Override
         public Object next() {
             try {
                 in.setConditionalCallback(alwaysSkip);
-                ByteBufferEntry en = (ByteBufferEntry) getEntry(position);
-                position = en.prevPosition;
-                return en.tag;
+                currentEntry = getEntry(position);
+                position = currentEntry.prevPosition;
+                return currentEntry.tag;
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
@@ -155,47 +237,11 @@ public class FSTOffheap {
     }
 
     @Predict(ByteBufferEntry.class) @Flat
-    static class ByteBufferEntry implements Serializable {
-        int prevPosition;
-        @Conditional Object content;
-        Object tag;
+    static public class ByteBufferEntry implements Serializable {
+        public int prevPosition;
+        public @Conditional Object content;
+        public @Flat Object tag;
     }
 
-    public static void main( String arg[]) throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-        FSTOffheap off = new FSTOffheap(100);
-        int location = 0;
 
-
-        Trader t = Trader.generateTrader(101, false);
-        SimpleOrder or = SimpleOrder.generateOrder(22);
-        int siz = FSTConfiguration.createDefaultConfiguration().calcObjectSizeBytesNotAUtility(t);
-        System.out.println("size "+siz);
-        int i1 = 80000;
-        System.out.println("size "+(siz*i1)/1000000+"mb");
-        long tim = System.currentTimeMillis();
-
-        int handle = off.add(t, null);
-
-        Object ttag = off.getTag(handle);
-        System.out.println(ttag);
-        Object traderRead = off.getObject(handle);
-        System.out.println(traderRead);
-
-        for ( int i = 0; i < i1; i++ ) {
-            location = off.add(t, "hallo" + i);
-        }
-        long dur = System.currentTimeMillis() - tim;
-        System.out.println("TIM "+ dur +" per ms "+(i1/dur));
-        System.out.println("siz "+off.lastPosition/1000/1000);
-        tim = System.currentTimeMillis();
-        Iterator it = off.iterator();
-        while( it.hasNext() ) {
-            Object tag = it.next();
-        }
-        System.out.println("TIMITER "+(System.currentTimeMillis()-tim));
-//        it = off.iterator();
-//        while( it.hasNext() ) {
-//            System.out.println(it.next());
-//        }
-    }
 }
