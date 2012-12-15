@@ -1,11 +1,3 @@
-package de.ruedigermoeller.heapoff;
-
-import de.ruedigermoeller.serialization.testclasses.enterprise.SimpleOrder;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.io.IOException;
-import java.util.*;
-
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
  * <p/>
@@ -27,6 +19,25 @@ import java.util.*;
  * Date: 14.12.12
  * Time: 20:34
  * To change this template use File | Settings | File Templates.
+ */
+package de.ruedigermoeller.heapoff;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.io.IOException;
+import java.util.*;
+
+/**
+ * a simple Map implementation based on OffHeapBuffer. Access is not threadsafe and the offheapbuffer
+ * is not grown automatically when the limit is reached. Note that every put adds a new Entry to the OffHeapBuffer,
+ * so its wise to check using contains before putting an Object (except you explicitely want to overwrite the
+ * existing Object). The maps build an in Java-Heap hashmap Key=>OffHeapIndex. The values are then stored
+ * offheap.
+ * Access is single threaded only, you need to do your own synchronization in order to access this from multiple threads.
+ *
+ * All objects put need to implement Serializable
+ * @param <K>
+ * @param <V>
  */
 public class FSTOffHeapMap<K,V> extends AbstractMap<K,V> {
 

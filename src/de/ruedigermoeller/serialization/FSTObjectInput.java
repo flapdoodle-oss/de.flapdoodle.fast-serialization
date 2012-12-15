@@ -37,7 +37,7 @@ import java.util.*;
  * Time: 11:53
  * To change this template use File | Settings | File Templates.
  */
-public final class FSTObjectInput extends DataInputStream implements ObjectInput {
+public class FSTObjectInput extends DataInputStream implements ObjectInput {
 
     public FSTClazzNameRegistry clnames;
     FSTObjectRegistry objects;

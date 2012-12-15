@@ -37,25 +37,26 @@ public class FSTClazzInfoRegistry {
 //    HashMap mInfos = new HashMap(97);
     FSTSerializerRegistry serializerRegistry = new FSTSerializerRegistry();
     boolean ignoreAnnotations = false;
-//    final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
+    final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
 
     public FSTClazzInfoRegistry() {
     }
 
     public FSTClazzInfo getCLInfo(Class c) {
-//        rwLock.readLock().lock();
+        rwLock.readLock().lock();
         FSTClazzInfo res = (FSTClazzInfo) mInfos.get(c);
         if ( res == null ) {
             if ( c == null ) {
+                rwLock.readLock().unlock();
                 throw new NullPointerException("Class is null");
             }
             res = new FSTClazzInfo(c, this, ignoreAnnotations);
-//            rwLock.readLock().unlock();
-//            rwLock.writeLock().lock();
+            rwLock.readLock().unlock();
+            rwLock.writeLock().lock();
             mInfos.put( c, res );
-//            rwLock.writeLock().unlock();
+            rwLock.writeLock().unlock();
         } else {
-//            rwLock.readLock().unlock();
+            rwLock.readLock().unlock();
         }
         return res;
     }

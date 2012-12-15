@@ -28,21 +28,21 @@ public class OptimizationExample1 implements Serializable {
     @EqualnessIsIdentity
     class Person implements Serializable {
         @Compress String name;
-        @Compress String prename;
+        @Compress String firstname;
         long makemebigger=7777l;
 
-        Person(String name, String prename) {
+        Person(String name, String firstname) {
             this.name = name;
-            this.prename = prename;
+            this.firstname = firstname;
         }
 
         public int hashCode() {
-            return name.hashCode()^prename.hashCode();
+            return name.hashCode()^firstname.hashCode();
         }
 
         public boolean equals( Object o ) {
             if ( o instanceof Person ) {
-                return ((Person) o).name.equals(name) && ((Person) o).prename.equals(prename);
+                return ((Person) o).name.equals(name) && ((Person) o).firstname.equals(firstname);
             }
             return false;
         }
@@ -51,21 +51,21 @@ public class OptimizationExample1 implements Serializable {
     @EqualnessIsIdentity
     class OtherPerson implements Serializable {
         String name;
-        String prename;
+        String firstname;
         long makemebigger=7777l;
 
-        OtherPerson(String name, String prename) {
+        OtherPerson(String name, String firstname) {
             this.name = name;
-            this.prename = prename;
+            this.firstname = firstname;
         }
 
         public int hashCode() {
-            return name.hashCode()^prename.hashCode();
+            return name.hashCode()^firstname.hashCode();
         }
 
         public boolean equals( Object o ) {
             if ( o instanceof OtherPerson ) {
-                return ((OtherPerson) o).name.equals(name) && ((OtherPerson) o).prename.equals(prename);
+                return ((OtherPerson) o).name.equals(name) && ((OtherPerson) o).firstname.equals(firstname);
             }
             return false;
         }

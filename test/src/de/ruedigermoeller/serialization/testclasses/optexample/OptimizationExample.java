@@ -28,24 +28,24 @@ public class OptimizationExample implements Serializable {
 
     class Person implements Serializable {
         String name;
-        String prename;
+        String firstname;
         long makemebigger=7777l;
 
-        Person(String name, String prename) {
+        Person(String name, String firstname) {
             this.name = name;
-            this.prename = prename;
+            this.firstname = firstname;
         }
 
     }
 
     class OtherPerson implements Serializable {
         String name;
-        String prename;
+        String firstname;
         long makemebigger=7777l;
 
-        OtherPerson(String name, String prename) {
+        OtherPerson(String name, String firstname) {
             this.name = name;
-            this.prename = prename;
+            this.firstname = firstname;
         }
 
     }

@@ -2,6 +2,7 @@ package de.ruedigermoeller.serialization.testclasses.enterprise;
 
 import de.ruedigermoeller.serialization.*;
 import de.ruedigermoeller.serialization.annotations.EqualnessIsIdentity;
+import de.ruedigermoeller.serialization.annotations.Flat;
 
 import java.io.*;
 
@@ -13,6 +14,7 @@ import java.io.*;
  * To change this template use File | Settings | File Templates.
  */
 //@EqualnessIsIdentity <= does not pay off
+@Flat
 public class ObjectOrientedInt implements Serializable {
 
     int value;
