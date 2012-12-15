@@ -15,7 +15,7 @@ import java.util.*;
 @EqualnessIsBinary
 public class SimpleOrder implements Serializable {
 
-    static SimpleOrder generateOrder( int randomSeed ) {
+    public static SimpleOrder generateOrder(int randomSeed) {
         Random rand = new Random(randomSeed);
         return new SimpleOrder(
                 new Date(rand.nextLong()),
