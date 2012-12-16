@@ -98,7 +98,7 @@ public class TestRunner {
         }
 
         public void dumpRes() {
-            System.out.println(title+" : Size:"+length+",  TimeRead: "+(timRead*1000/Run)+" nanos,   TimeWrite: "+(timWrite*1000/Run)+" nanos");
+            System.out.println(title+" : Size:"+length+",  TimeRead: "+(timRead*1000/Run)+" microsec,   TimeWrite: "+(timWrite*1000/Run)+" microsec");
         }
 
         public void runReadTest(Class cl) {
@@ -379,14 +379,14 @@ public class TestRunner {
         }
         charter.closeChart();
 
-        charter.openChart("Read Time (ns)");
+        charter.openChart("Read Time (micros)");
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
             charter.chartBar(test.title, (int)(test.timRead*1000/Run), 2, test.getColor());
         }
         charter.closeChart();
 
-        charter.openChart("Write Time (ns)");
+        charter.openChart("Write Time (micros)");
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
             charter.chartBar(test.title, (int)(test.timWrite*1000/Run), 2, test.getColor());

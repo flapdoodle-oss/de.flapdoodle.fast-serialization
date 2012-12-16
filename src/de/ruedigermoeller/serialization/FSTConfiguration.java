@@ -184,7 +184,7 @@ public final class FSTConfiguration {
     /**
      * for optimization purposes, do not use to benchmark processing time or in a regular program as
      * this methods creates a temporary binaryoutputstream and serializes the object in order to measure the
-     * write time in ns.
+     * write time in micros.
      *
      * give ~50.000 to 100.000 for small objects in order to get accurate results
      * for large objects you can decrease the iterations (give at least 10000)

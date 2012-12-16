@@ -36,10 +36,10 @@ import java.util.Iterator;
 
 /**
  * Core offheap implementation. The offheap is initialized with a fixed size. Multi threaded access is granted using
- * createAccess(). Concurrent read operations perform pretty well (low blocked time), concurrent write is possible but threads probably will be blocked
+ * createAccess(). Concurrent read operations perform ok'ish (low blocked time), concurrent write is possible but threads probably will be blocked
  * often.
  *
- * Objects added need to implement Serializable !!
+ * Objects added to the heap have to implement Serializable !!
  *
  * Use this as a base for higher level collection implementation. In order to get dynamically growing offheaps, consider
  * writing a collection wrapper managing ~1GB slices of FSTOffheap objects.
@@ -58,6 +58,7 @@ import java.util.Iterator;
  */
 public class FSTOffheap {
 
+    public static final int HEADER_SIZE = 8;
     String lock = "Lock";
     ByteBuffer buffer;
     FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
@@ -161,6 +162,41 @@ public class FSTOffheap {
         }
     }
 
+    public static class GetObjectBufferResult {
+        int handle;
+        int len; // len of pure object
+        ByteBuffer buff;
+        Object lock;
+
+        // will point to object start
+        public ByteBuffer slice() {
+            synchronized (lock) {
+                buff.position(handle+ HEADER_SIZE);
+                int prevLimit = buff.limit();
+                buff.limit(handle+ HEADER_SIZE +len);
+                ByteBuffer slice = buff.slice();
+                buff.limit(prevLimit);
+                return slice;
+            }
+        }
+
+        public void slice(byte toCopyTo[], int offset) {
+            synchronized (lock) {
+                buff.position(handle+HEADER_SIZE);
+                buff.get(toCopyTo,offset,len);
+            }
+        }
+
+        public int getPosition() {
+            return handle+ HEADER_SIZE;
+        }
+
+        public int getLen() {
+            return len;
+        }
+
+    }
+
     public class OffHeapAccess {
 
         protected ByteBufferEntry currentEntry = new ByteBufferEntry();
@@ -176,21 +212,29 @@ public class FSTOffheap {
             }
         }
 
-        public byte[] getTmpBuf(int siz) {
+        byte[] getTmpBuf(int siz) {
             if ( tmpBuf == null || tmpBuf.length < siz ) {
                 tmpBuf = new byte[siz];
             }
             return tmpBuf;
         }
 
+        public void getObjectBuffer( int handle, GetObjectBufferResult res ) {
+            res.len = buffer.getInt(handle);
+            buffer.position(handle+ HEADER_SIZE);
+            res.buff = buffer;
+            res.lock = lock;
+        }
+
         public ByteBufferEntry getEntry(int handle) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
-            int len = buffer.getInt(handle);
-            byte[] buf = getTmpBuf(len);
+            currentEntry.length = buffer.getInt(handle);
+            currentEntry.prevPosition = buffer.getInt(handle+4);
+            byte[] buf = getTmpBuf(currentEntry.length);
             synchronized (lock) {
-                buffer.position(handle+4);
+                buffer.position(handle+ HEADER_SIZE);
                 buffer.get(buf);
             }
-            in.resetForReuseUseArray(buf, 0, len);
+            in.resetForReuseUseArray(buf, 0, currentEntry.length);
             return (ByteBufferEntry) in.readObject(ByteBufferEntry.class);
         }
 
@@ -204,23 +248,38 @@ public class FSTOffheap {
             return getEntry(handle).tag;
         }
 
-        public int add(Object toSave, Object tag) throws IOException {
+        int prepareOut(Object toSave, Object tag) throws IOException {
             if ( out == null ) {
                 out = new FSTObjectOutput(conf);
             }
             out.resetForReUse(null);
+            out.writeObject(currentEntry,currentEntry.getClass());
+            return out.getWritten();
+        }
+
+        public int add(Object toSave, Object tag) throws IOException {
+            return add(toSave, tag, false,currPosition);
+        }
+
+        int add(Object toSave, Object tag, boolean preparedOut, int addPosition) throws IOException {
+            if ( out == null ) {
+                out = new FSTObjectOutput(conf);
+            }
+            if ( ! preparedOut ) {
+                prepareOut(toSave,tag);
+            }
             synchronized (lock) {
-                int res = currPosition;
+                // first 4 bytes are length
+                int res = addPosition;
                 currentEntry.content = toSave;
-                currentEntry.prevPosition = lastPosition;
+                buffer.putInt(res,out.getWritten());
+                buffer.putInt(res+4,lastPosition);
                 currentEntry.content = toSave;
                 currentEntry.tag = tag;
                 lastPosition = res;
-                buffer.position(currPosition+4); // length
-                out.writeObject(currentEntry,currentEntry.getClass());
+                buffer.position(addPosition + HEADER_SIZE); // length
                 buffer.put(out.getBuffer(),0,out.getWritten());
                 currPosition = buffer.position();
-                buffer.putInt(res,currPosition-res);
                 return res;
             }
         }
@@ -306,7 +365,8 @@ public class FSTOffheap {
 
     @Predict(ByteBufferEntry.class) @Flat
     static public class ByteBufferEntry implements Serializable {
-        public int prevPosition;
+        transient int length; // pure object length
+        transient int prevPosition;
         public @Conditional Object content;
         public @Flat Object tag;
     }
