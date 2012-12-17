@@ -52,17 +52,14 @@ public class FSTOffheapQueue  {
     int headPosition = 0;
     int tailPosition = 0;
     int currentQeueEnd = 0;
+    int count = 0;
 
     Object rwLock = "QueueRW";
-    Object writeLock = "QueueWriteLock";
-    Object readLock = "QueueReadLock";
-    Semaphore added = new Semaphore(0);
-    Semaphore taken = new Semaphore(0);
+//    Semaphore added = new Semaphore(0);
+//    Semaphore taken = new Semaphore(0);
 
-    FSTObjectOutput out;
-    FSTObjectInput in;
-    byte[] tmpWriteBuf;
-    byte[] tmpReadBuf;
+    ConcurrentWriteContext writer;
+    ConcurrentReadContext reader;
 
     public static class ByteBufferResult {
         public int off;
@@ -78,88 +75,123 @@ public class FSTOffheapQueue  {
     public FSTOffheapQueue(ByteBuffer buffer) throws IOException {
         this.buffer = buffer;
         currentQeueEnd = buffer.limit();
-        out = new FSTObjectOutput(conf);
-        in  = new FSTObjectInput(conf);
+        writer = createConcurrentWriter();
+        reader = createConcurrentReader();
     }
 
-    byte[] getTmpWriteBuf(int siz) {
-        if ( tmpWriteBuf == null || tmpWriteBuf.length < siz ) {
-            tmpWriteBuf = new byte[siz];
-        }
-        return tmpWriteBuf;
-    }
-
-    byte[] getTmpReadBuf(int siz) {
-        if ( tmpReadBuf == null || tmpReadBuf.length < siz ) {
-            tmpReadBuf = new byte[siz];
-        }
-        return tmpReadBuf;
+    public boolean addBytes(byte b[]) throws IOException {
+        int siz = b.length;
+        return addBytes(siz,b);
     }
 
     public boolean add(Object o) throws IOException {
-        synchronized ( writeLock ) {
+        return writer.add(o);
+    }
+
+    public class ConcurrentWriteContext {
+        FSTObjectOutput out = new FSTObjectOutput(conf);
+
+        public boolean add(Object o) throws IOException {
             out.resetForReUse(null);
             out.writeObject(o);
-            boolean full = false;
-            int siz = 0;
-            synchronized (rwLock) {
-                siz = out.getWritten();
-                int pos = 0;
-                if ( siz+tailPosition+HEADER_SIZE >= buffer.limit() ) {
-                    currentQeueEnd = tailPosition;
-                    tailPosition = 0;
+            int siz = out.getWritten();
+            byte[] towrite = out.getBuffer();
+            return addBytes(siz, towrite);
+        }
+    }
+
+    public class ConcurrentReadContext {
+        FSTObjectInput in;
+        ByteBufferResult tmpRes = new ByteBufferResult();
+
+        public ConcurrentReadContext() throws IOException {
+            in = new FSTObjectInput(conf);
+        }
+
+        public Object takeObject(int sizeResult[]) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException{
+            if ( takeBytes(tmpRes) ) {
+                in.resetForReuseUseArray(tmpRes.b,0,tmpRes.b.length);
+                if ( sizeResult != null ) {
+                    sizeResult[0] = tmpRes.b.length;
                 }
-                full = added.availablePermits() > 0;
-                if ( full ) {
-                    if ( tailPosition < headPosition ) {
-                        full = tailPosition+siz >= headPosition;
-                    } else if ( tailPosition > headPosition ){
-                        full = false;
-                    } else {
-                        full = true;
-                    }
+                return in.readObject();
+            }
+            return null;
+        }
+    }
+
+    public ConcurrentWriteContext createConcurrentWriter() {
+        return new ConcurrentWriteContext();
+    }
+
+    public ConcurrentReadContext createConcurrentReader() throws IOException {
+        return new ConcurrentReadContext();
+    }
+
+    private boolean addBytes(int siz, byte[] towrite) {
+        boolean full;
+        synchronized (rwLock) {
+            if ( siz+tailPosition+HEADER_SIZE >= buffer.limit() ) {
+                currentQeueEnd = tailPosition;
+                tailPosition = 0;
+            }
+            full = count > 0;
+            if ( full ) {
+                if ( tailPosition < headPosition ) {
+                    full = tailPosition+siz >= headPosition;
+                } else if ( tailPosition > headPosition ){
+                    full = false;
+                } else {
+                    full = true;
                 }
             }
-            if ( full ) {
-                taken.drainPermits();
+            if (!full) {
+                buffer.putInt(tailPosition, siz);
+                buffer.position(tailPosition + 4);
+                buffer.put(towrite, 0, siz );
+                tailPosition+=siz+HEADER_SIZE;
+                count++;
+                rwLock.notifyAll();
+            } else {
                 try {
-                    taken.acquire();
+                    rwLock.wait();
+                    addBytes(siz,towrite);
                 } catch (InterruptedException e) {
+                    e.printStackTrace();
                     return false;
                 }
             }
-            synchronized (rwLock) {
-                buffer.putInt(tailPosition, siz);
-                buffer.position(tailPosition+4);
-                buffer.put(out.getBuffer(), 0, siz );
-                tailPosition+=siz+HEADER_SIZE;
-            }
-            added.release();
-            return true;
         }
+//        if ( full ) {
+//            taken.drainPermits();
+//            try {
+//                taken.acquire();
+//                addBytes(siz,towrite);
+//            } catch (InterruptedException e) {
+//                return false;
+//            }
+//        }
+        return true;
     }
 
-    ByteBufferResult tmpRes = new ByteBufferResult();
 
-    public Object takeObject() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException{
-        synchronized (readLock) {
-            takeBytes(tmpRes);
-            in.resetForReuseUseArray(tmpRes.b,0,tmpRes.b.length);
-            return in.readObject();
-        }
+    public Object takeObject(int sizeResult[]) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException{
+        return reader.takeObject(sizeResult);
     }
 
     public boolean takeBytes(ByteBufferResult res) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException{
-        synchronized (readLock) {
-            try {
-                added.acquire();
-            } catch (InterruptedException e) {
-                return false;
+        synchronized (rwLock) {
+            if (headPosition == currentQeueEnd ) {
+                headPosition = 0;
             }
-            synchronized (rwLock) {
-                if (headPosition == currentQeueEnd ) {
-                    headPosition = 0;
+            if ( count <= 0 ) {
+                try {
+                    rwLock.wait();
+                } catch (InterruptedException e) {
+                    return false;
                 }
+                return takeBytes(res);
+            } else {
                 res.len = buffer.getInt(headPosition);
                 buffer.position(headPosition+HEADER_SIZE);
                 byte b[] = new byte[res.len];
@@ -168,8 +200,9 @@ public class FSTOffheapQueue  {
                 res.off = 0;
                 res.b = b;
                 headPosition += res.len+HEADER_SIZE;
+                count--;
+                rwLock.notifyAll();
             }
-            taken.release();
         }
         return true;
     }

@@ -3,7 +3,9 @@ package de.ruedigermoeller.heapofftest;
 import de.ruedigermoeller.heapoff.FSTOffHeapMap;
 import de.ruedigermoeller.heapoff.FSTOffheap;
 import de.ruedigermoeller.heapoff.FSTOffheapQueue;
+import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTObjectInput;
+import de.ruedigermoeller.serialization.FSTObjectOutput;
 import de.ruedigermoeller.serialization.testclasses.HtmlCharter;
 import de.ruedigermoeller.serialization.testclasses.basicstuff.SmallThing;
 import de.ruedigermoeller.serialization.testclasses.enterprise.SimpleOrder;
@@ -13,7 +15,6 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -39,7 +40,7 @@ import java.util.concurrent.CountDownLatch;
  * To change this template use File | Settings | File Templates.
  */
 
-// i know i could use junit .. but i just dislike jar jungles ..
+// no junit .. just dislike jar jungles ..
 public class OffHeapTest {
 
     private static final int QTESTIT = 1000000;
@@ -47,21 +48,37 @@ public class OffHeapTest {
     static class QueueWriter extends Thread {
         FSTOffheapQueue queue;
         private final CountDownLatch latch;
-        private final Object toWrite;
+        private Object toWrite;
         private final int iter;
+        private boolean encode = true;
+        FSTOffheapQueue.ConcurrentWriteContext context;
 
 
-        public QueueWriter(FSTOffheapQueue q, CountDownLatch latch, Object toWrite, int iter) {
+        public QueueWriter(FSTOffheapQueue q, CountDownLatch latch, Object toWrite, int iter, boolean enc ) throws IOException {
             queue = q;
             this.latch = latch;
             this.toWrite = toWrite;
             this.iter = iter;
+            encode = enc;
+            context = q.createConcurrentWriter();
+            if ( ! enc ) {
+                FSTObjectOutput out = new FSTObjectOutput(FSTConfiguration.createDefaultConfiguration());
+                out.writeObject(toWrite);
+                byte[] buffer = out.getBuffer();
+                byte tw[] = new byte[out.getWritten()];
+                System.arraycopy(buffer,0,tw,0,out.getWritten());
+                this.toWrite = tw;
+            }
         }
 
         public void run() {
             for (int i = 0; i < iter; i++) {
                 try {
-                    queue.add(toWrite);
+                    if ( encode ) {
+                        context.add(toWrite);
+                    } else {
+                        queue.addBytes((byte[])toWrite);
+                    }
                 } catch (IOException e) {
                     System.exit(-1);
                     e.printStackTrace();
@@ -79,26 +96,32 @@ public class OffHeapTest {
         int toRead = 0;
         int sumread = 0;
         private final CountDownLatch latch;
+        boolean decode = false;
+        FSTOffheapQueue.ConcurrentReadContext context;
 
-        public QueueReader(FSTOffheapQueue q, int toRead, CountDownLatch latch) {
+        public QueueReader(FSTOffheapQueue q, int toRead, CountDownLatch latch, boolean dec) throws IOException {
             queue = q;
             this.toRead = toRead;
             this.latch = latch;
+            this.decode = dec;
+            context = queue.createConcurrentReader();
         }
 
         public void run() {
             FSTOffheapQueue.ByteBufferResult result = new FSTOffheapQueue.ByteBufferResult();
+            int len[] = {0};
             for (int i = 0; i < toRead; i++) {
                 try {
-//                    queue.takeBytes(result);
-                    queue.takeObject();
-                    sumread+=result.len;
+                    if ( decode ) {
+                        context.takeObject(len);
+                        sumread+=len[0];
+                    } else {
+                        queue.takeBytes(result);
+                        sumread+=result.len;
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.exit(-1);
-                }
-                if ( i % 1000 == 9999 ) {
-                    System.out.print("<");
                 }
             }
             latch.countDown();
@@ -112,7 +135,7 @@ public class OffHeapTest {
                 queue.add(o);
             }
             for (int i = 0; i < 1000; i++ ) {
-                String s = (String) queue.takeObject();
+                String s = (String) queue.takeObject(null);
                 if ( ! s.equals("String " + i) ) {
                     throw new RuntimeException("queue bug");
                 }
@@ -121,25 +144,25 @@ public class OffHeapTest {
         System.out.println("qtest ok");
     }
 
-    public static void benchQu(HtmlCharter charter) throws IOException, InterruptedException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-        testQu(charter);
+    public static void benchQu(HtmlCharter charter, int numreader, int numWriter, boolean encwrite, boolean decread ) throws IOException, InterruptedException, IllegalAccessException, ClassNotFoundException, InstantiationException {
         FSTOffheapQueue queue = new FSTOffheapQueue(1);
-        int numreader = 2;
-        int numWriter = 4;
-        CountDownLatch latch = new CountDownLatch(numreader);
+        CountDownLatch latch = new CountDownLatch(numreader+numWriter);
         QueueReader reader[] = new QueueReader[numreader];
         SimpleOrder order = SimpleOrder.generateOrder(13);
-        Trader tra = Trader.generateTrader(13, true);
-        SmallThing thing = new SmallThing();
+
+        charter.openChart("Offheap Queue - "+((encwrite&&!decread)?"writing side.":"reading side.")+" "+numreader+" reader, "+numWriter+" writer. "+QTESTIT+" objects written/read." );
+
+//        Trader tra = Trader.generateTrader(13, true);
+//        SmallThing thing = new SmallThing();
 
         long tim = System.currentTimeMillis();
         for (int i=0; i < numreader; i++) {
-            reader[i] = new QueueReader(queue,QTESTIT/ numreader, latch);
+            reader[i] = new QueueReader(queue,QTESTIT/numreader, latch,decread);
             reader[i].start();
         }
 
         for (int i=0; i < numWriter; i++) {
-            new QueueWriter(queue, latch, order, QTESTIT/numWriter+1 ).start();
+            new QueueWriter(queue, latch, order, QTESTIT/numWriter+1,encwrite ).start();
         }
 
         latch.await();
@@ -149,7 +172,11 @@ public class OffHeapTest {
             QueueReader queueReader = reader[i];
             sumread+=reader[i].sumread;
         }
-        System.out.println("heap queue "+numreader+" reader, "+numWriter+" writer "+QTESTIT+" writes time:"+tim+" obj/sec:"+(QTESTIT/tim)*1000+" MB/Sec "+(sumread/tim)*1000/1000/1000);
+        System.out.println("heap queue "+numreader+" reader, "+numWriter+" writer "+QTESTIT+" writes time:"+tim+" obj/sec:"+(QTESTIT/tim)*1000+" MB read "+(sumread)/1000/1000);
+        charter.chartBar("time", (int) tim, 500, "#a0a0ff");
+        charter.chartBar("obj/sec", (int) (QTESTIT / tim) * 1000, 10000, "#a0ffa0");
+        charter.chartBar("MB/sec", (int) (sumread/tim)*1000/1000/1000,2,"#ffa0a0");
+        charter.closeChart();
     }
 
     public static void benchMap(HtmlCharter charter) throws IOException {
@@ -305,18 +332,25 @@ public class OffHeapTest {
         HtmlCharter charter = new HtmlCharter("./offheap.html");
         charter.openDoc();
 
-//        benchMap(charter);
-//
-//        benchOffHeap(new FSTOffheap(1000), charter, "Direct ByteBuffer" );
-//
-//        RandomAccessFile randomFile = new RandomAccessFile("./mappedfile.bin", "rw");
-//        randomFile.setLength(1000*1000*1000);
-//        FileChannel channel = randomFile.getChannel();
-//        MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 1000 * 1000 * 1000);
-//        benchOffHeap(new FSTOffheap(buf), charter, "Memory mapped File:");
-//        randomFile.close();
+        benchMap(charter);
 
-        benchQu(charter);
+        benchOffHeap(new FSTOffheap(1000), charter, "Direct ByteBuffer" );
+
+        RandomAccessFile randomFile = new RandomAccessFile("./mappedfile.bin", "rw");
+        randomFile.setLength(1000*1000*1000);
+        FileChannel channel = randomFile.getChannel();
+        MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 1000 * 1000 * 1000);
+        benchOffHeap(new FSTOffheap(buf), charter, "Memory mapped File:");
+        randomFile.close();
+
+        testQu(charter);
+        benchQu(charter,1,1,true,false);
+        benchQu(charter,4,1,true,false);
+        benchQu(charter,1,4,true,false);
+
+        benchQu(charter,1,1,false,true);
+        benchQu(charter,4,1,false,true);
+        benchQu(charter,1,4,false,true);
 
         charter.closeDoc();
 //        testOffHeap();
