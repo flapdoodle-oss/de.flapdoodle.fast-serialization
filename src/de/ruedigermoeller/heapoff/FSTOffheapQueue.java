@@ -115,7 +115,7 @@ public class FSTOffheapQueue  {
     public class ConcurrentWriteContext {
         FSTObjectOutput out = new FSTObjectOutput(conf);
 
-        public void addConcurrent(final Object o) throws IOException, ExecutionException {
+        private void addConcurrent(final Object o) throws IOException, ExecutionException {
             exec.addCall(new Callable() {
                 @Override
                 public Object call() throws Exception {
@@ -203,15 +203,6 @@ public class FSTOffheapQueue  {
                 }
             }
         }
-//        if ( full ) {
-//            taken.drainPermits();
-//            try {
-//                taken.acquire();
-//                addBytes(siz,towrite);
-//            } catch (InterruptedException e) {
-//                return false;
-//            }
-//        }
         return true;
     }
 

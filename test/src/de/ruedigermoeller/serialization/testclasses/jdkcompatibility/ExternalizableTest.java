@@ -15,7 +15,7 @@ import java.util.Vector;
  */
 @Predict(ExternalizableTest.ExternalTest.class)
 public class ExternalizableTest implements Serializable {
-    transient Vector test = new Vector();
+    Vector test = new Vector();
     ArrayList<ExternalTest> li = new ArrayList<ExternalTest>();
     ExternalTest ext = new ExternalTest(31);
 
@@ -30,6 +30,7 @@ public class ExternalizableTest implements Serializable {
     static class ExternalTest implements Externalizable {
 
         String pok = "HuckaHuckaHuckaHuckaHuckaHucka";
+        NestedExternalTest nested = new NestedExternalTest(43);
         int i = 34535;
 
         int j = 0;
@@ -45,6 +46,7 @@ public class ExternalizableTest implements Serializable {
         public void writeExternal(ObjectOutput out) throws IOException {
             out.writeInt(i);
             out.writeInt(j);
+            out.writeObject(nested);
         }
 
         @Override
@@ -52,6 +54,36 @@ public class ExternalizableTest implements Serializable {
             i = in.readInt();
             j = in.readInt();
             pok = "HuckaHuckaHuckaHuckaHuckaHucka";
+            nested = (NestedExternalTest) in.readObject();
+        }
+    }
+
+    static class NestedExternalTest implements Externalizable {
+
+        String pok = "X";
+        int i = 22;
+
+        int j = 0;
+
+        public NestedExternalTest() {
+        }
+
+        NestedExternalTest(int j) {
+            this.j = j;
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            out.writeInt(i);
+            out.writeInt(j);
+            out.writeUTF(pok);
+        }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            i = in.readInt();
+            j = in.readInt();
+            pok = in.readUTF();
         }
     }
 

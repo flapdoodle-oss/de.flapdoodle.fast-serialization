@@ -161,9 +161,6 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     }
 
     public void writeObject(Object obj, Class... possibles) throws IOException {
-        if ( curDepth != 0 ) {
-            throw new RuntimeException("not intended to be called from inside serialization. Use internal method instead");
-        }
         curDepth++;
         try {
             if ( possibles != null ) {

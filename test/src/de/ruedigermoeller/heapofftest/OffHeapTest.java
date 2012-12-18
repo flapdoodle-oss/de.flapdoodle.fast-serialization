@@ -79,7 +79,7 @@ public class OffHeapTest {
                 try {
                     if ( encode ) {
                         if (useConc) {
-                            context.addConcurrent(toWrite);
+                            context.add(toWrite);
                         } else {
                             context.add(toWrite);
                         }
@@ -89,7 +89,7 @@ public class OffHeapTest {
                 } catch (IOException e) {
                     System.exit(-1);
                     e.printStackTrace();
-                } catch (ExecutionException e) {
+                } catch (Exception e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
                 if ( i % 1000 == 9999 ) {
@@ -341,26 +341,26 @@ public class OffHeapTest {
         HtmlCharter charter = new HtmlCharter("./offheap.html");
         charter.openDoc();
 
-//        benchMap(charter);
-//
-//        benchOffHeap(new FSTOffheap(1000), charter, "Direct ByteBuffer" );
-//
-//        RandomAccessFile randomFile = new RandomAccessFile("./mappedfile.bin", "rw");
-//        randomFile.setLength(1000*1000*1000);
-//        FileChannel channel = randomFile.getChannel();
-//        MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 1000 * 1000 * 1000);
-//        benchOffHeap(new FSTOffheap(buf), charter, "Memory mapped File:");
-//        randomFile.close();
-//
-//        testQu(charter);
-//        benchQu(charter,1,1,true,false,false);
-        benchQu(charter, 1, 1, true, false, true);
-//        benchQu(charter,4,1,true,false);
-//        benchQu(charter,1,4,true,false);
-//
-//        benchQu(charter,1,1,false,true);
-//        benchQu(charter,4,1,false,true);
-//        benchQu(charter,1,4,false,true);
+        benchMap(charter);
+
+        benchOffHeap(new FSTOffheap(1000), charter, "Direct ByteBuffer" );
+
+        RandomAccessFile randomFile = new RandomAccessFile("./mappedfile.bin", "rw");
+        randomFile.setLength(1000*1000*1000);
+        FileChannel channel = randomFile.getChannel();
+        MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 1000 * 1000 * 1000);
+        benchOffHeap(new FSTOffheap(buf), charter, "Memory mapped File:");
+        randomFile.close();
+
+        testQu(charter);
+        benchQu(charter,1,1,true,false,false);
+//        benchQu(charter, 1, 1, true, false, true);
+        benchQu(charter,4,1,true,false,false);
+        benchQu(charter,1,4,true,false,false);
+
+        benchQu(charter,1,1,false,true,false);
+        benchQu(charter,4,1,false,true,false);
+        benchQu(charter,1,4,false,true,false);
 
         charter.closeDoc();
 //        testOffHeap();
