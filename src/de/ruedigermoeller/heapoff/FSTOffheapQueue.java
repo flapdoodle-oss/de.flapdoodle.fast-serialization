@@ -116,20 +116,20 @@ public class FSTOffheapQueue  {
         FSTObjectOutput out = new FSTObjectOutput(conf);
 
         private void addConcurrent(final Object o) throws IOException, ExecutionException {
-            exec.addCall(new Callable() {
-                @Override
-                public Object call() throws Exception {
-                    FSTObjectOutput out = getCachedOutput();
-                    out.resetForReUse(null);
-                    out.writeObject(o);
-                    return out;
-                }
-            });
-            FSTObjectOutput tmp = (FSTObjectOutput) exec.getResult();
-            int siz = tmp.getWritten();
-            byte[] towrite = tmp.getBuffer();
-            returnOut(tmp);
-            addBytes(siz, towrite);
+//            exec.addCall(new Callable() {
+//                @Override
+//                public Object call() throws Exception {
+//                    FSTObjectOutput out = getCachedOutput();
+//                    out.resetForReUse(null);
+//                    out.writeObject(o);
+//                    return out;
+//                }
+//            });
+//            FSTObjectOutput tmp = (FSTObjectOutput) exec.getResult();
+//            int siz = tmp.getWritten();
+//            byte[] towrite = tmp.getBuffer();
+//            returnOut(tmp);
+//            addBytes(siz, towrite);
         }
 
         public boolean add(Object o) throws IOException {

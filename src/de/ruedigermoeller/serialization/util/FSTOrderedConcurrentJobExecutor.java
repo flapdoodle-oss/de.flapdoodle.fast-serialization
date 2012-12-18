@@ -1,7 +1,6 @@
 package de.ruedigermoeller.serialization.util;
 
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,41 +11,119 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class FSTOrderedConcurrentJobExecutor {
 
-    ExecutorService pool;
-    Future futures[];
-    AtomicInteger curIdx = new AtomicInteger(0), endIdx = new AtomicInteger(0);
-    Semaphore lock;
+    abstract public static class FSTRunnable implements Runnable {
+        Semaphore sem = new Semaphore(1);
+
+        public final void run() {
+            runConcurrent();
+            sem.release();
+        }
+
+        public abstract void runConcurrent();
+        public abstract void runInOrder();
+
+    }
+
+    class OrderedRunnable implements Runnable {
+        FSTRunnable toRun;
+
+        @Override
+        public void run() {
+            try {
+                toRun.sem.acquire();
+                toRun.runInOrder();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                toRun.sem.release();
+                gateway.release();
+            }
+        }
+    }
+
+    ExecutorService pool, orderedPool;
+    FSTRunnable jobs[];
+    OrderedRunnable orderedRunnableCache[];
+    int curIdx = 0;
     private int threads;
+    Semaphore gateway;
 
     public FSTOrderedConcurrentJobExecutor(int threads) {
         this.pool = Executors.newFixedThreadPool(threads);
+        this.orderedPool = Executors.newSingleThreadExecutor();
         this.threads = threads;
-        futures = new Future[threads];
-        lock = new Semaphore(threads);
-    }
-
-    public int addCall(Callable toRun) {
-        try {
-            lock.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        jobs = new FSTRunnable[threads];
+        gateway = new Semaphore(threads);
+        orderedRunnableCache = new OrderedRunnable[threads];
+        for (int i = 0; i < jobs.length; i++) {
+            orderedRunnableCache[i] = new OrderedRunnable();
         }
-        System.out.println(lock.availablePermits());
-        int idx = curIdx.getAndIncrement() % threads;
-        futures[idx] = pool.submit(toRun);
-        return idx;
     }
 
-    public Object getResult() throws ExecutionException {
-        int idx = endIdx.getAndIncrement() % threads;
-        Object res = null;
-        try {
-            res = futures[idx].get();
-        } catch (InterruptedException e) {
-            return null;
+    public void addCall(final FSTRunnable toRun) throws InterruptedException {
+        gateway.acquire();
+        if ( jobs[curIdx] == null ) {
+            jobs[curIdx] = toRun;
+        } else {
+            jobs[curIdx].sem.acquire();
+            jobs[curIdx] = toRun;
         }
-        lock.release();
-        return res;
+
+        toRun.sem.acquire();
+
+        OrderedRunnable ord = orderedRunnableCache[curIdx];
+        ord.toRun = toRun;
+
+        curIdx = (curIdx+1) % threads;
+
+        orderedPool.execute(ord);
+        pool.execute(toRun);
+
     }
 
+    public void waitForFinish() throws InterruptedException {
+        final Semaphore sem = new Semaphore(0);
+        orderedPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                sem.release();
+            }
+        });
+        sem.acquire();
+    }
+
+    public static void main( String args[] ) throws InterruptedException {
+        FSTOrderedConcurrentJobExecutor jex = new FSTOrderedConcurrentJobExecutor(8);
+
+        final long sumtim = System.currentTimeMillis();
+        for ( int i = 0; i < 4; i++) {
+            final int finalI = i;
+            FSTRunnable job = new FSTRunnable() {
+
+                int count = finalI;
+
+                @Override
+                public void runConcurrent() {
+                    long tim = System.currentTimeMillis();
+                    for ( int j=0; j < 99999999; j++ ) {
+                        String s = "asdipo"+j+"oij";
+                        int idx = s.indexOf("oij");
+                        for ( int k=0; k < 1; k++ ) {
+                            String ss = "asdipo"+k+"oij";
+                            idx = s.indexOf("oij");
+                        }
+                    }
+                    System.out.println("tim "+count+" "+(System.currentTimeMillis()-tim));
+                }
+
+                @Override
+                public void runInOrder() {
+                    System.out.println(finalI);
+                }
+            };
+            jex.addCall(job);
+        }
+        jex.waitForFinish();
+        System.out.println("all time " + (System.currentTimeMillis() - sumtim));
+    }
 }
