@@ -33,6 +33,8 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Core offheap implementation. The offheap is initialized with a fixed size. Multi threaded access is granted using
@@ -59,6 +61,7 @@ import java.util.Iterator;
 public class FSTOffheap {
 
     public static final int HEADER_SIZE = 8;
+
     String lock = "Lock";
     ByteBuffer buffer;
     FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();

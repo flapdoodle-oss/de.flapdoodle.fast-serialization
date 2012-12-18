@@ -26,10 +26,13 @@ package de.ruedigermoeller.heapoff;
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTObjectInput;
 import de.ruedigermoeller.serialization.FSTObjectOutput;
+import de.ruedigermoeller.serialization.util.FSTOrderedConcurrentJobExecutor;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.concurrent.Semaphore;
+import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 /**
  * a queue based on off heap memory. The advantage is, that objects are serialized at the time you add them to the queue.
@@ -53,6 +56,10 @@ public class FSTOffheapQueue  {
     int tailPosition = 0;
     int currentQeueEnd = 0;
     int count = 0;
+
+    FSTOrderedConcurrentJobExecutor exec = new FSTOrderedConcurrentJobExecutor(4);
+    ArrayList<FSTObjectOutput> outputs = new ArrayList<FSTObjectOutput>();
+    int outSP = 0;
 
     Object rwLock = "QueueRW";
 //    Semaphore added = new Semaphore(0);
@@ -79,6 +86,23 @@ public class FSTOffheapQueue  {
         reader = createConcurrentReader();
     }
 
+    FSTObjectOutput getCachedOutput() {
+        synchronized (outputs) {
+            if (outputs.size()==0) {
+                return new FSTObjectOutput(conf);
+            }
+            FSTObjectOutput ret = outputs.get(outputs.size()-1);
+            outputs.remove(outputs.size() - 1);
+            return ret;
+        }
+    }
+
+    void returnOut(FSTObjectOutput ou) {
+        synchronized (outputs) {
+            outputs.add(ou);
+        }
+    }
+
     public boolean addBytes(byte b[]) throws IOException {
         int siz = b.length;
         return addBytes(siz,b);
@@ -90,6 +114,23 @@ public class FSTOffheapQueue  {
 
     public class ConcurrentWriteContext {
         FSTObjectOutput out = new FSTObjectOutput(conf);
+
+        public void addConcurrent(final Object o) throws IOException, ExecutionException {
+            exec.addCall(new Callable() {
+                @Override
+                public Object call() throws Exception {
+                    FSTObjectOutput out = getCachedOutput();
+                    out.resetForReUse(null);
+                    out.writeObject(o);
+                    return out;
+                }
+            });
+            FSTObjectOutput tmp = (FSTObjectOutput) exec.getResult();
+            int siz = tmp.getWritten();
+            byte[] towrite = tmp.getBuffer();
+            returnOut(tmp);
+            addBytes(siz, towrite);
+        }
 
         public boolean add(Object o) throws IOException {
             out.resetForReUse(null);
