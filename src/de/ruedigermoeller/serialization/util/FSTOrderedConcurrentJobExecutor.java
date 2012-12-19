@@ -53,7 +53,8 @@ public class FSTOrderedConcurrentJobExecutor {
     Semaphore gateway;
 
     public FSTOrderedConcurrentJobExecutor(int threads) {
-        this.pool = Executors.newFixedThreadPool(threads);
+        threads *= 2;
+        this.pool = Executors.newFixedThreadPool(threads/2);
         this.orderedPool = Executors.newSingleThreadExecutor();
         this.threads = threads;
         jobs = new FSTRunnable[threads];

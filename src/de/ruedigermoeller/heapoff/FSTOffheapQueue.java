@@ -76,11 +76,11 @@ public class FSTOffheapQueue  {
     }
 
     public FSTOffheapQueue(int sizeMB) throws IOException {
-        this( ByteBuffer.allocateDirect(sizeMB*1000*1000), 8);
+        this( ByteBuffer.allocateDirect(sizeMB*1000*1000), 4);
     }
 
     public FSTOffheapQueue(int sizeMB, int numThreads) throws IOException {
-        this( ByteBuffer.allocateDirect(sizeMB*1000*1000), 8);
+        this( ByteBuffer.allocateDirect(sizeMB*1000*1000), 4);
     }
 
     public FSTOffheapQueue(ByteBuffer buffer) throws IOException {
