@@ -12,7 +12,7 @@ import java.util.concurrent.*;
 public class FSTOrderedConcurrentJobExecutor {
 
     abstract public static class FSTRunnable implements Runnable {
-        Semaphore sem = new Semaphore(1);
+        Semaphore sem;
 
         public final void run() {
             runConcurrent();
@@ -44,6 +44,7 @@ public class FSTOrderedConcurrentJobExecutor {
     ExecutorService pool, orderedPool;
     FSTRunnable jobs[];
     OrderedRunnable orderedRunnableCache[];
+    Semaphore sems[];
     int curIdx = 0;
     private int threads;
     Semaphore gateway;
@@ -55,8 +56,10 @@ public class FSTOrderedConcurrentJobExecutor {
         jobs = new FSTRunnable[threads];
         gateway = new Semaphore(threads);
         orderedRunnableCache = new OrderedRunnable[threads];
+        sems = new Semaphore[threads];
         for (int i = 0; i < jobs.length; i++) {
             orderedRunnableCache[i] = new OrderedRunnable();
+            sems[i] = new Semaphore(1);
         }
     }
 
@@ -66,9 +69,11 @@ public class FSTOrderedConcurrentJobExecutor {
             jobs[curIdx] = toRun;
         } else {
             jobs[curIdx].sem.acquire();
+            jobs[curIdx].sem.release();
             jobs[curIdx] = toRun;
         }
 
+        toRun.sem = sems[curIdx];
         toRun.sem.acquire();
 
         OrderedRunnable ord = orderedRunnableCache[curIdx];

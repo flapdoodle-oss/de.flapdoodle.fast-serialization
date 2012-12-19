@@ -44,7 +44,7 @@ import java.util.concurrent.ExecutionException;
 // no junit .. just dislike jar jungles ..
 public class OffHeapTest {
 
-    private static final int QTESTIT = 1000000;
+    private static final int QTESTIT = 2000000;
 
     static class QueueWriter extends Thread {
         FSTOffheapQueue queue;
@@ -79,7 +79,7 @@ public class OffHeapTest {
                 try {
                     if ( encode ) {
                         if (useConc) {
-                            context.add(toWrite);
+                            context.addConcurrent(toWrite);
                         } else {
                             context.add(toWrite);
                         }
@@ -137,7 +137,7 @@ public class OffHeapTest {
         }
     }
     public static void testQu(HtmlCharter charter) throws IOException, InterruptedException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-        FSTOffheapQueue queue = new FSTOffheapQueue(1);
+        FSTOffheapQueue queue = new FSTOffheapQueue(500);
         for ( int j = 0; j < 50; j++ ) {
             for (int i = 0; i < 1000; i++ ) {
                 String o = "String " + i;
@@ -161,7 +161,7 @@ public class OffHeapTest {
 
         charter.openChart("Offheap Queue - "+(useConc?"Conc":"Single")+" - "+((encwrite&&!decread)?"writing side.":"reading side.")+" "+numreader+" reader, "+numWriter+" writer. "+QTESTIT+" objects written/read." );
 
-//        Trader tra = Trader.generateTrader(13, true);
+//        Trader order = Trader.generateTrader(13, true);
 //        SmallThing thing = new SmallThing();
 
         long tim = System.currentTimeMillis();
@@ -341,26 +341,26 @@ public class OffHeapTest {
         HtmlCharter charter = new HtmlCharter("./offheap.html");
         charter.openDoc();
 
-        benchMap(charter);
+//        benchMap(charter);
 
-        benchOffHeap(new FSTOffheap(1000), charter, "Direct ByteBuffer" );
-
-        RandomAccessFile randomFile = new RandomAccessFile("./mappedfile.bin", "rw");
-        randomFile.setLength(1000*1000*1000);
-        FileChannel channel = randomFile.getChannel();
-        MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 1000 * 1000 * 1000);
-        benchOffHeap(new FSTOffheap(buf), charter, "Memory mapped File:");
-        randomFile.close();
+//        benchOffHeap(new FSTOffheap(1000), charter, "Direct ByteBuffer" );
+//
+//        RandomAccessFile randomFile = new RandomAccessFile("./mappedfile.bin", "rw");
+//        randomFile.setLength(1000*1000*1000);
+//        FileChannel channel = randomFile.getChannel();
+//        MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 1000 * 1000 * 1000);
+//        benchOffHeap(new FSTOffheap(buf), charter, "Memory mapped File:");
+//        randomFile.close();
 
         testQu(charter);
         benchQu(charter,1,1,true,false,false);
-//        benchQu(charter, 1, 1, true, false, true);
-        benchQu(charter,4,1,true,false,false);
-        benchQu(charter,1,4,true,false,false);
-
-        benchQu(charter,1,1,false,true,false);
-        benchQu(charter,4,1,false,true,false);
-        benchQu(charter,1,4,false,true,false);
+        benchQu(charter, 1, 1, true, false, true);
+//        benchQu(charter,4,1,true,false,false);
+//        benchQu(charter,1,4,true,false,false);
+//
+//        benchQu(charter,1,1,false,true,false);
+//        benchQu(charter,4,1,false,true,false);
+//        benchQu(charter,1,4,false,true,false);
 
         charter.closeDoc();
 //        testOffHeap();

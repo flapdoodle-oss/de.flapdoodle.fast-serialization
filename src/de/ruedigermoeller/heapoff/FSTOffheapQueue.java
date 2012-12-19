@@ -57,7 +57,7 @@ public class FSTOffheapQueue  {
     int currentQeueEnd = 0;
     int count = 0;
 
-    FSTOrderedConcurrentJobExecutor exec = new FSTOrderedConcurrentJobExecutor(4);
+    FSTOrderedConcurrentJobExecutor exec;
     ArrayList<FSTObjectOutput> outputs = new ArrayList<FSTObjectOutput>();
     int outSP = 0;
 
@@ -76,14 +76,23 @@ public class FSTOffheapQueue  {
     }
 
     public FSTOffheapQueue(int sizeMB) throws IOException {
-        this( ByteBuffer.allocateDirect(sizeMB*1000*1000));
+        this( ByteBuffer.allocateDirect(sizeMB*1000*1000), 4);
+    }
+
+    public FSTOffheapQueue(int sizeMB, int numThreads) throws IOException {
+        this( ByteBuffer.allocateDirect(sizeMB*1000*1000), 4);
     }
 
     public FSTOffheapQueue(ByteBuffer buffer) throws IOException {
+        this(buffer,4);
+    }
+
+    public FSTOffheapQueue(ByteBuffer buffer, int numThreads) throws IOException {
         this.buffer = buffer;
         currentQeueEnd = buffer.limit();
         writer = createConcurrentWriter();
         reader = createConcurrentReader();
+        exec = new FSTOrderedConcurrentJobExecutor(numThreads);
     }
 
     FSTObjectOutput getCachedOutput() {
@@ -115,21 +124,29 @@ public class FSTOffheapQueue  {
     public class ConcurrentWriteContext {
         FSTObjectOutput out = new FSTObjectOutput(conf);
 
-        private void addConcurrent(final Object o) throws IOException, ExecutionException {
-//            exec.addCall(new Callable() {
-//                @Override
-//                public Object call() throws Exception {
-//                    FSTObjectOutput out = getCachedOutput();
-//                    out.resetForReUse(null);
-//                    out.writeObject(o);
-//                    return out;
-//                }
-//            });
-//            FSTObjectOutput tmp = (FSTObjectOutput) exec.getResult();
-//            int siz = tmp.getWritten();
-//            byte[] towrite = tmp.getBuffer();
-//            returnOut(tmp);
-//            addBytes(siz, towrite);
+        public void addConcurrent(final Object o) throws IOException, ExecutionException, InterruptedException {
+            exec.addCall(new FSTOrderedConcurrentJobExecutor.FSTRunnable() {
+                FSTObjectOutput tmp = getCachedOutput();
+//                FSTObjectOutput tmp = new FSTObjectOutput(conf);
+
+                @Override
+                public void runConcurrent() {
+                    tmp.resetForReUse(null);
+                    try {
+                        tmp.writeObject(o);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void runInOrder() {
+                    int siz = tmp.getWritten();
+                    byte[] towrite = tmp.getBuffer();
+                    returnOut(tmp);
+                    addBytes(siz, towrite);
+                }
+            });
         }
 
         public boolean add(Object o) throws IOException {
