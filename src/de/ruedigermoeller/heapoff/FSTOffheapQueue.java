@@ -124,13 +124,26 @@ public class FSTOffheapQueue  {
     public class ConcurrentWriteContext {
         FSTObjectOutput out = new FSTObjectOutput(conf);
 
+        /**
+         * perform multi threaded encoding. Note that depending on object size, you need up to 4 threads in order
+         * to break even. If complex objects are added to the queue you'll need fewer threads to break even.
+         * Scales well with multicore/hyperthreaded intel cpu's. The order of add's is still maintained, however
+         * encoding is done concurrent.
+         *
+         * It has been tested, that with 8 threads on multicore servers a speed up of up to 400% is possible.
+         * @param o
+         * @throws IOException
+         * @throws ExecutionException
+         * @throws InterruptedException
+         */
         public void addConcurrent(final Object o) throws IOException, ExecutionException, InterruptedException {
             exec.addCall(new FSTOrderedConcurrentJobExecutor.FSTRunnable() {
-                FSTObjectOutput tmp = getCachedOutput();
+                FSTObjectOutput tmp;
 //                FSTObjectOutput tmp = new FSTObjectOutput(conf);
 
                 @Override
                 public void runConcurrent() {
+                    tmp = getCachedOutput();
                     tmp.resetForReUse(null);
                     try {
                         tmp.writeObject(o);
