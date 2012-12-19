@@ -13,12 +13,15 @@ public class FSTOrderedConcurrentJobExecutor {
 
     abstract public static class FSTRunnable implements Runnable {
         Semaphore sem;
+        FSTRunnable next;
 
         public final void run() {
+            initThread();
             runConcurrent();
             sem.release();
         }
 
+        public abstract void initThread();
         public abstract void runConcurrent();
         public abstract void runInOrder();
 
@@ -106,6 +109,11 @@ public class FSTOrderedConcurrentJobExecutor {
             FSTRunnable job = new FSTRunnable() {
 
                 int count = finalI;
+
+                @Override
+                public void initThread() {
+
+                }
 
                 @Override
                 public void runConcurrent() {

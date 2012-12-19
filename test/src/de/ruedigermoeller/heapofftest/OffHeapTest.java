@@ -44,7 +44,7 @@ import java.util.concurrent.ExecutionException;
 // no junit .. just dislike jar jungles ..
 public class OffHeapTest {
 
-    private static final int QTESTIT = 2000000;
+    private static final int QTESTIT = 1000000;
 
     static class QueueWriter extends Thread {
         FSTOffheapQueue queue;
@@ -154,7 +154,7 @@ public class OffHeapTest {
     }
 
     public static void benchQu(HtmlCharter charter, int numreader, int numWriter, boolean encwrite, boolean decread, boolean useConc) throws IOException, InterruptedException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-        FSTOffheapQueue queue = new FSTOffheapQueue(1);
+        FSTOffheapQueue queue = new FSTOffheapQueue(50);
         CountDownLatch latch = new CountDownLatch(numreader+numWriter);
         QueueReader reader[] = new QueueReader[numreader];
         SimpleOrder order = SimpleOrder.generateOrder(13);
@@ -353,15 +353,15 @@ public class OffHeapTest {
 //        randomFile.close();
 
         testQu(charter);
-        benchQu(charter,1,1,true,false,false);
-        benchQu(charter, 1, 1, true, false, true);
-//        benchQu(charter,4,1,true,false,false);
-//        benchQu(charter,1,4,true,false,false);
+        for (int i = 0; i < 2; i++ ) {
+            benchQu(charter,1,1,true,false,i==1);
+            benchQu(charter,4,1,true,false,i==1);
+            benchQu(charter,1,4,true,false,i==1);
 //
-//        benchQu(charter,1,1,false,true,false);
-//        benchQu(charter,4,1,false,true,false);
-//        benchQu(charter,1,4,false,true,false);
-
+        }
+        benchQu(charter,1,1,false,true,false);
+        benchQu(charter,4,1,false,true,false);
+        benchQu(charter,1,4,false,true,false);
         charter.closeDoc();
 //        testOffHeap();
     }

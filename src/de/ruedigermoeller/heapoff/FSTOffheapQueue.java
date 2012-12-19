@@ -76,11 +76,11 @@ public class FSTOffheapQueue  {
     }
 
     public FSTOffheapQueue(int sizeMB) throws IOException {
-        this( ByteBuffer.allocateDirect(sizeMB*1000*1000), 4);
+        this( ByteBuffer.allocateDirect(sizeMB*1000*1000), 8);
     }
 
     public FSTOffheapQueue(int sizeMB, int numThreads) throws IOException {
-        this( ByteBuffer.allocateDirect(sizeMB*1000*1000), 4);
+        this( ByteBuffer.allocateDirect(sizeMB*1000*1000), 8);
     }
 
     public FSTOffheapQueue(ByteBuffer buffer) throws IOException {
@@ -137,29 +137,35 @@ public class FSTOffheapQueue  {
          * @throws InterruptedException
          */
         public void addConcurrent(final Object o) throws IOException, ExecutionException, InterruptedException {
-            exec.addCall(new FSTOrderedConcurrentJobExecutor.FSTRunnable() {
-                FSTObjectOutput tmp;
-//                FSTObjectOutput tmp = new FSTObjectOutput(conf);
+            synchronized (exec) {
+                exec.addCall(new FSTOrderedConcurrentJobExecutor.FSTRunnable() {
+                    FSTObjectOutput tmp;
+    //                FSTObjectOutput tmp = new FSTObjectOutput(conf);
 
-                @Override
-                public void runConcurrent() {
-                    tmp = getCachedOutput();
-                    tmp.resetForReUse(null);
-                    try {
-                        tmp.writeObject(o);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    @Override
+                    public void initThread() {
+                        tmp = getCachedOutput();
                     }
-                }
 
-                @Override
-                public void runInOrder() {
-                    int siz = tmp.getWritten();
-                    byte[] towrite = tmp.getBuffer();
-                    returnOut(tmp);
-                    addBytes(siz, towrite);
-                }
-            });
+                    @Override
+                    public void runConcurrent() {
+                        tmp.resetForReUse(null);
+                        try {
+                            tmp.writeObject(o);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void runInOrder() {
+                        int siz = tmp.getWritten();
+                        byte[] towrite = tmp.getBuffer();
+                        returnOut(tmp);
+                        addBytes(siz, towrite);
+                    }
+                });
+            }
         }
 
         public boolean add(Object o) throws IOException {
