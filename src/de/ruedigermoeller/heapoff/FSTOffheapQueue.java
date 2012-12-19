@@ -127,7 +127,7 @@ public class FSTOffheapQueue  {
         /**
          * perform multi threaded encoding. Note that depending on object size, you need up to 4 threads in order
          * to break even. If complex objects are added to the queue you'll need fewer threads to break even.
-         * Scales well with multicore/hyperthreaded intel cpu's. The order of add's is still maintained, however
+         * Scales well with multicore/hyperthreaded intel cpu's. The order of add's is kept (fifo), only
          * encoding is done concurrent.
          *
          * It has been tested, that with 8 threads on multicore servers a speed up of up to 400% is possible.

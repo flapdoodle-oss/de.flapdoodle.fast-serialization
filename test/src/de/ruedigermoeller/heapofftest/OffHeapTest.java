@@ -154,7 +154,7 @@ public class OffHeapTest {
     }
 
     public static void benchQu(HtmlCharter charter, int numreader, int numWriter, boolean encwrite, boolean decread, boolean useConc) throws IOException, InterruptedException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-        FSTOffheapQueue queue = new FSTOffheapQueue(50);
+        FSTOffheapQueue queue = new FSTOffheapQueue(50,4);
         CountDownLatch latch = new CountDownLatch(numreader+numWriter);
         QueueReader reader[] = new QueueReader[numreader];
         SimpleOrder order = SimpleOrder.generateOrder(13);
