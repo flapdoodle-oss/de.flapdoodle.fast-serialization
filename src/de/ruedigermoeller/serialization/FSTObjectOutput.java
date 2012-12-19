@@ -1200,10 +1200,10 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
             @Override
             public void defaultWriteObject() throws IOException {
-                FSTClazzInfo newInfo = clinfo;//FIXME: only fields of current subclass
+                FSTClazzInfo newInfo = clinfo;
                 Object replObj = toWrite;
                 if ( newInfo.getWriteReplaceMethod() != null ) {
-                    System.out.println("WARNING: WRITE REPLACE NOT SUPPORTED");
+                    System.out.println("WARNING: WRITE REPLACE NOT FULLY SUPPORTED");
                     try {
                         Object replaced = newInfo.getWriteReplaceMethod().invoke(replObj);
                         if ( replaced != null && replaced != toWrite ) {

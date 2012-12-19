@@ -31,6 +31,8 @@ import de.ruedigermoeller.serialization.util.FSTOrderedConcurrentJobExecutor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
@@ -41,7 +43,8 @@ import java.util.concurrent.ExecutionException;
  *  - queues do not suck CPU indirectly by being subject to garbage collection
  *  - if a message is added to multiple queues, you actually serialize this message once, then copy the resulting bytes
  *  - its easier to control network message size, as you already know the size of a serialized object
- *  - easy recovery in case you use memory mapped files
+ *  - recovery in case you use memory mapped files (additional work requrired)
+ *  - concurrent encoding/decoding to make use of multicore cpus
  *
  *  Once a message is sent to a client, a bunch of bytes is taken from the queue.
  *
@@ -58,15 +61,30 @@ public class FSTOffheapQueue  {
     int count = 0;
 
     FSTOrderedConcurrentJobExecutor exec;
+    BlockingQueue resQueue;
     ArrayList<FSTObjectOutput> outputs = new ArrayList<FSTObjectOutput>();
-    int outSP = 0;
 
     Object rwLock = "QueueRW";
-//    Semaphore added = new Semaphore(0);
-//    Semaphore taken = new Semaphore(0);
 
     ConcurrentWriteContext writer;
     ConcurrentReadContext reader;
+
+    boolean terminatePrefetch = false;
+    private boolean prefetcherAlive = false;
+    Thread prefetcher = new Thread("prefetch") {
+        public void run() {
+            while (!terminatePrefetch) {
+                try {
+                    preFetch();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            synchronized (rwLock) {
+                prefetcherAlive = false;
+            }
+        }
+    };
 
     public static class ByteBufferResult {
         public int off;
@@ -93,6 +111,7 @@ public class FSTOffheapQueue  {
         writer = createConcurrentWriter();
         reader = createConcurrentReader();
         exec = new FSTOrderedConcurrentJobExecutor(numThreads);
+        resQueue = new ArrayBlockingQueue(numThreads*2);
     }
 
     FSTObjectOutput getCachedOutput() {
@@ -109,6 +128,19 @@ public class FSTOffheapQueue  {
     void returnOut(FSTObjectOutput ou) {
         synchronized (outputs) {
             outputs.add(ou);
+        }
+    }
+
+    void startPrefetch() {
+        if ( prefetcherAlive ) {
+            return;
+        }
+        synchronized (rwLock) {
+            terminatePrefetch = false;
+            if ( !prefetcherAlive ) {
+                prefetcherAlive = true;
+                prefetcher.start();
+            }
         }
     }
 
@@ -130,7 +162,7 @@ public class FSTOffheapQueue  {
          * Scales well with multicore/hyperthreaded intel cpu's. The order of add's is kept (fifo), only
          * encoding is done concurrent.
          *
-         * It has been tested, that with 8 threads on multicore servers a speed up of up to 400% is possible.
+         * It has been tested, that with 8 threads on multicore servers a speed up of > 400% is possible.
          * @param o
          * @throws IOException
          * @throws ExecutionException
@@ -140,10 +172,9 @@ public class FSTOffheapQueue  {
             synchronized (exec) {
                 exec.addCall(new FSTOrderedConcurrentJobExecutor.FSTRunnable() {
                     FSTObjectOutput tmp;
-    //                FSTObjectOutput tmp = new FSTObjectOutput(conf);
 
                     @Override
-                    public void initThread() {
+                    public void runBefore() {
                         tmp = getCachedOutput();
                     }
 
@@ -177,12 +208,21 @@ public class FSTOffheapQueue  {
         }
     }
 
+    public void waitForFinish() throws InterruptedException {
+        exec.waitForFinish();
+    }
+
     public class ConcurrentReadContext {
         FSTObjectInput in;
         ByteBufferResult tmpRes = new ByteBufferResult();
 
         public ConcurrentReadContext() throws IOException {
             in = new FSTObjectInput(conf);
+        }
+
+        public Object takeObjectConcurrent() throws InterruptedException {
+            startPrefetch();
+            return resQueue.take();
         }
 
         public Object takeObject(int sizeResult[]) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException{
@@ -203,6 +243,52 @@ public class FSTOffheapQueue  {
 
     public ConcurrentReadContext createConcurrentReader() throws IOException {
         return new ConcurrentReadContext();
+    }
+
+    void preFetch() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException, InterruptedException {
+        final ByteBufferResult res = new ByteBufferResult();
+        if ( takeBytes(res) ) {
+            exec.addCall(new FSTOrderedConcurrentJobExecutor.FSTRunnable() {
+                ThreadLocal<FSTObjectInput> thinp = new ThreadLocal<FSTObjectInput>();
+                FSTObjectInput inp;
+                Object result;
+
+                @Override
+                public void runBefore() {
+                }
+
+                @Override
+                public void runConcurrent() {
+                    inp = thinp.get();
+                    if ( inp == null ) {
+                        try {
+                            thinp.set(inp=new FSTObjectInput(conf));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    try {
+                        inp.resetForReuseUseArray(res.b,0,res.b.length);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        result = inp.readObject();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                @Override
+                public void runInOrder() {
+                    try {
+                        resQueue.put(result);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        }
     }
 
     private boolean addBytes(int siz, byte[] towrite) {

@@ -136,8 +136,9 @@ public class OffHeapTest {
             latch.countDown();
         }
     }
-    public static void testQu(HtmlCharter charter) throws IOException, InterruptedException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-        FSTOffheapQueue queue = new FSTOffheapQueue(500);
+    public static void testQu(HtmlCharter charter) throws IOException, InterruptedException, InstantiationException, IllegalAccessException, ClassNotFoundException, ExecutionException {
+        FSTOffheapQueue queue = new FSTOffheapQueue(500,2);
+        long tim = System.currentTimeMillis();
         for ( int j = 0; j < 50; j++ ) {
             for (int i = 0; i < 1000; i++ ) {
                 String o = "String " + i;
@@ -150,6 +151,43 @@ public class OffHeapTest {
                 }
             }
         }
+        tim = System.currentTimeMillis()-tim;
+        System.out.println("S-S "+tim);
+        queue = new FSTOffheapQueue(500,2);
+        FSTOffheapQueue.ConcurrentWriteContext concurrentWriter = queue.createConcurrentWriter();
+        tim = System.currentTimeMillis();
+        for ( int j = 0; j < 50; j++ ) {
+            for (int i = 0; i < 1000; i++ ) {
+                String o = "String " + i;
+                concurrentWriter.addConcurrent(o);
+            }
+            for (int i = 0; i < 1000; i++ ) {
+                String s = (String) queue.takeObject(null);
+                if ( ! s.equals("String " + i) ) {
+                    System.out.println("queue bug conc write '"+s+"' expect '"+"String " + i+"'");
+                }
+            }
+        }
+        tim = System.currentTimeMillis()-tim;
+        System.out.println("C-S "+tim);
+        queue = new FSTOffheapQueue(500,2);
+        FSTOffheapQueue.ConcurrentReadContext concurrentReader = queue.createConcurrentReader();
+        tim = System.currentTimeMillis();
+        for ( int j = 0; j < 50; j++ ) {
+            for (int i = 0; i < 1000; i++ ) {
+                String o = "String " + i;
+                queue.add(o);
+            }
+            for (int i = 0; i < 1000; i++ ) {
+                String s = (String) concurrentReader.takeObjectConcurrent();
+                if ( ! s.equals("String " + i) ) {
+                    throw new RuntimeException("queue bug");
+                }
+            }
+        }
+        tim = System.currentTimeMillis()-tim;
+        System.out.println("S-C "+tim);
+        tim = System.currentTimeMillis();
         System.out.println("qtest ok");
     }
 
@@ -337,7 +375,7 @@ public class OffHeapTest {
         charter.closeChart();
     }
 
-    public static void main( String arg[]) throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException {
+    public static void main( String arg[]) throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException, ExecutionException {
         HtmlCharter charter = new HtmlCharter("./offheap.html");
         charter.openDoc();
 
@@ -355,12 +393,12 @@ public class OffHeapTest {
         testQu(charter);
         for (int i = 0; i < 2; i++ ) {
             benchQu(charter,1,1,true,false,i==1);
-            benchQu(charter,4,1,true,false,i==1);
+            benchQu(charter,2,2,true,false,i==1);
             benchQu(charter,1,4,true,false,i==1);
 //
         }
         benchQu(charter,1,1,false,true,false);
-        benchQu(charter,4,1,false,true,false);
+        benchQu(charter,2,2,false,true,false);
         benchQu(charter,1,4,false,true,false);
         charter.closeDoc();
 //        testOffHeap();

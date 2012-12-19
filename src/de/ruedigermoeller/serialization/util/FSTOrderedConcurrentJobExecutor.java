@@ -16,12 +16,12 @@ public class FSTOrderedConcurrentJobExecutor {
         FSTRunnable next;
 
         public final void run() {
-            initThread();
+            runBefore();
             runConcurrent();
             sem.release();
         }
 
-        public abstract void initThread();
+        public abstract void runBefore();
         public abstract void runConcurrent();
         public abstract void runInOrder();
 
@@ -101,6 +101,10 @@ public class FSTOrderedConcurrentJobExecutor {
         sem.acquire();
     }
 
+    public int getNumThreads() {
+        return sems.length/2;
+    }
+
     public static void main( String args[] ) throws InterruptedException {
         FSTOrderedConcurrentJobExecutor jex = new FSTOrderedConcurrentJobExecutor(8);
 
@@ -112,7 +116,7 @@ public class FSTOrderedConcurrentJobExecutor {
                 int count = finalI;
 
                 @Override
-                public void initThread() {
+                public void runBefore() {
 
                 }
 
