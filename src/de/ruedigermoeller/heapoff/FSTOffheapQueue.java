@@ -31,10 +31,7 @@ import de.ruedigermoeller.serialization.util.FSTOrderedConcurrentJobExecutor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
 /**
  * a queue based on off heap memory. The advantage is, that objects are serialized at the time you add them to the queue.
@@ -111,7 +108,7 @@ public class FSTOffheapQueue  {
         writer = createConcurrentWriter();
         reader = createConcurrentReader();
         exec = new FSTOrderedConcurrentJobExecutor(numThreads);
-        resQueue = new ArrayBlockingQueue(numThreads*2);
+        resQueue = new LinkedBlockingQueue(numThreads*2);
     }
 
     FSTObjectOutput getCachedOutput() {
@@ -153,51 +150,55 @@ public class FSTOffheapQueue  {
         return writer.add(o);
     }
 
+    /**
+     * perform multi threaded encoding. Note that depending on object size, you need up to 4 threads in order
+     * to break even. If complex objects are added to the queue you'll need fewer threads to break even.
+     * Scales well with multicore/hyperthreaded intel cpu's. The order of add's is kept (fifo), only
+     * encoding is done concurrent.
+     *
+     * It has been tested, that with 8 threads on multicore servers a speed up of > 400% is possible.
+     * @param o
+     * @throws IOException
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public void addConcurrent(final Object o) throws IOException, ExecutionException, InterruptedException {
+        synchronized (exec) {
+            exec.addCall(new FSTOrderedConcurrentJobExecutor.FSTRunnable() {
+                FSTObjectOutput tmp;
+
+                @Override
+                public void threadInit() {
+                    tmp = getCachedOutput();
+                }
+
+                @Override
+                public void runConcurrent() {
+                    tmp.resetForReUse(null);
+                    try {
+                        tmp.writeObject(o);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void runInOrder() {
+                    int siz = tmp.getWritten();
+                    byte[] towrite = tmp.getBuffer();
+                    addBytes(siz, towrite);
+                    returnOut(tmp);
+                }
+            });
+        }
+    }
+
+    public void waitForFinish() throws InterruptedException {
+        exec.waitForFinish();
+    }
+
     public class ConcurrentWriteContext {
         FSTObjectOutput out = new FSTObjectOutput(conf);
-
-        /**
-         * perform multi threaded encoding. Note that depending on object size, you need up to 4 threads in order
-         * to break even. If complex objects are added to the queue you'll need fewer threads to break even.
-         * Scales well with multicore/hyperthreaded intel cpu's. The order of add's is kept (fifo), only
-         * encoding is done concurrent.
-         *
-         * It has been tested, that with 8 threads on multicore servers a speed up of > 400% is possible.
-         * @param o
-         * @throws IOException
-         * @throws ExecutionException
-         * @throws InterruptedException
-         */
-        public void addConcurrent(final Object o) throws IOException, ExecutionException, InterruptedException {
-            synchronized (exec) {
-                exec.addCall(new FSTOrderedConcurrentJobExecutor.FSTRunnable() {
-                    FSTObjectOutput tmp;
-
-                    @Override
-                    public void runBefore() {
-                        tmp = getCachedOutput();
-                    }
-
-                    @Override
-                    public void runConcurrent() {
-                        tmp.resetForReUse(null);
-                        try {
-                            tmp.writeObject(o);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void runInOrder() {
-                        int siz = tmp.getWritten();
-                        byte[] towrite = tmp.getBuffer();
-                        returnOut(tmp);
-                        addBytes(siz, towrite);
-                    }
-                });
-            }
-        }
 
         public boolean add(Object o) throws IOException {
             out.resetForReUse(null);
@@ -208,21 +209,12 @@ public class FSTOffheapQueue  {
         }
     }
 
-    public void waitForFinish() throws InterruptedException {
-        exec.waitForFinish();
-    }
-
     public class ConcurrentReadContext {
         FSTObjectInput in;
         ByteBufferResult tmpRes = new ByteBufferResult();
 
         public ConcurrentReadContext() throws IOException {
             in = new FSTObjectInput(conf);
-        }
-
-        public Object takeObjectConcurrent() throws InterruptedException {
-            startPrefetch();
-            return resQueue.take();
         }
 
         public Object takeObject(int sizeResult[]) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException{
@@ -245,20 +237,17 @@ public class FSTOffheapQueue  {
         return new ConcurrentReadContext();
     }
 
+    final ByteBufferResult prefBuff = new ByteBufferResult();
     void preFetch() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException, InterruptedException {
-        final ByteBufferResult res = new ByteBufferResult();
-        if ( takeBytes(res) ) {
+        if ( takeBytes(prefBuff) ) {
+            final byte[] b = prefBuff.b;
             exec.addCall(new FSTOrderedConcurrentJobExecutor.FSTRunnable() {
                 ThreadLocal<FSTObjectInput> thinp = new ThreadLocal<FSTObjectInput>();
                 FSTObjectInput inp;
                 Object result;
 
                 @Override
-                public void runBefore() {
-                }
-
-                @Override
-                public void runConcurrent() {
+                public void threadInit() {
                     inp = thinp.get();
                     if ( inp == null ) {
                         try {
@@ -267,8 +256,12 @@ public class FSTOffheapQueue  {
                             throw new RuntimeException(e);
                         }
                     }
+                }
+
+                @Override
+                public void runConcurrent() {
                     try {
-                        inp.resetForReuseUseArray(res.b,0,res.b.length);
+                        inp.resetForReuseUseArray(b,0, b.length);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -328,9 +321,13 @@ public class FSTOffheapQueue  {
         return true;
     }
 
-
     public Object takeObject(int sizeResult[]) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException{
         return reader.takeObject(sizeResult);
+    }
+
+    public Object takeObjectConcurrent() throws InterruptedException {
+        startPrefetch();
+        return resQueue.take();
     }
 
     public boolean takeBytes(ByteBufferResult res) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException{
@@ -338,14 +335,17 @@ public class FSTOffheapQueue  {
             if (headPosition == currentQeueEnd ) {
                 headPosition = 0;
             }
-            if ( count <= 0 ) {
+            while ( count <= 0 ) {
                 try {
                     rwLock.wait();
                 } catch (InterruptedException e) {
                     return false;
                 }
-                return takeBytes(res);
-            } else {
+                if (headPosition == currentQeueEnd ) {
+                    headPosition = 0;
+                }
+            }
+            {
                 res.len = buffer.getInt(headPosition);
                 buffer.position(headPosition+HEADER_SIZE);
                 byte b[] = new byte[res.len];

@@ -16,12 +16,12 @@ public class FSTOrderedConcurrentJobExecutor {
         FSTRunnable next;
 
         public final void run() {
-            runBefore();
+            threadInit();
             runConcurrent();
             sem.release();
         }
 
-        public abstract void runBefore();
+        public abstract void threadInit();
         public abstract void runConcurrent();
         public abstract void runInOrder();
 
@@ -116,7 +116,7 @@ public class FSTOrderedConcurrentJobExecutor {
                 int count = finalI;
 
                 @Override
-                public void runBefore() {
+                public void threadInit() {
 
                 }
 

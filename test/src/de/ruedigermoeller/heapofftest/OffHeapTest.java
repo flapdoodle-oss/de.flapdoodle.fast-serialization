@@ -79,7 +79,7 @@ public class OffHeapTest {
                 try {
                     if ( encode ) {
                         if (useConc) {
-                            context.addConcurrent(toWrite);
+                            queue.addConcurrent(toWrite);
                         } else {
                             context.add(toWrite);
                         }
@@ -107,13 +107,15 @@ public class OffHeapTest {
         private final CountDownLatch latch;
         boolean decode = false;
         FSTOffheapQueue.ConcurrentReadContext context;
+        boolean conc;
 
-        public QueueReader(FSTOffheapQueue q, int toRead, CountDownLatch latch, boolean dec) throws IOException {
+        public QueueReader(FSTOffheapQueue q, int toRead, CountDownLatch latch, boolean dec, boolean useConc) throws IOException {
             queue = q;
             this.toRead = toRead;
             this.latch = latch;
             this.decode = dec;
             context = queue.createConcurrentReader();
+            conc = useConc;
         }
 
         public void run() {
@@ -122,8 +124,12 @@ public class OffHeapTest {
             for (int i = 0; i < toRead; i++) {
                 try {
                     if ( decode ) {
-                        context.takeObject(len);
-                        sumread+=len[0];
+                        if ( conc ) {
+                            queue.takeObjectConcurrent();
+                        } else {
+                            context.takeObject(len);
+                            sumread+=len[0];
+                        }
                     } else {
                         queue.takeBytes(result);
                         sumread+=result.len;
@@ -137,61 +143,76 @@ public class OffHeapTest {
         }
     }
     public static void testQu(HtmlCharter charter) throws IOException, InterruptedException, InstantiationException, IllegalAccessException, ClassNotFoundException, ExecutionException {
-        FSTOffheapQueue queue = new FSTOffheapQueue(500,2);
+        String str ="slkdflskdenlekldkmlsdklsdkfmsldkmflkemclekmclsdkmclseoijowijowidjwoeidjwoeidjlkdscfjvbfknösdcmsldkcm";
+        str += str;str += str;str += str;str += str;str += str;str += str;str += str;
+        FSTOffheapQueue queue = new FSTOffheapQueue(500,4);
         long tim = System.currentTimeMillis();
         for ( int j = 0; j < 50; j++ ) {
             for (int i = 0; i < 1000; i++ ) {
-                String o = "String " + i;
+                String o = str+"String " + i;
                 queue.add(o);
             }
             for (int i = 0; i < 1000; i++ ) {
                 String s = (String) queue.takeObject(null);
-                if ( ! s.equals("String " + i) ) {
+                if ( ! s.endsWith("String " + i) ) {
                     throw new RuntimeException("queue bug");
                 }
             }
         }
         tim = System.currentTimeMillis()-tim;
         System.out.println("S-S "+tim);
-        queue = new FSTOffheapQueue(500,2);
-        FSTOffheapQueue.ConcurrentWriteContext concurrentWriter = queue.createConcurrentWriter();
+        queue = new FSTOffheapQueue(500,4);
         tim = System.currentTimeMillis();
         for ( int j = 0; j < 50; j++ ) {
             for (int i = 0; i < 1000; i++ ) {
-                String o = "String " + i;
-                concurrentWriter.addConcurrent(o);
+                String o = str+"String " + i;
+                queue.addConcurrent(o);
             }
             for (int i = 0; i < 1000; i++ ) {
                 String s = (String) queue.takeObject(null);
-                if ( ! s.equals("String " + i) ) {
+                if ( ! s.endsWith("String " + i) ) {
                     System.out.println("queue bug conc write '"+s+"' expect '"+"String " + i+"'");
                 }
             }
         }
         tim = System.currentTimeMillis()-tim;
         System.out.println("C-S "+tim);
-        queue = new FSTOffheapQueue(500,2);
-        FSTOffheapQueue.ConcurrentReadContext concurrentReader = queue.createConcurrentReader();
+        queue = new FSTOffheapQueue(500,4);
         tim = System.currentTimeMillis();
         for ( int j = 0; j < 50; j++ ) {
             for (int i = 0; i < 1000; i++ ) {
-                String o = "String " + i;
+                String o = str+"String " + i;
                 queue.add(o);
             }
             for (int i = 0; i < 1000; i++ ) {
-                String s = (String) concurrentReader.takeObjectConcurrent();
-                if ( ! s.equals("String " + i) ) {
+                String s = (String) queue.takeObjectConcurrent();
+                if ( ! s.endsWith("String " + i) ) {
                     throw new RuntimeException("queue bug");
                 }
             }
         }
         tim = System.currentTimeMillis()-tim;
         System.out.println("S-C "+tim);
+        queue = new FSTOffheapQueue(500,4);
         tim = System.currentTimeMillis();
+        for ( int j = 0; j < 50; j++ ) {
+            for (int i = 0; i < 1000; i++ ) {
+                String o = str+"String " + i;
+                queue.addConcurrent(o);
+            }
+            for (int i = 0; i < 1000; i++ ) {
+                String s = (String) queue.takeObjectConcurrent();
+                if ( ! s.endsWith("String " + i) ) {
+                    throw new RuntimeException("queue bug");
+                }
+            }
+        }
+        tim = System.currentTimeMillis()-tim;
+        System.out.println("C-C "+tim);
         System.out.println("qtest ok");
     }
 
-    public static void benchQu(HtmlCharter charter, int numreader, int numWriter, boolean encwrite, boolean decread, boolean useConc) throws IOException, InterruptedException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+    public static void benchQu(HtmlCharter charter, int numreader, int numWriter, boolean encwrite, boolean decread, boolean useConc, boolean concread) throws IOException, InterruptedException, IllegalAccessException, ClassNotFoundException, InstantiationException {
         FSTOffheapQueue queue = new FSTOffheapQueue(50,4);
         CountDownLatch latch = new CountDownLatch(numreader+numWriter);
         QueueReader reader[] = new QueueReader[numreader];
@@ -204,7 +225,7 @@ public class OffHeapTest {
 
         long tim = System.currentTimeMillis();
         for (int i=0; i < numreader; i++) {
-            reader[i] = new QueueReader(queue,QTESTIT/numreader, latch,decread);
+            reader[i] = new QueueReader(queue,QTESTIT/numreader, latch,decread, concread);
             reader[i].start();
         }
 
@@ -390,16 +411,17 @@ public class OffHeapTest {
 //        benchOffHeap(new FSTOffheap(buf), charter, "Memory mapped File:");
 //        randomFile.close();
 
-        testQu(charter);
+//        testQu(charter);
         for (int i = 0; i < 2; i++ ) {
-            benchQu(charter,1,1,true,false,i==1);
-            benchQu(charter,2,2,true,false,i==1);
-            benchQu(charter,1,4,true,false,i==1);
-//
+            benchQu(charter,1,1,true,false,i==1,false);
+            benchQu(charter,2,2,true,false,i==1,false);
+            benchQu(charter,1,4,true,false,i==1,false);
         }
-        benchQu(charter,1,1,false,true,false);
-        benchQu(charter,2,2,false,true,false);
-        benchQu(charter,1,4,false,true,false);
+        benchQu(charter,1,1,false,true,false,false);
+        benchQu(charter,1,1,false,true,false,true);
+
+        benchQu(charter,2,2,false,true,false,false);
+        benchQu(charter,1,4,false,true,false,false);
         charter.closeDoc();
 //        testOffHeap();
     }
