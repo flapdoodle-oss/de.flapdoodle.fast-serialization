@@ -143,7 +143,7 @@ public class OffHeapTest {
         }
     }
     public static void testQu(HtmlCharter charter) throws IOException, InterruptedException, InstantiationException, IllegalAccessException, ClassNotFoundException, ExecutionException {
-        String str ="slkdflskdenlekldkmlsdklsdkfmsldkmflkemclekmclsdkmclseoijowijowidjwoeidjwoeidjlkdscfjvbfknösdcmsldkcm";
+        String str ="slkdflskdenlekldkmlsdklsdkfmsldkmflkemclekmclsdkmclseoijowijowidjwoeidjwoeidjlkdscfjvbfknï¿½sdcmsldkcm";
         str += str;str += str;str += str;str += str;str += str;str += str;str += str;
         FSTOffheapQueue queue = new FSTOffheapQueue(500,4);
         long tim = System.currentTimeMillis();
@@ -218,7 +218,7 @@ public class OffHeapTest {
         QueueReader reader[] = new QueueReader[numreader];
         SimpleOrder order = SimpleOrder.generateOrder(13);
 
-        charter.openChart("Offheap Queue - "+(useConc?"Conc":"Single")+" - "+((encwrite&&!decread)?"writing side.":"reading side.")+" "+numreader+" reader, "+numWriter+" writer. "+QTESTIT+" objects written/read." );
+        charter.openChart("Offheap Queue - "+(useConc?"Conc W":"Single W")+" "+(concread?"Conc R":"Single R")+" - "+((encwrite&&!decread)?"writing side.":"reading side.")+" "+numreader+" reader, "+numWriter+" writer. "+QTESTIT+" objects written/read." );
 
 //        Trader order = Trader.generateTrader(13, true);
 //        SmallThing thing = new SmallThing();
@@ -240,7 +240,7 @@ public class OffHeapTest {
             QueueReader queueReader = reader[i];
             sumread+=reader[i].sumread;
         }
-        System.out.println("heap queue "+numreader+" reader, "+numWriter+" writer "+QTESTIT+" writes time:"+tim+" obj/sec:"+(QTESTIT/tim)*1000+" MB read "+(sumread)/1000/1000);
+        System.out.println("heap queue "+(useConc?"Conc W":"Single W")+" "+(concread?"Conc R":"Single R")+" - "+((encwrite&&!decread)?"writer ecodes.":"reader decodes.")+" "+numreader+" reader, "+numWriter+" writer "+QTESTIT+" writes time:"+tim+" obj/sec:"+(QTESTIT/tim)*1000+" MB read "+(sumread)/1000/1000);
         charter.chartBar("time", (int) tim, 500, "#a0a0ff");
         charter.chartBar("obj/sec", (int) (QTESTIT / tim) * 1000, 10000, "#a0ffa0");
         charter.chartBar("MB/sec", (int) (sumread/tim)*1000/1000/1000,2,"#ffa0a0");
@@ -411,17 +411,19 @@ public class OffHeapTest {
 //        benchOffHeap(new FSTOffheap(buf), charter, "Memory mapped File:");
 //        randomFile.close();
 
-//        testQu(charter);
-        for (int i = 0; i < 2; i++ ) {
-            benchQu(charter,1,1,true,false,i==1,false);
-            benchQu(charter,2,2,true,false,i==1,false);
-            benchQu(charter,1,4,true,false,i==1,false);
-        }
+        testQu(charter);
+        benchQu(charter,1,1,true,false,false,false);
+        benchQu(charter,2,2,true,false,false,false);
+        benchQu(charter,1,4,true,false,false,false);
+        benchQu(charter,1,1,true,false,true,false);
+
         benchQu(charter,1,1,false,true,false,false);
+        benchQu(charter,2,2,false,true,false,false);
+        benchQu(charter,4,1,false,true,false,false);
         benchQu(charter,1,1,false,true,false,true);
 
-        benchQu(charter,2,2,false,true,false,false);
-        benchQu(charter,1,4,false,true,false,false);
+//        benchQu(charter,2,2,false,true,false,false);
+//        benchQu(charter,1,4,false,true,false,false);
         charter.closeDoc();
 //        testOffHeap();
     }

@@ -57,7 +57,9 @@ public class FSTOffheapQueue  {
     int currentQeueEnd = 0;
     int count = 0;
 
-    FSTOrderedConcurrentJobExecutor exec;
+    private final FSTOrderedConcurrentJobExecutor writeExec;
+    private final FSTOrderedConcurrentJobExecutor readExec;
+
     BlockingQueue resQueue;
     ArrayList<FSTObjectOutput> outputs = new ArrayList<FSTObjectOutput>();
 
@@ -107,7 +109,8 @@ public class FSTOffheapQueue  {
         currentQeueEnd = buffer.limit();
         writer = createConcurrentWriter();
         reader = createConcurrentReader();
-        exec = new FSTOrderedConcurrentJobExecutor(numThreads);
+        writeExec = new FSTOrderedConcurrentJobExecutor(numThreads);
+        readExec = new FSTOrderedConcurrentJobExecutor(numThreads);
         resQueue = new LinkedBlockingQueue(numThreads*2);
     }
 
@@ -163,17 +166,13 @@ public class FSTOffheapQueue  {
      * @throws InterruptedException
      */
     public void addConcurrent(final Object o) throws IOException, ExecutionException, InterruptedException {
-        synchronized (exec) {
-            exec.addCall(new FSTOrderedConcurrentJobExecutor.FSTRunnable() {
+        synchronized (writeExec) {
+            writeExec.addCall(new FSTOrderedConcurrentJobExecutor.FSTRunnable() {
                 FSTObjectOutput tmp;
 
                 @Override
-                public void threadInit() {
-                    tmp = getCachedOutput();
-                }
-
-                @Override
                 public void runConcurrent() {
+                    tmp = getCachedOutput();
                     tmp.resetForReUse(null);
                     try {
                         tmp.writeObject(o);
@@ -194,7 +193,7 @@ public class FSTOffheapQueue  {
     }
 
     public void waitForFinish() throws InterruptedException {
-        exec.waitForFinish();
+        writeExec.waitForFinish();
     }
 
     public class ConcurrentWriteContext {
@@ -238,34 +237,26 @@ public class FSTOffheapQueue  {
     }
 
     final ByteBufferResult prefBuff = new ByteBufferResult();
+    ThreadLocal<FSTObjectInput> thinp = new ThreadLocal<FSTObjectInput>();
     void preFetch() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException, InterruptedException {
         if ( takeBytes(prefBuff) ) {
             final byte[] b = prefBuff.b;
-            exec.addCall(new FSTOrderedConcurrentJobExecutor.FSTRunnable() {
-                ThreadLocal<FSTObjectInput> thinp = new ThreadLocal<FSTObjectInput>();
+            readExec.addCall(new FSTOrderedConcurrentJobExecutor.FSTRunnable() {
                 FSTObjectInput inp;
                 Object result;
 
                 @Override
-                public void threadInit() {
-                    inp = thinp.get();
-                    if ( inp == null ) {
-                        try {
-                            thinp.set(inp=new FSTObjectInput(conf));
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
-
-                @Override
                 public void runConcurrent() {
                     try {
-                        inp.resetForReuseUseArray(b,0, b.length);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
+                        inp = thinp.get();
+                        if (inp == null) {
+                            try {
+                                thinp.set(inp = new FSTObjectInput(conf));
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        inp.resetForReuseUseArray(b, 0, b.length);
                         result = inp.readObject();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
@@ -345,18 +336,16 @@ public class FSTOffheapQueue  {
                     headPosition = 0;
                 }
             }
-            {
-                res.len = buffer.getInt(headPosition);
-                buffer.position(headPosition+HEADER_SIZE);
-                byte b[] = new byte[res.len];
-                buffer.get(b);
-                res.buffer = ByteBuffer.wrap(b);
-                res.off = 0;
-                res.b = b;
-                headPosition += res.len+HEADER_SIZE;
-                count--;
-                rwLock.notifyAll();
-            }
+            res.len = buffer.getInt(headPosition);
+            buffer.position(headPosition+HEADER_SIZE);
+            byte b[] = new byte[res.len];
+            buffer.get(b);
+            res.buffer = ByteBuffer.wrap(b);
+            res.off = 0;
+            res.b = b;
+            headPosition += res.len+HEADER_SIZE;
+            count--;
+            rwLock.notifyAll();
         }
         return true;
     }
