@@ -218,7 +218,7 @@ public class OffHeapTest {
         QueueReader reader[] = new QueueReader[numreader];
         SimpleOrder order = SimpleOrder.generateOrder(13);
 
-        charter.openChart("Offheap Queue - "+(useConc?"Conc W":"Single W")+" "+(concread?"Conc R":"Single R")+" - "+((encwrite&&!decread)?"writing side.":"reading side.")+" "+numreader+" reader, "+numWriter+" writer. "+QTESTIT+" objects written/read." );
+        charter.openChart("Offheap Queue - "+(useConc?"Conc W":"Single W")+" "+(concread?"Conc R":"Single R")+" - "+((encwrite&&!decread)?"writer encodes.":"reader decodes.")+" "+numreader+" reader, "+numWriter+" writer. "+QTESTIT+" objects written/read." );
 
 //        Trader order = Trader.generateTrader(13, true);
 //        SmallThing thing = new SmallThing();
@@ -240,7 +240,7 @@ public class OffHeapTest {
             QueueReader queueReader = reader[i];
             sumread+=reader[i].sumread;
         }
-        System.out.println("heap queue "+(useConc?"Conc W":"Single W")+" "+(concread?"Conc R":"Single R")+" - "+((encwrite&&!decread)?"writer ecodes.":"reader decodes.")+" "+numreader+" reader, "+numWriter+" writer "+QTESTIT+" writes time:"+tim+" obj/sec:"+(QTESTIT/tim)*1000+" MB read "+(sumread)/1000/1000);
+        System.out.println("heap queue "+(useConc?"Conc W":"Single W")+" "+(concread?"Conc R":"Single R")+" - "+((encwrite&&!decread)?"writer encodes.":"reader decodes.")+" "+numreader+" reader, "+numWriter+" writer "+QTESTIT+" writes time:"+tim+" obj/sec:"+(QTESTIT/tim)*1000+" MB read "+(sumread)/1000/1000);
         charter.chartBar("time", (int) tim, 500, "#a0a0ff");
         charter.chartBar("obj/sec", (int) (QTESTIT / tim) * 1000, 10000, "#a0ffa0");
         charter.chartBar("MB/sec", (int) (sumread/tim)*1000/1000/1000,2,"#ffa0a0");

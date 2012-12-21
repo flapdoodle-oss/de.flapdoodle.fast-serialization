@@ -20,7 +20,7 @@ public class ExternalizableTest implements Serializable {
     ExternalTest ext = new ExternalTest(31);
 
     public ExternalizableTest() {
-        for (int i = 0; i < 500; i++)
+        for (int i = 0; i < 250; i++)
         {
             test.add(new ExternalTest(i));
             li.add(new ExternalTest(i+500));
