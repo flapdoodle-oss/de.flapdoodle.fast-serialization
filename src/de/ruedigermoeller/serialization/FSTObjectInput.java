@@ -213,6 +213,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     public Object readObjectWithHeader(FSTClazzInfo.FSTFieldInfo referencee) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
         final int readPos = input.pos;
         byte code = readFByte();
+        FSTClazzInfo clzSerInfo = null;
         Class c = null;
         switch (code) {
             case FSTObjectOutput.BIG_INT: {
@@ -262,9 +263,10 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                 break;
             }
             case FSTObjectOutput.ENUM: {
-                Class en = readClass();
+                clzSerInfo = readClass();
+                c = clzSerInfo.getClazz();
                 int ordinal = readCInt();
-                Object res = en.getEnumConstants()[ordinal];
+                Object res = c.getEnumConstants()[ordinal];
                 if ( ! referencee.isFlat() ) {
                     objects.registerObjectForRead(res, readPos);
                 }
@@ -272,7 +274,8 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             }
             case FSTObjectOutput.OBJECT: {
                 // class name
-                c = readClass();
+                clzSerInfo = readClass();
+                c = clzSerInfo.getClazz();
                 break;
             }
             default:
@@ -282,21 +285,22 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             debugStack.push("" + referencee.getDesc() + " code:" + code);
             debugStack.push("" + referencee.getDesc() + " " + c);
         }
-        FSTClazzInfo serializationInfo = null;
-        if ( referencee.lastInfo != null && referencee.lastInfo.clazz == c) {
-            serializationInfo = referencee.lastInfo;
-        } else {
-            serializationInfo = conf.getCLInfoRegistry().getCLInfo(c);
+        if ( clzSerInfo == null ) {
+            if ( referencee.lastInfo != null && referencee.lastInfo.clazz == c) {
+                clzSerInfo = referencee.lastInfo;
+            } else {
+                clzSerInfo = conf.getCLInfoRegistry().getCLInfo(c);
+            }
         }
         try {
             Object newObj = null;
-            FSTObjectSerializer ser = serializationInfo.getSer();
+            FSTObjectSerializer ser = clzSerInfo.getSer();
             boolean serInstance = false;
             if (ser != null) {
-                newObj = ser.instantiate(c, this, serializationInfo, referencee, readPos);
+                newObj = ser.instantiate(c, this, clzSerInfo, referencee, readPos);
             }
             if (newObj == null) {
-                newObj = serializationInfo.newInstance();
+                newObj = clzSerInfo.newInstance();
             } else
                 serInstance = true;
             if (newObj == null) {
@@ -304,27 +308,27 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             }
             if (newObj.getClass() != c) {//FIXME
                 c = newObj.getClass();
-                serializationInfo = conf.getCLInfoRegistry().getCLInfo(c);
+                clzSerInfo = conf.getCLInfoRegistry().getCLInfo(c);
             }
-            if ( ! referencee.isFlat() && ! serializationInfo.isFlat() ) {
+            if ( ! referencee.isFlat() && ! clzSerInfo.isFlat() ) {
                 objects.registerObjectForRead(newObj, readPos);
             }
             if (ser != null) {
                 if ( !serInstance )
-                    ser.readObject(this, newObj, serializationInfo, referencee);
-            } else if ( serializationInfo.isExternalizable() ) {
+                    ser.readObject(this, newObj, clzSerInfo, referencee);
+            } else if ( clzSerInfo.isExternalizable() ) {
                 ensureReadAhead(readExternalReadAHead);
                 ((Externalizable)newObj).readExternal(this);
-            } else if (serializationInfo.useCompatibleMode()) {
+            } else if (clzSerInfo.useCompatibleMode()) {
                 int pos = input.pos;
-                Object replaced = readObjectCompatible(referencee, serializationInfo, newObj);
+                Object replaced = readObjectCompatible(referencee, clzSerInfo, newObj);
                 if (replaced != null && replaced != newObj) {
                     objects.replace(newObj, replaced, pos);
                     newObj = replaced;
                 }
             } else {
-                FSTClazzInfo.FSTFieldInfo[] fieldInfo = serializationInfo.getFieldInfo();
-                readObjectFields(referencee, serializationInfo, fieldInfo, newObj);
+                FSTClazzInfo.FSTFieldInfo[] fieldInfo = clzSerInfo.getFieldInfo();
+                readObjectFields(referencee, clzSerInfo, fieldInfo, newObj);
             }
             if (DEBUGSTACK) {
                 debugStack.pop();
@@ -663,7 +667,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         if (len == -1) {
             return null;
         }
-        Class arrCl = readClass();
+        Class arrCl = readClass().getClazz();
         Class arrType = arrCl.getComponentType();
         if (!arrCl.getComponentType().isArray()) {
             Object array = Array.newInstance(arrType, len);
@@ -824,7 +828,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         }
     }
 
-    public Class readClass() throws IOException, ClassNotFoundException {
+    public FSTClazzInfo readClass() throws IOException, ClassNotFoundException {
         return clnames.decodeClass(this);
     }
 

@@ -75,19 +75,6 @@ public class FSTClazzNameRegistry {
         }
     }
 
-
-    public void differencesTo(FSTClazzNameRegistry other) {
-        for ( int i = 0; i < 1000; i++ ) {
-            Class cl = (Class) idToClz.get(i);
-            if (cl != null ) {
-                Class aClass = (Class) other.idToClz.get(i);
-                if ( aClass != cl ) {
-                    System.out.println("this "+i+":"+cl.getName()+" other:"+ aClass);
-                }
-            }
-        }
-    }
-
     void registerClass( Class c ) {
         registerClass(c,false);
     }
@@ -109,7 +96,7 @@ public class FSTClazzNameRegistry {
 
     protected void addClassMapping( Class c, int id ) {
         clzToId.put(c, id);
-        idToClz.put(id, c);
+        idToClz.put(id, conf.getCLInfoRegistry().getCLInfo(c) );
     }
 
     private int getIdFromClazz(Class c) {
@@ -161,7 +148,7 @@ public class FSTClazzNameRegistry {
         }
     }
 
-    public Class decodeClass(FSTObjectInput in) throws IOException, ClassNotFoundException {
+    public FSTClazzInfo decodeClass(FSTObjectInput in) throws IOException, ClassNotFoundException {
         short c = in.readCShort();
         if ( c == 0 ) {
             // full class name
@@ -170,7 +157,7 @@ public class FSTClazzNameRegistry {
             registerClass(cl, true);
             addCLNameSnippets(cl);
             addCLNameSnippets(Array.newInstance(cl, 0).getClass());
-            return cl;
+            return conf.getCLInfoRegistry().getCLInfo(cl);
         } else if ( c == 1 ) {
             int snippetId = in.readCShort();
             String snippetString = getSnippetFromId(snippetId);
@@ -202,9 +189,9 @@ public class FSTClazzNameRegistry {
             registerClass(cl, true);
             addCLNameSnippets(cl);
             addCLNameSnippets( Array.newInstance(cl,0).getClass() );
-            return cl;
+            return conf.getCLInfoRegistry().getCLInfo(cl);
         } else {
-            Class aClass = getClazzFromId(c);
+            FSTClazzInfo aClass = getClazzFromId(c);
             if ( aClass == null ) {
                 throw new RuntimeException("unable to decode class from code "+c);
             }
@@ -238,13 +225,13 @@ public class FSTClazzNameRegistry {
             return res;
     }
 
-    private Class getClazzFromId(int c) {
-        Class res = null;
+    private FSTClazzInfo getClazzFromId(int c) {
+        FSTClazzInfo res = null;
         if ( parent != null ) {
             res = parent.getClazzFromId(c);
         }
         if ( res == null ) {
-            return (Class) idToClz.get(c);
+            return (FSTClazzInfo) idToClz.get(c);
         } else {
             return res;
         }

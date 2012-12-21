@@ -291,6 +291,7 @@ public class FSTOffheap {
 
     public class OffHeapIterator extends OffHeapAccess implements Iterator {
         int position;
+        int currentPosition;
 
         OffHeapIterator(int position) {
             super();
@@ -313,6 +314,10 @@ public class FSTOffheap {
             return currentEntry.content;
         }
 
+        public int getCurrentPositiion() {
+            return currentPosition;
+        }
+
         /**
          *
          * @param callback - if null always read the full object (tag+value), else
@@ -323,6 +328,7 @@ public class FSTOffheap {
             try {
                 in.setConditionalCallback(callback);
                 currentEntry = getEntry(position);
+                currPosition = position;
                 position = currentEntry.prevPosition;
                 return currentEntry.tag;
             } catch (IOException e) {
