@@ -49,6 +49,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class FSTConfiguration {
 
 
+    public static final int CUSTOM_ID_BASE = 16000;
     FSTClazzInfoRegistry serializationInfoRegistry = new FSTClazzInfoRegistry();
     FSTObject2ObjectMap<Class,List<SoftReference>> cachedObjects = new FSTObject2ObjectMap<Class, List<SoftReference>>(97);
     FSTClazzNameRegistry classRegistry = new FSTClazzNameRegistry(null, this);
@@ -61,6 +62,10 @@ public final class FSTConfiguration {
                 intObjects[i] = new Integer(i);
             }
         }
+    }
+
+    public static FSTConfiguration createCrossLanguageConfiguration() {
+        return createDefaultConfiguration();
     }
 
     public static FSTConfiguration createDefaultConfiguration() {
@@ -264,6 +269,18 @@ public final class FSTConfiguration {
 
     public void setShareReferences(boolean shareReferences) {
         this.shareReferences = shareReferences;
+    }
+
+    /**
+     * attention: id should be > CUSTOM_ID_BASE
+     * @param c
+     * @param id
+     */
+    public void registerClass( Class c, int id ) {
+        if ( id < FSTConfiguration.CUSTOM_ID_BASE) {
+            throw new RuntimeException("use values > "+FSTConfiguration.CUSTOM_ID_BASE);
+        }
+        classRegistry.registerClass(c, id);
     }
 
     void addDefaultClazzes() {

@@ -193,10 +193,17 @@ public final class FSTClazzInfo {
             curCl = curCl.getSuperclass();
         }
 
+        // default sort order
         Comparator<FSTFieldInfo> comp = new Comparator<FSTFieldInfo>() {
             @Override
             public int compare(FSTFieldInfo o1, FSTFieldInfo o2) {
                 int res = 0;
+                if ( o1.getType() == boolean.class && o2.getType() != boolean.class ) {
+                    return -1;
+                }
+                if ( o1.getType() != boolean.class && o2.getType() == boolean.class ) {
+                    return 1;
+                }
                 if ( o1.isConditional() && ! o2.isConditional() ) {
                     res = 1;
                 } else if ( ! o1.isConditional() && o2.isConditional() ) {
