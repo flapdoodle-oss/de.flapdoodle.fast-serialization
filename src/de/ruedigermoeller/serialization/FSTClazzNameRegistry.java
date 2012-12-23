@@ -75,7 +75,7 @@ public class FSTClazzNameRegistry {
         }
     }
 
-    void registerClass( Class c ) {
+    public void registerClass( Class c ) {
         registerClass(c,false);
     }
 
@@ -107,7 +107,7 @@ public class FSTClazzNameRegistry {
         idToClz.put(id, conf.getCLInfoRegistry().getCLInfo(c) );
     }
 
-    private int getIdFromClazz(Class c) {
+    public int getIdFromClazz(Class c) {
         int res = Integer.MIN_VALUE;
         if ( parent != null ) {
             res = parent.getIdFromClazz(c);

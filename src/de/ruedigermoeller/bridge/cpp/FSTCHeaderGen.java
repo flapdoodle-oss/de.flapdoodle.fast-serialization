@@ -1,5 +1,7 @@
-package de.ruedigermoeller.bridge;
+package de.ruedigermoeller.bridge.cpp;
 
+import de.ruedigermoeller.bridge.FSTBridgeGen;
+import de.ruedigermoeller.bridge.FSTBridgeGenerator;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 
 import java.io.PrintStream;
@@ -28,14 +30,20 @@ import java.io.PrintStream;
  */
 public class FSTCHeaderGen extends FSTBridgeGen {
 
+    public FSTCHeaderGen(FSTBridgeGenerator gen) {
+        super(gen);
+    }
+
     protected void generateHeader(FSTClazzInfo info, PrintStream out, String depth) {
         out.println(depth+"#include \"FSTSerializationBase.h\"" );
         out.println(depth+"#include <iostream>" );
         out.println();
         String clz = getBridgeClassName(info);
-        out.println(depth+"class "+ clz +":FSTSerializationBase {");
+        out.println(depth+"class "+ clz +" : public FSTSerializationBase {");
         out.println();
         out.println(depth+"public:");
+
+        out.println(depth+"    "+ clz +"(FSTConfiguration * context) : FSTSerializationBase(context) {}");
         out.println(depth+"    ~"+ clz +"(void);");
         out.println(depth+"    virtual void "+clz+"::decode(istream &in);");
         out.println(depth+"    virtual void "+clz+"::encode(ostream &out);");
@@ -47,30 +55,40 @@ public class FSTCHeaderGen extends FSTBridgeGen {
 
     public void generateFieldDeclaration(FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
         Class type = fieldInfo.getType();
-        if (type == boolean.class ) {
-            out.println(depth+"jboolean "+fieldInfo.getField().getName()+";");
-        } else
-        if (type == int.class ) {
-            out.println(depth+"jint "+fieldInfo.getField().getName()+";");
-        } else
-        if (type == char.class ) {
-            out.println(depth+"jchar "+fieldInfo.getField().getName()+";");
-        } else
-        if (type == short.class ) {
-            out.println(depth+"jshort "+fieldInfo.getField().getName()+";");
-        } else
-        if (type == long.class ) {
-            out.println(depth+"jlong "+fieldInfo.getField().getName()+";");
-        } else
-        if (type == float.class ) {
-            out.println(depth+"jfloat "+fieldInfo.getField().getName()+";");
-        } else
-        if (type == double.class ) {
-            out.println(depth+"jdouble "+fieldInfo.getField().getName()+";");
-        } else
-        if (type == byte.class ) {
-            out.println(depth+"jbyte "+fieldInfo.getField().getName()+";");
+        if ( ! fieldInfo.isArray() ) {
+            if (type == boolean.class ) {
+                out.println(depth+"jboolean "+fieldInfo.getField().getName()+";");
+            } else
+            if (type == int.class ) {
+                out.println(depth+"jint "+fieldInfo.getField().getName()+";");
+            } else
+            if (type == char.class ) {
+                out.println(depth+"jchar "+fieldInfo.getField().getName()+";");
+            } else
+            if (type == short.class ) {
+                out.println(depth+"jshort "+fieldInfo.getField().getName()+";");
+            } else
+            if (type == long.class ) {
+                out.println(depth+"jlong "+fieldInfo.getField().getName()+";");
+            } else
+            if (type == float.class ) {
+                out.println(depth+"jfloat "+fieldInfo.getField().getName()+";");
+            } else
+            if (type == double.class ) {
+                out.println(depth+"jdouble "+fieldInfo.getField().getName()+";");
+            } else
+            if (type == byte.class ) {
+                out.println(depth+"jbyte "+fieldInfo.getField().getName()+";");
+            }
+        } else {
+            out.println(depth + getCPPArrayClzName(type) + " * " + fieldInfo.getField().getName() + ";");
         }
+    }
+
+    public static String getCPPArrayClzName(Class type) {
+        String simpleName = type.getComponentType().getSimpleName();
+        simpleName = Character.toUpperCase(simpleName.charAt(0))+simpleName.substring(1);
+        return "j" + simpleName + "Array";
     }
 
     protected void generateFooter(FSTClazzInfo info, PrintStream out, String depth) {

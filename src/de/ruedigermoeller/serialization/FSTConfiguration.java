@@ -49,10 +49,10 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class FSTConfiguration {
 
 
-    public static final int CUSTOM_ID_BASE = 16000;
     FSTClazzInfoRegistry serializationInfoRegistry = new FSTClazzInfoRegistry();
     FSTObject2ObjectMap<Class,List<SoftReference>> cachedObjects = new FSTObject2ObjectMap<Class, List<SoftReference>>(97);
     FSTClazzNameRegistry classRegistry = new FSTClazzNameRegistry(null, this);
+    boolean isCrossLanguage = false;
 
     public static Integer intObjects[];
     {
@@ -65,7 +65,9 @@ public final class FSTConfiguration {
     }
 
     public static FSTConfiguration createCrossLanguageConfiguration() {
-        return createDefaultConfiguration();
+        FSTConfiguration defaultConfiguration = createDefaultConfiguration();
+        defaultConfiguration.setCrossLanguage(true);
+        return defaultConfiguration;
     }
 
     public static FSTConfiguration createDefaultConfiguration() {
@@ -157,6 +159,14 @@ public final class FSTConfiguration {
 
     private FSTConfiguration() {
 
+    }
+
+    public boolean isCrossLanguage() {
+        return isCrossLanguage;
+    }
+
+    public void setCrossLanguage(boolean crossLanguage) {
+        isCrossLanguage = crossLanguage;
     }
 
     public void returnObject( Object ... cachedObs ) {
@@ -274,13 +284,9 @@ public final class FSTConfiguration {
     /**
      * attention: id should be > CUSTOM_ID_BASE
      * @param c
-     * @param id
      */
-    public void registerClass( Class c, int id ) {
-        if ( id < FSTConfiguration.CUSTOM_ID_BASE) {
-            throw new RuntimeException("use values > "+FSTConfiguration.CUSTOM_ID_BASE);
-        }
-        classRegistry.registerClass(c, id);
+    public void registerClass( Class c) {
+        classRegistry.registerClass(c);
     }
 
     void addDefaultClazzes() {

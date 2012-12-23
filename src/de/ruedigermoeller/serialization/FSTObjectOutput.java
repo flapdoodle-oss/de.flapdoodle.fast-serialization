@@ -44,7 +44,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     static final byte COPYHANDLE = -8;
     static final byte HANDLE = -7;
     static final byte ENUM = -6;
-    static final byte OBJECT_ARRAY = -5;
+    static final byte ARRAY = -5;
 //    static final byte STRING = -4;
     static final byte TYPED = -3; // var class == object written class
     //static final byte PRIMITIVE_ARRAY = -2;
@@ -231,7 +231,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             }
         }
         if (clazz.isArray()) {
-            writeFByte(OBJECT_ARRAY);
+            writeFByte(ARRAY);
             writeArray(referencee, toWrite);
 //        } else if ( toWrite instanceof String ) {
 //            writeFByte(STRING);
@@ -420,14 +420,15 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 if ( DUMP ) {
                     System.out.println("WRITE FIELD:"+subInfo.getField().getName());
                 }
+                boolean isarr = subInfo.isArray();
                 Class subInfType = subInfo.getType();
-                if ( subInfType != boolean.class ) {
+                if ( subInfType != boolean.class || isarr) {
                     if ( boolcount > 0 ) {
                         writeFByte(booleanMask<<(8-boolcount));
                         boolcount = 0; booleanMask = 0;
                     }
                 }
-                if ( subInfo.isIntegral() && ! subInfo.isArray() ) {
+                if ( subInfo.isIntegral() && !isarr) {
                     if ( subInfType == boolean.class ) {
                         if ( boolcount == 8 ) {
                             writeFByte(booleanMask<<(8-boolcount));
@@ -483,11 +484,11 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         if ( toWrite instanceof Serializable == false ) {
             throw new RuntimeException(toWrite.getClass().getName()+" is not serializable. referenced by "+referencee.getDesc());
         }
-        if ( toWrite.getClass() == referencee.getType() && ! clsInfo.useCompatibleMode() ) {
+        if ( toWrite.getClass() == referencee.getType() && ! clsInfo.useCompatibleMode() && ! conf.isCrossLanguage() ) {
             writeFByte(TYPED);
         } else {
             final Class[] possibleClasses = referencee.getPossibleClasses();
-            if ( possibleClasses == null ) {
+            if ( possibleClasses == null || conf.isCrossLanguage() ) {
                 writeFByte(OBJECT);
                 //writeClass(toWrite); inline
                 clnames.encodeClass(this,toWrite.getClass());
@@ -514,8 +515,8 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         }
 
         final int len = Array.getLength(array);
-        writeCInt(len);
         writeClass(array);
+        writeCInt(len);
         Class<?> componentType = array.getClass().getComponentType();
         if ( ! componentType.isArray() ) {
             if ( componentType == byte.class ) {
@@ -554,7 +555,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             if ( componentType == float.class ) {
                 float[] arr = (float[])array;
                 for ( int i = 0; i < len; i++ )
-                    writeFFloat(arr[i]);
+                    writeCFloat(arr[i]);
             } else
             if ( componentType == long.class ) {
                 long[] arr = (long[])array;
@@ -1112,10 +1113,6 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
     }
 
-    public void writeFFloat (float value) throws IOException {
-        writeFInt(Float.floatToIntBits(value));
-    }
-
     /** Writes a 4 byte float. */
     public void writeCFloat (float value) throws IOException {
         writeFInt(Float.floatToIntBits(value));
@@ -1353,7 +1350,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
             @Override
             public void writeFloat(float val) throws IOException {
-                FSTObjectOutput.this.writeFFloat(val);
+                FSTObjectOutput.this.writeCFloat(val);
             }
 
             @Override

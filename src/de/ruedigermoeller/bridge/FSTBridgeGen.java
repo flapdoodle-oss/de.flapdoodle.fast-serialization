@@ -31,6 +31,12 @@ import java.io.PrintStream;
  */
 public class FSTBridgeGen {
 
+    protected FSTBridgeGenerator gen;
+
+    public FSTBridgeGen(FSTBridgeGenerator gen) {
+        this.gen = gen;
+    }
+
     public void generateClazz(FSTClazzInfo info, String file, String depth ) throws FileNotFoundException {
         PrintStream ps = new PrintStream(new FileOutputStream(file + File.separator + getFileName(info)) );
         generateClazz(info, ps, depth);

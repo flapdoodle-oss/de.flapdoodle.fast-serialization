@@ -31,6 +31,6 @@ import java.io.Serializable;
 @Flat
 public class SmallThing implements Serializable {
     @Flat String name = "Ruediger";
-    @Flat String otherName = "Felix";
-    int ageSum = 59;
+    @Flat String otherName = "Felix,Emil";
+    int ageSum = 65;
 }

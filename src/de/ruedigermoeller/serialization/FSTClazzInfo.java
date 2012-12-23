@@ -81,6 +81,17 @@ public final class FSTClazzInfo {
         }
     }
 
+    public int getNumBoolFields() {
+        FSTFieldInfo[] fis = getFieldInfo();
+        for (int i = 0; i < fis.length; i++) {
+            FSTFieldInfo fstFieldInfo = fis[i];
+            if ( fstFieldInfo.getType() != boolean.class ) {
+                return i;
+            }
+        }
+        return fis.length;
+    }
+
     public boolean isExternalizable() {
         return externalizable;
     }

@@ -73,7 +73,7 @@ public class FSTBigNumberSerializers {
     static public class FSTFloatSerializer extends FSTBasicObjectSerializer {
         @Override
         public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
-            out.writeFFloat(((Float) toWrite).floatValue());
+            out.writeCFloat(((Float) toWrite).floatValue());
         }
 
         @Override

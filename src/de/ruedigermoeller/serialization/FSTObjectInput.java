@@ -251,7 +251,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                 //objects.registerObject(copy,true, readPos, null); //fixme:no need
                 return copy;
             }
-            case FSTObjectOutput.OBJECT_ARRAY: {
+            case FSTObjectOutput.ARRAY: {
                 Object res = readArray(referencee);
                 if ( ! referencee.isFlat() ) {
                     objects.registerObjectForRead(res, readPos);
@@ -663,11 +663,11 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     protected Object readArray(FSTClazzInfo.FSTFieldInfo referencee) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        Class arrCl = readClass().getClazz();
         final int len = readCInt();
         if (len == -1) {
             return null;
         }
-        Class arrCl = readClass().getClazz();
         Class arrType = arrCl.getComponentType();
         if (!arrCl.getComponentType().isArray()) {
             Object array = Array.newInstance(arrType, len);

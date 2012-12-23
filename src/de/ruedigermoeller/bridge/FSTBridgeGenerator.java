@@ -4,8 +4,7 @@ import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTCrossLanguageSerializer;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -33,6 +32,25 @@ public class FSTBridgeGenerator {
 
     HashSet<Class> knownClasses = new HashSet<Class>();
     FSTConfiguration conf = FSTConfiguration.createCrossLanguageConfiguration();
+    SortedSet<Class> sorted = new TreeSet<Class>( new Comparator<Class>() {
+        @Override
+        public int compare(Class o1, Class o2) {
+            return o1.getName().compareTo(o2.getName());
+        }
+    });
+    public FSTBridgeGenerator() {
+        addClass(int[].class);
+        addClass(byte[].class);
+        addClass(char[].class);
+        addClass(short[].class);
+        addClass(long[].class);
+        addClass(float[].class);
+        addClass(double[].class);
+    }
+
+    public FSTConfiguration getConf() {
+        return conf;
+    }
 
     public void addClass(Class c) {
         FSTClazzInfo info = conf.getCLInfoRegistry().getCLInfo(c);
@@ -42,7 +60,16 @@ public class FSTBridgeGenerator {
         if ( info.getSer() != null && info.getSer() instanceof FSTCrossLanguageSerializer == false ) {
             System.out.println("warning: Serializer registered for "+c.getName()+" will be ignored. Not a cross-language serializer");
         }
+        conf.getClassRegistry().registerClass(c);
         knownClasses.add(c);
+        sorted.add(c);
     }
 
+    public int getIdForClass( Class c ) {
+        return conf.getClassRegistry().getIdFromClazz(c);
+    }
+
+    public SortedSet<Class> getSortedClazzes() {
+        return sorted;
+    }
 }

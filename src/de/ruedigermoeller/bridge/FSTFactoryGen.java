@@ -2,6 +2,9 @@ package de.ruedigermoeller.bridge;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 /**
@@ -28,7 +31,7 @@ import java.io.PrintStream;
  */
 public class FSTFactoryGen {
 
-    FSTBridgeGenerator gen;
+    protected FSTBridgeGenerator gen;
 
     public FSTFactoryGen(FSTBridgeGenerator gen) {
         this.gen = gen;
@@ -41,4 +44,20 @@ public class FSTFactoryGen {
     public void generateFactoryImpl(PrintStream out) {
     }
 
+    public void generateFactory(String s) throws FileNotFoundException {
+        if ( getHeaderFileName() != null ) {
+            PrintStream header = new PrintStream(new FileOutputStream(s+ File.separator+getHeaderFileName()));
+            generateFactoryHeader(header);
+        }
+        PrintStream impl = new PrintStream(new FileOutputStream(s+File.separator+getImplFileName()));
+        generateFactoryImpl(impl);
+    }
+
+    protected String getImplFileName() {
+        return null;
+    }
+
+    protected String getHeaderFileName() {
+        return null;
+    }
 }
