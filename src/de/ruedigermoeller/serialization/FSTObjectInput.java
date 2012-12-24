@@ -54,6 +54,10 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 
     static ByteArrayInputStream empty = new ByteArrayInputStream(new byte[0]);
 
+    public FSTConfiguration getConf() {
+        return conf;
+    }
+
     static class CallbackEntry {
         ObjectInputValidation cb;
         int prio;
