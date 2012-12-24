@@ -20,10 +20,7 @@
 
 package de.ruedigermoeller.serialization.serializers;
 
-import de.ruedigermoeller.serialization.FSTBasicObjectSerializer;
-import de.ruedigermoeller.serialization.FSTClazzInfo;
-import de.ruedigermoeller.serialization.FSTObjectInput;
-import de.ruedigermoeller.serialization.FSTObjectOutput;
+import de.ruedigermoeller.serialization.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -35,7 +32,7 @@ import java.util.*;
  * Time: 14:16
  * To change this template use File | Settings | File Templates.
  */
-public class FSTDateSerializer extends FSTBasicObjectSerializer {
+public class FSTDateSerializer extends FSTBasicObjectSerializer implements FSTCrossLanguageSerializer {
     @Override
     public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
         out.writeFLong(((Date)toWrite).getTime());
@@ -48,4 +45,8 @@ public class FSTDateSerializer extends FSTBasicObjectSerializer {
         return res;
     }
 
+    @Override
+    public Class getCrossLangLayout() {
+        return Long.class;
+    }
 }

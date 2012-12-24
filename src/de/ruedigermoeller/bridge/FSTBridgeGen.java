@@ -1,6 +1,7 @@
 package de.ruedigermoeller.bridge;
 
 import de.ruedigermoeller.serialization.FSTClazzInfo;
+import de.ruedigermoeller.serialization.FSTCrossLanguageSerializer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,16 +49,20 @@ public class FSTBridgeGen {
     }
 
     public void generateClazz( FSTClazzInfo info, PrintStream out, String depth ) {
-        generateHeader(info,out,depth);
-        FSTClazzInfo.FSTFieldInfo[] fieldInfo = info.getFieldInfo();
+        FSTClazzInfo layout = info;
+        if ( info.getSer() instanceof FSTCrossLanguageSerializer ) {
+            layout = gen.getCLInfo(((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout());
+        }
+        generateHeader(info,layout,out,depth);
+        FSTClazzInfo.FSTFieldInfo[] fieldInfo = layout.getFieldInfo();
         for (int i = 0; i < fieldInfo.length; i++) {
             FSTClazzInfo.FSTFieldInfo fstFieldInfo = fieldInfo[i];
             generateFieldDeclaration(info, fstFieldInfo, out,depth+"    ");
         }
         out.println();
-        generateWriteMethod(info,out,depth);
+        generateWriteMethod(info,layout,out,depth);
         out.println();
-        generateReadMethod(info, out, depth);
+        generateReadMethod(info,layout, out, depth);
         out.println();
         generateFooter(info,out,depth);
 
@@ -66,7 +71,7 @@ public class FSTBridgeGen {
     public void generateFieldDeclaration(FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
     }
 
-    protected void generateHeader(FSTClazzInfo info, PrintStream out, String depth) {
+    protected void generateHeader(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
     }
 
     protected void generateFooter(FSTClazzInfo info, PrintStream out, String depth) {
@@ -76,14 +81,14 @@ public class FSTBridgeGen {
         return "fst" + info.getClazz().getSimpleName();
     }
 
-    public void generateWriteMethod( FSTClazzInfo clInfo, PrintStream out, String depth ) {
+    public void generateWriteMethod(FSTClazzInfo clInfo, FSTClazzInfo layout, PrintStream out, String depth) {
     }
 
     protected void generateWriteField(FSTClazzInfo clInfo, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
 
     }
 
-    public void generateReadMethod( FSTClazzInfo info, PrintStream out, String depth ) {
+    public void generateReadMethod(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
     }
 
     protected void generateReadField(FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {

@@ -1,9 +1,12 @@
 package de.ruedigermoeller.bridge;
 
+import de.ruedigermoeller.bridge.cpp.FSTCFileGen;
+import de.ruedigermoeller.bridge.cpp.FSTCHeaderGen;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTCrossLanguageSerializer;
 
+import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
@@ -38,6 +41,7 @@ public class FSTBridgeGenerator {
             return o1.getName().compareTo(o2.getName());
         }
     });
+
     public FSTBridgeGenerator() {
         addClass(int[].class);
         addClass(byte[].class);
@@ -46,21 +50,39 @@ public class FSTBridgeGenerator {
         addClass(long[].class);
         addClass(float[].class);
         addClass(double[].class);
+        addClass(Byte.class);
+        addClass(Character.class);
+        addClass(Short.class);
+        addClass(Integer.class);
+        addClass(Long.class);
+        addClass(Float.class);
+        addClass(Double.class);
+        addClass(Object[].class);
+        addClass(Date.class);
+        addClass(String.class);
     }
 
     public FSTConfiguration getConf() {
         return conf;
     }
 
+    public FSTClazzInfo getCLInfo( Class c ) {
+        return getConf().getCLInfoRegistry().getCLInfo(c);
+    }
+
     public void addClass(Class c) {
         FSTClazzInfo info = conf.getCLInfoRegistry().getCLInfo(c);
-        if ( info.useCompatibleMode() || info.isExternalizable() ) {
+        if ( info.getSer() == null && info.useCompatibleMode() || info.isExternalizable() ) {
             throw new RuntimeException("cannot use class "+c.getName()+" for cross language messages. It defines JDK specific serialization methods.");
         }
         if ( info.getSer() != null && info.getSer() instanceof FSTCrossLanguageSerializer == false ) {
             System.out.println("warning: Serializer registered for "+c.getName()+" will be ignored. Not a cross-language serializer");
         }
         conf.getClassRegistry().registerClass(c);
+        if ( info.getSer() instanceof FSTCrossLanguageSerializer) {
+            knownClasses.add(((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout());
+            sorted.add(((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout());
+        }
         knownClasses.add(c);
         sorted.add(c);
     }
@@ -71,5 +93,18 @@ public class FSTBridgeGenerator {
 
     public SortedSet<Class> getSortedClazzes() {
         return sorted;
+    }
+
+    public void generateClasses( String outDir ) throws FileNotFoundException {
+        for (Iterator<Class> iterator = sorted.iterator(); iterator.hasNext(); ) {
+            Class next = iterator.next();
+            if ( ! next.isArray() && next != String.class ) {
+                FSTCHeaderGen gen = new FSTCHeaderGen(this);
+                gen.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
+
+                FSTCFileGen genf = new FSTCFileGen(this);
+                genf.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
+            }
+        }
     }
 }

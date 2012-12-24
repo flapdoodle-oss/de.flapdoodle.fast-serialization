@@ -67,6 +67,7 @@ public final class FSTConfiguration {
     public static FSTConfiguration createCrossLanguageConfiguration() {
         FSTConfiguration defaultConfiguration = createDefaultConfiguration();
         defaultConfiguration.setCrossLanguage(true);
+        defaultConfiguration.serializationInfoRegistry.setIgnoreAnnotations(true);
         return defaultConfiguration;
     }
 

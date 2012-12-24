@@ -43,12 +43,24 @@ public class Cross implements Serializable {
     long aLong = 1234567890123456l;
     float aFloat = 1.2345678f;
     double aDouble = -1.876176d;
-    byte test [] = {1,2,3,-1,-2,-3};
-    int test1 [] = {-100,100,200,300};
+    byte testByte [] = {1,2,3,-1,-2,-3};
+    char testChar [] = {1,2,3,38000};
+    short testShort [] = {1,2,3,-18000,18000};
+    int testInt [] = {-100,100,200,300,398475398,-398457398};
+    long testlong [] = {-100,100,200,300,39458734235l,-34953456934l};
+    double testDouble[] = { 234.0234234d, -112312.0234234d };
+    float testFloat[] = { 234.0234234f, -112312.0234234f };
+    String string = "Rüdiger Möller";
+    CrossB crossB;
+
+    public Cross(CrossB b) {
+        crossB = b;
+    }
 
     public static void main( String arg[]) throws IOException {
         FSTBridgeGenerator generator = new FSTBridgeGenerator();
         generator.addClass(Cross.class);
+        generator.addClass(CrossB.class);
         FSTConfiguration conf = generator.getConf();
 
         FSTClazzInfo clInfo = conf.getCLInfoRegistry().getCLInfo(Cross.class);
@@ -61,17 +73,13 @@ public class Cross implements Serializable {
         System.out.println("}");
         System.out.println();
 
-        FSTCHeaderGen gen = new FSTCHeaderGen(generator);
-        gen.generateClazz(conf.getCLInfoRegistry().getCLInfo(Cross.class),"C:\\Users\\ruedi\\Documents\\Visual Studio 2012\\Projects\\FST\\FST","");
-
-        FSTCFileGen genf = new FSTCFileGen(generator);
-        genf.generateClazz(conf.getCLInfoRegistry().getCLInfo(Cross.class),"C:\\Users\\ruedi\\Documents\\Visual Studio 2012\\Projects\\FST\\FST","");
+        generator.generateClasses("C:\\Users\\ruedi\\Documents\\Visual Studio 2012\\Projects\\FST\\FST");
 
         FSTCFactoryGen hgen = new FSTCFactoryGen(generator);
         hgen.generateFactory("C:\\Users\\ruedi\\Documents\\Visual Studio 2012\\Projects\\FST\\FST");
 
         FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream("\\tmp\\crosstest.oos"), conf);
-        out.writeObject(new Cross());
+        out.writeObject(new Cross(new CrossB()));
         byte[] buffer = out.getBuffer();
         for ( int i = 0; i < out.getWritten(); i++ ) {
             System.out.println("["+i+"]"+buffer[i]);

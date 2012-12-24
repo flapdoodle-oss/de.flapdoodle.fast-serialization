@@ -1,4 +1,6 @@
-package de.ruedigermoeller.serialization;
+package de.ruedigermoeller.serialization.testclasses.crosslanguage;
+
+import java.util.Date;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -18,14 +20,17 @@ package de.ruedigermoeller.serialization;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  * <p/>
- * Date: 23.12.12
- * Time: 01:09
+ * Date: 24.12.12
+ * Time: 20:31
  * To change this template use File | Settings | File Templates.
  */
+public class CrossB extends Cross {
+    String strsub = "This is a String";
+    Integer integer = 9999;
+    Long bigLong = 349857345l;
+    Date now = new Date();
+    public CrossB() {
+        super(null);
+    }
 
-/**
- * just a tagging interface
- */
-public interface FSTCrossLanguageSerializer {
-    public Class getCrossLangLayout();
 }

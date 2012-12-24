@@ -5,6 +5,7 @@ import de.ruedigermoeller.bridge.FSTBridgeGenerator;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 
 import java.io.PrintStream;
+import java.util.Iterator;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -34,9 +35,18 @@ public class FSTCHeaderGen extends FSTBridgeGen {
         super(gen);
     }
 
-    protected void generateHeader(FSTClazzInfo info, PrintStream out, String depth) {
+    protected void generateHeader(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
         out.println(depth+"#include \"FSTSerializationBase.h\"" );
         out.println(depth+"#include <iostream>" );
+        out.println();
+        for (Iterator<Class> iterator = gen.getSortedClazzes().iterator(); iterator.hasNext(); ) {
+            Class cls = iterator.next();
+            if ( cls.isArray() ) {
+            } else
+            {
+                out.println(depth+"class "+getBridgeClassName(gen.getCLInfo(cls))+";");
+            }
+        }
         out.println();
         String clz = getBridgeClassName(info);
         out.println(depth+"class "+ clz +" : public FSTSerializationBase {");
@@ -79,6 +89,8 @@ public class FSTCHeaderGen extends FSTBridgeGen {
             } else
             if (type == byte.class ) {
                 out.println(depth+"jbyte "+fieldInfo.getField().getName()+";");
+            } else {
+                out.println(depth+getBridgeClassName(gen.getCLInfo(fieldInfo.getType()))+" * "+fieldInfo.getField().getName()+";");
             }
         } else {
             out.println(depth + getCPPArrayClzName(type) + " * " + fieldInfo.getField().getName() + ";");

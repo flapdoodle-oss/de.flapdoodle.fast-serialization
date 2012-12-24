@@ -3,7 +3,6 @@ package de.ruedigermoeller.bridge.cpp;
 import de.ruedigermoeller.bridge.FSTBridgeGen;
 import de.ruedigermoeller.bridge.FSTBridgeGenerator;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
-import sun.reflect.FieldInfo;
 
 import java.io.PrintStream;
 
@@ -35,7 +34,7 @@ public class FSTCFileGen extends FSTBridgeGen {
         super(gen);
     }
 
-    protected void generateHeader(FSTClazzInfo info, PrintStream out, String depth) {
+    protected void generateHeader(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
         out.print(depth + "#include \"" + getBridgeClassName(info) + ".h\"");
         out.println();
         out.println();
@@ -48,10 +47,10 @@ public class FSTCFileGen extends FSTBridgeGen {
         return getBridgeClassName(info) + ".cpp";
     }
 
-    public void generateReadMethod( FSTClazzInfo info, PrintStream out, String depth ) {
+    public void generateReadMethod(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
         out.println(depth +"void "+ getBridgeClassName(info) + "::decode(istream &in) {");
-        FSTClazzInfo.FSTFieldInfo[] fieldInfo = info.getFieldInfo();
-        int numBool = info.getNumBoolFields();
+        FSTClazzInfo.FSTFieldInfo[] fieldInfo = layout.getFieldInfo();
+        int numBool = layout.getNumBoolFields();
         out.println(depth+"    char bools = 0;");
         for (int i = 0; i < numBool; i++) {
             if ( i%8 == 0 ) {
@@ -117,19 +116,20 @@ public class FSTCFileGen extends FSTBridgeGen {
                 out.println(depth+name+" = ("+FSTCHeaderGen.getCPPArrayClzName(fieldInfo.getType())+"*)decodeObject( in );"); // array
             }
         } else {
-            out.println(depth+name+" = decodeObject( in );");
+            out.println(depth+name+" = ("+getBridgeClassName(gen.getCLInfo(fieldInfo.getType()))+"*)"+"decodeObject( in );");
         }
     }
 
-    public void generateWriteMethod( FSTClazzInfo info, PrintStream out, String depth ) {
+    public void generateWriteMethod(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
         out.println(depth +"void "+getBridgeClassName(info) + "::encode(ostream &out) {");
-        FSTClazzInfo.FSTFieldInfo[] fieldInfo = info.getFieldInfo();
+        FSTClazzInfo.FSTFieldInfo[] fieldInfo = layout.getFieldInfo();
         int numBool = info.getNumBoolFields();
         out.println(depth+"    char bools = 0;");
         for (int i = 0; i < numBool; i++) {
             if ( i%8 == 0 ) {
                 generateBoolWrite((i/8)*8,Math.min(numBool,((i/8)+1)*8),fieldInfo,out,depth+"    ");
-                out.println(depth+"    out.put(bools);");
+                out.println(depth + "    out.put(bools);");
+                out.println(depth + "    bools = 0;");
             }
         }
         for (int i = 0; i < fieldInfo.length; i++) {

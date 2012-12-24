@@ -34,6 +34,9 @@ public class FSTCFactoryGen extends FSTFactoryGen {
     }
 
     protected String getBridgeClassName(Class c) {
+        if ( c == Object[].class ) {
+            return "OBJECTARR";
+        }
         if ( c.getComponentType() != null && c.getComponentType().isPrimitive() ) {
             return c.getComponentType().getSimpleName().toUpperCase()+"ARR";
         }
@@ -46,15 +49,13 @@ public class FSTCFactoryGen extends FSTFactoryGen {
         out.println();
         for (Iterator<Class> iterator = gen.getSortedClazzes().iterator(); iterator.hasNext(); ) {
             Class cls = iterator.next();
-            if ( !cls.isArray() ) {
+            if ( !cls.isArray() && cls != String.class ) {
                 out.println("#include \""+getBridgeClassName(cls)+".h\"");
             }
         }
         for (Iterator<Class> iterator = gen.getSortedClazzes().iterator(); iterator.hasNext(); ) {
             Class cls = iterator.next();
-            if ( cls.isArray() ) {
-                out.println("#define "+getBridgeClassName(cls)+" "+(gen.getIdForClass(cls)));
-            }
+            out.println("#define CID_"+getBridgeClassName(cls).toUpperCase()+" "+(gen.getIdForClass(cls)));
         }
         out.println();
         out.println("class MyFSTConfiguration : public FSTConfiguration {");
@@ -73,12 +74,12 @@ public class FSTCFactoryGen extends FSTFactoryGen {
         for (Iterator<Class> iterator = gen.getSortedClazzes().iterator(); iterator.hasNext(); ) {
             Class cls = iterator.next();
             if ( cls.isArray() ) {
-
-            } else {
-                out.println("        case "+(gen.getIdForClass(cls))+": return new "+getBridgeClassName(cls)+"(this);");
+            } else
+            {
+                out.println("        case CID_"+getBridgeClassName(cls).toUpperCase()+": return new "+getBridgeClassName(cls)+"(this);");
             }
         }
-        out.println("        default: return NULL;");
+        out.println("        default: return defaultInstantiate(clzId);\n;");
         out.println("    }");
         out.println("};");
     }
