@@ -64,7 +64,7 @@ public class FSTJavaFactoryGen extends FSTFactoryGen {
             out.println("    public static final int CID_"+getBridgeClassName(cls).toUpperCase()+" = "+(gen.getIdForClass(cls))+";");
         }
         out.println();
-        out.println("    public Object instantiate(int clzId, InputStream in, FSTSerBase container) throws IOException {");
+        out.println("    public Object instantiate(int clzId, FSTCountingInputStream in, FSTSerBase container, int streampos) throws IOException {");
         out.println("        int len = 0;");
         out.println("        switch(clzId) {");
 
@@ -80,7 +80,7 @@ public class FSTJavaFactoryGen extends FSTFactoryGen {
                 out.println("            case CID_"+getBridgeClassName(cls).toUpperCase()+": return new "+getBridgeClassName(cls)+"(this);");
             }
         }
-        out.println("            default: return defaultInstantiate(getClass(clzId),in,container);");
+        out.println("            default: return defaultInstantiate(getClass(clzId),in,container,streampos);");
         out.println("        }");
         out.println("    }");
         out.println("    ");

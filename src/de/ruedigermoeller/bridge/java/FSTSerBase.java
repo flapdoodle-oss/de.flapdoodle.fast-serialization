@@ -1,8 +1,5 @@
 package de.ruedigermoeller.bridge.java;
 
-import de.ruedigermoeller.serialization.util.FSTUtil;
-import sun.misc.Unsafe;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,13 +14,86 @@ import java.io.OutputStream;
  */
 public class FSTSerBase {
 
+    static final byte BIG_BOOLEAN_FALSE = -17;
+    static final byte BIG_BOOLEAN_TRUE = -16;
+    static final byte BIG_INT = -9;
+    static final byte COPYHANDLE = -8;
+    static final byte HANDLE = -7;
+    static final byte ENUM = -6;
+    static final byte ARRAY = -5;
+    //    static final byte STRING = -4;
+    static final byte TYPED = -3; // var class == object written class
+    //static final byte PRIMITIVE_ARRAY = -2;
+    static final byte NULL = -1;
+    static final byte OBJECT = 0;
+
     protected FSTJavaFactory fac;
 
     public FSTSerBase(FSTJavaFactory fac) {
         this.fac = fac;
     }
 
-    public Object decodeObject( InputStream in ) {
+    public Object decodeObject( FSTCountingInputStream in ) throws IOException {
+        int streampos = in.getCount();
+        int header = in.read();
+        switch (header) {
+            case OBJECT:
+                int clz = readCShort(in);
+                fac.instantiate(clz,in,this,streampos);
+                break;
+            case NULL:
+                return null;
+            case HANDLE:
+                break;
+            case BIG_INT:
+                break;
+            case ARRAY:
+                break;
+        }
+//        int streampos = in.tellg();
+//        jbyte header = readByte(in);
+//        FSTSerializationBase * res = NULL;
+//        switch ( header ) {
+//            case OBJECT:
+//            {
+//                int clz = readCShort(in);
+//                FSTSerializationBase *obj = conf->instantiate(clz);
+//                if ( obj ) {
+//                    conf->registerObject(streampos,obj);
+//                    obj->decode(in);
+//                    return obj;
+//                }
+//                return NULL;
+//            }
+//            break;
+//            case NULL_REF:
+//                return NULL;
+//            case HANDLE:
+//            {
+//                int pos = readCInt(in);
+//                return conf->objects[pos];
+//                break;
+//            }
+//            case BIG_INT: // stupid performance opt in fst-java, consider skipping
+//            {
+//                res = conf->instantiate(CID_FSTINTEGER);
+//                res->decode(in);
+//                return res;
+//            }
+//            case ARRAY:
+//            {
+//                int clz = readCShort(in);
+//                res = conf->instantiate(clz);
+//                if ( res ) {
+//                    conf->registerObject(in.tellg(),res);
+//                }
+//                if ( res ) {
+//                    res->decode(in);
+//                }
+//                return res;
+//            }
+//        }
+//        return NULL;
         return null;
     }
 

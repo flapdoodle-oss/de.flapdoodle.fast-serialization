@@ -60,7 +60,7 @@ public class FSTJavaFileGen extends FSTFileGen {
 
     public void generateReadMethod(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
         depth+="    ";
-        out.println(depth +"public void decode(InputStream in)  throws IOException {");
+        out.println(depth +"public void decode(FSTCountingInputStream in)  throws IOException {");
         FSTClazzInfo.FSTFieldInfo[] fieldInfo = layout.getFieldInfo();
         int numBool = layout.getNumBoolFields();
         out.println(depth+"    int bools = 0;");
