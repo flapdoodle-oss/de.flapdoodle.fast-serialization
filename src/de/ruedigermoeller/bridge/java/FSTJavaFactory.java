@@ -1,5 +1,6 @@
 package de.ruedigermoeller.bridge.java;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -11,8 +12,8 @@ import java.io.InputStream;
  */
 public abstract class FSTJavaFactory {
 
-    public abstract FSTSerBase instantiate(int clzId, InputStream in, FSTSerBase container);
-    public FSTSerBase defaultInstantiate(Class clz, InputStream in, FSTSerBase container) {
+    public abstract Object instantiate(int clzId, InputStream in, FSTSerBase container) throws IOException;
+    public Object defaultInstantiate(Class clz, InputStream in, FSTSerBase container) {
         return null;
     }
 

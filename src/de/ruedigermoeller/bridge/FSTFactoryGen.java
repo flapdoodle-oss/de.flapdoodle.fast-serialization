@@ -29,12 +29,10 @@ import java.io.PrintStream;
  * Time: 01:23
  * To change this template use File | Settings | File Templates.
  */
-public class FSTFactoryGen {
-
-    protected FSTBridgeGenerator gen;
+public class FSTFactoryGen extends FSTGen {
 
     public FSTFactoryGen(FSTBridgeGenerator gen) {
-        this.gen = gen;
+        super(gen);
     }
 
     public void generateFactoryHeader(PrintStream out) {

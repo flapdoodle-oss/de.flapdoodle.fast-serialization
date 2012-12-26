@@ -140,6 +140,9 @@ public final class FSTClazzInfo {
     }
 
     private void createFields(Class c) {
+        if (c.isInterface()||c.isPrimitive()) {
+            return;
+        }
         List<Field> fields = getAllFields(c, null);
         for (int i = 0; i < fields.size(); i++) {
             Field field = fields.get(i);
@@ -175,8 +178,14 @@ public final class FSTClazzInfo {
         };
         Class curCl = c;
         fields.clear();
+
         while (curCl != Object.class) {
-            ObjectStreamClass os = ObjectStreamClass.lookup(curCl);
+            ObjectStreamClass os = null;
+            try {
+                os = ObjectStreamClass.lookup(curCl);
+            } catch (Exception e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
             if (os != null) {
                 final ObjectStreamField[] fi = os.getFields();
                 List<FSTFieldInfo> curClzFields = new ArrayList<FSTFieldInfo>();

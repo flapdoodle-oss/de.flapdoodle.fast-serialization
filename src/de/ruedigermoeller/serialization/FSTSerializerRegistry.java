@@ -75,6 +75,9 @@ public class FSTSerializerRegistry {
     FSTObject2ObjectMap<Class,SerEntry> map = new FSTObject2ObjectMap<Class, SerEntry>(97);
 
     public final FSTObjectSerializer getSerializer(Class cl) {
+        if ( cl.isPrimitive()) {
+            return null;
+        }
         return getSerializer(cl,cl);
     }
 

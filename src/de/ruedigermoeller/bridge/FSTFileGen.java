@@ -30,12 +30,10 @@ import java.io.PrintStream;
  * Time: 19:10
  * To change this template use File | Settings | File Templates.
  */
-public class FSTBridgeGen {
+public class FSTFileGen extends FSTGen {
 
-    protected FSTBridgeGenerator gen;
-
-    public FSTBridgeGen(FSTBridgeGenerator gen) {
-        this.gen = gen;
+    public FSTFileGen(FSTBridgeGenerator gen) {
+        super(gen);
     }
 
     public void generateClazz(FSTClazzInfo info, String file, String depth ) throws FileNotFoundException {
@@ -72,20 +70,6 @@ public class FSTBridgeGen {
         out.println();
         generateFooter(info,out,depth);
 
-    }
-
-    protected Class mapDeclarationType(Class type, FSTClazzInfo info) {
-        if ( gen.isRegistered(type) || isSystemClass(type) ) {
-            return type;
-        }
-        if (info.getSer() instanceof FSTCrossLanguageSerializer ) {
-            return ((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout();
-        }
-        throw new RuntimeException("unmappable class:"+type.getName());
-    }
-
-    public boolean isSystemClass(Class clz) {
-        return clz.getName().startsWith("java");
     }
 
     public void generateFieldDeclaration(FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {

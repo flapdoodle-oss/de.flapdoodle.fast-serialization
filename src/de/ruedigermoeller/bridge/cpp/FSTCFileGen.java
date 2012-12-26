@@ -1,6 +1,6 @@
 package de.ruedigermoeller.bridge.cpp;
 
-import de.ruedigermoeller.bridge.FSTBridgeGen;
+import de.ruedigermoeller.bridge.FSTFileGen;
 import de.ruedigermoeller.bridge.FSTBridgeGenerator;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 
@@ -28,7 +28,7 @@ import java.io.PrintStream;
  * Time: 19:40
  * To change this template use File | Settings | File Templates.
  */
-public class FSTCFileGen extends FSTBridgeGen {
+public class FSTCFileGen extends FSTFileGen {
 
     public FSTCFileGen(FSTBridgeGenerator gen) {
         super(gen);

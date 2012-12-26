@@ -1,15 +1,10 @@
 package de.ruedigermoeller.bridge.java;
 
-import de.ruedigermoeller.bridge.FSTBridgeGen;
+import de.ruedigermoeller.bridge.FSTFileGen;
 import de.ruedigermoeller.bridge.FSTBridgeGenerator;
-import de.ruedigermoeller.bridge.cpp.FSTCHeaderGen;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
-import de.ruedigermoeller.serialization.FSTCrossLanguageSerializer;
 
 import java.io.PrintStream;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -33,7 +28,7 @@ import java.util.List;
  * Time: 19:40
  * To change this template use File | Settings | File Templates.
  */
-public class FSTJavaFileGen extends FSTBridgeGen {
+public class FSTJavaFileGen extends FSTFileGen {
 
     public FSTJavaFileGen(FSTBridgeGenerator gen) {
         super(gen);
@@ -206,15 +201,17 @@ public class FSTJavaFileGen extends FSTBridgeGen {
     public void generateFieldDeclaration(FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
         Class type = fieldInfo.getType();
         String name = fieldInfo.getField().getName();
-        type = mapDeclarationType(type,info);
         if ( ! fieldInfo.isArray() ) {
             if (type.isPrimitive() || isSystemClass(type) ) {
                 out.println(depth+type.getSimpleName()+" "+ name +";");
             } else {
+                type = mapDeclarationType(type,info);
                 out.println(depth+getBridgeClassName(type)+" "+ name +";");
             }
         } else {
-            out.println(depth + type.getComponentType()+"[]" + " " + name + ";");
+            Class componentType = type.getComponentType();
+            Class aClass = mapDeclarationType(componentType, gen.getCLInfo(componentType));
+            out.println(depth + aClass +"[]" + " " + name + ";");
         }
     }
 
