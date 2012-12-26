@@ -1065,11 +1065,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         }
     }
 
-    @Override
-    public void close() throws IOException {
-        super.close();
-        conf.returnObject(objects, clnames);
-    }
 
     public char readCChar() throws IOException {
         ensureReadAhead(3);
@@ -1104,6 +1099,12 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             return (short) head;
         }
         return readShort();
+    }
+
+    @Override
+    public void close() throws IOException {
+        super.close();
+        conf.returnObject(objects, clnames);
     }
 
     ////////////////////////////////////////////////////// epic compatibility hack /////////////////////////////////////////////////////////

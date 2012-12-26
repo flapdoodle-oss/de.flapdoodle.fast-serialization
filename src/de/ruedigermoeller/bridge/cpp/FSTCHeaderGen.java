@@ -44,11 +44,11 @@ public class FSTCHeaderGen extends FSTBridgeGen {
             if ( cls.isArray() ) {
             } else
             {
-                out.println(depth+"class "+getBridgeClassName(gen.getCLInfo(cls))+";");
+                out.println(depth+"class "+getBridgeClassName(cls)+";");
             }
         }
         out.println();
-        String clz = getBridgeClassName(info);
+        String clz = getBridgeClassName(info.getClazz());
         out.println(depth+"class "+ clz +" : public FSTSerializationBase {");
         out.println();
         out.println(depth+"public:");
@@ -60,7 +60,7 @@ public class FSTCHeaderGen extends FSTBridgeGen {
     }
 
     protected String getFileName(FSTClazzInfo info) {
-        return getBridgeClassName(info) + ".h";
+        return getBridgeClassName(info.getClazz()) + ".h";
     }
 
     public void generateFieldDeclaration(FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
@@ -90,7 +90,7 @@ public class FSTCHeaderGen extends FSTBridgeGen {
             if (type == byte.class ) {
                 out.println(depth+"jbyte "+fieldInfo.getField().getName()+";");
             } else {
-                out.println(depth+getBridgeClassName(gen.getCLInfo(fieldInfo.getType()))+" * "+fieldInfo.getField().getName()+";");
+                out.println(depth+getBridgeClassName(fieldInfo.getType())+" * "+fieldInfo.getField().getName()+";");
             }
         } else {
             out.println(depth + getCPPArrayClzName(type) + " * " + fieldInfo.getField().getName() + ";");

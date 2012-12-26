@@ -1,11 +1,15 @@
 package de.ruedigermoeller.bridge;
 
+import de.ruedigermoeller.bridge.cpp.FSTCFactoryGen;
 import de.ruedigermoeller.bridge.cpp.FSTCFileGen;
 import de.ruedigermoeller.bridge.cpp.FSTCHeaderGen;
+import de.ruedigermoeller.bridge.java.FSTJavaFactoryGen;
+import de.ruedigermoeller.bridge.java.FSTJavaFileGen;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTCrossLanguageSerializer;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
@@ -71,6 +75,13 @@ public class FSTBridgeGenerator {
     }
 
     public void addClass(Class c) {
+        isValidClassType(c);
+        conf.getClassRegistry().registerClass(c);
+        knownClasses.add(c);
+        sorted.add(c);
+    }
+
+    public void isValidClassType(Class c) {
         FSTClazzInfo info = conf.getCLInfoRegistry().getCLInfo(c);
         if ( info.getSer() == null && info.useCompatibleMode() || info.isExternalizable() ) {
             throw new RuntimeException("cannot use class "+c.getName()+" for cross language messages. It defines JDK specific serialization methods.");
@@ -78,13 +89,10 @@ public class FSTBridgeGenerator {
         if ( info.getSer() != null && info.getSer() instanceof FSTCrossLanguageSerializer == false ) {
             System.out.println("warning: Serializer registered for "+c.getName()+" will be ignored. Not a cross-language serializer");
         }
-        conf.getClassRegistry().registerClass(c);
         if ( info.getSer() instanceof FSTCrossLanguageSerializer) {
             knownClasses.add(((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout());
             sorted.add(((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout());
         }
-        knownClasses.add(c);
-        sorted.add(c);
     }
 
     public int getIdForClass( Class c ) {
@@ -95,16 +103,40 @@ public class FSTBridgeGenerator {
         return sorted;
     }
 
-    public void generateClasses( String outDir ) throws FileNotFoundException {
+    public void generateClasses( Language lang, String outDir ) throws FileNotFoundException {
+        new File(outDir).mkdirs();
+        if ( lang == Language.CPP ) {
+            FSTCFactoryGen hgen = new FSTCFactoryGen(this);
+            hgen.generateFactory(outDir);
+        }
+        if ( lang == Language.JAVA ) {
+            FSTJavaFactoryGen hgen = new FSTJavaFactoryGen (this);
+            hgen.generateFactory(outDir);
+        }
         for (Iterator<Class> iterator = sorted.iterator(); iterator.hasNext(); ) {
             Class next = iterator.next();
             if ( ! next.isArray() && next != String.class ) {
-                FSTCHeaderGen gen = new FSTCHeaderGen(this);
-                gen.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
+                if ( lang == Language.CPP ) {
+                    FSTCHeaderGen gen = new FSTCHeaderGen(this);
+                    gen.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
 
-                FSTCFileGen genf = new FSTCFileGen(this);
-                genf.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
+                    FSTCFileGen genf = new FSTCFileGen(this);
+                    genf.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
+                }
+                if ( lang == Language.JAVA ) {
+                    FSTJavaFileGen genf = new FSTJavaFileGen(this);
+                    genf.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
+                }
             }
         }
+    }
+
+    public boolean isRegistered(Class clazz) {
+        return knownClasses.contains(clazz);
+    }
+
+    public enum Language {
+        CPP,
+        JAVA
     }
 }

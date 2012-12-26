@@ -7,6 +7,11 @@ import de.ruedigermoeller.bridge.cpp.FSTCHeaderGen;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTObjectOutput;
+import de.ruedigermoeller.serialization.testclasses.basicstuff.Primitives;
+import de.ruedigermoeller.serialization.testclasses.enterprise.ObjectOrientedDataType;
+import de.ruedigermoeller.serialization.testclasses.enterprise.ObjectOrientedInt;
+import de.ruedigermoeller.serialization.testclasses.enterprise.SimpleOrder;
+import de.ruedigermoeller.serialization.testclasses.enterprise.Trader;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -61,6 +66,7 @@ public class Cross implements Serializable {
         FSTBridgeGenerator generator = new FSTBridgeGenerator();
         generator.addClass(Cross.class);
         generator.addClass(CrossB.class);
+
         FSTConfiguration conf = generator.getConf();
 
         FSTClazzInfo clInfo = conf.getCLInfoRegistry().getCLInfo(Cross.class);
@@ -73,10 +79,8 @@ public class Cross implements Serializable {
         System.out.println("}");
         System.out.println();
 
-        generator.generateClasses("C:\\Users\\ruedi\\Documents\\Visual Studio 2012\\Projects\\FST\\FST");
-
-        FSTCFactoryGen hgen = new FSTCFactoryGen(generator);
-        hgen.generateFactory("C:\\Users\\ruedi\\Documents\\Visual Studio 2012\\Projects\\FST\\FST");
+//        generator.generateClasses( FSTBridgeGenerator.Language.CPP,  "C:\\Users\\ruedi\\Documents\\Visual Studio 2012\\Projects\\FST\\FST");
+        generator.generateClasses( FSTBridgeGenerator.Language.JAVA, "D:\\work\\FSTCrossTest\\src\\de\\ruedigermoeller\\bridge\\java\\generated");
 
         FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream("\\tmp\\crosstest.oos"), conf);
         out.writeObject(new Cross(new CrossB()));

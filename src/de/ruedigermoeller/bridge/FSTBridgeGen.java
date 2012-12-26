@@ -39,9 +39,15 @@ public class FSTBridgeGen {
     }
 
     public void generateClazz(FSTClazzInfo info, String file, String depth ) throws FileNotFoundException {
-        PrintStream ps = new PrintStream(new FileOutputStream(file + File.separator + getFileName(info)) );
-        generateClazz(info, ps, depth);
-        ps.close();
+        if ( shouldGenerateClazz(info) ) {
+            PrintStream ps = new PrintStream(new FileOutputStream(file + File.separator + getFileName(info)) );
+            generateClazz(info, ps, depth);
+            ps.close();
+        }
+    }
+
+    public boolean shouldGenerateClazz(FSTClazzInfo info) {
+        return true;
     }
 
     protected String getFileName(FSTClazzInfo info) {
@@ -68,6 +74,20 @@ public class FSTBridgeGen {
 
     }
 
+    protected Class mapDeclarationType(Class type, FSTClazzInfo info) {
+        if ( gen.isRegistered(type) || isSystemClass(type) ) {
+            return type;
+        }
+        if (info.getSer() instanceof FSTCrossLanguageSerializer ) {
+            return ((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout();
+        }
+        throw new RuntimeException("unmappable class:"+type.getName());
+    }
+
+    public boolean isSystemClass(Class clz) {
+        return clz.getName().startsWith("java");
+    }
+
     public void generateFieldDeclaration(FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
     }
 
@@ -77,8 +97,8 @@ public class FSTBridgeGen {
     protected void generateFooter(FSTClazzInfo info, PrintStream out, String depth) {
     }
 
-    protected String getBridgeClassName(FSTClazzInfo info) {
-        return "fst" + info.getClazz().getSimpleName();
+    protected String getBridgeClassName(Class clazz) {
+        return "fst" + clazz.getSimpleName();
     }
 
     public void generateWriteMethod(FSTClazzInfo clInfo, FSTClazzInfo layout, PrintStream out, String depth) {

@@ -1,10 +1,15 @@
-package de.ruedigermoeller.bridge.cpp;
+package de.ruedigermoeller.bridge.java;
 
 import de.ruedigermoeller.bridge.FSTBridgeGen;
 import de.ruedigermoeller.bridge.FSTBridgeGenerator;
+import de.ruedigermoeller.bridge.cpp.FSTCHeaderGen;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
+import de.ruedigermoeller.serialization.FSTCrossLanguageSerializer;
 
 import java.io.PrintStream;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -28,33 +33,45 @@ import java.io.PrintStream;
  * Time: 19:40
  * To change this template use File | Settings | File Templates.
  */
-public class FSTCFileGen extends FSTBridgeGen {
+public class FSTJavaFileGen extends FSTBridgeGen {
 
-    public FSTCFileGen(FSTBridgeGenerator gen) {
+    public FSTJavaFileGen(FSTBridgeGenerator gen) {
         super(gen);
     }
 
+    public boolean shouldGenerateClazz(FSTClazzInfo info) {
+        if (isSystemClass(info.getClazz())) {
+            return false;
+        }
+        return true;
+    }
+
     protected void generateHeader(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
-        out.print(depth + "#include \"" + getBridgeClassName(info.getClazz()) + ".h\"");
+        out.println("package de.ruedigermoeller.bridge.java.generated;");
         out.println();
+        out.println("import de.ruedigermoeller.bridge.java.*;" );
+        out.println("import java.io.*;" );
+        out.println("import java.util.*;" );
         out.println();
-        out.println(depth+getBridgeClassName(info.getClazz())+"::~"+getBridgeClassName(info.getClazz())+"(void) {");
-        out.println(depth+"}");
+        String clz = getBridgeClassName(info.getClazz());
+        out.println(depth+"public class "+ clz +" extends FSTSerBase {");
         out.println();
+        out.println(depth+"    public "+ clz +"(FSTJavaFactory context) { super(context); }");
     }
 
     protected String getFileName(FSTClazzInfo info) {
-        return getBridgeClassName(info.getClazz()) + ".cpp";
+        return getBridgeClassName(info.getClazz()) + ".java";
     }
 
     public void generateReadMethod(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
-        out.println(depth +"void "+ getBridgeClassName(info.getClazz()) + "::decode(istream &in) {");
+        depth+="    ";
+        out.println(depth +"public void decode(InputStream in)  throws IOException {");
         FSTClazzInfo.FSTFieldInfo[] fieldInfo = layout.getFieldInfo();
         int numBool = layout.getNumBoolFields();
-        out.println(depth+"    char bools = 0;");
+        out.println(depth+"    int bools = 0;");
         for (int i = 0; i < numBool; i++) {
             if ( i%8 == 0 ) {
-                out.println(depth+"    bools = in.get();");
+                out.println(depth+"    bools = (in.read()+256)&0xff;");
                 generateBoolRead((i/8)*8,Math.min(numBool,((i/8)+1)*8),fieldInfo,out,depth+"    ");
             }
         }
@@ -113,22 +130,36 @@ public class FSTCFileGen extends FSTBridgeGen {
             if (type == byte.class ) {
                 out.println(depth+name+" = readByte( in );");
             } else if ( fieldInfo.isArray() && fieldInfo.getArrayDepth() == 1 ) {
-                out.println(depth+name+" = ("+FSTCHeaderGen.getCPPArrayClzName(fieldInfo.getType())+"*)decodeObject( in );"); // array
+                out.println(depth+name+" = ("+ getBridgeClassName(fieldInfo.getType().getComponentType()) +"[])decodeObject( in );"); // array
             }
         } else {
-            out.println(depth+name+" = ("+getBridgeClassName(fieldInfo.getType())+"*)"+"decodeObject( in );");
+            out.println(depth+name+" = ("+getBridgeClassName(fieldInfo.getType())+")"+"decodeObject( in );");
         }
     }
 
+    protected String getBridgeClassName(Class clazz) {
+        if ( clazz.isPrimitive() ) {
+            return clazz.getSimpleName();
+        }
+        if ( isSystemClass(clazz) ) {
+            return clazz.getName();
+        }
+        if (!gen.isRegistered(clazz)) {
+            throw new RuntimeException("reference to unregistered class:"+clazz.getName());
+        }
+        return "fst" + clazz.getSimpleName();
+    }
+
     public void generateWriteMethod(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
-        out.println(depth +"void "+getBridgeClassName(info.getClazz()) + "::encode(ostream &out) {");
+        depth+="    ";
+        out.println(depth +"public void encode(OutputStream out)  throws IOException {");
         FSTClazzInfo.FSTFieldInfo[] fieldInfo = layout.getFieldInfo();
         int numBool = info.getNumBoolFields();
-        out.println(depth+"    char bools = 0;");
+        out.println(depth+"    int bools = 0;");
         for (int i = 0; i < numBool; i++) {
             if ( i%8 == 0 ) {
                 generateBoolWrite((i/8)*8,Math.min(numBool,((i/8)+1)*8),fieldInfo,out,depth+"    ");
-                out.println(depth + "    out.put(bools);");
+                out.println(depth + "    out.write(bools);");
                 out.println(depth + "    bools = 0;");
             }
         }
@@ -140,7 +171,7 @@ public class FSTCFileGen extends FSTBridgeGen {
     }
 
     protected void generateWriteField(FSTClazzInfo clInfo, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
-        if ( fieldInfo.isIntegral() && ! fieldInfo.isArray() ) {
+        if ( false && fieldInfo.isIntegral() && ! fieldInfo.isArray() ) {
             Class type = fieldInfo.getType();
             String name = fieldInfo.getField().getName();
             if (type == boolean.class ) {
@@ -170,5 +201,25 @@ public class FSTCFileGen extends FSTBridgeGen {
         }
     }
 
+/////////////////// header gen
+
+    public void generateFieldDeclaration(FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
+        Class type = fieldInfo.getType();
+        String name = fieldInfo.getField().getName();
+        type = mapDeclarationType(type,info);
+        if ( ! fieldInfo.isArray() ) {
+            if (type.isPrimitive() || isSystemClass(type) ) {
+                out.println(depth+type.getSimpleName()+" "+ name +";");
+            } else {
+                out.println(depth+getBridgeClassName(type)+" "+ name +";");
+            }
+        } else {
+            out.println(depth + type.getComponentType()+"[]" + " " + name + ";");
+        }
+    }
+
+    protected void generateFooter(FSTClazzInfo info, PrintStream out, String depth) {
+        out.println(depth+"}");
+    }
 
 }
