@@ -80,7 +80,7 @@ public class Cross implements Serializable {
         System.out.println();
 
 //        generator.generateClasses( FSTBridgeGenerator.Language.CPP,  "C:\\Users\\ruedi\\Documents\\Visual Studio 2012\\Projects\\FST\\FST");
-        generator.generateClasses( FSTBridgeGenerator.Language.JAVA, "F:\\work\\FSTCrossTest\\src\\de\\ruedigermoeller\\bridge\\java\\generated");
+        generator.generateClasses( FSTBridgeGenerator.Language.JAVA, "d:\\work\\FSTCrossTest\\src\\de\\ruedigermoeller\\bridge\\java\\generated");
 
         FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream("\\tmp\\crosstest.oos"), conf);
         out.writeObject(new Cross(new CrossB()));

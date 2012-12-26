@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -28,6 +29,7 @@ public class FSTSerBase {
     static final byte OBJECT = 0;
 
     protected FSTJavaFactory fac;
+    HashMap<Integer,Object> objectMap = new HashMap<Integer, Object>();
 
     public FSTSerBase(FSTJavaFactory fac) {
         this.fac = fac;
@@ -39,12 +41,21 @@ public class FSTSerBase {
         switch (header) {
             case OBJECT:
                 int clz = readCShort(in);
-                fac.instantiate(clz,in,this,streampos);
-                break;
+                Object obj = fac.instantiate(clz, in, this, streampos);
+                if ( obj != null ) {
+                    objectMap.put(streampos,obj);
+                    if (obj instanceof FSTSerBase) {
+                        ((FSTSerBase) obj).decode(in);
+                    }
+                } else {
+                    throw new RuntimeException("unknown class id "+clz);
+                }
+                return obj;
             case NULL:
                 return null;
             case HANDLE:
-                break;
+                int ha = readCInt(in);
+                return objectMap.get(ha);
             case BIG_INT:
                 break;
             case ARRAY:
@@ -101,6 +112,12 @@ public class FSTSerBase {
 
     }
 
+    public void encode(OutputStream out) throws IOException {
+    }
+
+    public void decode(FSTCountingInputStream in) throws IOException {
+    }
+
     public final int readInt(InputStream in) throws IOException {
         int ch1 = in.read();
         int ch2 = in.read();
@@ -137,7 +154,7 @@ public class FSTSerBase {
     }
 
     public final int readCInt(InputStream in) throws IOException {
-        final int head = in.read();
+        final byte head = (byte) in.read();
         // -128 = short byte, -127 == 4 byte
         if (head > -127 && head <= 127) {
             return head;
@@ -167,7 +184,7 @@ public class FSTSerBase {
     }
 
     public long readCLong(InputStream in) throws IOException {
-        int head = in.read();
+        byte head = (byte) in.read();
         // -128 = short byte, -127 == 4 byte
         if (head > -126 && head <= 127) {
             return head;
