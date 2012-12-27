@@ -28,6 +28,6 @@ public class FSTGen {
     }
 
     public boolean isSystemClass(Class clz) {
-        return clz.isPrimitive() || clz.getName().startsWith("java");
+        return clz.isPrimitive() || clz.getName().startsWith("java") || clz == Object[].class;
     }
 }

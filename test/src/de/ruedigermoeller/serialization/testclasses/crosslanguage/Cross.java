@@ -4,6 +4,7 @@ import de.ruedigermoeller.bridge.FSTBridgeGenerator;
 import de.ruedigermoeller.bridge.cpp.FSTCFactoryGen;
 import de.ruedigermoeller.bridge.cpp.FSTCFileGen;
 import de.ruedigermoeller.bridge.cpp.FSTCHeaderGen;
+import de.ruedigermoeller.bridge.java.generated.MyFSTFactory;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTObjectOutput;
@@ -13,6 +14,7 @@ import de.ruedigermoeller.serialization.testclasses.enterprise.ObjectOrientedInt
 import de.ruedigermoeller.serialization.testclasses.enterprise.SimpleOrder;
 import de.ruedigermoeller.serialization.testclasses.enterprise.Trader;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
@@ -57,6 +59,8 @@ public class Cross implements Serializable {
     float testFloat[] = { 234.0234234f, -112312.0234234f };
     String string = "Rüdiger Möller";
     CrossB crossB;
+    Object object = new float[] { 234.0234234f, -112312.0234234f };
+    Object other[] = { "Hallo", "Holla","Hallo" };
 
     public Cross(CrossB b) {
         crossB = b;
@@ -80,7 +84,7 @@ public class Cross implements Serializable {
         System.out.println();
 
 //        generator.generateClasses( FSTBridgeGenerator.Language.CPP,  "C:\\Users\\ruedi\\Documents\\Visual Studio 2012\\Projects\\FST\\FST");
-        generator.generateClasses( FSTBridgeGenerator.Language.JAVA, "d:\\work\\FSTCrossTest\\src\\de\\ruedigermoeller\\bridge\\java\\generated");
+        generator.generateClasses( FSTBridgeGenerator.Language.JAVA, "F:\\work\\FSTCrossTest\\src\\de\\ruedigermoeller\\bridge\\java\\generated");
 
         FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream("\\tmp\\crosstest.oos"), conf);
         out.writeObject(new Cross(new CrossB()));
@@ -89,5 +93,6 @@ public class Cross implements Serializable {
             System.out.println("["+i+"]"+buffer[i]);
         }
         out.close();
+
     }
 }

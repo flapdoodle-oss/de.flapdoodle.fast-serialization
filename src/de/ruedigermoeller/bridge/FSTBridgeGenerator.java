@@ -54,6 +54,7 @@ public class FSTBridgeGenerator {
         addClass(long[].class);
         addClass(float[].class);
         addClass(double[].class);
+        addClass(Object[].class);
         addClass(Byte.class);
         addClass(Character.class);
         addClass(Short.class);
@@ -61,9 +62,9 @@ public class FSTBridgeGenerator {
         addClass(Long.class);
         addClass(Float.class);
         addClass(Double.class);
-        addClass(Object[].class);
         addClass(Date.class);
         addClass(String.class);
+        addClass(Object.class);
     }
 
     public FSTConfiguration getConf() {

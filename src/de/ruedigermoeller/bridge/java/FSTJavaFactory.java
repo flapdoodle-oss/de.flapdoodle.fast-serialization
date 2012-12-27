@@ -19,6 +19,9 @@ public abstract class FSTJavaFactory {
 
     public abstract Object instantiate(int clzId, FSTCountingInputStream in, FSTSerBase container, int streamPosition) throws IOException;
     public Object defaultInstantiate(Class clz, FSTCountingInputStream in, FSTSerBase container, int streampos) throws IOException {
+        if ( clz == String.class ) {
+            return container.readStringUTF(in);
+        }
         if ( clz == Long.class ) {
             return new Long(container.readCLong(in));
         }

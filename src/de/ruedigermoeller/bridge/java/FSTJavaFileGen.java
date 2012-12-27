@@ -126,6 +126,8 @@ public class FSTJavaFileGen extends FSTFileGen {
                 out.println(depth+name+" = readByte( in );");
             } else if ( fieldInfo.isArray() && fieldInfo.getArrayDepth() == 1 ) {
                 out.println(depth+name+" = ("+ getBridgeClassName(fieldInfo.getType().getComponentType()) +"[])decodeObject( in );"); // array
+            } else {
+                throw new RuntimeException("cannot map type in field "+fieldInfo.getField());
             }
         } else {
             out.println(depth+name+" = ("+getBridgeClassName(fieldInfo.getType())+")"+"decodeObject( in );");
@@ -137,6 +139,9 @@ public class FSTJavaFileGen extends FSTFileGen {
             return clazz.getSimpleName();
         }
         if ( isSystemClass(clazz) ) {
+            if ( clazz.isArray() ) {
+                return clazz.getComponentType().getSimpleName()+"[]";
+            }
             return clazz.getName();
         }
         if (!gen.isRegistered(clazz)) {
@@ -209,9 +214,13 @@ public class FSTJavaFileGen extends FSTFileGen {
                 out.println(depth+getBridgeClassName(type)+" "+ name +";");
             }
         } else {
-            Class componentType = type.getComponentType();
-            Class aClass = mapDeclarationType(componentType, gen.getCLInfo(componentType));
-            out.println(depth + aClass +"[]" + " " + name + ";");
+            type = type.getComponentType();
+            if (type.isPrimitive() || isSystemClass(type) ) {
+                out.println(depth+type.getSimpleName()+"[] "+ name +";");
+            } else {
+                type = mapDeclarationType(type,info);
+                out.println(depth+getBridgeClassName(type)+"[] "+ name +";");
+            }
         }
     }
 

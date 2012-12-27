@@ -1,5 +1,7 @@
 package de.ruedigermoeller.bridge.java;
 
+import de.ruedigermoeller.serialization.util.FSTUtil;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,9 +39,9 @@ public class FSTSerBase {
 
     public Object decodeObject( FSTCountingInputStream in ) throws IOException {
         int streampos = in.getCount();
-        int header = in.read();
+        byte header = (byte) in.read();
         switch (header) {
-            case OBJECT:
+            case OBJECT: {
                 int clz = readCShort(in);
                 Object obj = fac.instantiate(clz, in, this, streampos);
                 if ( obj != null ) {
@@ -51,61 +53,84 @@ public class FSTSerBase {
                     throw new RuntimeException("unknown class id "+clz);
                 }
                 return obj;
+            }
             case NULL:
                 return null;
             case HANDLE:
                 int ha = readCInt(in);
                 return objectMap.get(ha);
             case BIG_INT:
-                break;
-            case ARRAY:
-                break;
+                return new Integer(readCInt(in));
+            case ARRAY: {
+                int clsId = readCShort(in);
+                Object obj = fac.instantiate(clsId, in, this, streampos);
+                readArray(obj, in);
+                return obj;
+            }
         }
-//        int streampos = in.tellg();
-//        jbyte header = readByte(in);
-//        FSTSerializationBase * res = NULL;
-//        switch ( header ) {
-//            case OBJECT:
-//            {
-//                int clz = readCShort(in);
-//                FSTSerializationBase *obj = conf->instantiate(clz);
-//                if ( obj ) {
-//                    conf->registerObject(streampos,obj);
-//                    obj->decode(in);
-//                    return obj;
-//                }
-//                return NULL;
-//            }
-//            break;
-//            case NULL_REF:
-//                return NULL;
-//            case HANDLE:
-//            {
-//                int pos = readCInt(in);
-//                return conf->objects[pos];
-//                break;
-//            }
-//            case BIG_INT: // stupid performance opt in fst-java, consider skipping
-//            {
-//                res = conf->instantiate(CID_FSTINTEGER);
-//                res->decode(in);
-//                return res;
-//            }
-//            case ARRAY:
-//            {
-//                int clz = readCShort(in);
-//                res = conf->instantiate(clz);
-//                if ( res ) {
-//                    conf->registerObject(in.tellg(),res);
-//                }
-//                if ( res ) {
-//                    res->decode(in);
-//                }
-//                return res;
-//            }
-//        }
-//        return NULL;
         return null;
+    }
+
+    public void readArray(Object array, FSTCountingInputStream in) throws IOException {
+        Class arrType = array.getClass().getComponentType();
+        if (arrType == byte.class) {
+            byte[] arr = (byte[]) array;
+            in.read(arr);
+        } else if (arrType == char.class) {
+            char[] arr = (char[]) array;
+            for (int j = 0; j < arr.length; j++) {
+                arr[j] = readCChar(in);
+            }
+        } else if (arrType == short.class) {
+            short[] arr = (short[]) array;
+            for (int j = 0; j < arr.length; j++) {
+                arr[j] = readShort(in);
+            }
+        } else if (arrType == int.class) {
+            final int[] arr = (int[]) array;
+            for (int j = 0; j < arr.length; j++) {
+                arr[j] = readCInt(in);
+            }
+        } else if (arrType == float.class) {
+            float[] arr = (float[]) array;
+            for (int j = 0; j < arr.length; j++) {
+                arr[j] = readCFloat(in);
+            }
+        } else if (arrType == double.class) {
+            double[] arr = (double[]) array;
+            for (int j = 0; j < arr.length; j++) {
+                arr[j] = readCDouble(in);
+            }
+        } else if (arrType == long.class) {
+            long[] arr = (long[]) array;
+            for (int j = 0; j < arr.length; j++) {
+                arr[j] = readLong(in);
+            }
+        } else if (arrType == boolean.class) {
+            boolean[] arr = (boolean[]) array;
+            for (int j = 0; j < arr.length; j++) {
+                arr[j] = in.read() != 0;
+            }
+        } else {
+            throw new RuntimeException("unexpected array type " + arrType);
+        }
+    }
+
+    public String readStringUTF(InputStream in) throws IOException {
+        int len = readCInt(in);
+        char charBuf[] = new char[len * 3];
+        int chcount = 0;
+        for (int i = 0; i < len; i++) {
+            char head = (char) in.read();
+            if (head >= 0 && head < 255) {
+                charBuf[chcount++] = head;
+            } else {
+                int ch1 = in.read();
+                int ch2 = in.read();
+                charBuf[chcount++] = (char) ((ch1 << 8) + (ch2 << 0));
+            }
+        }
+        return new String(charBuf, 0, chcount);
     }
 
     public void encodeObject( OutputStream out ) {
