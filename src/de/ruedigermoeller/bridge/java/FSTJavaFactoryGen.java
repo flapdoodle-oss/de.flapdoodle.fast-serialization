@@ -33,19 +33,6 @@ public class FSTJavaFactoryGen extends FSTFactoryGen {
         super(gen);
     }
 
-    protected String getBridgeClassName(Class c) {
-        if ( c == Object[].class ) {
-            return "OBJECTARR";
-        }
-        if ( c.getComponentType() != null && c.getComponentType().isPrimitive() ) {
-            return c.getComponentType().getSimpleName().toUpperCase()+"ARR";
-        }
-        if ( isSystemClass(c) ) {
-            return c.getSimpleName(); // system classes
-        }
-        return "fst" + c.getSimpleName();
-    }
-
     @Override
     public void generateFactoryHeader(PrintStream out) {
     }
@@ -61,7 +48,7 @@ public class FSTJavaFactoryGen extends FSTFactoryGen {
         out.println();
         for (Iterator<Class> iterator = gen.getSortedClazzes().iterator(); iterator.hasNext(); ) {
             Class cls = iterator.next();
-            out.println("    public static final int CID_"+getBridgeClassName(cls).toUpperCase()+" = "+(gen.getIdForClass(cls))+";");
+            out.println("    public static final int CID_"+ getCIDClazzName(cls) +" = "+(gen.getIdForClass(cls))+";");
         }
         out.println();
         out.println("    public Object instantiate(int clzId, FSTCountingInputStream in, FSTSerBase container, int streampos) throws IOException {");
@@ -71,13 +58,13 @@ public class FSTJavaFactoryGen extends FSTFactoryGen {
         for (Iterator<Class> iterator = gen.getSortedClazzes().iterator(); iterator.hasNext(); ) {
             Class cls = iterator.next();
             if ( cls.isArray() ) {
-                out.println("            case CID_"+getBridgeClassName(cls).toUpperCase()+": len = container.readCInt(in); return new "+cls.getComponentType().getSimpleName()+"[len];");
+                out.println("            case CID_"+getCIDClazzName(cls) +": len = container.readCInt(in); return new "+getBridgeClassName(cls).replace("[]","")+"[len];");
             } else if ( isSystemClass(cls))
             {
 //                out.println("            case CID_"+getBridgeClassName(cls).toUpperCase()+": return new "+getBridgeClassName(cls)+"();");
             } else
             {
-                out.println("            case CID_"+getBridgeClassName(cls).toUpperCase()+": return new "+getBridgeClassName(cls)+"(this);");
+                out.println("            case CID_"+getCIDClazzName(cls) +": return new "+getBridgeClassName(cls)+"(this);");
             }
         }
         out.println("            default: return defaultInstantiate(getClass(clzId),in,container,streampos);");
@@ -90,20 +77,16 @@ public class FSTJavaFactoryGen extends FSTFactoryGen {
 
         for (Iterator<Class> iterator = gen.getSortedClazzes().iterator(); iterator.hasNext(); ) {
             Class cls = iterator.next();
-            if ( cls.isArray() ) {
-                out.println("            case CID_"+getBridgeClassName(cls).toUpperCase()+": return "+cls.getComponentType().getSimpleName()+"[].class;");
-            } else if ( isSystemClass(cls))
-            {
-                out.println("            case CID_"+getBridgeClassName(cls).toUpperCase()+": return "+cls.getName()+".class;");
-            } else
-            {
-                out.println("            case CID_"+getBridgeClassName(cls).toUpperCase()+": return "+getBridgeClassName(cls)+".class;");
-            }
+            out.println("            case CID_"+getCIDClazzName(cls) +": return "+getBridgeClassName(cls)+".class;");
         }
-        out.println("            default: return null;");
+        out.println("            default: throw new RuntimeException(\"unknown class id:\"+clzId);");
         out.println("        }");
         out.println("    }");
         out.println("}");
+    }
+
+    private String getCIDClazzName(Class cls) {
+        return getBridgeClassName(cls).toUpperCase().replace('.','_').replace("[]","_ARR");
     }
 
     protected String getImplFileName() {

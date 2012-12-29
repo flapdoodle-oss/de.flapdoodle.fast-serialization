@@ -11,6 +11,7 @@ import de.ruedigermoeller.serialization.FSTCrossLanguageSerializer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -47,15 +48,17 @@ public class FSTBridgeGenerator {
     });
 
     public FSTBridgeGenerator() {
-        addClass(int[].class);
         addClass(byte[].class);
+        addClass(boolean[].class);
         addClass(char[].class);
         addClass(short[].class);
+        addClass(int[].class);
         addClass(long[].class);
         addClass(float[].class);
         addClass(double[].class);
-        addClass(Object[].class);
+
         addClass(Byte.class);
+        addClass(Boolean.class);
         addClass(Character.class);
         addClass(Short.class);
         addClass(Integer.class);
@@ -76,10 +79,23 @@ public class FSTBridgeGenerator {
     }
 
     public void addClass(Class c) {
+        if ( c.isArray() && ! c.getComponentType().isPrimitive() ) {
+            c = c.getComponentType();
+            if ( c.isArray() ) {
+                throw new RuntimeException("multi dimensional arrays not supported !");
+            }
+        }
         isValidClassType(c);
         conf.getClassRegistry().registerClass(c);
         knownClasses.add(c);
         sorted.add(c);
+
+        if ( ! c.isPrimitive() && ! c.isArray() ) {
+            Class arrCl = Array.newInstance(c, 0).getClass();
+            conf.getClassRegistry().registerClass(arrCl);
+            knownClasses.add(arrCl);
+            sorted.add(arrCl);
+        }
     }
 
     public void isValidClassType(Class c) {
@@ -92,7 +108,7 @@ public class FSTBridgeGenerator {
         }
         if ( info.getSer() instanceof FSTCrossLanguageSerializer) {
             knownClasses.add(((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout());
-            sorted.add(((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout());
+//            sorted.add(((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout());
         }
     }
 

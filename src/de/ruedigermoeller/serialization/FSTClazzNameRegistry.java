@@ -81,7 +81,7 @@ public class FSTClazzNameRegistry {
 
     // for read => always increase handle (wg. replaceObject)
     void registerClass( Class c, boolean forRead ) {
-        if ( clzToId.get(c) != Integer.MIN_VALUE ) {
+        if ( getIdFromClazz(c) != Integer.MIN_VALUE ) {
             return;
         }
         addClassMapping(c, classIdCount++);
@@ -96,7 +96,7 @@ public class FSTClazzNameRegistry {
 
     // for read => always increase handle (wg. replaceObject)
     public void registerClass( Class c, int code) {
-        if ( clzToId.get(c) != Integer.MIN_VALUE ) {
+        if ( getIdFromClazz(c) != Integer.MIN_VALUE ) {
             return;
         }
         addClassMapping(c, code);
@@ -233,7 +233,7 @@ public class FSTClazzNameRegistry {
             return res;
     }
 
-    private FSTClazzInfo getClazzFromId(int c) {
+    public FSTClazzInfo getClazzFromId(int c) {
         FSTClazzInfo res = null;
         if ( parent != null ) {
             res = parent.getClazzFromId(c);

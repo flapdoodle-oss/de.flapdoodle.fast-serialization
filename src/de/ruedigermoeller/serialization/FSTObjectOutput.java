@@ -476,7 +476,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     }
 
     protected void writeObjectHeader(final FSTClazzInfo clsInfo, final FSTClazzInfo.FSTFieldInfo referencee, final Object toWrite) throws IOException {
-        if (clsInfo.isEqualIsBinary()) {
+        if (clsInfo.isEqualIsBinary() ) {
             writeFByte(OBJECT);
             writeClass(toWrite);
             return;

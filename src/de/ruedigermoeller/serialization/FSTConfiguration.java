@@ -65,10 +65,38 @@ public final class FSTConfiguration {
     }
 
     public static FSTConfiguration createCrossLanguageConfiguration() {
-        FSTConfiguration defaultConfiguration = createDefaultConfiguration();
-        defaultConfiguration.setCrossLanguage(true);
-        defaultConfiguration.serializationInfoRegistry.setIgnoreAnnotations(true);
-        return defaultConfiguration;
+        FSTConfiguration conf = new FSTConfiguration();
+        conf.setCrossLanguage(true);
+        conf.serializationInfoRegistry.setIgnoreAnnotations(true);
+        conf.addDefaultClazzes();
+        FSTSerializerRegistry reg = conf.serializationInfoRegistry.serializerRegistry;
+
+        // serializers
+        reg.putSerializer(String.class, new FSTStringSerializer(), false);
+        reg.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
+        reg.putSerializer(Character.class, new FSTBigNumberSerializers.FSTCharSerializer(), false);
+        reg.putSerializer(Short.class, new FSTBigNumberSerializers.FSTShortSerializer(), false);
+        reg.putSerializer(Long.class, new FSTBigNumberSerializers.FSTLongSerializer(), false);
+        reg.putSerializer(Float.class, new FSTBigNumberSerializers.FSTFloatSerializer(), false);
+        reg.putSerializer(Double.class, new FSTBigNumberSerializers.FSTDoubleSerializer(), false);
+
+        reg.putSerializer(Date.class, new FSTDateSerializer(), false);
+        reg.putSerializer(StringBuffer.class, new FSTStringBufferSerializer(), true);
+        reg.putSerializer(StringBuilder.class, new FSTStringBuilderSerializer(), true);
+        reg.putSerializer(EnumSet.class, new FSTEnumSetSerializer(), true);
+        reg.putSerializer(HashMap.class, new FSTMapSerializer(), false); // subclass should register manually
+        reg.putSerializer(Hashtable.class, new FSTMapSerializer(), false); // subclass should register manually
+        reg.putSerializer(ConcurrentHashMap.class, new FSTMapSerializer(), false); // subclass should register manually
+
+        reg.putSerializer(ArrayList.class, new FSTCrossLanguageCollectionSerializer(), false);
+        reg.putSerializer(Vector.class, new FSTCrossLanguageCollectionSerializer(), true);
+        reg.putSerializer(LinkedList.class, new FSTCrossLanguageCollectionSerializer(), true);
+        reg.putSerializer(HashSet.class, new FSTCrossLanguageCollectionSerializer(), true);
+//        conf.serializationInfoRegistry.serializerRegistry.putSerializer(HashMap.class,new FSTMapSerializer(), false); // subclass should register manually
+//        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Hashtable.class, new FSTMapSerializer(), false); // subclass should register manually
+//        conf.serializationInfoRegistry.serializerRegistry.putSerializer(ConcurrentHashMap.class, new FSTMapSerializer(), false); // subclass should register manually
+
+        return conf;
     }
 
     public static FSTConfiguration createDefaultConfiguration() {

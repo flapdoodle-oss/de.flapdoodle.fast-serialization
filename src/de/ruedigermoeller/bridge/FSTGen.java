@@ -3,6 +3,9 @@ package de.ruedigermoeller.bridge;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTCrossLanguageSerializer;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 /**
  * Created with IntelliJ IDEA.
  * User: ruedi
@@ -28,6 +31,44 @@ public class FSTGen {
     }
 
     public boolean isSystemClass(Class clz) {
-        return clz.isPrimitive() || clz.getName().startsWith("java") || clz == Object[].class;
+        return clz.isPrimitive() || clz == Object.class || clz == Object[].class || clz == Date.class ||
+               clz == Boolean.class || clz == Byte.class || clz == Character.class || clz == Short.class || clz == Integer.class ||
+               clz == Long.class || clz == Float.class || clz == Double.class || clz == String.class;
     }
+
+    protected String getBridgeClassName(Class clazz0) {
+        Class clazz = clazz0;
+        if ( clazz.isArray() && clazz.getComponentType().isPrimitive() ) {
+            return clazz.getComponentType().getSimpleName()+"[]";
+        }
+        if ( clazz.isArray() ) {
+            clazz = clazz.getComponentType();
+            if ( clazz.isArray() ) {
+                throw new RuntimeException("multi dimensional arrays are not supported "+clazz0);
+            }
+        }
+
+        if ( clazz.isPrimitive() ) {
+            return clazz.getSimpleName();
+        }
+        if ( isSystemClass(clazz) ) {
+            if ( clazz0.isArray() ) {
+                return clazz.getName()+"[]";
+            }
+            return clazz.getName();
+        }
+        if (!gen.isRegistered(clazz)) {
+            FSTClazzInfo info = gen.getCLInfo(clazz);
+            if ( info.getSer() instanceof FSTCrossLanguageSerializer) {
+                return getBridgeClassName( ((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout() );
+            } else {
+                throw new RuntimeException("reference to unregistered or unsupported class:"+clazz.getName());
+            }
+        }
+        if ( clazz0.isArray() ) {
+            return clazz.getSimpleName()+"_FST[]";
+        }
+        return clazz.getSimpleName()+"_FST";
+    }
+
 }

@@ -612,6 +612,9 @@ public final class FSTClazzInfo {
     }
 
     public FSTObjectSerializer getSer() {
+        if ( getClazz() == ArrayList.class ) {
+            System.out.println("POK");
+        }
         if (ser == null) {
             ser = reg.serializerRegistry.getSerializer(clazz);
             if (ser == null) {

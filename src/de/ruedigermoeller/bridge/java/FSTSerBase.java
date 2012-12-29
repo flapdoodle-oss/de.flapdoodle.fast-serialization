@@ -31,7 +31,6 @@ public class FSTSerBase {
     static final byte OBJECT = 0;
 
     protected FSTJavaFactory fac;
-    HashMap<Integer,Object> objectMap = new HashMap<Integer, Object>();
 
     public FSTSerBase(FSTJavaFactory fac) {
         this.fac = fac;
@@ -45,7 +44,7 @@ public class FSTSerBase {
                 int clz = readCShort(in);
                 Object obj = fac.instantiate(clz, in, this, streampos);
                 if ( obj != null ) {
-                    objectMap.put(streampos,obj);
+                    fac.getObjectMap().put(streampos,obj);
                     if (obj instanceof FSTSerBase) {
                         ((FSTSerBase) obj).decode(in);
                     }
@@ -58,7 +57,7 @@ public class FSTSerBase {
                 return null;
             case HANDLE:
                 int ha = readCInt(in);
-                return objectMap.get(ha);
+                return fac.getObjectMap().get(ha);
             case BIG_INT:
                 return new Integer(readCInt(in));
             case ARRAY: {
@@ -67,6 +66,8 @@ public class FSTSerBase {
                 readArray(obj, in);
                 return obj;
             }
+            case COPYHANDLE:
+                throw new RuntimeException("class has been written using a non-cross-language configuration");
         }
         return null;
     }
@@ -110,6 +111,11 @@ public class FSTSerBase {
             boolean[] arr = (boolean[]) array;
             for (int j = 0; j < arr.length; j++) {
                 arr[j] = in.read() != 0;
+            }
+        } else if (Object.class.isAssignableFrom(arrType)) {
+            Object[] arr = (Object[]) array;
+            for (int j = 0; j < arr.length; j++) {
+                arr[j] = decodeObject(in);
             }
         } else {
             throw new RuntimeException("unexpected array type " + arrType);

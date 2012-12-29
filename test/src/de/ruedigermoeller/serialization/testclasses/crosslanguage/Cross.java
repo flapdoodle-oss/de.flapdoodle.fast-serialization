@@ -4,7 +4,6 @@ import de.ruedigermoeller.bridge.FSTBridgeGenerator;
 import de.ruedigermoeller.bridge.cpp.FSTCFactoryGen;
 import de.ruedigermoeller.bridge.cpp.FSTCFileGen;
 import de.ruedigermoeller.bridge.cpp.FSTCHeaderGen;
-import de.ruedigermoeller.bridge.java.generated.MyFSTFactory;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTObjectOutput;
@@ -14,10 +13,13 @@ import de.ruedigermoeller.serialization.testclasses.enterprise.ObjectOrientedInt
 import de.ruedigermoeller.serialization.testclasses.enterprise.SimpleOrder;
 import de.ruedigermoeller.serialization.testclasses.enterprise.Trader;
 
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -59,9 +61,16 @@ public class Cross implements Serializable {
     float testFloat[] = { 234.0234234f, -112312.0234234f };
     String string = "Rüdiger Möller";
     CrossB crossB;
+    CrossB crossBs[];
     Object object = new float[] { 234.0234234f, -112312.0234234f };
     Object other[] = { "Hallo", "Holla","Hallo" };
+    Dimension dimension = new Dimension(44,44);
+    Dimension dims[] = new Dimension[] { new Dimension(10,10), new Dimension(20,20)};
+    ArrayList list = new ArrayList();
 
+    {
+        list.add("na so ein glück");
+    }
     public Cross(CrossB b) {
         crossB = b;
     }
@@ -70,6 +79,8 @@ public class Cross implements Serializable {
         FSTBridgeGenerator generator = new FSTBridgeGenerator();
         generator.addClass(Cross.class);
         generator.addClass(CrossB.class);
+        generator.addClass(Dimension.class);
+        generator.addClass(Dimension[].class);
 
         FSTConfiguration conf = generator.getConf();
 
@@ -93,6 +104,7 @@ public class Cross implements Serializable {
             System.out.println("["+i+"]"+buffer[i]);
         }
         out.close();
+        System.out.println("id "+conf.getClassRegistry().getClazzFromId(70).getClazz().getSimpleName());
 
     }
 }

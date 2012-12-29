@@ -7,6 +7,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,6 +17,8 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class FSTJavaFactory {
+
+    HashMap<Integer,Object> objectMap = new HashMap<Integer, Object>();
 
     public abstract Object instantiate(int clzId, FSTCountingInputStream in, FSTSerBase container, int streamPosition) throws IOException;
     public Object defaultInstantiate(Class clz, FSTCountingInputStream in, FSTSerBase container, int streampos) throws IOException {
@@ -43,4 +46,7 @@ public abstract class FSTJavaFactory {
         return base.decodeObject(in);
     }
 
+    public HashMap<Integer, Object> getObjectMap() {
+        return objectMap;
+    }
 }

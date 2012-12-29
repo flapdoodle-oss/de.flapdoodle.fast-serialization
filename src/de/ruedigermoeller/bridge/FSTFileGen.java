@@ -64,12 +64,20 @@ public class FSTFileGen extends FSTGen {
             generateFieldDeclaration(info, fstFieldInfo, out,depth+"    ");
         }
         out.println();
+        for (int i = 0; i < fieldInfo.length; i++) {
+            FSTClazzInfo.FSTFieldInfo fstFieldInfo = fieldInfo[i];
+            generateFieldGetter(info, fstFieldInfo, out,depth+"    ");
+        }
+        out.println();
         generateWriteMethod(info,layout,out,depth);
         out.println();
         generateReadMethod(info,layout, out, depth);
         out.println();
         generateFooter(info,out,depth);
 
+    }
+
+    public void generateFieldGetter(FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
     }
 
     public void generateFieldDeclaration(FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
@@ -79,10 +87,6 @@ public class FSTFileGen extends FSTGen {
     }
 
     protected void generateFooter(FSTClazzInfo info, PrintStream out, String depth) {
-    }
-
-    protected String getBridgeClassName(Class clazz) {
-        return "fst" + clazz.getSimpleName();
     }
 
     public void generateWriteMethod(FSTClazzInfo clInfo, FSTClazzInfo layout, PrintStream out, String depth) {

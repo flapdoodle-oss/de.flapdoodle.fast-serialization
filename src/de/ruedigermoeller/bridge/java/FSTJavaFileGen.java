@@ -51,7 +51,11 @@ public class FSTJavaFileGen extends FSTFileGen {
         String clz = getBridgeClassName(info.getClazz());
         out.println(depth+"public class "+ clz +" extends FSTSerBase {");
         out.println();
-        out.println(depth+"    public "+ clz +"(FSTJavaFactory context) { super(context); }");
+        out.println(depth+"    public "+ clz +"(FSTJavaFactory context)" );
+        out.println(depth+"    {");
+        out.println(depth+"        super(context);");
+        out.println(depth+"    }");
+        out.println();
     }
 
     protected String getFileName(FSTClazzInfo info) {
@@ -134,21 +138,6 @@ public class FSTJavaFileGen extends FSTFileGen {
         }
     }
 
-    protected String getBridgeClassName(Class clazz) {
-        if ( clazz.isPrimitive() ) {
-            return clazz.getSimpleName();
-        }
-        if ( isSystemClass(clazz) ) {
-            if ( clazz.isArray() ) {
-                return clazz.getComponentType().getSimpleName()+"[]";
-            }
-            return clazz.getName();
-        }
-        if (!gen.isRegistered(clazz)) {
-            throw new RuntimeException("reference to unregistered class:"+clazz.getName());
-        }
-        return "fst" + clazz.getSimpleName();
-    }
 
     public void generateWriteMethod(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
         depth+="    ";
@@ -206,21 +195,20 @@ public class FSTJavaFileGen extends FSTFileGen {
     public void generateFieldDeclaration(FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
         Class type = fieldInfo.getType();
         String name = fieldInfo.getField().getName();
-        if ( ! fieldInfo.isArray() ) {
-            if (type.isPrimitive() || isSystemClass(type) ) {
-                out.println(depth+type.getSimpleName()+" "+ name +";");
-            } else {
-                type = mapDeclarationType(type,info);
-                out.println(depth+getBridgeClassName(type)+" "+ name +";");
-            }
+        if ( type.isArray() ) {
+            out.println(depth+"protected "+getBridgeClassName(mapDeclarationType(type.getComponentType(),gen.getCLInfo(type)))+"[] "+ name +";");
         } else {
-            type = type.getComponentType();
-            if (type.isPrimitive() || isSystemClass(type) ) {
-                out.println(depth+type.getSimpleName()+"[] "+ name +";");
-            } else {
-                type = mapDeclarationType(type,info);
-                out.println(depth+getBridgeClassName(type)+"[] "+ name +";");
-            }
+            out.println(depth+"protected "+getBridgeClassName(mapDeclarationType(type,gen.getCLInfo(type)))+" "+ name +";");
+        }
+    }
+
+    public void generateFieldGetter(FSTClazzInfo info, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
+        Class type = fieldInfo.getType();
+        String name = fieldInfo.getField().getName();
+        if ( type.isArray() ) {
+            out.println(depth+getBridgeClassName(mapDeclarationType(type.getComponentType(),gen.getCLInfo(type)))+"[] get"+ Character.toUpperCase(name.charAt(0))+name.substring(1) +"() { return "+name+";"+" }");
+        } else {
+            out.println(depth+getBridgeClassName(mapDeclarationType(type,gen.getCLInfo(type)))+" get"+ Character.toUpperCase(name.charAt(0))+name.substring(1) +"() { return "+name+";"+" }");
         }
     }
 
