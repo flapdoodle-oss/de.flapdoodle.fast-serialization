@@ -35,7 +35,7 @@ public class FSTJavaFileGen extends FSTFileGen {
     }
 
     public boolean shouldGenerateClazz(FSTClazzInfo info) {
-        if (isSystemClass(info.getClazz())) {
+        if (isSystemClass(info.getClazz()) || info.getClazz().isEnum()) {
             return false;
         }
         return true;
@@ -160,9 +160,9 @@ public class FSTJavaFileGen extends FSTFileGen {
     }
 
     protected void generateWriteField(FSTClazzInfo clInfo, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
-        if ( false && fieldInfo.isIntegral() && ! fieldInfo.isArray() ) {
-            Class type = fieldInfo.getType();
-            String name = fieldInfo.getField().getName();
+        Class type = fieldInfo.getType();
+        String name = fieldInfo.getField().getName();
+        if ( fieldInfo.isIntegral() && ! fieldInfo.isArray()) {
             if (type == boolean.class ) {
                 //out.println(depth+"jboolean "+fieldInfo.getField().getName()+";");
             } else
@@ -186,7 +186,11 @@ public class FSTJavaFileGen extends FSTFileGen {
             } else
             if (type == byte.class ) {
                 out.println(depth+"writeByte( out, "+ name + ");");
+            } else {
+                throw new RuntimeException("cannot map type in field "+fieldInfo.getField());
             }
+        } else {
+            out.println(depth+"encodeObject( out, "+name+" );");
         }
     }
 

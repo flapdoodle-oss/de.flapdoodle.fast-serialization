@@ -239,7 +239,11 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         } else if ( toWrite instanceof Enum ) {
             writeFByte(ENUM);
             writeClass(toWrite);
-            writeCInt(((Enum) toWrite).ordinal());
+            if ( conf.isCrossLanguage() ) {
+                writeStringUTF(((Enum) toWrite).name());
+            } else {
+                writeCInt(((Enum) toWrite).ordinal());
+            }
         } else {
             // check for custom serializer
             FSTObjectSerializer ser = serializationInfo.getSer();

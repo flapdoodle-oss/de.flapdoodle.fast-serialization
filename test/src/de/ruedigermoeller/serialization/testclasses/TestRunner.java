@@ -245,6 +245,61 @@ public class TestRunner {
         }
     };
 
+    static FSTConfiguration crossconf;
+    static {
+        crossconf = FSTConfiguration.createCrossLanguageConfiguration();
+    }
+
+    SerTest crossFST = new SerTest("FST cross language conf") {
+        FSTObjectInput.ConditionalCallback conditionalCallback = new FSTObjectInput.ConditionalCallback() {
+            @Override
+            public boolean shouldSkip(Object halfDecoded, int streamPosition, Field field) {
+                return false;
+            }
+        };
+
+        public String getColor() {
+            return "#909090";
+        }
+
+        @Override
+        protected void readTest(ByteArrayInputStream bin, Class cl) {
+            FSTObjectInput in = null;
+            try {
+                in = new FSTObjectInput(bin, crossconf);
+                in.setConditionalCallback(conditionalCallback);
+                Object res = in.readObject(cl);
+                if ( res instanceof Swing && WarmUP == 0) {
+                    ((Swing) res).showInFrame("FST Copy");
+                }
+                in.close();
+                resObject = res;
+//                out.clnames.differencesTo(in.clnames);
+            } catch (Throwable e) {
+//                out.clnames.differencesTo(in.clnames);
+                FSTUtil.printEx(e);
+                throw new RuntimeException(e);
+            }
+        }
+        FSTObjectOutput out;
+        @Override
+        protected void writeTest(Object toWrite, OutputStream bout, Class aClass) {
+            out = new FSTObjectOutput(bout, crossconf);
+            try {
+                out.writeObject(toWrite, aClass);
+                out.flush();
+                out.close();
+            } catch (Throwable e) {
+                FSTUtil.printEx(e);
+                throw new RuntimeException(e);
+            }
+        }
+        public void run( Object toWrite ) {
+            super.run(toWrite);
+            System.out.println(out.getObjectMap().getObjectSize());
+        }
+    };
+
     static FSTConfiguration defconf;
     static {
         defconf = FSTConfiguration.createDefaultConfiguration();
@@ -355,7 +410,8 @@ public class TestRunner {
         System.out.println();
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
-        SerTest tests[] = { optFST, defFST, kryotest, minFST, defser};
+//        SerTest tests[] = { optFST, defFST, kryotest, minFST, defser, crossFST};
+        SerTest tests[] = { optFST, defFST, kryotest, minFST, crossFST};
 //        SerTest tests[] = { optFST, defFST, kryotest};
 //        SerTest tests[] = { defser, kryotest, defFST};
 //        SerTest tests[] = { kryotest};
@@ -407,7 +463,7 @@ public class TestRunner {
         runner.charter.text("<i>intel i7 3,4 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
-        WarmUP = 30000; Run = WarmUP+1;
+        WarmUP = 10000; Run = WarmUP+1;
         runner.runAll(new Primitives(0).createPrimArray());
         runner.runAll(new CommonCollections());
         runner.runAll(new PrimitiveArrays().createPrimArray());

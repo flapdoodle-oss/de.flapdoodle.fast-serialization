@@ -40,7 +40,7 @@ public class FSTSerializerRegistry {
     }
 
 
-    static FSTObjectSerializer NULL = new NULLSerializer();
+    public static FSTObjectSerializer NULL = new NULLSerializer();
 
     static class NULLSerializer implements FSTObjectSerializer {
         @Override
@@ -82,6 +82,9 @@ public class FSTSerializerRegistry {
     }
 
     final FSTObjectSerializer getSerializer(Class cl, Class lookupStart) {
+        if ( cl == null ) {
+            return null;
+        }
         final SerEntry serEntry = map.get(cl);
         if ( serEntry != null ) {
             if ( cl == lookupStart && serEntry.ser.willHandleClass(cl)) {

@@ -47,6 +47,8 @@ public class FSTSerBase {
                     fac.getObjectMap().put(streampos,obj);
                     if (obj instanceof FSTSerBase) {
                         ((FSTSerBase) obj).decode(in);
+                    } else if (obj.getClass().isArray() ) {
+                        readArray(obj,in);
                     }
                 } else {
                     throw new RuntimeException("unknown class id "+clz);
@@ -60,6 +62,11 @@ public class FSTSerBase {
                 return fac.getObjectMap().get(ha);
             case BIG_INT:
                 return new Integer(readCInt(in));
+            case ENUM:
+                int clzId = readCShort(in); // skip enum clz
+                String s = readStringUTF(in);
+                fac.objectMap.put(streampos,s);
+                return s;
             case ARRAY: {
                 int clsId = readCShort(in);
                 Object obj = fac.instantiate(clsId, in, this, streampos);
@@ -71,6 +78,7 @@ public class FSTSerBase {
         }
         return null;
     }
+
 
     public void readArray(Object array, FSTCountingInputStream in) throws IOException {
         Class arrType = array.getClass().getComponentType();
@@ -122,6 +130,79 @@ public class FSTSerBase {
         }
     }
 
+    public void encodeObject( FSTCountingOutputStream out, Object toWrite ) throws IOException {
+        int streampos = out.getWritten();
+        if ( toWrite instanceof Enum) {
+            out.write(ENUM);
+            // FIXME: how to remember string was enum ?
+        } else if (toWrite == null ) {
+            out.write(NULL);
+        } else if ( toWrite.getClass() == Integer.class ) {
+            out.write(BIG_INT);
+            writeCInt(out,((Integer)toWrite).intValue());
+        } else if ( toWrite.getClass() == Boolean.class ) {
+            out.write(((Boolean)toWrite) ? BIG_BOOLEAN_TRUE:BIG_BOOLEAN_FALSE);
+        } else if ( toWrite.getClass().isArray() ) {
+            out.write(ARRAY);
+            // TODO
+        } else {
+            out.write(OBJECT);
+            int clzId = fac.getId(toWrite.getClass());
+            //case HANDLE:
+            // todo
+        }
+    }
+
+    public void writeArray(Object array, OutputStream out) throws IOException {
+        Class arrType = array.getClass().getComponentType();
+//        if (arrType == byte.class) {
+//            byte[] arr = (byte[]) array;
+//            in.read(arr);
+//        } else if (arrType == char.class) {
+//            char[] arr = (char[]) array;
+//            for (int j = 0; j < arr.length; j++) {
+//                arr[j] = readCChar(in);
+//            }
+//        } else if (arrType == short.class) {
+//            short[] arr = (short[]) array;
+//            for (int j = 0; j < arr.length; j++) {
+//                arr[j] = readShort(in);
+//            }
+//        } else if (arrType == int.class) {
+//            final int[] arr = (int[]) array;
+//            for (int j = 0; j < arr.length; j++) {
+//                arr[j] = readCInt(in);
+//            }
+//        } else if (arrType == float.class) {
+//            float[] arr = (float[]) array;
+//            for (int j = 0; j < arr.length; j++) {
+//                arr[j] = readCFloat(in);
+//            }
+//        } else if (arrType == double.class) {
+//            double[] arr = (double[]) array;
+//            for (int j = 0; j < arr.length; j++) {
+//                arr[j] = readCDouble(in);
+//            }
+//        } else if (arrType == long.class) {
+//            long[] arr = (long[]) array;
+//            for (int j = 0; j < arr.length; j++) {
+//                arr[j] = readLong(in);
+//            }
+//        } else if (arrType == boolean.class) {
+//            boolean[] arr = (boolean[]) array;
+//            for (int j = 0; j < arr.length; j++) {
+//                arr[j] = in.read() != 0;
+//            }
+//        } else if (Object.class.isAssignableFrom(arrType)) {
+//            Object[] arr = (Object[]) array;
+//            for (int j = 0; j < arr.length; j++) {
+//                arr[j] = decodeObject(in);
+//            }
+//        } else {
+//            throw new RuntimeException("unexpected array type " + arrType);
+//        }
+    }
+
     public String readStringUTF(InputStream in) throws IOException {
         int len = readCInt(in);
         char charBuf[] = new char[len * 3];
@@ -139,7 +220,7 @@ public class FSTSerBase {
         return new String(charBuf, 0, chcount);
     }
 
-    public void encodeObject( OutputStream out ) {
+    public void encodeObject( OutputStream out, Object toEncode ) {
 
     }
 
@@ -148,6 +229,98 @@ public class FSTSerBase {
 
     public void decode(FSTCountingInputStream in) throws IOException {
     }
+
+    public void writeCShort(OutputStream out, short c) throws IOException {
+        if ( c < 255 && c >= 0 ) {
+            out.write(c);
+        } else {
+            out.write(255);
+            writeShort(out, c);
+        }
+    }
+
+    public void writeByte( OutputStream out, int v ) throws IOException {
+        out.write(v & 0xFF);
+    }
+
+    public void writeShort( OutputStream out, int v ) throws IOException {
+        out.write((v >>>  8) & 0xFF);
+        out.write((v >>> 0) & 0xFF);
+    }
+
+    public void writeCChar( OutputStream out, char c) throws IOException {
+        // -128 = short byte, -127 == 4 byte
+        if ( c < 255 && c >= 0 ) {
+            out.write( c );
+        } else {
+            out.write( 255 );
+            out.write(((c >>>  8) & 0xFF) );
+            out.write( ((c >>> 0) & 0xFF) );
+        }
+    }
+
+    public void writeCInt(OutputStream out, int anInt) throws IOException {
+        // -128 = short byte, -127 == 4 byte
+        if ( anInt > -127 && anInt <=127 ) {
+            out.write( anInt );
+        } else
+        if ( anInt >= Short.MIN_VALUE && anInt <= Short.MAX_VALUE ) {
+            out.write( -128 );
+            out.write( ((anInt >>>  8) & 0xFF) );
+            out.write( (byte) ((anInt >>> 0) & 0xFF) );
+        } else {
+            out.write( -127 );
+            out.write( ((anInt >>> 24) & 0xFF) );
+            out.write( (anInt >>> 16) & 0xFF);
+            out.write( (anInt >>>  8) & 0xFF);
+            out.write( (anInt >>> 0) & 0xFF);
+        }
+    }
+
+    /** Writes a 4 byte float. */
+    public void writeCFloat (OutputStream out,float value) throws IOException {
+        writeInt( out, Float.floatToIntBits(value));
+    }
+
+    public void writeCDouble (OutputStream out,double value) throws IOException {
+        writeLong( out, Double.doubleToLongBits(value) );
+    }
+
+    public void writeInt( OutputStream out, int v ) throws IOException {
+        out.write( ((v >>> 24) & 0xFF) );
+        out.write( ((v >>> 16) & 0xFF) );
+        out.write( ((v >>>  8) & 0xFF) );
+        out.write( ((v >>> 0) & 0xFF) );
+    }
+
+    public void writeLong( OutputStream out, long v ) throws IOException {
+        out.write( (int)(v >>> 56) );
+        out.write( (int)(v >>> 48) );
+        out.write( (int)(v >>> 40) );
+        out.write( (int)(v >>> 32) );
+        out.write( (int)((v >>> 24) & 0xFF) );
+        out.write( (int)((v >>> 16) & 0xFF) );
+        out.write( (int)((v >>>  8) & 0xFF) );
+        out.write( (int)((v >>>  0) & 0xFF) );
+    }
+
+    public void writeCLong( OutputStream out, long anInt) throws IOException {
+// -128 = short byte, -127 == 4 byte
+        if ( anInt > -126 && anInt <=127 ) {
+            out.write((int) anInt);
+        } else
+        if ( anInt >= Short.MIN_VALUE && anInt <= Short.MAX_VALUE ) {
+            out.write(-128);
+            writeShort( out, (int) anInt);
+        } else if ( anInt >= Integer.MIN_VALUE && anInt <= Integer.MAX_VALUE ) {
+            out.write(-127);
+            writeInt( out,(int) anInt);
+        } else {
+            out.write(-126);
+            writeLong(out,anInt);
+        }
+    }
+
 
     public final int readInt(InputStream in) throws IOException {
         int ch1 = in.read();

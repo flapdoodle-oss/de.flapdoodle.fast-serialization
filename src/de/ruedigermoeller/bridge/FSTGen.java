@@ -21,6 +21,9 @@ public class FSTGen {
     }
 
     protected Class mapDeclarationType(Class type, FSTClazzInfo info) {
+        if ( Enum.class.isAssignableFrom(type) ) {
+            return String.class;
+        }
         if ( gen.isRegistered(type) || isSystemClass(type) ) {
             return type;
         }
@@ -37,6 +40,13 @@ public class FSTGen {
     }
 
     protected String getBridgeClassName(Class clazz0) {
+        return getBridgeClassName(clazz0,true);
+    }
+
+    protected String getBridgeClassName(Class clazz0, boolean replaceByLayout ) {
+        if (clazz0 == String.class || Enum.class.isAssignableFrom(clazz0)) {
+            return "String";
+        }
         Class clazz = clazz0;
         if ( clazz.isArray() && clazz.getComponentType().isPrimitive() ) {
             return clazz.getComponentType().getSimpleName()+"[]";
@@ -48,6 +58,13 @@ public class FSTGen {
             }
         }
 
+        if ( replaceByLayout && gen.getMappedClasses().containsKey(clazz) ) {
+            Class prevClazz = clazz;
+            clazz = gen.getMappedClasses().get(clazz);
+            if ( clazz != prevClazz ) {
+                return getBridgeClassName(clazz);
+            }
+        }
         if ( clazz.isPrimitive() ) {
             return clazz.getSimpleName();
         }
@@ -60,7 +77,9 @@ public class FSTGen {
         if (!gen.isRegistered(clazz)) {
             FSTClazzInfo info = gen.getCLInfo(clazz);
             if ( info.getSer() instanceof FSTCrossLanguageSerializer) {
-                return getBridgeClassName( ((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout() );
+                Class crossLangLayout = ((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout();
+//                gen.addMappedClass(crossLangLayout, clazz);
+                return getBridgeClassName(crossLangLayout);
             } else {
                 throw new RuntimeException("reference to unregistered or unsupported class:"+clazz.getName());
             }

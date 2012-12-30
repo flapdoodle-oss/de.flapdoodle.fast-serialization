@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FST.iml" filepath="$PROJECT_DIR$/FST.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../FSTCrossTest/FSTCrossTest.iml" filepath="$PROJECT_DIR$/../FSTCrossTest/FSTCrossTest.iml" />
     </modules>
   </component>
 </project>

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -44,6 +45,18 @@ import java.util.HashMap;
  * To change this template use File | Settings | File Templates.
  */
 public class Cross implements Serializable {
+
+    public enum OHO {
+        WAN,
+        TU,
+        SREE
+    }
+    public enum test {
+        EINS,
+        ZWEI,
+        DREI
+    }
+
     boolean a = true,b = false,c = false, d = false, e = true, aa = false,ab = false,ac = false, ad = false, ae = false, xx = false;
     int anInt = 1234567890;
     char achar = 12345;
@@ -67,9 +80,14 @@ public class Cross implements Serializable {
     Dimension dimension = new Dimension(44,44);
     Dimension dims[] = new Dimension[] { new Dimension(10,10), new Dimension(20,20)};
     ArrayList list = new ArrayList();
+    HashMap map = new HashMap();
+    test enu = test.ZWEI;
+    OHO oho = OHO.SREE;
 
     {
         list.add("na so ein glück");
+        map.put("test", 100);
+        map.put(10000, 1);
     }
     public Cross(CrossB b) {
         crossB = b;
@@ -79,6 +97,8 @@ public class Cross implements Serializable {
         FSTBridgeGenerator generator = new FSTBridgeGenerator();
         generator.addClass(Cross.class);
         generator.addClass(CrossB.class);
+        generator.addClass(Cross.test.class);
+        generator.addClass(OHO.class);
         generator.addClass(Dimension.class);
         generator.addClass(Dimension[].class);
 
@@ -104,7 +124,7 @@ public class Cross implements Serializable {
             System.out.println("["+i+"]"+buffer[i]);
         }
         out.close();
-        System.out.println("id "+conf.getClassRegistry().getClazzFromId(70).getClazz().getSimpleName());
+        System.out.println("id "+conf.getClassRegistry().getClazzFromId(97).getClazz().getSimpleName());
 
     }
 }

@@ -269,12 +269,21 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             case FSTObjectOutput.ENUM: {
                 clzSerInfo = readClass();
                 c = clzSerInfo.getClazz();
-                int ordinal = readCInt();
-                Object res = c.getEnumConstants()[ordinal];
-                if ( ! referencee.isFlat() ) {
-                    objects.registerObjectForRead(res, readPos);
+                if ( conf.isCrossLanguage() ) {
+                    String val = readStringUTF();
+                    Object res = Enum.valueOf(c,val);
+                    if ( ! referencee.isFlat() ) {
+                        objects.registerObjectForRead(res, readPos);
+                    }
+                    return res;
+                } else {
+                    int ordinal = readCInt();
+                    Object res = c.getEnumConstants()[ordinal];
+                    if ( ! referencee.isFlat() ) {
+                        objects.registerObjectForRead(res, readPos);
+                    }
+                    return res;
                 }
-                return res;
             }
             case FSTObjectOutput.OBJECT: {
                 // class name

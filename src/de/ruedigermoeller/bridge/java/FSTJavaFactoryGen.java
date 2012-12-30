@@ -3,6 +3,7 @@ package de.ruedigermoeller.bridge.java;
 import de.ruedigermoeller.bridge.FSTBridgeGenerator;import de.ruedigermoeller.bridge.FSTFactoryGen;
 
 import java.io.PrintStream;
+import java.util.HashSet;
 import java.util.Iterator;
 
 /**
@@ -46,25 +47,36 @@ public class FSTJavaFactoryGen extends FSTFactoryGen {
         out.println();
         out.println("public class MyFSTFactory extends FSTJavaFactory {");
         out.println();
+        HashSet<String> defined = new HashSet<String>();
         for (Iterator<Class> iterator = gen.getSortedClazzes().iterator(); iterator.hasNext(); ) {
             Class cls = iterator.next();
-            out.println("    public static final int CID_"+ getCIDClazzName(cls) +" = "+(gen.getIdForClass(cls))+";");
+            String cidClazzName = getCIDClazzName(cls);
+            if ( defined.contains(cidClazzName) ) {
+                continue;
+            }
+            defined.add(cidClazzName);
+            out.println("    public static final int CID_"+ cidClazzName +" = "+(gen.getIdForClass(cls))+";");
         }
         out.println();
         out.println("    public Object instantiate(int clzId, FSTCountingInputStream in, FSTSerBase container, int streampos) throws IOException {");
         out.println("        int len = 0;");
         out.println("        switch(clzId) {");
-
+        defined.clear();
         for (Iterator<Class> iterator = gen.getSortedClazzes().iterator(); iterator.hasNext(); ) {
             Class cls = iterator.next();
+            String cidClazzName = getCIDClazzName(cls);
+            if ( defined.contains(cidClazzName) || gen.getMappedClasses().get(cls) != null ) {
+                continue;
+            }
+            defined.add(cidClazzName);
             if ( cls.isArray() ) {
-                out.println("            case CID_"+getCIDClazzName(cls) +": len = container.readCInt(in); return new "+getBridgeClassName(cls).replace("[]","")+"[len];");
+                out.println("            case CID_"+ cidClazzName +": len = container.readCInt(in); return new "+getBridgeClassName(cls).replace("[]","")+"[len];");
             } else if ( isSystemClass(cls))
             {
 //                out.println("            case CID_"+getBridgeClassName(cls).toUpperCase()+": return new "+getBridgeClassName(cls)+"();");
-            } else
+            } else if ( !cls.isEnum() )
             {
-                out.println("            case CID_"+getCIDClazzName(cls) +": return new "+getBridgeClassName(cls)+"(this);");
+                out.println("            case CID_"+ cidClazzName +": return new "+getBridgeClassName(cls)+"(this);");
             }
         }
         out.println("            default: return defaultInstantiate(getClass(clzId),in,container,streampos);");
@@ -75,9 +87,15 @@ public class FSTJavaFactoryGen extends FSTFactoryGen {
         out.println("        int len = 0;");
         out.println("        switch(clzId) {");
 
+        defined.clear();
         for (Iterator<Class> iterator = gen.getSortedClazzes().iterator(); iterator.hasNext(); ) {
             Class cls = iterator.next();
-            out.println("            case CID_"+getCIDClazzName(cls) +": return "+getBridgeClassName(cls)+".class;");
+            String cidClazzName = getCIDClazzName(cls);
+            if ( defined.contains(cidClazzName) ) {
+                continue;
+            }
+            defined.add(cidClazzName);
+            out.println("            case CID_"+ cidClazzName +": return "+getBridgeClassName(cls)+".class;");
         }
         out.println("            default: throw new RuntimeException(\"unknown class id:\"+clzId);");
         out.println("        }");
@@ -86,7 +104,10 @@ public class FSTJavaFactoryGen extends FSTFactoryGen {
     }
 
     private String getCIDClazzName(Class cls) {
-        return getBridgeClassName(cls).toUpperCase().replace('.','_').replace("[]","_ARR");
+        if ( Enum.class.isAssignableFrom(cls) ) {
+            return cls.getName().toUpperCase().replace('.','_').replace("$","_");
+        }
+        return getBridgeClassName(cls,false).toUpperCase().replace('.','_').replace("[]","_ARR");
     }
 
     protected String getImplFileName() {

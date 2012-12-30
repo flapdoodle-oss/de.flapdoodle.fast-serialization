@@ -84,17 +84,14 @@ public final class FSTConfiguration {
         reg.putSerializer(StringBuffer.class, new FSTStringBufferSerializer(), true);
         reg.putSerializer(StringBuilder.class, new FSTStringBuilderSerializer(), true);
         reg.putSerializer(EnumSet.class, new FSTEnumSetSerializer(), true);
-        reg.putSerializer(HashMap.class, new FSTMapSerializer(), false); // subclass should register manually
-        reg.putSerializer(Hashtable.class, new FSTMapSerializer(), false); // subclass should register manually
-        reg.putSerializer(ConcurrentHashMap.class, new FSTMapSerializer(), false); // subclass should register manually
 
-        reg.putSerializer(ArrayList.class, new FSTCrossLanguageCollectionSerializer(), false);
-        reg.putSerializer(Vector.class, new FSTCrossLanguageCollectionSerializer(), true);
-        reg.putSerializer(LinkedList.class, new FSTCrossLanguageCollectionSerializer(), true);
-        reg.putSerializer(HashSet.class, new FSTCrossLanguageCollectionSerializer(), true);
-//        conf.serializationInfoRegistry.serializerRegistry.putSerializer(HashMap.class,new FSTMapSerializer(), false); // subclass should register manually
-//        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Hashtable.class, new FSTMapSerializer(), false); // subclass should register manually
-//        conf.serializationInfoRegistry.serializerRegistry.putSerializer(ConcurrentHashMap.class, new FSTMapSerializer(), false); // subclass should register manually
+        reg.putSerializer(AbstractCollection.class, new FSTCrossLanguageCollectionSerializer(), true);
+        reg.putSerializer(AbstractMap.class, new FSTCrossLanguageMapSerializer(), true);
+        reg.putSerializer(Dictionary.class, new FSTCrossLanguageMapSerializer(), true);
+
+        // not cross platform capable (comparator)
+        reg.putSerializer(TreeMap.class, FSTSerializerRegistry.NULL, true);
+        reg.putSerializer(TreeSet.class, FSTSerializerRegistry.NULL, true);
 
         return conf;
     }

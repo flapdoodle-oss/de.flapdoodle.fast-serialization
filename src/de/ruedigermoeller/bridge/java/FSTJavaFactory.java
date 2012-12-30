@@ -22,7 +22,7 @@ public abstract class FSTJavaFactory {
 
     public abstract Object instantiate(int clzId, FSTCountingInputStream in, FSTSerBase container, int streamPosition) throws IOException;
     public Object defaultInstantiate(Class clz, FSTCountingInputStream in, FSTSerBase container, int streampos) throws IOException {
-        if ( clz == String.class ) {
+        if ( clz == String.class || clz == char[].class ) {
             return container.readStringUTF(in);
         }
         if ( clz == Long.class ) {
@@ -37,6 +37,11 @@ public abstract class FSTJavaFactory {
         if ( clz == Date.class ) {
             return new Date(container.readCLong(in));
         }
+        if ( clz == Object[].class ) {
+            int len = container.readCInt(in);
+            Object[] array = new Object[len];
+            return array;
+        }
         return null;
     }
 
@@ -49,4 +54,13 @@ public abstract class FSTJavaFactory {
     public HashMap<Integer, Object> getObjectMap() {
         return objectMap;
     }
+
+    public Class getClass(int clzId) {
+        return null;
+    }
+
+    public int getId(Class clz) {
+        return 0;
+    }
+
 }

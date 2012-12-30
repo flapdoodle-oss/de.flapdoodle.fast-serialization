@@ -33,7 +33,6 @@ public class FSTCrossLanguageCollectionSerializer  extends FSTBasicObjectSeriali
     public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
         Collection col = (Collection)toWrite;
         out.writeCInt(col.size());
-        out.writeClass(Object.class);
         if ( col instanceof List) {
             List l = (List) col;
             for (int i = 0; i < l.size(); i++) {
@@ -52,7 +51,6 @@ public class FSTCrossLanguageCollectionSerializer  extends FSTBasicObjectSeriali
         try {
             Object res = null;
             int len = in.readCInt();
-            FSTClazzInfo fstClazzInfo = in.readClass(); // dummy to be array compatible
             if ( objectClass == ArrayList.class ) {
                 res = new ArrayList(len);
             } else
