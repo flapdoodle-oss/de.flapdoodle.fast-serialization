@@ -3,8 +3,7 @@ package de.ruedigermoeller.bridge.java;
 import de.ruedigermoeller.bridge.FSTBridgeGenerator;import de.ruedigermoeller.bridge.FSTFactoryGen;
 
 import java.io.PrintStream;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -99,6 +98,39 @@ public class FSTJavaFactoryGen extends FSTFactoryGen {
         }
         out.println("            default: throw new RuntimeException(\"unknown class id:\"+clzId);");
         out.println("        }");
+        out.println("    }");
+        out.println("    ");
+        out.println("    public int getId(Class clazz) {");
+        defined.clear();
+        ArrayList<Class> sortedClazzes = new ArrayList<Class>();
+        sortedClazzes.add(Boolean.class);
+        sortedClazzes.add(Byte.class);
+        sortedClazzes.add(Character.class);
+        sortedClazzes.add(Short.class);
+        sortedClazzes.add(Integer.class);
+        sortedClazzes.add(Long.class);
+        sortedClazzes.add(Float.class);
+        sortedClazzes.add(Double.class);
+        sortedClazzes.add(String.class);
+        sortedClazzes.add(Date.class);
+        sortedClazzes.addAll(gen.getSortedClazzes());
+        for (Iterator<Class> iterator = sortedClazzes.iterator(); iterator.hasNext(); ) {
+            Class cls = iterator.next();
+            String cidClazzName = getCIDClazzName(cls);
+            String bridgeClassName = getBridgeClassName(cls);
+            if ( defined.contains(cidClazzName) || defined.contains(bridgeClassName)
+                 || (bridgeClassName.equals("Object[]") && !cidClazzName.equals("JAVA_LANG_OBJECT_ARR") )
+                 || (bridgeClassName.equals("String") && !cidClazzName.equals("STRING") )
+              )
+            {
+                continue;
+            }
+            defined.add(cidClazzName);
+            defined.add(bridgeClassName);
+            out.println("        if ( clazz == " + bridgeClassName + ".class ) ");
+            out.println("            return CID_"+cidClazzName+";");
+        }
+        out.println("        return 0;");
         out.println("    }");
         out.println("}");
     }

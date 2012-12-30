@@ -144,63 +144,116 @@ public class FSTSerBase {
             out.write(((Boolean)toWrite) ? BIG_BOOLEAN_TRUE:BIG_BOOLEAN_FALSE);
         } else if ( toWrite.getClass().isArray() ) {
             out.write(ARRAY);
+            int clzId = fac.getId(toWrite.getClass());
+            if ( clzId <= 0 ) {
+                throw new RuntimeException("unregistered class "+toWrite.getClass().getName()+", cannot write");
+            }
+            writeCShort(out, (short) clzId);
+            writeArray(toWrite,out);
             // TODO
         } else {
             out.write(OBJECT);
-            int clzId = fac.getId(toWrite.getClass());
+            if ( toWrite instanceof FSTSerBase ) {
+                ((FSTSerBase) toWrite).encode(out);
+            } else {
+                int clzId = fac.getId(toWrite.getClass());
+                if ( clzId <= 0 ) {
+                    throw new RuntimeException("unregistered class "+toWrite.getClass().getName()+", cannot write");
+                }
+                writeCShort(out, (short) clzId);
+                if ( toWrite instanceof Character ) {
+                    writeCChar(out, (Character) toWrite);
+                } else if ( toWrite instanceof Short ) {
+                    writeCShort(out, (Short) toWrite );
+                } else if ( toWrite instanceof Long ) {
+                    writeCLong(out, (Long) toWrite);
+                } else if ( toWrite instanceof Float ) {
+                    writeCFloat( out, (Float) toWrite);
+                } else if ( toWrite instanceof Double ) {
+                    writeCDouble( out, (Double) toWrite);
+                } else if ( toWrite instanceof String ) {
+                    writeStringUTF(out, (String) toWrite);
+                }
+                // built in + sysclasses
+            }
             //case HANDLE:
             // todo
         }
     }
 
+    public void writeStringUTF(OutputStream out, String str) throws IOException {
+        final int strlen = str.length();
+
+        writeCInt(out,strlen);
+        for (int i=0; i<strlen; i++) {
+            final int c = str.charAt(i);
+            if ( c < 255 ) {
+                out.write(c);
+            } else {
+                out.write(255);
+                out.write(((c >>> 8) & 0xFF));
+                out.write(((c >>> 0) & 0xFF));
+            }
+        }
+    }
+
     public void writeArray(Object array, OutputStream out) throws IOException {
         Class arrType = array.getClass().getComponentType();
-//        if (arrType == byte.class) {
-//            byte[] arr = (byte[]) array;
-//            in.read(arr);
-//        } else if (arrType == char.class) {
-//            char[] arr = (char[]) array;
-//            for (int j = 0; j < arr.length; j++) {
-//                arr[j] = readCChar(in);
-//            }
-//        } else if (arrType == short.class) {
-//            short[] arr = (short[]) array;
-//            for (int j = 0; j < arr.length; j++) {
-//                arr[j] = readShort(in);
-//            }
-//        } else if (arrType == int.class) {
-//            final int[] arr = (int[]) array;
-//            for (int j = 0; j < arr.length; j++) {
-//                arr[j] = readCInt(in);
-//            }
-//        } else if (arrType == float.class) {
-//            float[] arr = (float[]) array;
-//            for (int j = 0; j < arr.length; j++) {
-//                arr[j] = readCFloat(in);
-//            }
-//        } else if (arrType == double.class) {
-//            double[] arr = (double[]) array;
-//            for (int j = 0; j < arr.length; j++) {
-//                arr[j] = readCDouble(in);
-//            }
-//        } else if (arrType == long.class) {
-//            long[] arr = (long[]) array;
-//            for (int j = 0; j < arr.length; j++) {
-//                arr[j] = readLong(in);
-//            }
-//        } else if (arrType == boolean.class) {
-//            boolean[] arr = (boolean[]) array;
-//            for (int j = 0; j < arr.length; j++) {
-//                arr[j] = in.read() != 0;
-//            }
-//        } else if (Object.class.isAssignableFrom(arrType)) {
-//            Object[] arr = (Object[]) array;
-//            for (int j = 0; j < arr.length; j++) {
-//                arr[j] = decodeObject(in);
-//            }
-//        } else {
-//            throw new RuntimeException("unexpected array type " + arrType);
-//        }
+        if (arrType == byte.class) {
+            byte[] arr = (byte[]) array;
+            writeCInt(out, arr.length);
+            out.write(arr);
+        } else if (arrType == char.class) {
+            char[] arr = (char[]) array;
+            writeCInt(out, arr.length);
+            for (int j = 0; j < arr.length; j++) {
+                writeCChar( out, arr[j] );
+            }
+        } else if (arrType == short.class) {
+            short[] arr = (short[]) array;
+            writeCInt(out,arr.length);
+            for (int j = 0; j < arr.length; j++) {
+                writeShort(out, arr[j]);
+            }
+        } else if (arrType == int.class) {
+            final int[] arr = (int[]) array;
+            writeCInt(out,arr.length);
+            for (int j = 0; j < arr.length; j++) {
+                writeCInt(out, arr[j]);
+            }
+        } else if (arrType == float.class) {
+            float[] arr = (float[]) array;
+            writeCInt(out,arr.length);
+            for (int j = 0; j < arr.length; j++) {
+                writeCFloat(out, arr[j]);
+            }
+        } else if (arrType == double.class) {
+            double[] arr = (double[]) array;
+            writeCInt(out,arr.length);
+            for (int j = 0; j < arr.length; j++) {
+                writeCDouble(out, arr[j]);
+            }
+        } else if (arrType == long.class) {
+            long[] arr = (long[]) array;
+            writeCInt(out,arr.length);
+            for (int j = 0; j < arr.length; j++) {
+                writeLong(out, arr[j]);
+            }
+        } else if (arrType == boolean.class) {
+            boolean[] arr = (boolean[]) array;
+            writeCInt(out,arr.length);
+            for (int j = 0; j < arr.length; j++) {
+                out.write( arr[j] ? 1 : 0 );
+            }
+        } else if (Object.class.isAssignableFrom(arrType)) {
+            Object[] arr = (Object[]) array;
+            writeCInt(out,arr.length);
+            for (int j = 0; j < arr.length; j++) {
+                encodeObject((FSTCountingOutputStream) out, arr[j]);
+            }
+        } else {
+            throw new RuntimeException("unexpected array type " + arrType);
+        }
     }
 
     public String readStringUTF(InputStream in) throws IOException {
@@ -220,11 +273,7 @@ public class FSTSerBase {
         return new String(charBuf, 0, chcount);
     }
 
-    public void encodeObject( OutputStream out, Object toEncode ) {
-
-    }
-
-    public void encode(OutputStream out) throws IOException {
+    public void encode(FSTCountingOutputStream out) throws IOException {
     }
 
     public void decode(FSTCountingInputStream in) throws IOException {

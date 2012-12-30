@@ -96,7 +96,7 @@ public class FSTJavaFileGen extends FSTFileGen {
         int mask = 128;
         for (int i = start; i < end; i++) {
             FSTClazzInfo.FSTFieldInfo fi = fields[i];
-            out.println(depth+"bools = bools | ("+fi.getField().getName()+"? 0 : "+mask+");");
+            out.println(depth+"bools = bools | (!"+fi.getField().getName()+"? 0 : "+mask+");");
             mask = mask >>> 1;
         }
     }
@@ -141,9 +141,10 @@ public class FSTJavaFileGen extends FSTFileGen {
 
     public void generateWriteMethod(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
         depth+="    ";
-        out.println(depth +"public void encode(OutputStream out)  throws IOException {");
+        out.println(depth +"public void encode(FSTCountingOutputStream out)  throws IOException {");
         FSTClazzInfo.FSTFieldInfo[] fieldInfo = layout.getFieldInfo();
         int numBool = info.getNumBoolFields();
+        out.println(depth+"    writeCInt( out, "+gen.getIdForClass(info.getClazz())+");");
         out.println(depth+"    int bools = 0;");
         for (int i = 0; i < numBool; i++) {
             if ( i%8 == 0 ) {

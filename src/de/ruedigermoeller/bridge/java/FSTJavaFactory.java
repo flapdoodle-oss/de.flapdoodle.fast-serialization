@@ -2,10 +2,7 @@ package de.ruedigermoeller.bridge.java;
 
 import de.ruedigermoeller.serialization.util.FSTInputStream;
 
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -48,7 +45,20 @@ public abstract class FSTJavaFactory {
     public Object decodeFromStream(InputStream inputStream) throws IOException {
         FSTSerBase base = new FSTSerBase(this);
         FSTCountingInputStream in = new FSTCountingInputStream(inputStream);
-        return base.decodeObject(in);
+        Object res = base.decodeObject(in);
+        reset();
+        return res;
+    }
+
+    protected void reset() {
+        objectMap.clear();
+    }
+
+    public void encodeToStream(Object toWrite, OutputStream outStream) throws IOException {
+        FSTSerBase base = new FSTSerBase(this);
+        FSTCountingOutputStream out = new FSTCountingOutputStream(outStream);
+        base.encodeObject(out,toWrite);
+        reset();
     }
 
     public HashMap<Integer, Object> getObjectMap() {
