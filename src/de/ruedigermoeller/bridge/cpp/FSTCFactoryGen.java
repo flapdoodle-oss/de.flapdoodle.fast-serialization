@@ -1,6 +1,7 @@
 package de.ruedigermoeller.bridge.cpp;
 
-import de.ruedigermoeller.bridge.FSTBridgeGenerator;import de.ruedigermoeller.bridge.FSTFactoryGen;
+import de.ruedigermoeller.bridge.FSTBridge;
+import de.ruedigermoeller.bridge.FSTFactoryGen;
 
 import java.io.PrintStream;
 import java.util.Iterator;
@@ -29,7 +30,7 @@ import java.util.Iterator;
  */
 public class FSTCFactoryGen extends FSTFactoryGen {
 
-    public FSTCFactoryGen(FSTBridgeGenerator gen) {
+    public FSTCFactoryGen(FSTBridge gen) {
         super(gen);
     }
 

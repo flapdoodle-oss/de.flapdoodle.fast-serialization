@@ -31,7 +31,7 @@ import java.io.PrintStream;
  */
 public class FSTFactoryGen extends FSTGen {
 
-    public FSTFactoryGen(FSTBridgeGenerator gen) {
+    public FSTFactoryGen(FSTBridge gen) {
         super(gen);
     }
 

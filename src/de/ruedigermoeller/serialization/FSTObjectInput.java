@@ -256,6 +256,48 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                 return copy;
             }
             case FSTObjectOutput.ARRAY: {
+                if ( conf.isCrossLanguage() ) {
+                    Class reftype = referencee.getType();
+                    if ( reftype != null ) {
+                        if ( ! reftype.isInterface() )
+                        {
+                            FSTClazzInfo classInfo = conf.getClassInfo(reftype);
+                            if ( classInfo.getSer() instanceof FSTCrossLanguageSerializer ) {
+                                int tmpClzId = readCShort(); // ignored
+                                clzSerInfo = classInfo;
+                                c = classInfo.getClazz();
+                                break;
+                            }
+                        } else {
+                            // support following collection types
+                            if ( reftype == Map.class ) {
+                                int tmpClzId = readCShort(); // ignored
+                                clzSerInfo = conf.getClassInfo(HashMap.class);
+                                c = clzSerInfo.getClazz();
+                                break;
+                            } else
+                            if ( reftype == Dictionary.class ) {
+                                int tmpClzId = readCShort(); // ignored
+                                clzSerInfo = conf.getClassInfo(Hashtable.class);
+                                c = clzSerInfo.getClazz();
+                                break;
+                            } else
+                            if ( reftype == List.class ) {
+                                int tmpClzId = readCShort(); // ignored
+                                clzSerInfo = conf.getClassInfo(ArrayList.class);
+                                c = clzSerInfo.getClazz();
+                                break;
+                            } else
+                            if ( reftype == Collection.class ) {
+                                int tmpClzId = readCShort(); // ignored
+                                clzSerInfo = conf.getClassInfo(ArrayList.class);
+                                c = clzSerInfo.getClazz();
+                                break;
+                            } else
+                                throw new RuntimeException("cannot map cross platform type "+referencee);
+                        }
+                    }
+                }
                 Object res = readArray(referencee);
                 if ( ! referencee.isFlat() ) {
                     objects.registerObjectForRead(res, readPos);
@@ -289,6 +331,13 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                 // class name
                 clzSerInfo = readClass();
                 c = clzSerInfo.getClazz();
+                if ( conf.isCrossLanguage() && referencee.getType() != null ) {
+                    FSTClazzInfo classInfo = conf.getClassInfo(referencee.getType());
+                    if ( classInfo.getSer() instanceof FSTCrossLanguageSerializer ) {
+                        clzSerInfo = classInfo;
+                        c = classInfo.getClazz();
+                    }
+                }
                 break;
             }
             default:
@@ -512,6 +561,10 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                     }
                     // object
                     Object subObject = readObjectWithHeader(subInfo);
+                    if ( conf.isCrossLanguage() && subObject instanceof String && Enum.class.isAssignableFrom( subInfo.getType() ) )
+                    {
+                        subObject = Enum.valueOf(subInfo.getType(), (String) subObject);
+                    }
                     serializationInfo.setObjectValue(newObj, subInfo, subObject);
                 }
                 if (DEBUGSTACK) {
@@ -1103,7 +1156,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     public short readCShort() throws IOException {
         ensureReadAhead(3);
         int head = ((int) readFByte() + 256) &0xff;
-        // -128 = short byte, -127 == 4 byte
         if (head >= 0 && head < 255) {
             return (short) head;
         }

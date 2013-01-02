@@ -67,13 +67,9 @@ public class FSTCrossLanguageCollectionSerializer  extends FSTBasicObjectSeriali
             if ( col instanceof ArrayList ) {
                 ((ArrayList)col).ensureCapacity(len);
             }
-            Class possibleClasses[] = new Class[] {null};
             for ( int i = 0; i < len; i++ ) {
-                Object obj = in.readObjectInternal(possibleClasses);
+                Object obj = in.readObjectInternal(null);
                 col.add(obj);
-                if ( obj != null ) {
-                    possibleClasses[0] = obj.getClass();
-                }
             }
             return res;
         } catch (Throwable th) {

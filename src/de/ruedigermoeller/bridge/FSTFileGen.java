@@ -32,7 +32,7 @@ import java.io.PrintStream;
  */
 public class FSTFileGen extends FSTGen {
 
-    public FSTFileGen(FSTBridgeGenerator gen) {
+    public FSTFileGen(FSTBridge gen) {
         super(gen);
     }
 

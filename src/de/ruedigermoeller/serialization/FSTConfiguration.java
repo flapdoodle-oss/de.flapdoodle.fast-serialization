@@ -460,4 +460,8 @@ public final class FSTConfiguration {
     public ClassLoader getClassLoader() {
         return getClass().getClassLoader();
     }
+
+    public FSTClazzInfo getClassInfo(Class type) {
+        return serializationInfoRegistry.getCLInfo(type);
+    }
 }

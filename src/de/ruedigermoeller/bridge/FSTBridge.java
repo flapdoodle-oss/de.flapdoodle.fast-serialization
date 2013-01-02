@@ -5,6 +5,8 @@ import de.ruedigermoeller.bridge.cpp.FSTCFileGen;
 import de.ruedigermoeller.bridge.cpp.FSTCHeaderGen;
 import de.ruedigermoeller.bridge.java.FSTJavaFactoryGen;
 import de.ruedigermoeller.bridge.java.FSTJavaFileGen;
+import de.ruedigermoeller.bridge.python.FSTPyFactoryGen;
+import de.ruedigermoeller.bridge.python.FSTPyFileGen;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTCrossLanguageSerializer;
@@ -37,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Time: 00:55
  * To change this template use File | Settings | File Templates.
  */
-public class FSTBridgeGenerator {
+public class FSTBridge {
 
     HashSet<Class> knownClasses = new HashSet<Class>();
     HashMap<Class,Class> mappedClasses = new HashMap<Class, Class>();
@@ -49,7 +51,7 @@ public class FSTBridgeGenerator {
         }
     });
 
-    public FSTBridgeGenerator() {
+    public FSTBridge() {
         addClass(byte[].class);
         addClass(boolean[].class);
         addClass(char[].class);
@@ -174,6 +176,10 @@ public class FSTBridgeGenerator {
             FSTJavaFactoryGen hgen = new FSTJavaFactoryGen (this);
             hgen.generateFactory(outDir);
         }
+        if ( lang == Language.PY2 ) {
+            FSTPyFactoryGen hgen = new FSTPyFactoryGen (this);
+            hgen.generateFactory(outDir);
+        }
         for (Iterator<Class> iterator = sorted.iterator(); iterator.hasNext(); ) {
             Class next = iterator.next();
             if ( ! next.isArray() && ! mappedClasses.containsKey(next) && next != String.class) {
@@ -188,6 +194,10 @@ public class FSTBridgeGenerator {
                     FSTJavaFileGen genf = new FSTJavaFileGen(this);
                     genf.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
                 }
+                if ( lang == Language.PY2 ) {
+//                    FSTPyFileGen genf = new FSTPyFileGen(this);
+//                    genf.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
+                }
             }
         }
     }
@@ -198,6 +208,7 @@ public class FSTBridgeGenerator {
 
     public enum Language {
         CPP,
-        JAVA
+        JAVA,
+        PY2
     }
 }

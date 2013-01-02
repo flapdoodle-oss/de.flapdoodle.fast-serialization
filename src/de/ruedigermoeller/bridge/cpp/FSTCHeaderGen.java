@@ -1,7 +1,7 @@
 package de.ruedigermoeller.bridge.cpp;
 
 import de.ruedigermoeller.bridge.FSTFileGen;
-import de.ruedigermoeller.bridge.FSTBridgeGenerator;
+import de.ruedigermoeller.bridge.FSTBridge;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 
 import java.io.PrintStream;
@@ -31,7 +31,7 @@ import java.util.Iterator;
  */
 public class FSTCHeaderGen extends FSTFileGen {
 
-    public FSTCHeaderGen(FSTBridgeGenerator gen) {
+    public FSTCHeaderGen(FSTBridge gen) {
         super(gen);
     }
 

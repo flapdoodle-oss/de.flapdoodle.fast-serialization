@@ -1,7 +1,7 @@
 package de.ruedigermoeller.bridge.java;
 
 import de.ruedigermoeller.bridge.FSTFileGen;
-import de.ruedigermoeller.bridge.FSTBridgeGenerator;
+import de.ruedigermoeller.bridge.FSTBridge;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 
 import java.io.PrintStream;
@@ -30,7 +30,7 @@ import java.io.PrintStream;
  */
 public class FSTJavaFileGen extends FSTFileGen {
 
-    public FSTJavaFileGen(FSTBridgeGenerator gen) {
+    public FSTJavaFileGen(FSTBridge gen) {
         super(gen);
     }
 
@@ -211,9 +211,15 @@ public class FSTJavaFileGen extends FSTFileGen {
         Class type = fieldInfo.getType();
         String name = fieldInfo.getField().getName();
         if ( type.isArray() ) {
-            out.println(depth+getBridgeClassName(mapDeclarationType(type.getComponentType(),gen.getCLInfo(type)))+"[] get"+ Character.toUpperCase(name.charAt(0))+name.substring(1) +"() { return "+name+";"+" }");
+            String typeString = getBridgeClassName(mapDeclarationType(type.getComponentType(), gen.getCLInfo(type)));
+            String nameString = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+            out.println(depth+"public "+ typeString +"[] get"+ nameString +"() { return "+name+";"+" }");
+            out.println(depth + "public void set" + nameString + "( " + typeString + "[] arg) { " + name + "=arg;" + " }");
         } else {
-            out.println(depth+getBridgeClassName(mapDeclarationType(type,gen.getCLInfo(type)))+" get"+ Character.toUpperCase(name.charAt(0))+name.substring(1) +"() { return "+name+";"+" }");
+            String typeString = getBridgeClassName(mapDeclarationType(type, gen.getCLInfo(type)));
+            String nameString = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+            out.println(depth+"public "+ typeString +" get"+ nameString +"() { return "+name+";"+" }");
+            out.println(depth + "public void set" + nameString + "( " + typeString + " arg) { " + name + "=arg;" + " }");
         }
     }
 

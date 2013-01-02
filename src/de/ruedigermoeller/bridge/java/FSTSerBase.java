@@ -186,7 +186,7 @@ public class FSTSerBase {
 
         writeCInt(out,strlen);
         for (int i=0; i<strlen; i++) {
-            final int c = str.charAt(i);
+            final char c = str.charAt(i);
             if ( c < 255 ) {
                 out.write(c);
             } else {

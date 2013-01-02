@@ -606,6 +606,9 @@ public final class FSTClazzInfo {
             return field != null ? "<" + field.getName() + " of " + field.getDeclaringClass().getSimpleName() + ">" : "<undefined referencee>";
         }
 
+        public String toString() {
+            return getDesc();
+        }
         public boolean isFlat() {
             return flat;
         }

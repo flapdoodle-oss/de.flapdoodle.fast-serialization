@@ -1,6 +1,7 @@
 package de.ruedigermoeller.bridge.java;
 
-import de.ruedigermoeller.bridge.FSTBridgeGenerator;import de.ruedigermoeller.bridge.FSTFactoryGen;
+import de.ruedigermoeller.bridge.FSTBridge;
+import de.ruedigermoeller.bridge.FSTFactoryGen;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -29,7 +30,7 @@ import java.util.*;
  */
 public class FSTJavaFactoryGen extends FSTFactoryGen {
 
-    public FSTJavaFactoryGen(FSTBridgeGenerator gen) {
+    public FSTJavaFactoryGen(FSTBridge gen) {
         super(gen);
     }
 

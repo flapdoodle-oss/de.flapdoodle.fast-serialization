@@ -1,26 +1,18 @@
 package de.ruedigermoeller.serialization.testclasses.crosslanguage;
 
-import de.ruedigermoeller.bridge.FSTBridgeGenerator;
-import de.ruedigermoeller.bridge.cpp.FSTCFactoryGen;
-import de.ruedigermoeller.bridge.cpp.FSTCFileGen;
-import de.ruedigermoeller.bridge.cpp.FSTCHeaderGen;
+import de.ruedigermoeller.bridge.FSTBridge;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTObjectOutput;
-import de.ruedigermoeller.serialization.testclasses.basicstuff.Primitives;
-import de.ruedigermoeller.serialization.testclasses.enterprise.ObjectOrientedDataType;
-import de.ruedigermoeller.serialization.testclasses.enterprise.ObjectOrientedInt;
-import de.ruedigermoeller.serialization.testclasses.enterprise.SimpleOrder;
-import de.ruedigermoeller.serialization.testclasses.enterprise.Trader;
 
-import java.awt.*;
-import java.io.FileInputStream;
+import java.awt.Dimension;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -72,15 +64,16 @@ public class Cross implements Serializable {
     long testlong [] = {-100,100,200,300,39458734235l,-34953456934l};
     double testDouble[] = { 234.0234234d, -112312.0234234d };
     float testFloat[] = { 234.0234234f, -112312.0234234f };
-    String string = "Rüdiger Möller";
+    String string = "üäö";
     CrossB crossB;
     CrossB crossBs[];
     Object object = new float[] { 234.0234234f, -112312.0234234f };
     Object other[] = { "Hallo", "Holla","Hallo" };
     Dimension dimension = new Dimension(44,44);
     Dimension dims[] = new Dimension[] { new Dimension(10,10), new Dimension(20,20)};
-    ArrayList list = new ArrayList();
-    HashMap map = new HashMap();
+    List list = new ArrayList();
+    public HashMap map = new HashMap();
+    public Map map1 = new HashMap();
     test enu = test.ZWEI;
     OHO oho = OHO.SREE;
 
@@ -88,19 +81,15 @@ public class Cross implements Serializable {
         list.add("na so ein glück");
         map.put("test", 100);
         map.put(10000, 1);
+        map1.put("map1test", 1100);
+        map1.put(100001, 11);
     }
     public Cross(CrossB b) {
         crossB = b;
     }
 
     public static void main( String arg[]) throws IOException {
-        FSTBridgeGenerator generator = new FSTBridgeGenerator();
-        generator.addClass(Cross.class);
-        generator.addClass(CrossB.class);
-        generator.addClass(Cross.test.class);
-        generator.addClass(OHO.class);
-        generator.addClass(Dimension.class);
-        generator.addClass(Dimension[].class);
+        FSTBridge generator = getFstBridge();
 
         FSTConfiguration conf = generator.getConf();
 
@@ -114,8 +103,9 @@ public class Cross implements Serializable {
         System.out.println("}");
         System.out.println();
 
-//        generator.generateClasses( FSTBridgeGenerator.Language.CPP,  "C:\\Users\\ruedi\\Documents\\Visual Studio 2012\\Projects\\FST\\FST");
-        generator.generateClasses( FSTBridgeGenerator.Language.JAVA, "F:\\work\\FSTCrossTest\\src\\de\\ruedigermoeller\\bridge\\java\\generated");
+//        generator.generateClasses( FSTBridge.Language.CPP,  "C:\\Users\\ruedi\\Documents\\Visual Studio 2012\\Projects\\FST\\FST");
+        generator.generateClasses( FSTBridge.Language.JAVA, "D:\\work\\FSTCrossTest\\src\\de\\ruedigermoeller\\bridge\\java\\generated");
+        generator.generateClasses( FSTBridge.Language.PY2, "D:\\work\\FSTCrossPy\\fstgen");
 
         FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream("\\tmp\\crosstest.oos"), conf);
         out.writeObject(new Cross(new CrossB()));
@@ -126,5 +116,16 @@ public class Cross implements Serializable {
         out.close();
         System.out.println("id "+conf.getClassRegistry().getClazzFromId(97).getClazz().getSimpleName());
 
+    }
+
+    public static FSTBridge getFstBridge() {
+        FSTBridge generator = new FSTBridge();
+        generator.addClass(Cross.class);
+        generator.addClass(CrossB.class);
+        generator.addClass(test.class);
+        generator.addClass(OHO.class);
+        generator.addClass(Dimension.class);
+        generator.addClass(Dimension[].class);
+        return generator;
     }
 }

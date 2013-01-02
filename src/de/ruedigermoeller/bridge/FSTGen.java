@@ -3,8 +3,7 @@ package de.ruedigermoeller.bridge;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTCrossLanguageSerializer;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,9 +13,9 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public class FSTGen {
-    protected FSTBridgeGenerator gen;
+    protected FSTBridge gen;
 
-    public FSTGen(FSTBridgeGenerator gen) {
+    public FSTGen(FSTBridge gen) {
         this.gen = gen;
     }
 
@@ -29,6 +28,9 @@ public class FSTGen {
         }
         if (info.getSer() instanceof FSTCrossLanguageSerializer) {
             return ((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout();
+        }
+        if (isCrossPlatformCollection(type)) {
+            return Object[].class;
         }
         throw new RuntimeException("unmappable class:"+type.getName());
     }
@@ -80,7 +82,11 @@ public class FSTGen {
                 Class crossLangLayout = ((FSTCrossLanguageSerializer) info.getSer()).getCrossLangLayout();
 //                gen.addMappedClass(crossLangLayout, clazz);
                 return getBridgeClassName(crossLangLayout);
-            } else {
+            } else
+            if (isCrossPlatformCollection(clazz)) {
+                return "Object[]";
+            } else
+            {
                 throw new RuntimeException("reference to unregistered or unsupported class:"+clazz.getName());
             }
         }
@@ -88,6 +94,10 @@ public class FSTGen {
             return clazz.getSimpleName()+"_FST[]";
         }
         return clazz.getSimpleName()+"_FST";
+    }
+
+    private boolean isCrossPlatformCollection(Class clazz) {
+        return clazz == List.class || clazz== Map.class || clazz == Dictionary.class || clazz == Collection.class;
     }
 
 }
