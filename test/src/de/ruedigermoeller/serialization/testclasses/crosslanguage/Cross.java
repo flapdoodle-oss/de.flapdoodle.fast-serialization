@@ -104,8 +104,8 @@ public class Cross implements Serializable {
         System.out.println();
 
 //        generator.generateClasses( FSTBridge.Language.CPP,  "C:\\Users\\ruedi\\Documents\\Visual Studio 2012\\Projects\\FST\\FST");
-        generator.generateClasses( FSTBridge.Language.JAVA, "D:\\work\\FSTCrossTest\\src\\de\\ruedigermoeller\\bridge\\java\\generated");
-        generator.generateClasses( FSTBridge.Language.PY2, "D:\\work\\FSTCrossPy\\fstgen");
+        generator.generateClasses( FSTBridge.Language.JAVA, "f:\\work\\FSTCrossTest\\src\\de\\ruedigermoeller\\bridge\\java\\generated");
+        generator.generateClasses( FSTBridge.Language.PY2, "f:\\work\\FSTCrossPy\\fstgen");
 
         FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream("\\tmp\\crosstest.oos"), conf);
         out.writeObject(new Cross(new CrossB()));

@@ -195,8 +195,8 @@ public class FSTBridge {
                     genf.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
                 }
                 if ( lang == Language.PY2 ) {
-//                    FSTPyFileGen genf = new FSTPyFileGen(this);
-//                    genf.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
+                    FSTPyFileGen genf = new FSTPyFileGen(this);
+                    genf.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
                 }
             }
         }
