@@ -50,6 +50,7 @@ public class FSTBridge {
             return o1.getName().compareTo(o2.getName());
         }
     });
+    HashSet<Class> generatedWrappers;
 
     public FSTBridge() {
         addClass(byte[].class);
@@ -135,6 +136,10 @@ public class FSTBridge {
         }
     }
 
+    public HashSet<Class> getGeneratedWrappers() {
+        return generatedWrappers;
+    }
+
     public void isValidClassType(Class c) {
         FSTClazzInfo info = conf.getCLInfoRegistry().getCLInfo(c);
         if ( info.getSer() instanceof FSTCrossLanguageSerializer) {
@@ -180,6 +185,7 @@ public class FSTBridge {
             FSTPyFactoryGen hgen = new FSTPyFactoryGen (this);
             hgen.generateFactory(outDir);
         }
+        generatedWrappers = new HashSet<Class>();
         for (Iterator<Class> iterator = sorted.iterator(); iterator.hasNext(); ) {
             Class next = iterator.next();
             if ( ! next.isArray() && ! mappedClasses.containsKey(next) && next != String.class) {
@@ -188,14 +194,26 @@ public class FSTBridge {
                     gen.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
 
                     FSTCFileGen genf = new FSTCFileGen(this);
-                    genf.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
+                    FSTClazzInfo clInfo = conf.getCLInfoRegistry().getCLInfo(next);
+                    if ( genf.shouldGenerateClazz(clInfo)) {
+                        generatedWrappers.add(next);
+                    }
+                    genf.generateClazz(clInfo,outDir,"");
                 }
                 if ( lang == Language.JAVA ) {
                     FSTJavaFileGen genf = new FSTJavaFileGen(this);
+                    FSTClazzInfo clInfo = conf.getCLInfoRegistry().getCLInfo(next);
+                    if ( genf.shouldGenerateClazz(clInfo)) {
+                        generatedWrappers.add(next);
+                    }
                     genf.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
                 }
                 if ( lang == Language.PY2 ) {
                     FSTPyFileGen genf = new FSTPyFileGen(this);
+                    FSTClazzInfo clInfo = conf.getCLInfoRegistry().getCLInfo(next);
+                    if ( genf.shouldGenerateClazz(clInfo)) {
+                        generatedWrappers.add(next);
+                    }
                     genf.generateClazz(conf.getCLInfoRegistry().getCLInfo(next),outDir,"");
                 }
             }

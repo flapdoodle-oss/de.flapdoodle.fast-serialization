@@ -30,11 +30,14 @@ public class FSTPyFactoryGen extends FSTFactoryGen {
     public void generateFactoryImpl(PrintStream out) {
         out.println("__author__ = 'fst generator'");
         out.println();
-        out.println("import pyfst");
+        for (Iterator<Class> iterator = gen.getGeneratedWrappers().iterator(); iterator.hasNext(); ) {
+            Class aClass = iterator.next();
+            out.println("import "+getBridgeClassName(aClass));
+        }
+        out.println("import FSTRuntime");
         out.println("import array");
-        out.println("import numpy");
         out.println();
-        out.println("class MyFSTFactory(pyfst.FSTPyFactory) : ");
+        out.println("class MyFSTFactory(FSTRuntime.FSTPyFactory) : ");
         out.println();
         HashSet<String> defined = new HashSet<String>();
         for (Iterator<Class> iterator = gen.getSortedClazzes().iterator(); iterator.hasNext(); ) {
@@ -67,12 +70,27 @@ public class FSTPyFactoryGen extends FSTFactoryGen {
             } else if ( !cls.isEnum() )
             {
                 out.println("        if (clzId == self.CID_"+ cidClazzName +") :");
-                out.println("            return "+getBridgeClassName(cls)+"(this)");
+                out.println("            return "+getBridgeClassName(cls)+"(self)");
             }
         }
+        out.println("        if (clzId == self.CID_JAVA_LANG_LONG :");
+        out.println("            return return serbase.readCLong(stream)");
+        out.println("        if (clzId == self.CID_JAVA_LANG_BYTE :");
+        out.println("            return return serbase.readS(stream)");
+        out.println("        if (clzId == self.CID_JAVA_LANG_CHARACTER :");
+        out.println("            return return serbase.readCChar(stream)");
+        out.println("        if (clzId == self.CID_JAVA_LANG_INTEGER :");
+        out.println("            return return serbase.readCInt(stream)");
+        out.println("        if (clzId == self.CID_JAVA_LANG_SHORT :");
+        out.println("            return return serbase.readCShort(stream)");
+        out.println("        if (clzId == self.CID_JAVA_LANG_FLOAT :");
+        out.println("            return return serbase.readCFloat(stream)");
+        out.println("        if (clzId == self.CID_JAVA_LANG_DOUBLE :");
+        out.println("            return return serbase.readCDouble(stream)");
+
         out.println("        return self.defaultInstantiate(self.getClass(clzId),stream,container,streampos)");
         out.println("");
-        out.println("    def getClass(self, clzId) :");
+//        out.println("    def getClass(self, clzId) :");
 
         defined.clear();
         for (Iterator<Class> iterator = gen.getSortedClazzes().iterator(); iterator.hasNext(); ) {

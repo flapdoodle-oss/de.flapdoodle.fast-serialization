@@ -29,11 +29,11 @@ public class FSTPyFileGen  extends FSTFileGen {
     protected void generateHeader(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
         out.println("__author__ = 'fst generator'");
         out.println();
-        out.println("import pyfst" );
+        out.println("import FSTRuntime" );
         out.println("import array" );
         out.println();
         String clz = getBridgeClassName(info.getClazz());
-        out.println(depth+"class "+ clz +"(pyfst.FSTSerBase) :");
+        out.println(depth+"class "+ clz +"(FSTRuntime.FSTSerBase) :");
         out.println();
         out.println(depth+"    def __init__(self, factory): " );
         out.println(depth+"        self.fac = factory");
@@ -49,7 +49,7 @@ public class FSTPyFileGen  extends FSTFileGen {
         out.println(depth +"def decode(self, stream) :");
         FSTClazzInfo.FSTFieldInfo[] fieldInfo = layout.getFieldInfo();
         int numBool = layout.getNumBoolFields();
-        out.println(depth+"    bools = 0;");
+        out.println(depth+"    bools = 0");
         for (int i = 0; i < numBool; i++) {
             if ( i%8 == 0 ) {
                 out.println(depth+"    bools = self.readU(stream)");
