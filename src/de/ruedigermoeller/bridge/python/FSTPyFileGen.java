@@ -68,7 +68,7 @@ public class FSTPyFileGen  extends FSTFileGen {
         int mask = 128;
         for (int i = start; i < end; i++) {
             FSTClazzInfo.FSTFieldInfo fi = fields[i];
-            out.println(depth+fi.getField().getName()+" = (bools & "+mask+") != 0");
+            out.println(depth+"self."+fi.getField().getName()+" = (bools & "+mask+") != 0");
             mask = mask >>> 1;
         }
     }
@@ -90,32 +90,32 @@ public class FSTPyFileGen  extends FSTFileGen {
                 //out.println(depth+"jboolean "+fieldInfo.getField().getName()+";");
             } else
             if (type == int.class ) {
-                out.println(depth+name+" = self.readCInt( stream )");
+                out.println(depth+"self."+name+" = self.readCInt( stream )");
             } else
             if (type == char.class ) {
-                out.println(depth+name+" = self.readCChar( stream )");
+                out.println(depth+"self."+name+" = self.readCChar( stream )");
             } else
             if (type == short.class ) {
-                out.println(depth+name+" = self.readCShort( stream )");
+                out.println(depth+"self."+name+" = self.readCShort( stream )");
             } else
             if (type == long.class ) {
-                out.println(depth+name+" = self.readCLong( stream )");
+                out.println(depth+"self."+name+" = self.readCLong( stream )");
             } else
             if (type == float.class ) {
-                out.println(depth+name+" = self.readCFloat( stream )");
+                out.println(depth+"self."+name+" = self.readCFloat( stream )");
             } else
             if (type == double.class ) {
-                out.println(depth+name+" = self.readCDouble( stream )");
+                out.println(depth+"self."+name+" = self.readCDouble( stream )");
             } else
             if (type == byte.class ) {
-                out.println(depth+name+" = self.readS( stream )");
+                out.println(depth+"self."+name+" = self.readS( stream )");
             } else if ( fieldInfo.isArray() && fieldInfo.getArrayDepth() == 1 ) {
-                out.println(depth+name+" = self.decodeObject( stream )"); // array
+                out.println(depth+"self."+name+" = self.decodeObject( stream )"); // array
             } else {
                 throw new RuntimeException("cannot map type in field "+fieldInfo.getField());
             }
         } else {
-            out.println(depth+name+" = self.decodeObject( stream )");
+            out.println(depth+"self."+name+" = self.decodeObject( stream )");
         }
     }
 

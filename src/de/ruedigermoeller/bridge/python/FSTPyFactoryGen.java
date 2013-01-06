@@ -56,10 +56,16 @@ public class FSTPyFactoryGen extends FSTFactoryGen {
         for (Iterator<Class> iterator = gen.getSortedClazzes().iterator(); iterator.hasNext(); ) {
             Class cls = iterator.next();
             String cidClazzName = getCIDClazzName(cls);
-            if ( defined.contains(cidClazzName) || gen.getMappedClasses().get(cls) != null ) {
+            Class mapped = gen.getMappedClasses().get(cls);
+            if ( defined.contains(cidClazzName) || (mapped != null && mapped != Object[].class) ) {
                 continue;
             }
             defined.add(cidClazzName);
+            if ( mapped == Object[].class ) {
+                out.println("        if (clzId == self.CID_"+ cidClazzName +") :");
+                out.println("            len = serbase.readCInt(stream)" );
+                out.println("            return " + getArrayCreationString(mapped));
+            } else
             if ( cls.isArray() ) {
                 out.println("        if (clzId == self.CID_"+ cidClazzName +") :");
                 out.println("            len = serbase.readCInt(stream)" );
@@ -70,25 +76,30 @@ public class FSTPyFactoryGen extends FSTFactoryGen {
             } else if ( !cls.isEnum() )
             {
                 out.println("        if (clzId == self.CID_"+ cidClazzName +") :");
-                out.println("            return "+getBridgeClassName(cls)+"(self)");
+                out.println("            return "+getBridgeClassName(cls)+"."+getBridgeClassName(cls)+"(self)");
             }
         }
-        out.println("        if (clzId == self.CID_JAVA_LANG_LONG :");
-        out.println("            return return serbase.readCLong(stream)");
-        out.println("        if (clzId == self.CID_JAVA_LANG_BYTE :");
-        out.println("            return return serbase.readS(stream)");
-        out.println("        if (clzId == self.CID_JAVA_LANG_CHARACTER :");
-        out.println("            return return serbase.readCChar(stream)");
-        out.println("        if (clzId == self.CID_JAVA_LANG_INTEGER :");
-        out.println("            return return serbase.readCInt(stream)");
-        out.println("        if (clzId == self.CID_JAVA_LANG_SHORT :");
-        out.println("            return return serbase.readCShort(stream)");
-        out.println("        if (clzId == self.CID_JAVA_LANG_FLOAT :");
-        out.println("            return return serbase.readCFloat(stream)");
-        out.println("        if (clzId == self.CID_JAVA_LANG_DOUBLE :");
-        out.println("            return return serbase.readCDouble(stream)");
+        out.println("        if (clzId == self.CID_JAVA_LANG_LONG) :");
+        out.println("            return serbase.readCLong(stream)");
+        out.println("        if (clzId == self.CID_JAVA_LANG_BYTE) :");
+        out.println("            return serbase.readS(stream)");
+        out.println("        if (clzId == self.CID_JAVA_LANG_CHARACTER) :");
+        out.println("            return serbase.readCChar(stream)");
+        out.println("        if (clzId == self.CID_JAVA_LANG_INTEGER) :");
+        out.println("            return serbase.readCInt(stream)");
+        out.println("        if (clzId == self.CID_JAVA_LANG_SHORT) :");
+        out.println("            return serbase.readCShort(stream)");
+        out.println("        if (clzId == self.CID_JAVA_LANG_FLOAT) :");
+        out.println("            return serbase.readCFloat(stream)");
+        out.println("        if (clzId == self.CID_JAVA_LANG_DOUBLE) :");
+        out.println("            return serbase.readCDouble(stream)");
+        out.println("        if (clzId == self.CID_JAVA_UTIL_DATE) :");
+        out.println("            return serbase.readCLong(stream)");
+        out.println("        if (clzId == self.CID_STRING) :");
+        out.println("            return serbase.readStringUTF(stream)");
 
-        out.println("        return self.defaultInstantiate(self.getClass(clzId),stream,container,streampos)");
+        out.println("        print 'unknown class id:', clzId");
+        out.println("        return None");
         out.println("");
 //        out.println("    def getClass(self, clzId) :");
 
@@ -141,33 +152,33 @@ public class FSTPyFactoryGen extends FSTFactoryGen {
     private String getArrayCreationString(Class cls) {
         String bridgeClassName = getBridgeClassName(cls);
         if ("byte[]".equals(bridgeClassName)||"java.lang.Byte[]".equals(bridgeClassName)) {
-            return "array.array('b', range(len))";
+            return "FSTRuntime.jbytearr(len)";
         }
         if ("boolean[]".equals(bridgeClassName)||"java.lang.Boolean[]".equals(bridgeClassName)) {
-            return "array.array('c', range(len))";
+            return "FSTRuntime.jbooleanarr(len)";
         }
         if ("char[]".equals(bridgeClassName)||"java.lang.Character[]".equals(bridgeClassName)) {
-            return "array.array('H', range(len))";
+            return "FSTRuntime.jchararr(len)";
         }
         if ("short[]".equals(bridgeClassName)||"java.lang.Short[]".equals(bridgeClassName)) {
-            return "array.array('h', range(len))";
+            return "FSTRuntime.jshortarr(len)";
         }
         if ("int[]".equals(bridgeClassName)||"java.lang.Integer[]".equals(bridgeClassName)) {
-            return "array.array('i', range(len))";
+            return "FSTRuntime.jintarr(len)";
         }
         if ("long[]".equals(bridgeClassName)||"java.lang.Long[]".equals(bridgeClassName)) {
-            return "array.array('l', range(len))";
+            return "FSTRuntime.jlongarr(len)";
         }
         if ("float[]".equals(bridgeClassName)||"java.lang.Float[]".equals(bridgeClassName)) {
-            return "array.array('f', range(len))";
+            return "FSTRuntime.jfloatarr(len)";
         }
         if ("double[]".equals(bridgeClassName)||"java.lang.Double[]".equals(bridgeClassName)) {
-            return "array.array('d', range(len))";
+            return "FSTRuntime.jdoublearr(len)";
         }
         if ("java.lang.Object[]".equals(bridgeClassName)) {
-            return "numpy.empty(shape=(len,), dtype=object)";
+            return "FSTRuntime.jarray(len)";
         }
-        return bridgeClassName.replace("[]", "") + "[len]";
+        return "FSTRuntime.jarray(len) # "+bridgeClassName;
     }
 
     private String getCIDClazzName(Class cls) {

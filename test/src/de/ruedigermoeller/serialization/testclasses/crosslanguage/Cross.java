@@ -114,7 +114,10 @@ public class Cross implements Serializable {
             System.out.println("["+i+"]"+buffer[i]);
         }
         out.close();
-        System.out.println("id "+conf.getClassRegistry().getClazzFromId(97).getClazz().getSimpleName());
+        int err[] = {15,97,14};
+        for (int i = 0; i < err.length; i++) {
+            System.out.println("id "+err[i]+" "+conf.getClassRegistry().getClazzFromId(err[i]).getClazz().getSimpleName());
+        }
 
     }
 
