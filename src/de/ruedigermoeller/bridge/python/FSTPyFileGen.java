@@ -77,7 +77,8 @@ public class FSTPyFileGen  extends FSTFileGen {
         int mask = 128;
         for (int i = start; i < end; i++) {
             FSTClazzInfo.FSTFieldInfo fi = fields[i];
-            out.println(depth+"bools = bools | (!"+fi.getField().getName()+"? 0 : "+mask+")");
+            out.println(depth+"if self."+fi.getField().getName()+" :" );
+            out.println(depth+"    bools |= "+mask );
             mask = mask >>> 1;
         }
     }
@@ -121,17 +122,16 @@ public class FSTPyFileGen  extends FSTFileGen {
 
 
     public void generateWriteMethod(FSTClazzInfo info, FSTClazzInfo layout, PrintStream out, String depth) {
-        if ( 1 != 0 ) return;
         depth+="    ";
-        out.println(depth +"public void encode(FSTCountingOutputStream out)  throws IOException {");
+        out.println(depth +"def encode(self, stream) :");
         FSTClazzInfo.FSTFieldInfo[] fieldInfo = layout.getFieldInfo();
         int numBool = info.getNumBoolFields();
-        out.println(depth+"    writeCInt( out, "+gen.getIdForClass(info.getClazz())+");");
-        out.println(depth+"    int bools = 0");
+        out.println(depth+"    self.writeCInt( stream, "+gen.getIdForClass(info.getClazz())+")");
+        out.println(depth+"    bools = 0");
         for (int i = 0; i < numBool; i++) {
             if ( i%8 == 0 ) {
                 generateBoolWrite((i/8)*8,Math.min(numBool,((i/8)+1)*8),fieldInfo,out,depth+"    ");
-                out.println(depth + "    out.write(bools)");
+                out.println(depth + "    self.writeU( stream, bools )");
                 out.println(depth + "    bools = 0");
             }
         }
@@ -139,7 +139,6 @@ public class FSTPyFileGen  extends FSTFileGen {
             FSTClazzInfo.FSTFieldInfo fstFieldInfo = fieldInfo[i];
             generateWriteField(info,fstFieldInfo,out,depth+"    ");
         }
-        out.println(depth+"}");
     }
 
     protected void generateWriteField(FSTClazzInfo clInfo, FSTClazzInfo.FSTFieldInfo fieldInfo, PrintStream out, String depth) {
@@ -150,30 +149,30 @@ public class FSTPyFileGen  extends FSTFileGen {
                 //out.println(depth+"jboolean "+fieldInfo.getField().getName()+";");
             } else
             if (type == int.class ) {
-                out.println(depth+"writeCInt( out, "+ name + ");");
+                out.println(depth+"self.writeCInt( stream, "+ name + ")");
             } else
             if (type == char.class ) {
-                out.println(depth+"writeCChar( out, "+ name + ");");
+                out.println(depth+"writeCChar( stream, "+ name + ")");
             } else
             if (type == short.class ) {
-                out.println(depth+"writeCShort( out, "+ name + ");");
+                out.println(depth+"writeCShort( stream, "+ name + ")");
             } else
             if (type == long.class ) {
-                out.println(depth+"writeCLong( out, "+ name + ");");
+                out.println(depth+"writeCLong( stream, "+ name + ")");
             } else
             if (type == float.class ) {
-                out.println(depth+"writeCFloat( out, "+ name + ");");
+                out.println(depth+"writeCFloat( stream, "+ name + ")");
             } else
             if (type == double.class ) {
-                out.println(depth+"writeCDouble( out, "+ name + ");");
+                out.println(depth+"writeCDouble( stream, "+ name + ")");
             } else
             if (type == byte.class ) {
-                out.println(depth+"writeByte( out, "+ name + ");");
+                out.println(depth+"writeByte( stream, "+ name + ")");
             } else {
                 throw new RuntimeException("cannot map type in field "+fieldInfo.getField());
             }
         } else {
-            out.println(depth+"encodeObject( out, "+name+" )");
+            out.println(depth+"self.encodeObject( stream, "+name+" )");
         }
     }
 
