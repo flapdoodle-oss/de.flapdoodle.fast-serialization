@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FST.iml" filepath="$PROJECT_DIR$/FST.iml" />
       <module fileurl="file://$PROJECT_DIR$/../FSTCrossTest/FSTCrossTest.iml" filepath="$PROJECT_DIR$/../FSTCrossTest/FSTCrossTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../GroovyPlayground/GroovyPlayground.iml" filepath="$PROJECT_DIR$/../GroovyPlayground/GroovyPlayground.iml" />
       <module fileurl="file://$PROJECT_DIR$/../FSTCrossPy/fstgen/fstgen.iml" filepath="$PROJECT_DIR$/../FSTCrossPy/fstgen/fstgen.iml" />
     </modules>
   </component>

@@ -463,7 +463,7 @@ public class TestRunner {
         runner.charter.text("<i>intel i7 3,4 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
-        WarmUP = 10000; Run = WarmUP+1;
+        WarmUP = 100000; Run = WarmUP+1;
         runner.runAll(new Primitives(0).createPrimArray());
         runner.runAll(new CommonCollections());
         runner.runAll(new PrimitiveArrays().createPrimArray());
