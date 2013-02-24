@@ -44,7 +44,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * User: ruedi
  * Date: 18.11.12
  * Time: 20:41
- * To change this template use File | Settings | File Templates.
+ *
+ * Holds a serialization configuration. Reuse this class !!! construction is very expensive. (just keep a static instances around)
  */
 public final class FSTConfiguration {
 

@@ -229,7 +229,7 @@ public final class FSTClazzInfo {
                 } else if ( ! o1.isConditional() && o2.isConditional() ) {
                     res = -1;
                 } else
-                    o1.getType().getSimpleName().compareTo(o2.getType().getSimpleName());
+                    res = o1.getType().getSimpleName().compareTo(o2.getType().getSimpleName());
                 if (res == 0)
                     res = o1.getField().getName().compareTo(o2.getField().getName());
                 if (res == 0) {
@@ -487,6 +487,10 @@ public final class FSTClazzInfo {
 
         public void setPlain(boolean plain) {
             isPlain = plain;
+        }
+
+        public long getMemOffset() {
+            return memOffset;
         }
 
         public boolean isCompressed() {
