@@ -228,7 +228,11 @@ public final class FSTClazzInfo {
                     res = 1;
                 } else if ( ! o1.isConditional() && o2.isConditional() ) {
                     res = -1;
-                } else
+                } else if ( o1.isIntegral() && !o2.isIntegral() )
+                    res = -1;
+                if ( res == 0 )
+                    res = (int) (o1.getMemOffset()-o2.getMemOffset());
+                if ( res == 0 )
                     res = o1.getType().getSimpleName().compareTo(o2.getType().getSimpleName());
                 if (res == 0)
                     res = o1.getField().getName().compareTo(o2.getField().getName());
