@@ -21,7 +21,6 @@ package de.ruedigermoeller.serialization;
 
 import de.ruedigermoeller.serialization.util.FSTInt2ObjectMap;
 import de.ruedigermoeller.serialization.util.FSTObject2IntMap;
-import de.ruedigermoeller.serialization.util.FSTObject2ObjectMap;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -207,7 +206,7 @@ public class FSTClazzNameRegistry {
         }
     }
 
-    FSTObject2ObjectMap<String,Class> classCache = new FSTObject2ObjectMap<String, Class>(200);
+    HashMap<String,Class> classCache = new HashMap<String, Class>(200);
     private Class classForName(String clName) throws ClassNotFoundException {
         if ( parent != null ) {
             return parent.classForName(clName);

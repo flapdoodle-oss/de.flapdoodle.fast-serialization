@@ -20,7 +20,6 @@
 package de.ruedigermoeller.serialization;
 
 import de.ruedigermoeller.serialization.serializers.*;
-import de.ruedigermoeller.serialization.util.FSTObject2ObjectMap;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
@@ -51,7 +50,7 @@ public final class FSTConfiguration {
 
 
     FSTClazzInfoRegistry serializationInfoRegistry = new FSTClazzInfoRegistry();
-    FSTObject2ObjectMap<Class,List<SoftReference>> cachedObjects = new FSTObject2ObjectMap<Class, List<SoftReference>>(97);
+    HashMap<Class,List<SoftReference>> cachedObjects = new HashMap<Class, List<SoftReference>>(97);
     FSTClazzNameRegistry classRegistry = new FSTClazzNameRegistry(null, this);
     boolean isCrossLanguage = false;
 

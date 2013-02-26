@@ -33,7 +33,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class FSTClazzInfoRegistry {
 
-    FSTObject2ObjectMap mInfos = new FSTObject2ObjectMap(97);
+    HashMap mInfos = new HashMap(97);
 //    HashMap mInfos = new HashMap(97);
     FSTSerializerRegistry serializerRegistry = new FSTSerializerRegistry();
     boolean ignoreAnnotations = false;

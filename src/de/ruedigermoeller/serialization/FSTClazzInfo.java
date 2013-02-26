@@ -20,7 +20,6 @@
 package de.ruedigermoeller.serialization;
 
 import de.ruedigermoeller.serialization.annotations.*;
-import de.ruedigermoeller.serialization.util.FSTObject2ObjectMap;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 
 import java.io.*;
@@ -38,12 +37,12 @@ public final class FSTClazzInfo {
 
     Class clazz;
     FSTFieldInfo fieldInfo[]; // serializable fields
-    FSTObject2ObjectMap<String, FSTFieldInfo> fieldMap = new FSTObject2ObjectMap<String, FSTFieldInfo>(15); // all fields
+    HashMap<String, FSTFieldInfo> fieldMap = new HashMap<String, FSTFieldInfo>(15); // all fields
     Constructor cons;
     Method writeReplaceMethod, readResolveMethod;
     boolean requiresCompatibleMode;
 
-    FSTObject2ObjectMap<Class, FSTCompatibilityInfo> compInfo = new FSTObject2ObjectMap<Class, FSTCompatibilityInfo>(7);
+    HashMap<Class, FSTCompatibilityInfo> compInfo = new HashMap<Class, FSTCompatibilityInfo>(7);
     Class[] predict;
     boolean equalIsIdentity;
     boolean equalIsBinary;

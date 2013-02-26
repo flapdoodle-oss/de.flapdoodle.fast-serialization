@@ -20,7 +20,6 @@
 package de.ruedigermoeller.serialization;
 
 import de.ruedigermoeller.serialization.serializers.*;
-import de.ruedigermoeller.serialization.util.FSTObject2ObjectMap;
 
 import java.util.*;
 
@@ -72,7 +71,7 @@ public class FSTSerializerRegistry {
         }
     }
 
-    FSTObject2ObjectMap<Class,SerEntry> map = new FSTObject2ObjectMap<Class, SerEntry>(97);
+    HashMap<Class,SerEntry> map = new HashMap<Class, SerEntry>(97);
 
     public final FSTObjectSerializer getSerializer(Class cl) {
         if ( cl.isPrimitive()) {
