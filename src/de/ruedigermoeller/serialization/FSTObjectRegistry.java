@@ -21,6 +21,8 @@ package de.ruedigermoeller.serialization;
 
 import de.ruedigermoeller.serialization.util.*;
 
+import java.util.IdentityHashMap;
+
 /**
  * Created with IntelliJ IDEA.
  * User: ruedi
@@ -31,7 +33,7 @@ import de.ruedigermoeller.serialization.util.*;
 public final class FSTObjectRegistry {
 
     boolean disabled = false;
-    FSTInt2IntMap objects = new FSTInt2IntMap(97); // sysid => id
+    IdentityHashMap<Object,Integer> objects = new IdentityHashMap<Object,Integer>(97); // sysid => id
     FSTInt2ObjectMap idToObject = new FSTInt2ObjectMap(97);
     FSTObject2IntMap equalsMap = new FSTObject2IntMap(97,true); // object => handle
 
@@ -100,9 +102,8 @@ public final class FSTObjectRegistry {
         } else if ( clzInfo.isFlat() ) {
             return Integer.MIN_VALUE;
         }
-        final int sysid = System.identityHashCode(o);
-        int handle = objects.get(sysid);
-        if ( handle != Integer.MIN_VALUE ) {
+        Integer handle = objects.get(o);
+        if ( handle != null ) {
 //            if ( idToObject.get(handle) == null ) { // (*) (can get improved)
 //                idToObject.add(handle, o);
 //            }
@@ -120,7 +121,7 @@ public final class FSTObjectRegistry {
                 }
             }
         }
-        objects.put(sysid, streamPosition);
+        objects.put(o, streamPosition);
         //idToObject.add(streamPosition, o); only required for equalsness, moved to (*)
         if ( DUMP )
             System.out.println("REGISTER "+o.getClass()+" pos:"+streamPosition+" handle:"+streamPosition+" id:"+System.identityHashCode(o));
