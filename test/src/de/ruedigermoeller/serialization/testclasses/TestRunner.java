@@ -14,8 +14,6 @@ import de.ruedigermoeller.serialization.util.FSTUtil;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.util.Objects;
-import java.util.Properties;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,6 +24,9 @@ import java.util.Properties;
  */
 public class TestRunner {
 
+    static {
+        System.setProperty("fst.unsafe","true");
+    }
     static int WarmUP = 10000;
     static int Run = WarmUP+1;
     abstract class SerTest {
@@ -410,10 +411,10 @@ public class TestRunner {
         System.out.println();
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
-        SerTest tests[] = { defFST, kryotest, defser, optFST, minFST, crossFST};
+//        SerTest tests[] = { defFST, kryotest, defser, optFST, minFST, crossFST};
 //        SerTest tests[] = { optFST, defFST, kryotest, minFST, crossFST};
 //        SerTest tests[] = { optFST, defFST, kryotest};
-//        SerTest tests[] = { defser, kryotest, defFST};
+        SerTest tests[] = { defser, kryotest, defFST};
 //        SerTest tests[] = { kryotest};
 //        SerTest tests[] = { kryotest, defFST};
 //        SerTest tests[] = { defFST};
@@ -456,7 +457,6 @@ public class TestRunner {
 
     public static void main( String[] arg ) {
 
-        System.setProperty("fst.unsafe","true");
         TestRunner runner = new TestRunner();
 
 

@@ -1155,6 +1155,10 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         buffout.reset();
     }
 
+    /**
+     * if out == null => automatically create/reuse a bytebuffer
+     * @param out
+     */
     public void resetForReUse( OutputStream out ) {
         reset();
         if ( out != null ) {
@@ -1389,6 +1393,13 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
     public byte[] getBuffer() {
         return buffout.buf;
+    }
+
+    public byte[] getCopyOfWrittenBuffer() {
+        byte res [] = new byte[written];
+        byte[] buffer = getBuffer();
+        System.arraycopy(buffer,0,res,0,written);
+        return res;
     }
 
     public FSTConfiguration getConf() {

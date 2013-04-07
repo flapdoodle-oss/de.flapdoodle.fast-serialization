@@ -37,12 +37,10 @@ public class AnotherOffheapThingy<T> {
         String s = "Hallo";
     }
 
-    static class CPY<T> {
-        public T copyObj(Unsafe un, T test, int siz) {
-            byte b[] = new byte[(int) siz];
-            un.copyMemory(test,0, b, 0, siz);
-            return (T)b;
-        }
+    public static <T> T copyObj(Unsafe un, T test, int siz) {
+        byte b[] = new byte[(int) siz];
+        un.copyMemory(test,0, b, 0, siz);
+        return (T)b;
     }
 
     public static void main( String arg[] ) {
@@ -63,7 +61,7 @@ public class AnotherOffheapThingy<T> {
         byte b[] = new byte[(int) siz];
         un.copyMemory(test,0, b, 0, siz);
 
-        other = new CPY<Sample>().copyObj(un,test, (int) siz);
+        other = copyObj(un,test, (int) siz);
         System.out.println("POK");
 
     }

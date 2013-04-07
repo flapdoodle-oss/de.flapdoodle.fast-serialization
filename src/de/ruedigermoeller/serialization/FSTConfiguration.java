@@ -316,6 +316,7 @@ public final class FSTConfiguration {
     }
 
     void addDefaultClazzes() {
+        classRegistry.registerClass(String.class);
         classRegistry.registerClass(Byte.class);
         classRegistry.registerClass(Short.class);
         classRegistry.registerClass(Integer.class);
