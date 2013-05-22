@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" readonly="true" id="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/de/ruedigermoeller/heapofftest/AnotherOffheapThingy.java" afterPath="$PROJECT_DIR$/test/src/de/ruedigermoeller/heapofftest/AnotherOffheapThingy.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FST.iml" afterPath="$PROJECT_DIR$/FST.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectOutput.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" afterPath="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
+    <list default="true" readonly="true" id="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" name="Default" comment="removed stuff 1-2% performance gain">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fst.properties" afterPath="$PROJECT_DIR$/fst.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="FST.iws" />
@@ -16,8 +12,8 @@
     <file path="/FSTObjectInput.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1356796059094" ignored="false" />
     <file path="/FSTObjectOutput.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362080876500" ignored="false" />
     <file path="/FSTObjectRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355431045111" ignored="false" />
-    <file path="/a.dummy" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1361823937725" ignored="false" />
-    <file path="/Dummy.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1361911705773" ignored="false" />
+    <file path="/a.dummy" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1366742394150" ignored="false" />
+    <file path="/Dummy.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1366743601828" ignored="false" />
     <file path="/SimpleOrder.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355512004726" ignored="false" />
     <file path="/FSTOffHeapMap.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355575260072" ignored="false" />
     <file path="/BasicOfftest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355536772120" ignored="false" />
@@ -193,6 +189,8 @@
     <file path="/FGFastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362084046548" ignored="false" />
     <file path="$PROJECT_DIR$/../FastGrid/src/de/ruedigermoeller/fastgrid/remoting/FGFastCastUnmarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362084013474" ignored="false" />
     <file path="/FGFastCastUnmarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362083999444" ignored="false" />
+    <file path="/FstSpeedTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1366742846509" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/clustermembership/FGClusterDiscovery.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1366743792273" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -226,6 +224,7 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint url="jar://C:/jdk1.7.0_07/src.zip!/java/io/EOFException.java" line="50" class="java.io.EOFException" package="java.io">
         <option name="ENABLED" value="true" />
@@ -416,7 +415,6 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -453,11 +451,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestRunner.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="TestRunner.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="475" column="34" selection-start="16826" selection-end="16826" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="36" column="19" selection-start="1180" selection-end="1180" vertical-scroll-proportion="0.021601016">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -498,13 +498,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FSTSerializerRegistry.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="FSTSerializerRegistry.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="0" selection-start="1128" selection-end="1390" vertical-scroll-proportion="0.021601016">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="37" column="19" selection-start="1383" selection-end="1383" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -525,7 +523,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/bridge/python/FSTPyFactoryGen.java" />
         <option value="$PROJECT_DIR$/../FSTCrossPy/fstgen/FSTRuntime.py" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/bridge/python/FSTPyFileGen.java" />
         <option value="$PROJECT_DIR$/../FSTCrossPy/fstgen/Cross_FST.py" />
@@ -541,12 +538,13 @@
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTConfiguration.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java" />
+        <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/FstSpeedTest.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="154" />
-    <option name="y" value="28" />
+    <option name="x" value="157" />
+    <option name="y" value="54" />
     <option name="width" value="1558" />
     <option name="height" value="1007" />
   </component>
@@ -593,21 +591,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -650,18 +633,23 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+        </subPane>
+      </pane>
+      <pane id="PackagesPane">
+        <subPane>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -706,7 +694,7 @@
       <recent name="de.ruedigermoeller.serialization.util.FSTUtil" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.TestRunner">
+  <component name="RunManager" selected="Application.FstSpeedTest">
     <configuration default="false" name="TestRunner" type="Application" factoryName="Application" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -742,27 +730,6 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Cover" />
       <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="PyTest" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:/Python27/python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../FSTCrossPy/" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <module name="" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="F:\work\FSTCrossPy\fstgen\PyTest.py" />
-      <option name="PARAMETERS" value="" />
-      <RunnerSettings RunnerId="PyDebugRunner" />
-      <RunnerSettings RunnerId="PythonCover" />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="PyDebugRunner" />
-      <ConfigurationWrapper RunnerId="PythonCover" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -841,6 +808,23 @@
       </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="FstSpeedTest" type="Application" factoryName="Application" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" value="FstSpeedTest" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="FST" />
+      <envs />
+      <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -1036,18 +1020,18 @@
     <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Application.Cross" />
       <item index="1" class="java.lang.String" itemvalue="Application.TestRunner" />
-      <item index="2" class="java.lang.String" itemvalue="Python.PyTest" />
-      <item index="3" class="java.lang.String" itemvalue="Application.BugReport2" />
-      <item index="4" class="java.lang.String" itemvalue="Application.AnotherOffheapThingy" />
-      <item index="5" class="java.lang.String" itemvalue="Application.FSTMap" />
+      <item index="2" class="java.lang.String" itemvalue="Application.BugReport2" />
+      <item index="3" class="java.lang.String" itemvalue="Application.AnotherOffheapThingy" />
+      <item index="4" class="java.lang.String" itemvalue="Application.FSTMap" />
+      <item index="5" class="java.lang.String" itemvalue="Application.FstSpeedTest" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Application.TestRunner" />
-        <item index="1" class="java.lang.String" itemvalue="Application.FSTMap" />
-        <item index="2" class="java.lang.String" itemvalue="Application.AnotherOffheapThingy" />
-        <item index="3" class="java.lang.String" itemvalue="Application.BugReport2" />
-        <item index="4" class="java.lang.String" itemvalue="Python.PyTest" />
+        <item index="0" class="java.lang.String" itemvalue="Application.FstSpeedTest" />
+        <item index="1" class="java.lang.String" itemvalue="Application.TestRunner" />
+        <item index="2" class="java.lang.String" itemvalue="Application.FSTMap" />
+        <item index="3" class="java.lang.String" itemvalue="Application.AnotherOffheapThingy" />
+        <item index="4" class="java.lang.String" itemvalue="Application.BugReport2" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -1347,7 +1331,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="154" y="28" width="1558" height="1007" extended-state="0" />
+    <frame x="157" y="54" width="1558" height="1007" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33939394" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1357,8 +1341,8 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18942437" sideWeight="0.693302" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42890716" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21820615" sideWeight="0.53819036" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32902467" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21820615" sideWeight="0.4653349" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3266745" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1366,8 +1350,8 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21820615" sideWeight="0.45358402" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.306698" sideWeight="0.9887711" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21820615" sideWeight="0.5264395" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.52291423" sideWeight="0.9887711" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20772947" sideWeight="0.7556306" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="SVN Repositories" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3299435" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17066291" sideWeight="0.7587879" order="4" side_tool="false" content_ui="combo" />
@@ -1479,10 +1463,8 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="0" selection-start="1128" selection-end="1390" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="37" column="19" selection-start="1383" selection-end="1383" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1532,13 +1514,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="475" column="34" selection-start="16826" selection-end="16826" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTMap.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="28" column="21" selection-start="1101" selection-end="1101" vertical-scroll-proportion="0.0">
@@ -1576,7 +1551,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="0" selection-start="1128" selection-end="1390" vertical-scroll-proportion="0.021601016">
+        <state line="37" column="19" selection-start="1383" selection-end="1383" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="19" selection-start="1180" selection-end="1180" vertical-scroll-proportion="0.021601016">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
