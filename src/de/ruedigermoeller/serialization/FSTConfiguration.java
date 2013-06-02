@@ -72,6 +72,7 @@ public final class FSTConfiguration {
         FSTSerializerRegistry reg = conf.serializationInfoRegistry.serializerRegistry;
 
         // serializers
+        reg.putSerializer(Class.class, new FSTClassSerializer(), false);
         reg.putSerializer(String.class, new FSTStringSerializer(), false);
         reg.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
         reg.putSerializer(Character.class, new FSTBigNumberSerializers.FSTCharSerializer(), false);
@@ -142,25 +143,27 @@ public final class FSTConfiguration {
         };
 
         // serializers
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(String.class, new FSTStringSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Character.class, new FSTBigNumberSerializers.FSTCharSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Short.class, new FSTBigNumberSerializers.FSTShortSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Long.class, new FSTBigNumberSerializers.FSTLongSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Float.class, new FSTBigNumberSerializers.FSTFloatSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Double.class, new FSTBigNumberSerializers.FSTDoubleSerializer(), false);
+        FSTSerializerRegistry reg = conf.serializationInfoRegistry.serializerRegistry;
+        reg.putSerializer(Class.class, new FSTClassSerializer(), false);
+        reg.putSerializer(String.class, new FSTStringSerializer(), false);
+        reg.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
+        reg.putSerializer(Character.class, new FSTBigNumberSerializers.FSTCharSerializer(), false);
+        reg.putSerializer(Short.class, new FSTBigNumberSerializers.FSTShortSerializer(), false);
+        reg.putSerializer(Long.class, new FSTBigNumberSerializers.FSTLongSerializer(), false);
+        reg.putSerializer(Float.class, new FSTBigNumberSerializers.FSTFloatSerializer(), false);
+        reg.putSerializer(Double.class, new FSTBigNumberSerializers.FSTDoubleSerializer(), false);
 
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Date.class, new FSTDateSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(StringBuffer.class, new FSTStringBufferSerializer(), true);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(StringBuilder.class, new FSTStringBuilderSerializer(), true);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(EnumSet.class, new FSTEnumSetSerializer(), true);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(ArrayList.class,new FSTCollectionSerializer(), false); // subclass should register manually
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Vector.class,new FSTCollectionSerializer(), false); // EXCEPTION !!! subclass should register manually
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(LinkedList.class,new FSTCollectionSerializer(), false); // subclass should register manually
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(HashSet.class,new FSTCollectionSerializer(), false); // subclass should register manually
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(HashMap.class,new FSTMapSerializer(), false); // subclass should register manually
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Hashtable.class,new FSTMapSerializer(), false); // subclass should register manually
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(ConcurrentHashMap.class,new FSTMapSerializer(), false); // subclass should register manually
+        reg.putSerializer(Date.class, new FSTDateSerializer(), false);
+        reg.putSerializer(StringBuffer.class, new FSTStringBufferSerializer(), true);
+        reg.putSerializer(StringBuilder.class, new FSTStringBuilderSerializer(), true);
+        reg.putSerializer(EnumSet.class, new FSTEnumSetSerializer(), true);
+        reg.putSerializer(ArrayList.class, new FSTCollectionSerializer(), false); // subclass should register manually
+        reg.putSerializer(Vector.class, new FSTCollectionSerializer(), false); // EXCEPTION !!! subclass should register manually
+        reg.putSerializer(LinkedList.class, new FSTCollectionSerializer(), false); // subclass should register manually
+        reg.putSerializer(HashSet.class, new FSTCollectionSerializer(), false); // subclass should register manually
+        reg.putSerializer(HashMap.class, new FSTMapSerializer(), false); // subclass should register manually
+        reg.putSerializer(Hashtable.class, new FSTMapSerializer(), false); // subclass should register manually
+        reg.putSerializer(ConcurrentHashMap.class, new FSTMapSerializer(), false); // subclass should register manually
         return conf;
     }
 
@@ -172,6 +175,7 @@ public final class FSTConfiguration {
         FSTConfiguration conf = new FSTConfiguration();
         conf.addDefaultClazzes();
         // serializers
+        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Class.class, new FSTClassSerializer(), false);
         conf.serializationInfoRegistry.serializerRegistry.putSerializer(EnumSet.class, new FSTEnumSetSerializer(), true);
         conf.serializationInfoRegistry.serializerRegistry.putSerializer(String.class, new FSTStringSerializer(), false);
         conf.serializationInfoRegistry.serializerRegistry.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
