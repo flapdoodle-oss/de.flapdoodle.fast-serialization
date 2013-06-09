@@ -32,6 +32,8 @@ import java.util.*;
  */
 public class FSTSerializerRegistry {
 
+    private FSTSerializerRegistryDelegate delegate;
+
     public static FSTSerializerRegistry getMostCompatibleInstance() { // FIXME: move to config
         FSTSerializerRegistry res = new FSTSerializerRegistry();
         res.putSerializer(EnumSet.class, new FSTEnumSetSerializer(), true);
@@ -40,6 +42,14 @@ public class FSTSerializerRegistry {
 
 
     public static FSTObjectSerializer NULL = new NULLSerializer();
+
+    public void setDelegate(FSTSerializerRegistryDelegate delegate) {
+        this.delegate = delegate;
+    }
+
+    public FSTSerializerRegistryDelegate getDelegate() {
+        return delegate;
+    }
 
     static class NULLSerializer implements FSTObjectSerializer {
         @Override
@@ -76,6 +86,12 @@ public class FSTSerializerRegistry {
     public final FSTObjectSerializer getSerializer(Class cl) {
         if ( cl.isPrimitive()) {
             return null;
+        }
+        if ( delegate != null ) {
+            FSTObjectSerializer ser = delegate.getSerializer(cl);
+            if ( ser != null ) {
+                return ser;
+            }
         }
         return getSerializer(cl,cl);
     }

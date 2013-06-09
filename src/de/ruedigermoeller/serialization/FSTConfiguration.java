@@ -227,6 +227,15 @@ public final class FSTConfiguration {
     }
 
     /**
+     * patch default serializer lookup. set to null to delete.
+     * Should be set prior to any serialization going on (serializer lookup is cached).
+     * @param del
+     */
+    public void setSerializerRegistryDelegate( FSTSerializerRegistryDelegate del ) {
+        serializationInfoRegistry.setSerializerRegistryDelegate(del);
+    }
+
+    /**
      * for optimization purposes, do not use to benchmark processing time or in a regular program as
      * this methods creates a temporary binaryoutputstream and serializes the object in order to measure the
      * write time in micros.

@@ -2,28 +2,35 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" name="Default" comment="removed stuff 1-2% performance gain">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fst.properties" afterPath="$PROJECT_DIR$/fst.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistryDelegate.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FST.iml" afterPath="$PROJECT_DIR$/FST.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfoRegistry.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfoRegistry.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTConfiguration.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTConfiguration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java" afterPath="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ant.xml" afterPath="$PROJECT_DIR$/.idea/ant.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
+    <list id="6f7c434a-88bd-4381-a8c3-3c0f931e5f06" name="ignored" comment="" />
     <ignored path="FST.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/fragment.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362079867693" ignored="false" />
+    <file path="/fragment.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370597779191" ignored="false" />
     <file path="/FSTOffheap.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1356048047921" ignored="false" />
     <file path="/FSTObjectInput.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1356796059094" ignored="false" />
     <file path="/FSTObjectOutput.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362080876500" ignored="false" />
     <file path="/FSTObjectRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355431045111" ignored="false" />
-    <file path="/a.dummy" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1366742394150" ignored="false" />
-    <file path="/Dummy.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1366743601828" ignored="false" />
+    <file path="/a.dummy" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370725393612" ignored="false" />
+    <file path="/Dummy.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370798586463" ignored="false" />
     <file path="/SimpleOrder.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355512004726" ignored="false" />
     <file path="/FSTOffHeapMap.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355575260072" ignored="false" />
     <file path="/BasicOfftest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355536772120" ignored="false" />
     <file path="/OffHeapTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1356033874357" ignored="false" />
     <file path="/SmallThing.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355538852223" ignored="false" />
-    <file path="/FSTClazzInfoRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1361904310349" ignored="false" />
+    <file path="/FSTClazzInfoRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370789725653" ignored="false" />
     <file path="/a.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355572847822" ignored="false" />
     <file path="/ObjectOrientedInt.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355581527510" ignored="false" />
     <file path="/FSTOffheapQueue.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1356032883244" ignored="false" />
-    <file path="/FSTConfiguration.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1361904332207" ignored="false" />
+    <file path="/FSTConfiguration.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370789540646" ignored="false" />
     <file path="/ExternalizableTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355856591167" ignored="false" />
     <file path="/FSTOrderedConcurrentJobExecutor.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355944895555" ignored="false" />
     <file path="/FSTFork.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1356031714212" ignored="false" />
@@ -58,7 +65,7 @@
     <file path="/FSTCrossLanguageMapSerializer.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1356777819161" ignored="false" />
     <file path="/TestRunner.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1361899640813" ignored="false" />
     <file path="/FSTCrossLanguageEnumSetSerializer.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1356789634876" ignored="false" />
-    <file path="/FSTSerializerRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1361904345548" ignored="false" />
+    <file path="/FSTSerializerRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370789789511" ignored="false" />
     <file path="/FSTCountingOutputStream.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1356868921139" ignored="false" />
     <file path="/FSTPyFileGen.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1357945336292" ignored="false" />
     <file path="/Cross_FST.py" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1357957629593" ignored="false" />
@@ -107,17 +114,17 @@
     <file path="/SocketWrapper.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359495455128" ignored="false" />
     <file path="$PROJECT_DIR$/../StraightGroups/src/de/ruedigermoeller/straightgroups/MCastSocketTransport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359562835733" ignored="false" />
     <file path="$PROJECT_DIR$/../StraightGroups/src/de/ruedigermoeller/straightgroups/Transport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359495308665" ignored="false" />
-    <file path="/Transport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359495308665" ignored="false" />
-    <file path="/MCastSocketTransport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359574373179" ignored="false" />
+    <file path="/Transport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1369506135754" ignored="false" />
+    <file path="/MCastSocketTransport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370460304883" ignored="false" />
     <file path="$PROJECT_DIR$/../StraightGroups/src/de/ruedigermoeller/straightgroups/TransportReceiver.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359492028308" ignored="false" />
     <file path="/TransportReceiver.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359489834570" ignored="false" />
     <file path="$PROJECT_DIR$/../StraightGroups/src/de/ruedigermoeller/straightgroups/ReliableSender.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359562827731" ignored="false" />
-    <file path="/ReliableSender.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359570229645" ignored="false" />
+    <file path="/ReliableSender.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370718241620" ignored="false" />
     <file path="$PROJECT_DIR$/../StraightGroups/src/de/ruedigermoeller/straightgroups/MyBaOutput.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359491868312" ignored="false" />
     <file path="$PROJECT_DIR$/../StraightGroups/src/de/ruedigermoeller/straightgroups/MyBAInput.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359491959143" ignored="false" />
     <file path="/MyBAInput.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359562855486" ignored="false" />
     <file path="$PROJECT_DIR$/../StraightGroups/src/de/ruedigermoeller/straightgroups/ReliableReceiver.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359562899724" ignored="false" />
-    <file path="/ReliableReceiver.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359571479154" ignored="false" />
+    <file path="/ReliableReceiver.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370705980181" ignored="false" />
     <file path="$PROJECT_DIR$/../StraightGroups/src/de/ruedigermoeller/straightgroups/PerSenderReceiveBuffer.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359495023244" ignored="false" />
     <file path="$PROJECT_DIR$/../StraightGroups/src/de/ruedigermoeller/straightgroups/interfaces/Transport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359563395723" ignored="false" />
     <file path="$PROJECT_DIR$/../StraightGroups/src/de/ruedigermoeller/straightgroups/interfaces/TransportReceiver.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1359562804736" ignored="false" />
@@ -180,17 +187,136 @@
     <file path="/FGRemoteProxyFactory.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362079716650" ignored="false" />
     <file path="$PROJECT_DIR$/../FastGrid/src/de/ruedigermoeller/fastgrid/remoting/FGMethod.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362081197206" ignored="false" />
     <file path="$PROJECT_DIR$/../FastGrid/src/de/ruedigermoeller/fastgrid/remoting/FGMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1361996083088" ignored="false" />
-    <file path="/FGMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1361996082066" ignored="false" />
-    <file path="/FGMethod.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362081191950" ignored="false" />
+    <file path="/FGMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370725106367" ignored="false" />
+    <file path="/FGMethod.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370725927014" ignored="false" />
     <file path="$PROJECT_DIR$/../FastGrid/src/de/ruedigermoeller/fastgrid/remoting/FGCallContext.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362079656613" ignored="false" />
     <file path="$PROJECT_DIR$/../FastGrid/src/de/ruedigermoeller/fastgrid/remoting/FastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362080056470" ignored="false" />
     <file path="/FastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362084045956" ignored="false" />
     <file path="$PROJECT_DIR$/../FastGrid/src/de/ruedigermoeller/fastgrid/remoting/FGFastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362084046877" ignored="false" />
-    <file path="/FGFastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362084046548" ignored="false" />
+    <file path="/FGFastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370798559561" ignored="false" />
     <file path="$PROJECT_DIR$/../FastGrid/src/de/ruedigermoeller/fastgrid/remoting/FGFastCastUnmarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362084013474" ignored="false" />
-    <file path="/FGFastCastUnmarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362083999444" ignored="false" />
+    <file path="/FGFastCastUnmarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370797107765" ignored="false" />
     <file path="/FstSpeedTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1366742846509" ignored="false" />
-    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/clustermembership/FGClusterDiscovery.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1366743792273" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/clustermembership/FGClusterDiscovery.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723480285" ignored="false" />
+    <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/util/FCUtils.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370460512831" ignored="false" />
+    <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/transport/SharedMemMCastQueue.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1369503933312" ignored="false" />
+    <file path="/SharedMemMCastQueue.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1369504073828" ignored="false" />
+    <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/base/Transport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1369506135754" ignored="false" />
+    <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/transport/MCastSocketTransport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370460305233" ignored="false" />
+    <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/transport/SharedMemMCastQueueWriter.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1369684593433" ignored="false" />
+    <file path="/SharedMemMCastQueueWriter.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1369684592985" ignored="false" />
+    <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/base/TransportQueue.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1369505742615" ignored="false" />
+    <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/sequencer/ReliableSender.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370718896757" ignored="false" />
+    <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/sequencer/ReliableReceiver.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370705981049" ignored="false" />
+    <file path="/FGClusterDiscovery.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370693180121" ignored="false" />
+    <file path="/FGProxyFactory.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370797817670" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGProxyFactory.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370797819724" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGFastCastUnmarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370797111530" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGFastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370798560266" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fastgrid/test/services/DiscoveryTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370182139428" ignored="false" />
+    <file path="/DiscoveryTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370283263516" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/gui/JGridControl.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370166123517" ignored="false" />
+    <file path="/JGridControl.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370165237969" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/clustermembership/gui/FGDiscoveryGUI.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370714483010" ignored="false" />
+    <file path="/FGDiscoveryGUI.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370714440673" ignored="false" />
+    <file path="C:/jdk1.7.0_21/jfx/rt-e71070b0e0c0/javafx-ui-common/src/javafx/application/Application.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370093603998" ignored="false" />
+    <file path="/Application.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370093587956" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/appframework/FGSimpleNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370166118458" ignored="false" />
+    <file path="/FGSimpleNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370126606402" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/appframework/FGServiceConfiguration.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370118575127" ignored="false" />
+    <file path="/FGServiceConfiguration.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370118574736" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/clustermembership/FGClusterNodeInfo.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370373546682" ignored="false" />
+    <file path="/FGClusterNodeInfo.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370373533576" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fastgrid/test/TrafficGenerator.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370198191245" ignored="false" />
+    <file path="/TrafficGenerator.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370727190686" ignored="false" />
+    <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/sequencer/RUDPConfig.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370593136740" ignored="false" />
+    <file path="/FGAckedMessage.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370135329737" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/clustermembership/FGAckedMessage.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370135330655" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/Loopback.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370135390661" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/Unreliable.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370135462179" ignored="false" />
+    <file path="/Unreliable.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370135448068" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/clustermembership/FGNodeState.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370170244872" ignored="false" />
+    <file path="/FGNodeState.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370170244215" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/clustermembership/IFGClusterDiscovery.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723185558" ignored="false" />
+    <file path="/IFGClusterDiscovery.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370287264679" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/appframework/FGSNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370166121303" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/appframework/FGNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370717242563" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/appframework/IFGRemoteJob.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370166245018" ignored="false" />
+    <file path="/IFGRemoteJob.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370166245018" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/appframework/FGManagedNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723118633" ignored="false" />
+    <file path="/FGManagedNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370711231829" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/appframework/IFGManagedService.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723183924" ignored="false" />
+    <file path="/IFGManagedService.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723183924" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/gui/FastGridControl.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370601514831" ignored="false" />
+    <file path="/FGNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370711147631" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/clustermembership/FGServiceClassLoader.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370180740276" ignored="false" />
+    <file path="/FGServiceClassLoader.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370180394121" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fastgrid/test/framework/ManagedNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370280555287" ignored="false" />
+    <file path="/ManagedNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370283257750" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fastgrid/test/framework/ClusterStarter.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370198684122" ignored="false" />
+    <file path="/ClusterStarter.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370711390308" ignored="false" />
+    <file path="/FSTClassSerializer.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370184824452" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/managedobjects/FGServiceManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370712880010" ignored="false" />
+    <file path="/FGServiceManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370712880010" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/managedobjects/IFGServiceManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723101182" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/appframework/FGHostNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723118633" ignored="false" />
+    <file path="/FGHostNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370711264173" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/globalstate/IFGGlobalClusterState.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370193837579" ignored="false" />
+    <file path="/IFGGlobalClusterState.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370193833267" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/appframework/FGControllingNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723118633" ignored="false" />
+    <file path="/FGControllingNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370711522682" ignored="false" />
+    <file path="/FastGridControl.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370461463870" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/appframework/FGClassLoader.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370280531075" ignored="false" />
+    <file path="/FGClassLoader.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370280000155" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/TrafficGenerator.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370727197814" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/InterfaceTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370283234986" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/FGXampleSender.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370692459487" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/InterfaceTestImpl.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370692438685" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/FGXampleService.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370692449420" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/FGXampleReceiver.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370593145713" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/framework/ManagedNode.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370283257750" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/framework/ClusterStarter.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723118633" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/services/DiscoveryTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370460936185" ignored="false" />
+    <file path="/FGXampleSender.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370281709661" ignored="false" />
+    <file path="/FGXampleReceiver.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370281720181" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/managedobjects/FGClassLoader.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370281795721" ignored="false" />
+    <file path="/InterfaceTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370283234986" ignored="false" />
+    <file path="/InterfaceTestImpl.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370283240487" ignored="false" />
+    <file path="/IFGServiceManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723100411" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/managedobjects/gui/FGServiceGUI.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370727301833" ignored="false" />
+    <file path="/FGServiceGUI.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370727271110" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/TimeStamper.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723763086" ignored="false" />
+    <file path="/TimeStamper.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723758657" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/config/FGClusterConfig.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370454182389" ignored="false" />
+    <file path="/FGClusterConfig.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370460620593" ignored="false" />
+    <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/transport/FCSocketConf.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370603434436" ignored="false" />
+    <file path="/FCSocketConf.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370603427148" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/config/FGClusterChannel.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370453161166" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/config/FGClusterConfigYaml.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370602418111" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test.yaml" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370455141371" ignored="false" />
+    <file path="/FGClusterConfigYaml.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370602416179" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/resource/cluster.yaml" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370622596454" ignored="false" />
+    <file path="/cluster.yaml" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370622596454" ignored="false" />
+    <file path="/FCUtils.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370460508543" ignored="false" />
+    <file path="/FCMulticastChannelTransport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370601254852" ignored="false" />
+    <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/transport/FCMulticastChannelTransport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370601606481" ignored="false" />
+    <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/transport/MCastSocketTransportQueue.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370603476417" ignored="false" />
+    <file path="/MCastSocketTransportQueue.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370603466535" ignored="false" />
+    <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/transport/FCMulticastSocketTransport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370603294600" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGMethod.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370725928247" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/util/FGCountingLatchAction.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370705015264" ignored="false" />
+    <file path="/FGCountingLatchAction.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370705003796" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370725106367" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/managedobjects/IFGObjectManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370726710913" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/managedobjects/FGObjectManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370726907955" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/appframework/IFGManagedObject.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723185558" ignored="false" />
+    <file path="/IFGObjectManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370726461163" ignored="false" />
+    <file path="/FGObjectManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370726907955" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/todo.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370734306525" ignored="false" />
+    <file path="/todo.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370734306525" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGProxy.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370797375961" ignored="false" />
+    <file path="/FSTSerializerRegistryDelegate.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370789430625" ignored="false" />
+    <file path="/FGProxy.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370797375219" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -224,12 +350,48 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
+    <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </breakpoint_any>
     <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint url="jar://C:/jdk1.7.0_07/src.zip!/java/io/EOFException.java" line="50" class="java.io.EOFException" package="java.io">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
         <option name="SUSPEND_POLICY" value="SuspendAll" />
         <option name="SUSPEND" value="true" />
         <option name="COUNT_FILTER_ENABLED" value="false" />
@@ -244,6 +406,7 @@
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
         <option name="SUSPEND_POLICY" value="SuspendAll" />
         <option name="SUSPEND" value="true" />
         <option name="COUNT_FILTER_ENABLED" value="false" />
@@ -258,6 +421,7 @@
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
         <option name="SUSPEND_POLICY" value="SuspendAll" />
         <option name="SUSPEND" value="true" />
         <option name="COUNT_FILTER_ENABLED" value="false" />
@@ -272,6 +436,7 @@
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
         <option name="SUSPEND_POLICY" value="SuspendAll" />
         <option name="SUSPEND" value="true" />
         <option name="COUNT_FILTER_ENABLED" value="false" />
@@ -286,6 +451,7 @@
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
         <option name="SUSPEND_POLICY" value="SuspendAll" />
         <option name="SUSPEND" value="true" />
         <option name="COUNT_FILTER_ENABLED" value="false" />
@@ -300,34 +466,7 @@
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/test/src/com/software/util/DeepEquals.java" line="205" class="com.software.util.DeepEquals" package="com.software.util">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/test/src/com/software/util/DeepEquals.java" line="214" class="com.software.util.DeepEquals" package="com.software.util">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
         <option name="SUSPEND_POLICY" value="SuspendAll" />
         <option name="SUSPEND" value="true" />
         <option name="COUNT_FILTER_ENABLED" value="false" />
@@ -342,6 +481,7 @@
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
         <option name="SUSPEND_POLICY" value="SuspendAll" />
         <option name="SUSPEND" value="true" />
         <option name="COUNT_FILTER_ENABLED" value="false" />
@@ -356,6 +496,7 @@
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
         <option name="SUSPEND_POLICY" value="SuspendAll" />
         <option name="SUSPEND" value="true" />
         <option name="COUNT_FILTER_ENABLED" value="false" />
@@ -370,6 +511,7 @@
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
         <option name="SUSPEND_POLICY" value="SuspendAll" />
         <option name="SUSPEND" value="true" />
         <option name="COUNT_FILTER_ENABLED" value="false" />
@@ -381,40 +523,7 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </line_breakpoints>
-    <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
-      <breakpoint>
-        <option name="NOTIFY_CAUGHT" value="true" />
-        <option name="NOTIFY_UNCAUGHT" value="true" />
-        <option name="ENABLED" value="false" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="false" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint>
-        <option name="NOTIFY_CAUGHT" value="true" />
-        <option name="NOTIFY_UNCAUGHT" value="true" />
-        <option name="ENABLED" value="false" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="false" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-    </breakpoint_any>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -424,11 +533,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="FSTClazzInfo.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java">
+      <file leaf-file-name="FSTConfiguration.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTConfiguration.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="0" selection-start="916" selection-end="916" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="234" column="56" selection-start="11568" selection-end="11568" vertical-scroll-proportion="-7.4">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1856#1884#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -436,46 +548,49 @@
       <file leaf-file-name="FSTClazzInfoRegistry.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfoRegistry.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="35" column="32" selection-start="1217" selection-end="1217" vertical-scroll-proportion="0.0">
+            <state line="73" column="33" selection-start="2456" selection-end="2456" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FSTClazzNameRegistry.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzNameRegistry.java">
+      <file leaf-file-name="FSTSerializerRegistryDelegate.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistryDelegate.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="23" column="0" selection-start="987" selection-end="987" vertical-scroll-proportion="0.0">
+            <state line="26" column="79" selection-start="1064" selection-end="1064" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestRunner.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="FSTObjectSerializer.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectSerializer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="34" column="17" selection-start="1101" selection-end="1101" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FSTSerializerRegistry.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="94" column="9" selection-start="3114" selection-end="3114" vertical-scroll-proportion="0.5587121">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TestRunner.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="19" selection-start="1180" selection-end="1180" vertical-scroll-proportion="0.021601016">
+            <state line="4" column="43" selection-start="180" selection-end="180" vertical-scroll-proportion="0.0">
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#6750#6961#0" expanded="false" />
+                <element signature="e#6950#6951#0" expanded="false" />
+                <element signature="e#8683#8894#0" expanded="false" />
+                <element signature="e#8883#8884#0" expanded="false" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FSTMap.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTMap.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="21" selection-start="1101" selection-end="1101" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AnotherOffheapThingy.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/heapofftest/AnotherOffheapThingy.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="42" column="20" selection-start="1572" selection-end="1572" vertical-scroll-proportion="0.0">
-              <folding />
             </state>
           </provider>
         </entry>
@@ -489,20 +604,33 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FSTConfiguration.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTConfiguration.java">
+      <file leaf-file-name="fst.properties" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fst.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="0" selection-start="916" selection-end="916" vertical-scroll-proportion="0.0">
+            <state line="0" column="12" selection-start="12" selection-end="12" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FSTSerializerRegistry.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java">
+      <file leaf-file-name="FSTStringSerializer.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/serializers/FSTStringSerializer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="37" column="19" selection-start="1383" selection-end="1383" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="13" column="103" selection-start="313" selection-end="383" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FSTClassSerializer.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/serializers/FSTClassSerializer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="40" column="0" selection-start="1841" selection-end="1841" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -515,37 +643,37 @@
     </FindUsagesManager>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffHeapMap.java" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/heapofftest/OffHeapTest.java" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/../FSTCrossPy/fstgen/MyFSTFactory.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffheapQueue.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/../FSTCrossPy/fstgen/MyFSTFactory.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffHeapMap.java" root0="SKIP_INSPECTION" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/../FSTCrossPy/fstgen/FSTRuntime.py" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/bridge/python/FSTPyFileGen.java" />
         <option value="$PROJECT_DIR$/../FSTCrossPy/fstgen/Cross_FST.py" />
         <option value="$PROJECT_DIR$/result.html" />
         <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/basicstuff/BugReport2.java" />
-        <option value="$PROJECT_DIR$/fst.properties" />
         <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/heapofftest/AnotherOffheapThingy.java" />
         <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTMap.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfoRegistry.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTObject2ObjectMap.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzNameRegistry.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTConfiguration.java" />
         <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java" />
-        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java" />
         <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/FstSpeedTest.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/serializers/FSTClassSerializer.java" />
+        <option value="$PROJECT_DIR$/fst.properties" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistryDelegate.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTConfiguration.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfoRegistry.java" />
+        <option value="$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="157" />
-    <option name="y" value="54" />
-    <option name="width" value="1558" />
+    <option name="x" value="146" />
+    <option name="y" value="40" />
+    <option name="width" value="1587" />
     <option name="height" value="1007" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -591,6 +719,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -605,31 +734,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="fstgen" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
               <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FSTCrossTest" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FSTCrossTest" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -643,18 +748,17 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="FST" />
+              <option name="myItemId" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="GenerateAntBuildDialog.generateIdeaHomeProperty" value="false" />
-    <property name="project.structure.last.edited" value="Global Libraries" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="options.splitter.main.proportions" value="0.3" />
@@ -667,6 +771,7 @@
     <property name="GenerateAntBuildDialog.enableUiFormCompile" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="FullScreen" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
     <property name="options.splitter.details.proportions" value="0.2" />
@@ -833,7 +938,7 @@
       <setting name="path" value="" />
       <setting name="vmparams" value="" />
       <setting name="params" value="" />
-      <setting name="workDir" value="F:\work\FST" />
+      <setting name="workDir" value="file://$PROJECT_DIR$" />
       <setting name="debug" value="false" />
       <method />
     </configuration>
@@ -843,48 +948,12 @@
       <option name="PROGRAM_PARAMETERS" />
       <method />
     </configuration>
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <module name="fstgen" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <method />
-    </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
       <option name="SHMEM_ADDRESS" value="javadebug" />
       <option name="HOST" value="localhost" />
       <option name="PORT" value="5005" />
-      <method />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Unittests">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <module name="fstgen" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="CLASS_NAME" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="FOLDER_NAME" value="" />
-      <option name="TEST_TYPE" value="TEST_SCRIPT" />
-      <option name="PATTERN" value="" />
-      <option name="USE_PATTERN" value="false" />
-      <option name="PUREUNITTEST" value="true" />
-      <option name="PARAMS" value="" />
-      <option name="USE_PARAM" value="false" />
       <method />
     </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
@@ -941,24 +1010,6 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="" />
       <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Doctests">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <module name="fstgen" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="CLASS_NAME" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="FOLDER_NAME" value="" />
-      <option name="TEST_TYPE" value="TEST_SCRIPT" />
-      <option name="PATTERN" value="" />
-      <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
     <configuration default="true" type="JavascriptDebugSession" factoryName="Local" singleton="true">
@@ -1043,7 +1094,7 @@
   <component name="StructureViewFactory">
     <option name="ACTIVE_ACTIONS" value="ALPHA_COMPARATOR" />
   </component>
-  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="true">
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="true" SSL_PROTOCOLS="all">
     <option name="USER" value="" />
     <option name="PASSWORD" value="" />
     <option name="mySSHConnectionTimeout" value="30000" />
@@ -1053,7 +1104,6 @@
     <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
     <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
     <option name="IGNORE_SPACES_IN_MERGE" value="false" />
-    <option name="DETECT_NESTED_COPIES" value="true" />
     <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
     <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
     <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
@@ -1327,30 +1377,40 @@
       <created>1361911715107</created>
       <updated>1361911715107</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="removed stuff 1-2% performance gain">
+      <created>1369251453114</created>
+      <updated>1369251453114</updated>
+    </task>
+    <task id="LOCAL-00059" summary="removed stuff 1-2% performance gain">
+      <created>1370198215103</created>
+      <updated>1370198215103</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="157" y="54" width="1558" height="1007" extended-state="0" />
+    <frame x="146" y="40" width="1587" height="1007" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33939394" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18942437" sideWeight="0.693302" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18910046" sideWeight="0.6956522" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42890716" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32902467" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21820615" sideWeight="0.4653349" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2179908" sideWeight="0.3560517" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3266745" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3043478" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20772947" sideWeight="0.6452703" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21820615" sideWeight="0.5264395" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2179908" sideWeight="0.33842537" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.52291423" sideWeight="0.9887711" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20772947" sideWeight="0.7556306" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="SVN Repositories" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3299435" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1358,8 +1418,7 @@
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3172738" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3043478" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3172738" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -1389,7 +1448,7 @@
     <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="true" />
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
-    <option name="SHORT_DIFF_HORISONTALLY" value="true" />
+    <option name="SHORT_DIFF_HORIZONTALLY" value="true" />
     <option name="SHORT_DIFF_EXTRA_LINES" value="2" />
     <option name="SOFT_WRAPS_IN_SHORT_DIFF" value="true" />
     <option name="INCLUDE_TEXT_INTO_PATCH" value="false" />
@@ -1399,6 +1458,10 @@
     <option name="SHOW_DIRTY_RECURSIVELY" value="false" />
     <option name="LIMIT_HISTORY" value="true" />
     <option name="MAXIMUM_HISTORY_ROWS" value="1000" />
+    <option name="UPDATE_FILTER_SCOPE_NAME" />
+    <option name="USE_COMMIT_MESSAGE_MARGIN" value="false" />
+    <option name="COMMIT_MESSAGE_MARGIN_SIZE" value="72" />
+    <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
     <option name="LAST_COMMIT_MESSAGE" value="removed stuff 1-2% performance gain" />
@@ -1412,6 +1475,7 @@
     <option name="ACTIVE_VCS_NAME" />
     <option name="UPDATE_GROUP_BY_PACKAGES" value="false" />
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
+    <option name="UPDATE_FILTER_BY_SCOPE" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
     <MESSAGE value="initial import" />
@@ -1437,13 +1501,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/../FSTCrossPy/fstgen/MyFSTFactory.py</url>
-          <line>1</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-      </breakpoints>
       <option name="time" value="23" />
     </breakpoint-manager>
   </component>
@@ -1451,59 +1508,89 @@
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="FILTER_TARGETS" value="false" />
     <buildFile url="file://$PROJECT_DIR$/fst.xml">
-      <antCommandLine value="" />
-      <runInBackground value="true" />
-      <targetFilters />
-      <treeView value="true" />
-      <verbose value="true" />
-      <viewClosedWhenNoErrors value="false" />
+      <targetFilters>
+        <filter targetName="compile.module.fst" isVisible="true" />
+        <filter targetName="compile.module.fst.production" isVisible="true" />
+        <filter targetName="compile.module.fst.tests" isVisible="true" />
+        <filter targetName="clean.module.fst" isVisible="true" />
+        <filter targetName="init" isVisible="true" />
+        <filter targetName="clean" isVisible="true" />
+        <filter targetName="build.modules" isVisible="true" />
+        <filter targetName="all" isVisible="true" />
+      </targetFilters>
       <expanded value="true" />
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java">
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="19" selection-start="1383" selection-end="1383" vertical-scroll-proportion="0.0">
+        <state line="22" column="0" selection-start="916" selection-end="916" vertical-scroll-proportion="0.0">
           <folding />
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectCopy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="14" selection-start="939" selection-end="939" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/basicstuff/Primitives.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="59" column="0" selection-start="2059" selection-end="2059" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/com/software/util/DeepEquals.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="149" column="0" selection-start="6341" selection-end="6341" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/jdk1.7.0_07/jre/lib/rt.jar!/sun/misc/Unsafe.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="215" column="32" selection-start="6123" selection-end="6132" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/heapofftest/OffHeapTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="77" column="44" selection-start="3096" selection-end="3096" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="jar://C:/jdk1.7.0_07/src.zip!/java/util/Date.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="128" column="13" selection-start="5167" selection-end="5167" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/heapofftest/AnotherOffheapThingy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="20" selection-start="1572" selection-end="1572" vertical-scroll-proportion="0.0">
+        <state line="42" column="20" selection-start="1572" selection-end="1572" vertical-scroll-proportion="0.11030303">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/heapoff/FSTOffheap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="60" column="13" selection-start="2861" selection-end="2861" vertical-scroll-proportion="0.02093596">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/heapofftest/OffHeapTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="417" column="51" selection-start="17562" selection-end="17562" vertical-scroll-proportion="0.41502464">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/offheap.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/com/software/util/DeepEquals.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="217" column="13" selection-start="9068" selection-end="9068" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/serializers/FSTStringSerializer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="103" selection-start="313" selection-end="383" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/serializers/FSTClassSerializer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="0" selection-start="1841" selection-end="1841" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="43" selection-start="180" selection-end="180" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#6750#6961#0" expanded="false" />
+            <element signature="e#6950#6951#0" expanded="false" />
+            <element signature="e#8683#8894#0" expanded="false" />
+            <element signature="e#8883#8884#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1514,54 +1601,48 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/util/FSTMap.java">
+    <entry file="file://$PROJECT_DIR$/fst.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="21" selection-start="1101" selection-end="1101" vertical-scroll-proportion="0.0">
+        <state line="0" column="12" selection-start="12" selection-end="12" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfoRegistry.java">
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTObjectSerializer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="32" selection-start="1217" selection-end="1217" vertical-scroll-proportion="0.0">
+        <state line="34" column="17" selection-start="1101" selection-end="1101" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzNameRegistry.java">
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistryDelegate.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="0" selection-start="987" selection-end="987" vertical-scroll-proportion="0.0">
+        <state line="26" column="79" selection-start="1064" selection-end="1064" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTConfiguration.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="0" selection-start="916" selection-end="916" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="234" column="56" selection-start="11568" selection-end="11568" vertical-scroll-proportion="-7.4">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1856#1884#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfo.java">
+    <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTClazzInfoRegistry.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="0" selection-start="916" selection-end="916" vertical-scroll-proportion="0.0">
+        <state line="73" column="33" selection-start="2456" selection-end="2456" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/de/ruedigermoeller/serialization/FSTSerializerRegistry.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="19" selection-start="1383" selection-end="1383" vertical-scroll-proportion="0.0">
+        <state line="94" column="9" selection-start="3114" selection-end="3114" vertical-scroll-proportion="0.5587121">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="19" selection-start="1180" selection-end="1180" vertical-scroll-proportion="0.021601016">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1618,7 +1699,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>pyfst</last-edited>
+          <last-edited>FST</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

@@ -68,4 +68,13 @@ public class FSTClazzInfoRegistry {
     public void setIgnoreAnnotations(boolean ignoreAnnotations) {
         this.ignoreAnnotations = ignoreAnnotations;
     }
+
+
+    public void setSerializerRegistryDelegate(FSTSerializerRegistryDelegate delegate) {
+        serializerRegistry.setDelegate(delegate);
+    }
+
+    public FSTSerializerRegistryDelegate getSerializerRegistryDelegate() {
+        return serializerRegistry.getDelegate();
+    }
 }
