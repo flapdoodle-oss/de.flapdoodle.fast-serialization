@@ -233,6 +233,10 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             case FSTObjectOutput.BIG_BOOLEAN_TRUE: {
                 return Boolean.TRUE;
             }
+            case FSTObjectOutput.ONE_OF: {
+                int index = readFByte();
+                return referencee.getOneOf()[index];// in case of exceptions here => version conflict
+            }
             case FSTObjectOutput.NULL: {
                 return null;
             }

@@ -38,6 +38,7 @@ import java.util.*;
 public final class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
 
 
+    static final byte ONE_OF = -18;
     static final byte BIG_BOOLEAN_FALSE = -17;
     static final byte BIG_BOOLEAN_TRUE = -16;
     static final byte BIG_INT = -9;
@@ -61,7 +62,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
     int curDepth = 0;
 
-    int writeExternalWriteAhead = 5000;
+    int writeExternalWriteAhead = 5000; // max size an external may occupy FIXME: document this, create annotation to configure this
 
     /**
      * Creates a new FSTObjectOutput stream to write data to the specified
@@ -192,6 +193,17 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             return;
         }
         final Class clazz = toWrite.getClass();
+        String[] oneOf = referencee.getOneOf();
+        if ( oneOf != null ) {
+            for (int i = 0; i < oneOf.length; i++) {
+                String s = oneOf[i];
+                if ( s.equals(toWrite) ) {
+                    writeFByte(ONE_OF);
+                    writeFByte(i);
+                    return;
+                }
+            }
+        }
         if ( clazz == Boolean.class ) {
             if (((Boolean) toWrite).booleanValue()) {
                 writeFByte(BIG_BOOLEAN_TRUE);

@@ -444,6 +444,7 @@ public final class FSTClazzInfo {
         int integralType;
         FSTClazzInfo lastInfo;
         long memOffset = -1;
+        String oneOf[] = null;
 
         public FSTFieldInfo(Class[] possibleClasses, Field fi, boolean ignoreAnnotations) {
             this.possibleClasses = possibleClasses;
@@ -480,8 +481,16 @@ public final class FSTClazzInfo {
                 if (isIntegral()) {
                     isConditional = false;
                 }
+                OneOf annotation = fi.getAnnotation(OneOf.class);
+                if ( annotation != null ) {
+                    oneOf = annotation.value();
+                }
             }
 
+        }
+
+        public String[] getOneOf() {
+            return oneOf;
         }
 
         public boolean isPlain() {

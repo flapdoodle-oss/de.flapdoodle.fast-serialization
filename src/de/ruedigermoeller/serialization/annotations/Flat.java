@@ -44,5 +44,9 @@ import java.lang.annotation.RetentionPolicy;
  */
 
 @Retention(RetentionPolicy.RUNTIME)
+/**
+ * defines the reference should not be looked up for identical objects in the object graph. May speed up
+ * encoding, however in case there is another link to this object, performance and size are worse then
+ */
 public @interface Flat {
 }
