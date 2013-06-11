@@ -411,10 +411,10 @@ public class TestRunner {
         System.out.println();
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
-//        SerTest tests[] = { defFST, kryotest, defser, optFST, minFST, crossFST};
+        SerTest tests[] = { defFST, kryotest, defser, optFST, minFST, crossFST};
 //        SerTest tests[] = { optFST, defFST, kryotest, minFST, crossFST};
 //        SerTest tests[] = { optFST, defFST, kryotest};
-        SerTest tests[] = { defser, kryotest, defFST};
+//        SerTest tests[] = { defser, kryotest, defFST};
 //        SerTest tests[] = { kryotest};
 //        SerTest tests[] = { kryotest, defFST};
 //        SerTest tests[] = { defFST};
@@ -456,6 +456,7 @@ public class TestRunner {
 
 
     public static void main( String[] arg ) {
+        System.setProperty("fst.unsafe","true");
 
         TestRunner runner = new TestRunner();
 

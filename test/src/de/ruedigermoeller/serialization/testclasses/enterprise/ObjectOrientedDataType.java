@@ -3,6 +3,7 @@ package de.ruedigermoeller.serialization.testclasses.enterprise;
 import de.ruedigermoeller.serialization.*;
 import de.ruedigermoeller.serialization.annotations.Compress;
 import de.ruedigermoeller.serialization.annotations.EqualnessIsIdentity;
+import de.ruedigermoeller.serialization.annotations.OneOf;
 
 import java.io.*;
 
@@ -16,7 +17,10 @@ import java.io.*;
 @EqualnessIsIdentity
 public class ObjectOrientedDataType implements Serializable {
 
-    // encapsulate like a boss
+    // encapsulate like a boss ..
+
+    // just to test, benchmark ignores this for default conf
+    @OneOf({"HipHop", "********","pok a asudh ","killbill not yet","fillorkill","wacka wacka","BeBop","pokasd","irgendwas","adadad" })
     @Compress
     private String aString="";
     private boolean isCapableOfDoingAnythingMeaningful;

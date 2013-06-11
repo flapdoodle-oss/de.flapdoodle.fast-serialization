@@ -48,7 +48,7 @@ public class Primitives extends PrivatePrimitive implements Serializable {
 
      char w = 234, x = 33344;
      byte y = -34, z = 126;
-    short sh0 = 127;
+     short sh0 = 127;
 
      int gg = -122;
      int zz = 99999;
@@ -82,13 +82,13 @@ public class Primitives extends PrivatePrimitive implements Serializable {
     @Compress String st;
 
     @Compress String st1;
-    @Compress @Flat String st2;
-    @Compress String hidden;
-    @Compress @Flat String st3;
+    @Compress String st2;
+    @OneOf({"Visible","Hidden"}) @Compress String hidden;
+    @Compress String st3;
     @Compress String st4;
-    @Compress @Flat String st5;
-    @Compress @Flat String st6;
-    @Compress @Flat String st7;
+    @Compress String st5;
+    @Compress String st6;
+    @Compress String st7;
 
     StyleSheet on = null;
     URL on1 = null;
@@ -129,6 +129,7 @@ public class Primitives extends PrivatePrimitive implements Serializable {
 }
 
 class PrivatePrimitive {
-     String hidden = "Hidden";
+    @OneOf({"Hidden"})
+    String hidden = "Hidden";
 }
 

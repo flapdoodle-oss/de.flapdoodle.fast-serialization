@@ -175,15 +175,17 @@ public final class FSTConfiguration {
         FSTConfiguration conf = new FSTConfiguration();
         conf.addDefaultClazzes();
         // serializers
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Class.class, new FSTClassSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(EnumSet.class, new FSTEnumSetSerializer(), true);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(String.class, new FSTStringSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Character.class, new FSTBigNumberSerializers.FSTCharSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Short.class, new FSTBigNumberSerializers.FSTShortSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Long.class, new FSTBigNumberSerializers.FSTLongSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Float.class, new FSTBigNumberSerializers.FSTFloatSerializer(), false);
-        conf.serializationInfoRegistry.serializerRegistry.putSerializer(Double.class, new FSTBigNumberSerializers.FSTDoubleSerializer(), false);
+        FSTSerializerRegistry reg = conf.serializationInfoRegistry.serializerRegistry;
+        reg.putSerializer(Class.class, new FSTClassSerializer(), false);
+        reg.putSerializer(EnumSet.class, new FSTEnumSetSerializer(), true);
+        reg.putSerializer(String.class, new FSTStringSerializer(), false);
+        reg.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
+        reg.putSerializer(Character.class, new FSTBigNumberSerializers.FSTCharSerializer(), false);
+        reg.putSerializer(Short.class, new FSTBigNumberSerializers.FSTShortSerializer(), false);
+        reg.putSerializer(Long.class, new FSTBigNumberSerializers.FSTLongSerializer(), false);
+        reg.putSerializer(Float.class, new FSTBigNumberSerializers.FSTFloatSerializer(), false);
+        reg.putSerializer(Double.class, new FSTBigNumberSerializers.FSTDoubleSerializer(), false);
+        reg.putSerializer(ConcurrentHashMap.class, new FSTMapSerializer(), false); // subclass should register manually
         return conf;
     }
 
