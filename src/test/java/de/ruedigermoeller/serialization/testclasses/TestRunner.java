@@ -411,9 +411,9 @@ public class TestRunner {
         System.out.println();
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
-        SerTest tests[] = { defFST, kryotest, defser, optFST, minFST, crossFST};
+//        SerTest tests[] = { defFST, kryotest, defser, optFST, minFST, crossFST};
 //        SerTest tests[] = { optFST, defFST, kryotest, minFST, crossFST};
-//        SerTest tests[] = { optFST, defFST, kryotest};
+        SerTest tests[] = { optFST, defFST, kryotest};
 //        SerTest tests[] = { defser, kryotest, defFST};
 //        SerTest tests[] = { kryotest};
 //        SerTest tests[] = { kryotest, defFST};
@@ -465,7 +465,7 @@ public class TestRunner {
         runner.charter.text("<i>intel i7 3,4 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
-        WarmUP = 20000; Run = WarmUP+1;
+        WarmUP = 2000; Run = WarmUP+1;
         runner.runAll(new Primitives(0).createPrimArray());
         runner.runAll(new CommonCollections());
         runner.runAll(new PrimitiveArrays().createPrimArray());

@@ -3,6 +3,8 @@
   <component name="GradleSettings">
     <option name="gradleHome" value="F:\work\graddle" />
     <option name="linkedProjectPath" value="$PROJECT_DIR$/build.gradle" />
+    <option name="preferLocalInstallationToWrapper" value="true" />
+    <option name="useAutoImport" value="false" />
   </component>
 </project>
 

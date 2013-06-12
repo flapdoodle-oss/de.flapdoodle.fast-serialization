@@ -1,21 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" readonly="true" id="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" name="Default" comment="project reorg">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build.gradle" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
-      <change type="DELETED" beforePath="F:\work\fst\fst-with-test.properties" afterPath="" />
-      <change type="DELETED" beforePath="F:\work\fst\fst-with-test.xml" afterPath="" />
-      <change type="DELETED" beforePath="F:\work\fst\fst.properties" afterPath="" />
-      <change type="DELETED" beforePath="F:\work\fst\fst.xml" afterPath="" />
-      <change type="DELETED" beforePath="F:\work\fst\offheap.html" afterPath="" />
-      <change type="DELETED" beforePath="F:\work\fst\result-1.0.html" afterPath="" />
-      <change type="MODIFICATION" beforePath="F:\work\fst\test" afterPath="F:\work\fst\test" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="$PROJECT_DIR$/.idea/.name" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FST.iml" afterPath="$PROJECT_DIR$/FST.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ant.xml" afterPath="$PROJECT_DIR$/.idea/ant.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/kryo_2_20_all.xml" afterPath="$PROJECT_DIR$/.idea/libraries/kryo_2_20_all.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+    <list default="true" readonly="true" id="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/serialization/testclasses/TestRunner.java" afterPath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/gradle.xml" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="6f7c434a-88bd-4381-a8c3-3c0f931e5f06" name="ignored" comment="" />
@@ -27,7 +16,7 @@
     <file path="/FSTObjectOutput.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370890776727" ignored="false" />
     <file path="/FSTObjectRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355431045111" ignored="false" />
     <file path="/a.dummy" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370725393612" ignored="false" />
-    <file path="/Dummy.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371063842580" ignored="false" />
+    <file path="/Dummy.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371064152763" ignored="false" />
     <file path="/SimpleOrder.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355512004726" ignored="false" />
     <file path="/FSTOffHeapMap.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355575260072" ignored="false" />
     <file path="/BasicOfftest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355536772120" ignored="false" />
@@ -200,11 +189,11 @@
     <file path="$PROJECT_DIR$/../FastGrid/src/de/ruedigermoeller/fastgrid/remoting/FastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362080056470" ignored="false" />
     <file path="/FastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362084045956" ignored="false" />
     <file path="$PROJECT_DIR$/../FastGrid/src/de/ruedigermoeller/fastgrid/remoting/FGFastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362084046877" ignored="false" />
-    <file path="/FGFastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370798559561" ignored="false" />
+    <file path="/FGFastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371078079709" ignored="false" />
     <file path="$PROJECT_DIR$/../FastGrid/src/de/ruedigermoeller/fastgrid/remoting/FGFastCastUnmarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1362084013474" ignored="false" />
     <file path="/FGFastCastUnmarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370797107765" ignored="false" />
     <file path="/FstSpeedTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1366742846509" ignored="false" />
-    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/clustermembership/FGClusterDiscovery.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723480285" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/clustermembership/FGClusterDiscovery.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371069703619" ignored="false" />
     <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/util/FCUtils.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370460512831" ignored="false" />
     <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/transport/SharedMemMCastQueue.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1369503933312" ignored="false" />
     <file path="/SharedMemMCastQueue.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1369504073828" ignored="false" />
@@ -217,9 +206,9 @@
     <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/sequencer/ReliableReceiver.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370705981049" ignored="false" />
     <file path="/FGClusterDiscovery.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370693180121" ignored="false" />
     <file path="/FGProxyFactory.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370797817670" ignored="false" />
-    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGProxyFactory.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370797819724" ignored="false" />
-    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGFastCastUnmarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370797111530" ignored="false" />
-    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGFastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370798560266" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGProxyFactory.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371078124610" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGFastCastUnmarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371069703619" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGFastCastMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371078124610" ignored="false" />
     <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fastgrid/test/services/DiscoveryTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370182139428" ignored="false" />
     <file path="/DiscoveryTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370283263516" ignored="false" />
     <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/gui/JGridControl.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370166123517" ignored="false" />
@@ -275,7 +264,7 @@
     <file path="/FastGridControl.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370461463870" ignored="false" />
     <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/appframework/FGClassLoader.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370280531075" ignored="false" />
     <file path="/FGClassLoader.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370280000155" ignored="false" />
-    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/TrafficGenerator.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370727197814" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/TrafficGenerator.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371069703619" ignored="false" />
     <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/InterfaceTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370283234986" ignored="false" />
     <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/FGXampleSender.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370692459487" ignored="false" />
     <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/InterfaceTestImpl.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370692438685" ignored="false" />
@@ -292,18 +281,18 @@
     <file path="/IFGServiceManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723100411" ignored="false" />
     <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/managedobjects/gui/FGServiceGUI.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370727301833" ignored="false" />
     <file path="/FGServiceGUI.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370727271110" ignored="false" />
-    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/TimeStamper.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723763086" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/test/de/ruedigermoeller/fg/test/TimeStamper.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371069703619" ignored="false" />
     <file path="/TimeStamper.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723758657" ignored="false" />
     <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/config/FGClusterConfig.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370454182389" ignored="false" />
     <file path="/FGClusterConfig.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370460620593" ignored="false" />
     <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/transport/FCSocketConf.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370603434436" ignored="false" />
     <file path="/FCSocketConf.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370603427148" ignored="false" />
-    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/config/FGClusterChannel.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370453161166" ignored="false" />
-    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/config/FGClusterConfigYaml.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370602418111" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/config/FGClusterChannel.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371078981131" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/config/FGClusterConfigYaml.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371079379068" ignored="false" />
     <file path="$PROJECT_DIR$/../fast-grid/test.yaml" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370455141371" ignored="false" />
-    <file path="/FGClusterConfigYaml.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370602416179" ignored="false" />
-    <file path="$PROJECT_DIR$/../fast-grid/resource/cluster.yaml" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370622596454" ignored="false" />
-    <file path="/cluster.yaml" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370622596454" ignored="false" />
+    <file path="/FGClusterConfigYaml.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371079345058" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/resource/cluster.yaml" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371079525946" ignored="false" />
+    <file path="/cluster.yaml" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371079525577" ignored="false" />
     <file path="/FCUtils.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370460508543" ignored="false" />
     <file path="/FCMulticastChannelTransport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370601254852" ignored="false" />
     <file path="$PROJECT_DIR$/../FastCast/trunk/src/de/ruedigermoeller/fastcast/transport/FCMulticastChannelTransport.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370601606481" ignored="false" />
@@ -315,21 +304,32 @@
     <file path="/FGCountingLatchAction.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370705003796" ignored="false" />
     <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370725106367" ignored="false" />
     <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/managedobjects/IFGObjectManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370726710913" ignored="false" />
-    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/managedobjects/FGObjectManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370726907955" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/services/managedobjects/FGObjectManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371069703619" ignored="false" />
     <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/appframework/IFGManagedObject.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370723185558" ignored="false" />
     <file path="/IFGObjectManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370726461163" ignored="false" />
     <file path="/FGObjectManagement.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370726907955" ignored="false" />
     <file path="$PROJECT_DIR$/../fast-grid/todo.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370734306525" ignored="false" />
     <file path="/todo.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370734306525" ignored="false" />
-    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGProxy.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370797375961" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGProxy.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371068982032" ignored="false" />
     <file path="/FSTSerializerRegistryDelegate.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370789430625" ignored="false" />
-    <file path="/FGProxy.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370797375219" ignored="false" />
+    <file path="/FGProxy.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371068982032" ignored="false" />
     <file path="/Flat.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370889985014" ignored="false" />
     <file path="/OneOf.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370890255579" ignored="false" />
     <file path="/OptimizationExample1.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370890912541" ignored="false" />
     <file path="/Primitives.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370976914529" ignored="false" />
     <file path="/ObjectOrientedDataType.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1370977166681" ignored="false" />
-    <file path="/build.gradle" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371062975722" ignored="false" />
+    <file path="/build.gradle" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371067248509" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/adapters/fastcast/FGFastCastObjectRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371079616684" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/IFGObjectRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371068317794" ignored="false" />
+    <file path="/IFGObjectRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371069175174" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/IFGRemoteObjectRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371078155300" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/FGRemoteObject.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371068999676" ignored="false" />
+    <file path="/IFGRemoteObjectRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371073979037" ignored="false" />
+    <file path="/FGFastCastObjectRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371079616367" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/IFGManagedObject.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371069683729" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/IFGRemotableObject.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371069703619" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/IFGMarshaller.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371078124610" ignored="false" />
+    <file path="$PROJECT_DIR$/../fast-grid/src/de/ruedigermoeller/fastgrid/remoting/adapters/FGProxyUtil.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371078791610" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -486,10 +486,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="build.gradle" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="build.gradle" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="0" selection-start="418" selection-end="418" vertical-scroll-proportion="0.5704348">
+            <state line="12" column="0" selection-start="226" selection-end="226" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -498,7 +498,18 @@
       <file leaf-file-name="FSTFactoryGen.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/bridge/FSTFactoryGen.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="41" column="5" selection-start="1384" selection-end="1384" vertical-scroll-proportion="0.0">
+            <state line="21" column="47" selection-start="809" selection-end="809" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TestRunner.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="414" column="21" selection-start="14446" selection-end="14446" vertical-scroll-proportion="0.21132076">
               <folding />
             </state>
           </provider>
@@ -544,7 +555,7 @@
           <option name="name" value="check" />
         </GradleTaskDescriptor>
         <GradleTaskDescriptor>
-          <option name="description" value="Assembles the main classes." />
+          <option name="description" value="Assembles binary 'main'." />
           <option name="name" value="classes" />
         </GradleTaskDescriptor>
         <GradleTaskDescriptor>
@@ -552,12 +563,16 @@
           <option name="name" value="clean" />
         </GradleTaskDescriptor>
         <GradleTaskDescriptor>
-          <option name="description" value="Compiles the main Java source." />
+          <option name="description" value="Compiles source set 'main:java'." />
           <option name="name" value="compileJava" />
         </GradleTaskDescriptor>
         <GradleTaskDescriptor>
-          <option name="description" value="Compiles the test Java source." />
+          <option name="description" value="Compiles source set 'test:java'." />
           <option name="name" value="compileTestJava" />
+        </GradleTaskDescriptor>
+        <GradleTaskDescriptor>
+          <option name="description" value="Installs the 'archives' artifacts into the local Maven repository." />
+          <option name="name" value="install" />
         </GradleTaskDescriptor>
         <GradleTaskDescriptor>
           <option name="description" value="Assembles a jar archive containing the main classes." />
@@ -568,12 +583,16 @@
           <option name="name" value="javadoc" />
         </GradleTaskDescriptor>
         <GradleTaskDescriptor>
-          <option name="description" value="Processes the main resources." />
+          <option name="description" value="Processes source set 'main:resources'." />
           <option name="name" value="processResources" />
         </GradleTaskDescriptor>
         <GradleTaskDescriptor>
-          <option name="description" value="Processes the test resources." />
+          <option name="description" value="Processes source set 'test:resources'." />
           <option name="name" value="processTestResources" />
+        </GradleTaskDescriptor>
+        <GradleTaskDescriptor>
+          <option name="description" value="Initializes a new Gradle build. [incubating]" />
+          <option name="name" value="setupBuild" />
         </GradleTaskDescriptor>
         <GradleTaskDescriptor>
           <option name="name" value="sourcesJar" />
@@ -583,7 +602,7 @@
           <option name="name" value="test" />
         </GradleTaskDescriptor>
         <GradleTaskDescriptor>
-          <option name="description" value="Assembles the test classes." />
+          <option name="description" value="Assembles binary 'test'." />
           <option name="name" value="testClasses" />
         </GradleTaskDescriptor>
       </set>
@@ -603,11 +622,7 @@
       <list>
         <GradleTaskDescriptor>
           <option name="executorId" value="Run" />
-          <option name="name" value="sourcesJar" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="executorId" value="Run" />
-          <option name="name" value="srcJar" />
+          <option name="name" value="uploadArchives" />
         </GradleTaskDescriptor>
         <GradleTaskDescriptor>
           <option name="executorId" value="Run" />
@@ -619,7 +634,11 @@
         </GradleTaskDescriptor>
         <GradleTaskDescriptor>
           <option name="executorId" value="Run" />
-          <option name="name" value="compileJava" />
+          <option name="name" value="sourcesJar" />
+        </GradleTaskDescriptor>
+        <GradleTaskDescriptor>
+          <option name="executorId" value="Run" />
+          <option name="name" value="srcJar" />
         </GradleTaskDescriptor>
       </list>
     </option>
@@ -646,10 +665,13 @@
         <option value="$PROJECT_DIR$/test/src/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/bridge/FSTFactoryGen.java" />
         <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/serialization/testclasses/basicstuff/SmallThing.java" />
-        <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
       </list>
     </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <treeState />
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="7" />
@@ -746,6 +768,20 @@
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="main" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
@@ -769,34 +805,58 @@
   </component>
   <component name="PropertiesComponent">
     <property name="GenerateAntBuildDialog.generateIdeaHomeProperty" value="false" />
-    <property name="project.structure.last.edited" value="Modules" />
-    <property name="OverrideImplement.combined" value="true" />
-    <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="GenerateAntBuildDialog.generateSingleFile" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/build.gradle" />
-    <property name="GenerateAntBuildDialog.inclineRuntiemClasspath" value="false" />
-    <property name="GenerateAntBuildDialog.outputFileNameProperty" value="fst-with-test" />
-    <property name="GenerateAntBuildDialog.enableUiFormCompile" value="false" />
-    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="recentsLimit" value="5" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth2" value="75" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth1" value="75" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth0" value="75" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth5" value="75" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth4" value="75" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth3" value="75" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="FullScreen" value="false" />
-    <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="options.lastSelected" value="reference.projectsettings.compiler.javacompiler" />
-    <property name="project.structure.side.proportion" value="0.2" />
     <property name="GenerateAntBuildDialog.forceTargetJdk" value="false" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth1" value="75" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth0" value="75" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth3" value="75" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="OverrideImplement.combined" value="true" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth2" value="75" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder1" value="1" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder0" value="0" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder3" value="3" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder2" value="2" />
+    <property name="GenerateAntBuildDialog.generateSingleFile" value="true" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder5" value="5" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder4" value="4" />
+    <property name="GenerateAntBuildDialog.inclineRuntiemClasspath" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/build.gradle" />
+    <property name="GenerateAntBuildDialog.outputFileNameProperty" value="fst-with-test" />
+    <property name="GenerateAntBuildDialog.enableUiFormCompile" value="false" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth4" value="75" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth5" value="75" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder5" value="5" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder3" value="3" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder4" value="4" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder1" value="1" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder2" value="2" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder0" value="0" />
     <property name="restartRequiresConfirmation" value="true" />
     <property name="gradle.tool.window.active" value="Tasks" />
     <property name="GenerateAntBuildDialog.backupFiles" value="false" />
-    <property name="options.searchVisible" value="true" />
-    <property name="dynamic.classpath" value="false" />
     <property name="dir.diff.last.used.directory" value="$PROJECT_DIR$/../FSTCrossPy - Kopie" />
+    <property name="dynamic.classpath" value="false" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -928,25 +988,12 @@
       </UpdatedFiles>
     </UpdateInfo>
   </component>
-  <component name="RunManager" selected="Groovy.gradle:sourcesJar">
+  <component name="RunManager" selected="Application.TestRunner">
     <configuration default="false" name="gradle:build" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
       <module name="FST" />
       <setting name="path" value="file://$PROJECT_DIR$/build.gradle" />
       <setting name="vmparams" value="" />
       <setting name="params" value="build" />
-      <setting name="workDir" value="file://$PROJECT_DIR$" />
-      <setting name="debug" value="false" />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" enabled="false" />
-      </method>
-    </configuration>
-    <configuration default="false" name="gradle:jar" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
-      <module name="FST" />
-      <setting name="path" value="file://$PROJECT_DIR$/build.gradle" />
-      <setting name="vmparams" value="" />
-      <setting name="params" value="jar" />
       <setting name="workDir" value="file://$PROJECT_DIR$" />
       <setting name="debug" value="false" />
       <RunnerSettings RunnerId="Run" />
@@ -968,19 +1015,6 @@
         <option name="Make" enabled="false" />
       </method>
     </configuration>
-    <configuration default="false" name="gradle:srcJar" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
-      <module name="fst" />
-      <setting name="path" value="file://$PROJECT_DIR$/build.gradle" />
-      <setting name="vmparams" value="" />
-      <setting name="params" value="srcJar" />
-      <setting name="workDir" value="file://$PROJECT_DIR$" />
-      <setting name="debug" value="false" />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" enabled="false" />
-      </method>
-    </configuration>
     <configuration default="false" name="gradle:sourcesJar" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
       <module name="fst" />
       <setting name="path" value="file://$PROJECT_DIR$/build.gradle" />
@@ -993,6 +1027,41 @@
       <method>
         <option name="Make" enabled="false" />
       </method>
+    </configuration>
+    <configuration default="false" name="gradle:uploadArchives" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
+      <module name="fst" />
+      <setting name="path" value="file://$PROJECT_DIR$/build.gradle" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="uploadArchives" />
+      <setting name="workDir" value="file://$PROJECT_DIR$" />
+      <setting name="debug" value="false" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method>
+        <option name="Make" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="false" name="TestRunner" type="Application" factoryName="Application" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="de.ruedigermoeller.serialization.testclasses.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="de.ruedigermoeller.serialization.testclasses.TestRunner" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="fst" />
+      <envs />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
     </configuration>
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="" />
@@ -1132,18 +1201,18 @@
     <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Application.Cross" />
       <item index="1" class="java.lang.String" itemvalue="Groovy.gradle:build" />
-      <item index="2" class="java.lang.String" itemvalue="Groovy.gradle:jar" />
-      <item index="3" class="java.lang.String" itemvalue="Groovy.gradle:clean" />
-      <item index="4" class="java.lang.String" itemvalue="Groovy.gradle:srcJar" />
-      <item index="5" class="java.lang.String" itemvalue="Groovy.gradle:sourcesJar" />
+      <item index="2" class="java.lang.String" itemvalue="Groovy.gradle:clean" />
+      <item index="3" class="java.lang.String" itemvalue="Groovy.gradle:sourcesJar" />
+      <item index="4" class="java.lang.String" itemvalue="Groovy.gradle:uploadArchives" />
+      <item index="5" class="java.lang.String" itemvalue="Application.TestRunner" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Groovy.gradle:sourcesJar" />
-        <item index="1" class="java.lang.String" itemvalue="Groovy.gradle:srcJar" />
+        <item index="0" class="java.lang.String" itemvalue="Application.TestRunner" />
+        <item index="1" class="java.lang.String" itemvalue="Groovy.gradle:uploadArchives" />
         <item index="2" class="java.lang.String" itemvalue="Groovy.gradle:build" />
         <item index="3" class="java.lang.String" itemvalue="Groovy.gradle:clean" />
-        <item index="4" class="java.lang.String" itemvalue="Groovy.gradle:jar" />
+        <item index="4" class="java.lang.String" itemvalue="Groovy.gradle:sourcesJar" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -1454,34 +1523,42 @@
       <created>1371063672106</created>
       <updated>1371063672106</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="project reorg">
+      <created>1371064071105</created>
+      <updated>1371064071105</updated>
+    </task>
+    <task id="LOCAL-00065" summary="project reorg">
+      <created>1371064184104</created>
+      <updated>1371064184104</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="7" y="6" width="1787" height="1051" extended-state="0" />
     <editor active="false" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33939394" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29599535" sideWeight="0.7329609" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3385475" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.29599535" sideWeight="0.6379888" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16715032" sideWeight="0.6960894" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42890716" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32902467" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20835751" sideWeight="0.22793296" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20835751" sideWeight="0.18547486" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.326257" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.326257" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3039106" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="SVN Repositories" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32960895" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20772947" sideWeight="0.6452703" order="10" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965758" sideWeight="0.5217877" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20835751" sideWeight="0.44469273" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26703912" sideWeight="0.9887711" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20835751" sideWeight="0.45139664" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.36201116" sideWeight="0.9887711" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20772947" sideWeight="0.7556306" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17066291" sideWeight="0.7587879" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1589,16 +1666,25 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/bridge/FSTFactoryGen.java">
+    <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="5" selection-start="1384" selection-end="1384" vertical-scroll-proportion="0.0">
+        <state line="12" column="0" selection-start="226" selection-end="226" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/bridge/FSTFactoryGen.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="0" selection-start="418" selection-end="418" vertical-scroll-proportion="0.5704348">
+        <state line="21" column="47" selection-start="809" selection-end="809" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/serialization/testclasses/TestRunner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="414" column="21" selection-start="14446" selection-end="14446" vertical-scroll-proportion="0.21132076">
           <folding />
         </state>
       </provider>

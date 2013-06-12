@@ -1,5 +1,5 @@
 apply plugin: 'java'
-
+apply plugin: 'maven'
 version="1.02"
 
 dependencies {
@@ -21,3 +21,24 @@ compileJava {
 artifacts {
     archives sourcesJar
 }
+
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            repository(url: "http://org.apache.maven.wagon:wagon-http:2.2")
+//            pom.version = version
+//            pom.groupId = 'de.ruedigermoeller'
+//            pom.artifactId = 'fast-serialization'
+//            pom.project {
+//                dependencies { }
+//                description "fast and efficient java serialization drop-in replacement"
+//                licenses {
+//                    license {
+//                        name 'LGPL 2.1'
+//                        distribution 'repo'
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
