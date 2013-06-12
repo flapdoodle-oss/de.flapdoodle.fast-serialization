@@ -1,6 +1,5 @@
 package de.ruedigermoeller.bridge;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,7 +35,7 @@ public class FSTFactoryGen extends FSTGen {
     }
 
     public void generateFactoryHeader(PrintStream out) {
-        throw new NotImplementedException();
+        throw new RuntimeException("unimplented");
     }
 
     public void generateFactoryImpl(PrintStream out) {
