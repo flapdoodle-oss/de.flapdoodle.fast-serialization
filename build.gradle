@@ -1,0 +1,23 @@
+apply plugin: 'java'
+
+version="1.02"
+
+dependencies {
+    compile fileTree("src/test/lib")
+}
+
+task sourcesJar(type: Jar, dependsOn:classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+compileJava {
+    options.compilerArgs << '-XDignore.symbol.file'
+    options.compilerArgs << '-nowarn'
+    options.fork = true
+    options.forkOptions.executable = 'javac'
+}
+
+artifacts {
+    archives sourcesJar
+}
