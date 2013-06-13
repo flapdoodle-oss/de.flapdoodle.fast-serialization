@@ -78,15 +78,15 @@ public class Primitives extends PrivatePrimitive implements Serializable {
     SampleEnum en1 = SampleEnum.Predesignated_GiveUp_Allowed;
     EnumSet<SampleEnum> enSet = EnumSet.of(SampleEnum.Predesignated,SampleEnum.Complete);
 
-    @Compress String st;
+    String st;
 
     @Compress String st1;
     @Compress String st2;
-    @OneOf({"Visible","Hidden"}) @Compress String hidden;
-    @Compress String st3;
-    @Compress String st4;
+    @OneOf({"Visible","Hidden"}) String hidden;
+    @Flat @Compress String st3;
+    @Flat @Compress String st4;
     @Compress String st5;
-    @Compress String st6;
+    @Flat @Compress String st6;
     @Compress String st7;
 
     StyleSheet on = null;
