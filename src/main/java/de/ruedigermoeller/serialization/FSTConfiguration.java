@@ -518,7 +518,7 @@ public final class FSTConfiguration {
      * @param out
      * @return
      */
-    public FSTObjectOutput getObjectOutputStream(OutputStream out) {
+    public FSTObjectOutput getObjectOutput(OutputStream out) {
         FSTObjectOutput fstObjectOutput = output.get();
         fstObjectOutput.resetForReUse(out);
         return fstObjectOutput;

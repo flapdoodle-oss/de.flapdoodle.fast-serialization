@@ -34,13 +34,6 @@ public class FSTSerializerRegistry {
 
     private FSTSerializerRegistryDelegate delegate;
 
-    public static FSTSerializerRegistry getMostCompatibleInstance() { // FIXME: move to config
-        FSTSerializerRegistry res = new FSTSerializerRegistry();
-        res.putSerializer(EnumSet.class, new FSTEnumSetSerializer(), true);
-        return res;
-    }
-
-
     public static FSTObjectSerializer NULL = new NULLSerializer();
 
     public void setDelegate(FSTSerializerRegistryDelegate delegate) {

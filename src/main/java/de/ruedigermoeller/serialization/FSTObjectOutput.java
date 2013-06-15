@@ -101,6 +101,23 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         }
     }
 
+    /**
+     * Flushes this data output stream. This forces any buffered output
+     * bytes to be written out to the stream.
+     * <p/>
+     * The <code>flush</code> method of <code>DataOutputStream</code>
+     * calls the <code>flush</code> method of its underlying output stream.
+     *
+     * @throws java.io.IOException if an I/O error occurs.
+     * @see java.io.FilterOutputStream#out
+     * @see java.io.OutputStream#flush()
+     */
+    @Override
+    public void flush() throws IOException {
+        buffout.flush();
+        super.flush();
+    }
+
     static ByteArrayOutputStream empty = new ByteArrayOutputStream(0);
 
     /**
@@ -118,6 +135,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     boolean closed = false;
     @Override
     public void close() throws IOException {
+        flush();
         closed = true;
         super.close();
         conf.returnObject(buffout,objects,clnames);
@@ -245,11 +263,13 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             return;
         }
         FSTClazzInfo serializationInfo = null;
-        if ( referencee.lastInfo != null && referencee.lastInfo.getClazz() == clazz ) {
-            serializationInfo = referencee.lastInfo;
-        } else {
-            serializationInfo = getClassInfoRegistry().getCLInfo(clazz);
-            referencee.lastInfo = serializationInfo;
+        synchronized (referencee) {
+            if ( referencee.lastInfo != null && referencee.lastInfo.getClazz() == clazz ) {
+                serializationInfo = referencee.lastInfo;
+            } else {
+                serializationInfo = getClassInfoRegistry().getCLInfo(clazz);
+                referencee.lastInfo = serializationInfo;
+            }
         }
         // check for custom serializer
         FSTObjectSerializer ser = serializationInfo.getSer();

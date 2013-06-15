@@ -358,10 +358,10 @@ public class TestRunner {
         }
         @Override
         protected void writeTest(Object toWrite, OutputStream bout, Class aClass) {
-            FSTObjectOutput out = defconf.getObjectOutputStream(bout);
+            FSTObjectOutput out = defconf.getObjectOutput(bout);
             try {
                 out.writeObject(toWrite, aClass);
-                bout.flush();
+                out.flush();
                 bout.close();
             } catch (Throwable e) {
                 FSTUtil.printEx(e);
