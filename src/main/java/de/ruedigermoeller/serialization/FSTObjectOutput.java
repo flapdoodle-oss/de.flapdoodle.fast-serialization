@@ -872,30 +872,56 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         written++;
     }
 
-    public void writeFInt( int v ) throws IOException {
+    public void writeFIntUnsafe( int v ) throws IOException {
+        final Unsafe unsafe = FSTUtil.unsafe;
         buffout.ensureFree(4);
-        byte[] buf = buffout.buf;
-        int count = buffout.pos;
-        buf[count++] = (byte) ((v >>> 24) & 0xFF);
-        buf[count++] = (byte) ((v >>> 16) & 0xFF);
-        buf[count++] = (byte) ((v >>>  8) & 0xFF);
-        buf[count++] = (byte) ((v >>> 0) & 0xFF);
+        final byte buf[] = buffout.buf;
+        unsafe.putInt(buf,buffout.pos+bufoff,v);
         buffout.pos += 4;
         written += 4;
     }
 
+    public void writeFInt( int v ) throws IOException {
+        if ( FSTUtil.unsafe != null ) {
+            writeFIntUnsafe(v);
+            return;
+        }
+        buffout.ensureFree(4);
+        byte[] buf = buffout.buf;
+        int count = buffout.pos;
+        buf[count++] = (byte) ((v >>> 0) & 0xFF);
+        buf[count++] = (byte) ((v >>>  8) & 0xFF);
+        buf[count++] = (byte) ((v >>> 16) & 0xFF);
+        buf[count++] = (byte) ((v >>> 24) & 0xFF);
+        buffout.pos += 4;
+        written += 4;
+    }
+
+    public void writeFLongUnsafe( long v ) throws IOException {
+        final Unsafe unsafe = FSTUtil.unsafe;
+        buffout.ensureFree(8);
+        final byte buf[] = buffout.buf;
+        unsafe.putLong(buf,buffout.pos+bufoff,v);
+        buffout.pos += 8;
+        written += 8;
+    }
+
     public void writeFLong( long v ) throws IOException {
+        if ( FSTUtil.unsafe != null ) {
+            writeFLongUnsafe(v);
+            return;
+        }
         buffout.ensureFree(8);
         byte[] buf = buffout.buf;
         int count = buffout.pos;
-        buf[count++] = (byte)(v >>> 56);
-        buf[count++] = (byte)(v >>> 48);
-        buf[count++] = (byte)(v >>> 40);
-        buf[count++] = (byte)(v >>> 32);
-        buf[count++] = (byte) ((v >>> 24) & 0xFF);
-        buf[count++] = (byte) ((v >>> 16) & 0xFF);
-        buf[count++] = (byte) ((v >>>  8) & 0xFF);
         buf[count++] = (byte) ((v >>> 0) & 0xFF);
+        buf[count++] = (byte) ((v >>>  8) & 0xFF);
+        buf[count++] = (byte) ((v >>> 16) & 0xFF);
+        buf[count++] = (byte) ((v >>> 24) & 0xFF);
+        buf[count++] = (byte)(v >>> 32);
+        buf[count++] = (byte)(v >>> 40);
+        buf[count++] = (byte)(v >>> 48);
+        buf[count++] = (byte)(v >>> 56);
         buffout.pos += 8;
         written += 8;
     }
@@ -1108,17 +1134,23 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     final static int bufoff;
     final static int choff;
     final static int intoff;
+    final static int longoff;
     final static int intscal;
+    final static int longscal;
     final static int chscal;
 
     static {
         if ( FSTUtil.unsafe != null ) {
             bufoff = FSTUtil.unsafe.arrayBaseOffset(byte[].class);
             intoff = FSTUtil.unsafe.arrayBaseOffset(int[].class);
+            longoff = FSTUtil.unsafe.arrayBaseOffset(long[].class);
+            longscal = FSTUtil.unsafe.arrayIndexScale(long[].class);
             intscal = FSTUtil.unsafe.arrayIndexScale(int[].class);
             chscal = FSTUtil.unsafe.arrayIndexScale(char[].class);
             choff = FSTUtil.unsafe.arrayBaseOffset(char[].class);
         } else {
+            longoff = 0;
+            longscal = 0;
             bufoff = 0;
             intoff = 0;
             intscal = 0;
@@ -1195,12 +1227,15 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
     /**
      * if out == null => automatically create/reuse a bytebuffer
+     *
+     * do not use, for whatever VM/CPU cache magic, this may degrade performance if underlying bytearrays are shared amongst streams ..
+     * does not happen when passing null ...
      * @param out
      */
     public void resetForReUse( OutputStream out ) {
         reset();
         if ( out != null ) {
-            this.out = out;
+            buffout.setOutstream(out);
         } else {
             this.out = buffout;
         }
@@ -1391,7 +1426,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
             @Override
             public void writeLong(long val) throws IOException {
-                FSTObjectOutput.this.writeFLong(val);
+                FSTObjectOutput.this.writeLong(val);
             }
 
             @Override

@@ -783,13 +783,13 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                     double[] arr = (double[]) array;
                     ensureReadAhead(arr.length*8);
                     for (int j = 0; j < len; j++) {
-                        arr[j] = readDouble();
+                        arr[j] = readFDouble();
                     }
                 } else if (arrType == long.class) {
                     long[] arr = (long[]) array;
                     ensureReadAhead(arr.length*8);
                     for (int j = 0; j < len; j++) {
-                        arr[j] = readLong();
+                        arr[j] = readFLong();
                     }
                 } else if (arrType == boolean.class) {
                     boolean[] arr = (boolean[]) array;
@@ -923,9 +923,11 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         input.reset();
     }
 
+    // be careful, for whatever VM/CPU cache magic, this may degrade performance if underlying bytearrays are shared amongst streams ..
+    // you have to test it case to case
     public void resetForReuse(InputStream in) throws IOException {
         input.reset();
-        this.in = in;
+//        this.in = in;
         input.initFromStream(in);
         objects.clearForRead(); clnames.clear();
     }
@@ -949,10 +951,10 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         ensureReadAhead(4);
         int count = input.pos;
         final byte buf[] = input.buf;
-        int ch1 = (buf[count++]+256)&0xff;
-        int ch2 = (buf[count++]+256)&0xff;
-        int ch3 = (buf[count++]+256)&0xff;
         int ch4 = (buf[count++]+256)&0xff;
+        int ch3 = (buf[count++]+256)&0xff;
+        int ch2 = (buf[count++]+256)&0xff;
+        int ch1 = (buf[count++]+256)&0xff;
         input.pos = count;
         return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
     }
@@ -1110,13 +1112,29 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         }
     }
 
+    public double readFDouble() throws IOException {
+        return Double.longBitsToDouble(readFLong());
+    }
+
     public final byte readFByte() throws IOException {
         ensureReadAhead(1);
         return input.buf[input.pos++];
     }
 
     public long readFLong() throws IOException {
-        return readLong();
+        ensureReadAhead(8);
+        int count = input.pos;
+        final byte buf[] = input.buf;
+        long ch8 = (buf[count++]+256)&0xff;
+        long ch7 = (buf[count++]+256)&0xff;
+        long ch6 = (buf[count++]+256)&0xff;
+        long ch5 = (buf[count++]+256)&0xff;
+        long ch4 = (buf[count++]+256)&0xff;
+        long ch3 = (buf[count++]+256)&0xff;
+        long ch2 = (buf[count++]+256)&0xff;
+        long ch1 = (buf[count++]+256)&0xff;
+        input.pos = count;
+        return ((ch1 << 56) + (ch2 << 48) + (ch3 << 40)+ (ch4 << 32)+(ch5 << 24) + (ch6 << 16) + (ch7 << 8) + (ch8 << 0));
     }
 
     public long readCLong() throws IOException {
@@ -1131,7 +1149,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         } else if (head == -127) {
             return readFInt();
         } else {
-            return readLong();
+            return readFLong();
         }
     }
 
@@ -1158,7 +1176,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
      */
     public double readCDouble() throws IOException {
         ensureReadAhead(8);
-        return Double.longBitsToDouble(readLong());
+        return Double.longBitsToDouble(readFLong());
     }
 
     public short readCShort() throws IOException {

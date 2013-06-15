@@ -272,70 +272,70 @@ public final class FSTClazzInfo {
     }
 
     public final int getByteValue(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
-        if (fstFieldInfo.memOffset >= 0 ) {
+        if (fstFieldInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             return FSTUtil.unsafe.getByte(obj,fstFieldInfo.memOffset);
         }
         return fstFieldInfo.getField().getByte(obj);
     }
 
     public final int getCharValue(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
-        if (fstFieldInfo.memOffset >= 0 ) {
+        if (fstFieldInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             return FSTUtil.unsafe.getChar(obj,fstFieldInfo.memOffset);
         }
         return fstFieldInfo.getField().getChar(obj);
     }
 
     public final int getShortValue(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
-        if (fstFieldInfo.memOffset >= 0 ) {
+        if (fstFieldInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             return FSTUtil.unsafe.getShort(obj,fstFieldInfo.memOffset);
         }
         return fstFieldInfo.getField().getShort(obj);
     }
 
     public final int getIntValue(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
-        if (fstFieldInfo.memOffset >= 0 ) {
+        if (fstFieldInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             return FSTUtil.unsafe.getInt(obj,fstFieldInfo.memOffset);
         }
         return fstFieldInfo.getField().getInt(obj);
     }
 
     public final long getLongValue(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
-        if (fstFieldInfo.memOffset >= 0 ) {
+        if (fstFieldInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             return FSTUtil.unsafe.getLong(obj,fstFieldInfo.memOffset);
         }
         return fstFieldInfo.getField().getLong(obj);
     }
 
     public final boolean getBooleanValue(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
-        if (fstFieldInfo.memOffset >= 0 ) {
+        if (fstFieldInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             return FSTUtil.unsafe.getBoolean(obj,fstFieldInfo.memOffset);
         }
         return fstFieldInfo.getField().getBoolean(obj);
     }
 
     public final Object getObjectValue(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
-        if (fstFieldInfo.memOffset >= 0 ) {
+        if (fstFieldInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             return FSTUtil.unsafe.getObject(obj,fstFieldInfo.memOffset);
         }
         return fstFieldInfo.getField().get(obj);
     }
 
     public final float getFloatValue(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
-        if (fstFieldInfo.memOffset >= 0 ) {
+        if (fstFieldInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             return FSTUtil.unsafe.getFloat(obj,fstFieldInfo.memOffset);
         }
         return fstFieldInfo.getField().getFloat(obj);
     }
 
     public final double getDoubleValue(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
-        if (fstFieldInfo.memOffset >= 0 ) {
+        if (fstFieldInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             return FSTUtil.unsafe.getDouble(obj,fstFieldInfo.memOffset);
         }
         return fstFieldInfo.getField().getDouble(obj);
     }
 
     public final void setByteValue(Object newObj, FSTFieldInfo subInfo, byte b) throws IllegalAccessException {
-        if (subInfo.memOffset >= 0 ) {
+        if (subInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             FSTUtil.unsafe.putByte(newObj,subInfo.memOffset,b);
             return;
         }
@@ -343,7 +343,7 @@ public final class FSTClazzInfo {
     }
 
     public final void setCharValue(Object newObj, FSTFieldInfo subInfo, char c) throws IllegalAccessException {
-        if (subInfo.memOffset >= 0 ) {
+        if (subInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             FSTUtil.unsafe.putChar(newObj,subInfo.memOffset,c);
             return;
         }
@@ -351,7 +351,7 @@ public final class FSTClazzInfo {
     }
 
     public final void setShortValue(Object newObj, FSTFieldInfo subInfo, short i1) throws IllegalAccessException {
-        if (subInfo.memOffset >= 0 ) {
+        if (subInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             FSTUtil.unsafe.putShort(newObj,subInfo.memOffset,i1);
             return;
         }
@@ -359,7 +359,7 @@ public final class FSTClazzInfo {
     }
 
     public final void setIntValue(Object newObj, FSTFieldInfo subInfo, int i1) throws IllegalAccessException {
-        if ( subInfo.memOffset >= 0 ) {
+        if ( subInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             FSTUtil.unsafe.putInt(newObj,subInfo.memOffset,i1);
         } else {
             subInfo.getField().setInt(newObj, i1);
@@ -367,7 +367,7 @@ public final class FSTClazzInfo {
     }
 
     public final void setLongValue(Object newObj, FSTFieldInfo subInfo, long i1) throws IllegalAccessException {
-        if (subInfo.memOffset >= 0 ) {
+        if (subInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             FSTUtil.unsafe.putLong(newObj,subInfo.memOffset,i1);
             return;
         }
@@ -375,7 +375,7 @@ public final class FSTClazzInfo {
     }
 
     public final void setBooleanValue(Object newObj, FSTFieldInfo subInfo, boolean i1) throws IllegalAccessException {
-        if (subInfo.memOffset >= 0 ) {
+        if (subInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             FSTUtil.unsafe.putBoolean(newObj,subInfo.memOffset,i1);
             return;
         }
@@ -383,7 +383,7 @@ public final class FSTClazzInfo {
     }
 
     public final void setObjectValue(Object newObj, FSTFieldInfo subInfo, Object i1) throws IllegalAccessException {
-        if (subInfo.memOffset >= 0 ) {
+        if (subInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             FSTUtil.unsafe.putObject(newObj,subInfo.memOffset,i1);
             return;
         }
@@ -391,7 +391,7 @@ public final class FSTClazzInfo {
     }
 
     public final void setFloatValue(Object newObj, FSTFieldInfo subInfo, float l) throws IllegalAccessException {
-        if (subInfo.memOffset >= 0 ) {
+        if (subInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             FSTUtil.unsafe.putFloat(newObj,subInfo.memOffset,l);
             return;
         }
@@ -399,7 +399,7 @@ public final class FSTClazzInfo {
     }
 
     public final void setDoubleValue(Object newObj, FSTFieldInfo subInfo, double l) throws IllegalAccessException {
-        if (subInfo.memOffset >= 0 ) {
+        if (subInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
             FSTUtil.unsafe.putDouble(newObj,subInfo.memOffset,l);
             return;
         }

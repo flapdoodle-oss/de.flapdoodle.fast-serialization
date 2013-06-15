@@ -238,6 +238,6 @@ public class Trader implements Serializable, HasDescription {
 
     @Override
     public String getDescription() {
-        return "Measures speed on a typical 'Enterprise-Object' using Value-Classes instead of primitive tpyes.";
+        return "Measures serialization of a typical 'Enterprise-Object' using Value-Classes instead of primitive tpyes.";
     }
 }

@@ -23,36 +23,31 @@ import java.io.Serializable;
  * MA 02110-1301  USA
  * <p/>
  * Date: 15.06.13
- * Time: 00:54
+ * Time: 15:55
  * To change this template use File | Settings | File Templates.
  */
-public class FrequentPrimitives implements Serializable, HasDescription {
-
-    public static FrequentPrimitives[] getArray(int siz) {
-        FrequentPrimitives[] res = new FrequentPrimitives[siz];
-        for (int i = 0; i < res.length; i++) {
-            res[i] = new FrequentPrimitives();
-        }
-        return res;
-    }
-
-    String str = "R.Moeller";
-    String str1 = "R.Moeller1";
-    boolean b0 = true;
-    boolean b1 = false;
-    boolean b2 = true;
-    int test1 = 123456;
-    int test2 = 123456;
-    int test3 = 123456;
-    int test4 = 123456;
-    int test5 = -1;
-    int test6 = 0;
-    long l1 = -38457359987788345l;
-    long l2 = 0l;
-    double d = 122.33;
-
+public class LargeNativeArrays implements Serializable, HasDescription {
     @Override
     public String getDescription() {
-        return "A class with a typical distribution of primitve fields: 2 short Strings, 3 boolean, 6 ints, 2 long, one double.";
+        return "measures performance serializing a large int array, a large long array and a large double array filled with random values";
+    }
+
+    int ints[];
+    long longs[];
+    double doubles[];
+    public LargeNativeArrays() {
+        int N = 1500;
+        ints = new int[N*2];
+        for (int i = 0; i < ints.length; i++) {
+            ints[i] = (int) (Math.random()*Integer.MAX_VALUE*2-Integer.MAX_VALUE);
+        }
+        longs = new long[N];
+        for (int i = 0; i < longs.length; i++) {
+            longs[i] = (long) (Math.random()*Long.MAX_VALUE*2-Long.MAX_VALUE);
+        }
+        doubles = new double[N];
+        for (int i = 0; i < doubles.length; i++) {
+            doubles[i] = Math.random()*Double.MAX_VALUE*2-Double.MAX_VALUE;
+        }
     }
 }

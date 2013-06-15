@@ -11,6 +11,7 @@ import de.ruedigermoeller.serialization.testclasses.basicstuff.*;
 import de.ruedigermoeller.serialization.testclasses.enterprise.*;
 import de.ruedigermoeller.serialization.testclasses.jdkcompatibility.*;
 import de.ruedigermoeller.serialization.util.FSTUtil;
+import sun.misc.Unsafe;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -123,18 +124,19 @@ public class TestRunner {
     }
 
     static Kryo kryo = new Kryo();
-    static {
-        kryo.register(Primitives.class);
-    }
     SerTest kryotest = new SerTest("kryo") {
 
         public String getColor() {
             return "#A0A0A0";
         }
 
+        Input out;
         @Override
         protected void readTest(ByteArrayInputStream bin, Class cl) {
-            Input out = new Input(bin);
+            if ( out ==null )
+                out = new Input(bin);
+            else
+                out.setInputStream(bin);
             Object res = kryo.readObject(out,cl);
             if ( res instanceof Swing && WarmUP == 0) {
                 ((Swing) res).showInFrame("KRYO COPY");
@@ -142,17 +144,13 @@ public class TestRunner {
             out.close();
             resObject = res;
         }
-
+        Output output;
         @Override
         protected void writeTest(Object toWrite, OutputStream bout, Class aClass) {
-//            kryo.reset();
-//        kryo.setReferences(false);
-//        kryo.register(Sample.class);
-//        kryo.register(Date.class);
-//        kryo.register(Integer.class);
-//        kryo.register(BigDecimal.class);
-//        kryo.register(StringBuffer.class);
-            Output output = new Output(bout);
+            if ( output == null )
+                output = new Output(bout);
+            else
+                output.setOutputStream(bout);
             kryo.writeObject(output, toWrite);
             output.close();
         }
@@ -308,14 +306,34 @@ public class TestRunner {
         }
     };
 
-    static FSTConfiguration defconf;
-    static {
-        defconf = FSTConfiguration.createDefaultConfiguration();
-        // dont do this, just for testing
-        defconf.getCLInfoRegistry().setIgnoreAnnotations(true);
-    }
 
-    SerTest defFST = new SerTest("FST default conf") {
+    SerTest defFST = new FSTTest("FST default conf",true);
+    SerTest defFSTNoUns = new FSTTest("FST default no unsafe ",false);
+
+    class FSTTest extends SerTest {
+
+        boolean uns;
+        FSTConfiguration defconf;
+        {
+            defconf = FSTConfiguration.createDefaultConfiguration();
+            // dont do this, just for testing
+            defconf.getCLInfoRegistry().setIgnoreAnnotations(true);
+        }
+
+        FSTTest(String desc,boolean uns) {
+            super(desc);
+            this.uns = uns;
+        }
+
+        @Override
+        public void run( Object toWrite ) {
+            Unsafe tmp = FSTUtil.unsafe;
+            if ( ! uns ) {
+                FSTUtil.unsafe = null;
+            }
+            super.run(toWrite);
+            FSTUtil.unsafe = tmp;
+        }
 
         public String getColor() {
             return "#4040a0";
@@ -325,11 +343,10 @@ public class TestRunner {
         @Override
         protected void readTest(ByteArrayInputStream bin, Class cl) {
             try {
-                if ( true || in == null ) {
+                if (in == null)
                     in = new FSTObjectInput(bin, defconf);
-                } else {
+                else
                     in.resetForReuse(bin);
-                }
                 Object res = in.readObject(cl);
                 if ( res instanceof Swing && WarmUP == 0) {
                     ((Swing) res).showInFrame("FST Copy");
@@ -346,7 +363,10 @@ public class TestRunner {
         FSTObjectOutput out;
         @Override
         protected void writeTest(Object toWrite, OutputStream bout, Class aClass) {
-            out = new FSTObjectOutput(bout, defconf);
+            if ( out == null )
+                out = new FSTObjectOutput(bout, defconf);
+            else
+                out.resetForReUse(bout);
             try {
                 out.writeObject(toWrite, aClass);
                 out.flush();
@@ -356,61 +376,8 @@ public class TestRunner {
                 throw new RuntimeException(e);
             }
         }
-        public void run( Object toWrite ) {
-            super.run(toWrite);
-            System.out.println(out.getObjectMap().getObjectSize());
-        }
     };
 
-    static FSTConfiguration minconf;
-    static {
-        minconf = FSTConfiguration.createMinimalConfiguration();
-        // dont do this, just for testing
-        minconf.getCLInfoRegistry().setIgnoreAnnotations(true);
-    }
-
-    SerTest minFST = new SerTest("FST compatibility conf") {
-
-        public String getColor() {
-            return "#9090ff";
-        }
-        @Override
-        protected void readTest(ByteArrayInputStream bin, Class cl) {
-            FSTObjectInput in = null;
-            try {
-                in = new FSTObjectInput(bin, minconf);
-                Object res = in.readObject(cl);
-                if ( res instanceof Swing && WarmUP == 0) {
-                    minFSTSwing = res;
-                    ((Swing) res).showInFrame("FST Copy");
-                }
-                in.close();
-                resObject = res;
-//                out.clnames.differencesTo(in.clnames);
-            } catch (Throwable e) {
-//                out.clnames.differencesTo(in.clnames);
-                FSTUtil.printEx(e);
-                throw new RuntimeException(e);
-            }
-        }
-        FSTObjectOutput out;
-        @Override
-        protected void writeTest(Object toWrite, OutputStream bout, Class aClass) {
-            out = new FSTObjectOutput(bout, minconf);
-            try {
-                out.writeObject(toWrite, aClass);
-                out.flush();
-                out.close();
-            } catch (Throwable e) {
-                FSTUtil.printEx(e);
-                throw new RuntimeException(e);
-            }
-        }
-        public void run( Object toWrite ) {
-            super.run(toWrite);
-            System.out.println(out.getObjectMap().getObjectSize());
-        }
-    };
 
     Class testClass;
     public SerTest[] runAll( Object toSer ) {
@@ -430,7 +397,7 @@ public class TestRunner {
 //        SerTest tests[] = { defFST, kryotest, defser, optFST, minFST, crossFST};
 //        SerTest tests[] = { optFST, defFST, kryotest, minFST, crossFST};
 //        SerTest tests[] = { defFST, optFST,  kryotest};
-        SerTest tests[] = { defFST, kryotest, defser };
+        SerTest tests[] = { defFST, /*defFSTNoUns,*/ kryotest, defser };
 //        SerTest tests[] = { kryotest};
 //        SerTest tests[] = { kryotest, defFST};
 //        SerTest tests[] = { defFST};
@@ -494,9 +461,10 @@ public class TestRunner {
         runner.charter.text("<i>intel i7 3770K 3,5 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
-        WarmUP = 50000; Run = WarmUP+1;
+        WarmUP = 20000; Run = WarmUP+1;
         runner.runAll(FrequentPrimitives.getArray(200));
         runner.runAll(new FrequentCollections());
+        runner.runAll(new LargeNativeArrays());
         runner.runAll(new Primitives(0).createPrimArray());
         runner.runAll(new PrimitiveArrays().createPrimArray());
         runner.runAll(new CommonCollections());

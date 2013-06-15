@@ -31,7 +31,7 @@ import java.io.InputStream;
  */
 public final class FSTInputStream extends InputStream {
 
-    public int chunk_size = 4000;
+    public int chunk_size = 64000;
     public byte buf[];
     public  int pos;
     public  int count;
@@ -48,13 +48,15 @@ public final class FSTInputStream extends InputStream {
         }
         int read = in.read(buf);
         count+=read;
-        while( read == chunk_size ) {
+        while( read != -1 ) {
             if ( buf.length < count+chunk_size ) {
                 ensureCapacity(buf.length*2);
             }
             read = in.read(buf,count,chunk_size);
-            count += read;
+            if ( read > 0 )
+                count += read;
         }
+        in.close();
     }
 
     public void ensureCapacity(int siz) {

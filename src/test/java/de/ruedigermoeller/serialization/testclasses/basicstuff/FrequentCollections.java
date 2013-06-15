@@ -78,6 +78,6 @@ public class FrequentCollections implements Serializable, HasDescription {
 
     @Override
     public String getDescription() {
-        return "Measures speed of most popular collection classes. (HashMap and an ArrayList filled with Integer and Long).";
+        return "Measures serialization of most popular collection classes. (HashMap and an ArrayList filled with Integer and Long).";
     }
 }
