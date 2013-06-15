@@ -923,9 +923,10 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         input.reset();
     }
 
-    // be careful, for whatever VM/CPU cache magic, this may degrade performance if underlying bytearrays are shared amongst streams ..
-    // you have to test it case to case
     public void resetForReuse(InputStream in) throws IOException {
+        if ( closed ) {
+            throw new RuntimeException("can't reuse closed stream");
+        }
         input.reset();
 //        this.in = in;
         input.initFromStream(in);
@@ -933,6 +934,9 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     public void resetForReuseCopyArray(byte bytes[], int off, int len) throws IOException {
+        if ( closed ) {
+            throw new RuntimeException("can't reuse closed stream");
+        }
         input.reset();
         objects.clearForRead(); clnames.clear();
         input.ensureCapacity(len);
@@ -941,6 +945,9 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     public void resetForReuseUseArray(byte bytes[], int off, int len) throws IOException {
+        if ( closed ) {
+            throw new RuntimeException("can't reuse closed stream");
+        }
         input.reset();
         objects.clearForRead(); clnames.clear();
         input.count = len;
@@ -1188,9 +1195,11 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         return readShort();
     }
 
+    boolean closed = false;
     @Override
     public void close() throws IOException {
         super.close();
+        closed = true;
         conf.returnObject(objects, clnames);
     }
 

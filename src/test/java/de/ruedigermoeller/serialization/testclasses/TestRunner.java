@@ -339,19 +339,15 @@ public class TestRunner {
             return "#4040a0";
         }
 
-        FSTObjectInput in = null;
         @Override
         protected void readTest(ByteArrayInputStream bin, Class cl) {
             try {
-                if (in == null)
-                    in = new FSTObjectInput(bin, defconf);
-                else
-                    in.resetForReuse(bin);
+                FSTObjectInput in = defconf.getObjectInput(bin);
                 Object res = in.readObject(cl);
                 if ( res instanceof Swing && WarmUP == 0) {
                     ((Swing) res).showInFrame("FST Copy");
                 }
-                in.close();
+                bin.close();
                 resObject = res;
 //                out.clnames.differencesTo(in.clnames);
             } catch (Throwable e) {
@@ -360,17 +356,13 @@ public class TestRunner {
                 throw new RuntimeException(e);
             }
         }
-        FSTObjectOutput out;
         @Override
         protected void writeTest(Object toWrite, OutputStream bout, Class aClass) {
-            if ( out == null )
-                out = new FSTObjectOutput(bout, defconf);
-            else
-                out.resetForReUse(bout);
+            FSTObjectOutput out = defconf.getObjectOutputStream(bout);
             try {
                 out.writeObject(toWrite, aClass);
-                out.flush();
-                out.close();
+                bout.flush();
+                bout.close();
             } catch (Throwable e) {
                 FSTUtil.printEx(e);
                 throw new RuntimeException(e);
@@ -397,7 +389,7 @@ public class TestRunner {
 //        SerTest tests[] = { defFST, kryotest, defser, optFST, minFST, crossFST};
 //        SerTest tests[] = { optFST, defFST, kryotest, minFST, crossFST};
 //        SerTest tests[] = { defFST, optFST,  kryotest};
-        SerTest tests[] = { defFST, /*defFSTNoUns,*/ kryotest, defser };
+        SerTest tests[] = { defFST, defFSTNoUns, kryotest, defser };
 //        SerTest tests[] = { kryotest};
 //        SerTest tests[] = { kryotest, defFST};
 //        SerTest tests[] = { defFST};

@@ -115,8 +115,10 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         buffout.setOutstream(buffout);
     }
 
+    boolean closed = false;
     @Override
     public void close() throws IOException {
+        closed = true;
         super.close();
         conf.returnObject(buffout,objects,clnames);
     }
@@ -1233,6 +1235,8 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
      * @param out
      */
     public void resetForReUse( OutputStream out ) {
+        if ( closed )
+            throw new RuntimeException("Can't reuse closed stream");
         reset();
         if ( out != null ) {
             buffout.setOutstream(out);

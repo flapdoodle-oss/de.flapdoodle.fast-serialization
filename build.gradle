@@ -1,6 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'maven'
-version="1.02"
+version="1.1"
 
 dependencies {
     compile fileTree("src/test/lib")

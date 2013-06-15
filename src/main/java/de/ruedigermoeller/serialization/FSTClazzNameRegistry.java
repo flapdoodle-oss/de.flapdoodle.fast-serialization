@@ -185,7 +185,9 @@ public class FSTClazzNameRegistry {
                 try {
                     cl = classForName(clName);
                     if ( parent != null ) {
-                        parent.classCache.put(oldTry,cl);
+                        synchronized (parent.classCache) {
+                            parent.classCache.put(oldTry,cl);
+                        }
                     }
                     classCache.put(oldTry,cl);
                 } catch ( ClassNotFoundException ex1 ) {
@@ -211,14 +213,16 @@ public class FSTClazzNameRegistry {
         if ( parent != null ) {
             return parent.classForName(clName);
         }
-        Class res = classCache.get(clName);
-        if ( res == null ) {
-            res = Class.forName(clName, false, conf.getClassLoader() );
-            if ( res != null ) {
-                classCache.put(clName, res);
+        synchronized (classCache) {
+            Class res = classCache.get(clName);
+            if ( res == null ) {
+                res = Class.forName(clName, false, conf.getClassLoader() );
+                if ( res != null ) {
+                    classCache.put(clName, res);
+                }
             }
+            return res;
         }
-        return res;
     }
 
     private String getSnippetFromId(int snippetId) {

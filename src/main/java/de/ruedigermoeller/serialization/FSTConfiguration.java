@@ -22,9 +22,7 @@ package de.ruedigermoeller.serialization;
 import de.ruedigermoeller.serialization.serializers.*;
 
 import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.ref.SoftReference;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -287,10 +285,10 @@ public final class FSTConfiguration {
             if ( li == null ) {
                 return null;
             }
-            for (int i = 0; i < li.size(); i++) {
+            for (int i = li.size()-1; i >= 0; i--) {
                 SoftReference softReference = li.get(i);
                 Object res = softReference.get();
-                li.remove(i);i--;
+                li.remove(i);
                 if ( res != null ) {
                     return res;
                 }
@@ -477,4 +475,53 @@ public final class FSTConfiguration {
     public FSTClazzInfo getClassInfo(Class type) {
         return serializationInfoRegistry.getCLInfo(type);
     }
+
+    ThreadLocal<FSTObjectOutput> output = new ThreadLocal<FSTObjectOutput>() {
+        @Override
+        protected FSTObjectOutput initialValue() {
+            return new FSTObjectOutput(FSTConfiguration.this);
+        }
+    };
+
+    ThreadLocal<FSTObjectInput> input = new ThreadLocal<FSTObjectInput>() {
+        @Override
+        protected FSTObjectInput initialValue() {
+            try {
+                return new FSTObjectInput(FSTConfiguration.this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    };
+
+    /**
+     * utility for thread safety and reuse. Do not close the resulting stream. However you should close
+     * the given InputStream 'in'
+     * @param in
+     * @return
+     */
+    public FSTObjectInput getObjectInput( InputStream in ) {
+        FSTObjectInput fstObjectInput = input.get();
+        try {
+            fstObjectInput.resetForReuse(in);
+            return fstObjectInput;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * utility for thread safety and reuse. Do not close the resulting stream. However you should close
+     * the given OutputStream 'out'
+     * @param out
+     * @return
+     */
+    public FSTObjectOutput getObjectOutputStream(OutputStream out) {
+        FSTObjectOutput fstObjectOutput = output.get();
+        fstObjectOutput.resetForReUse(out);
+        return fstObjectOutput;
+    }
+
 }
