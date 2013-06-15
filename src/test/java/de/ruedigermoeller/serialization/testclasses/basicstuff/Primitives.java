@@ -2,6 +2,7 @@ package de.ruedigermoeller.serialization.testclasses.basicstuff;
 
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.annotations.*;
+import de.ruedigermoeller.serialization.testclasses.HasDescription;
 
 import javax.swing.text.html.StyleSheet;
 import java.io.File;
@@ -18,8 +19,13 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 @Predict({Primitives.SampleEnum.class,PrivatePrimitive.class})
-public class Primitives extends PrivatePrimitive implements Serializable {
+public class Primitives extends PrivatePrimitive implements Serializable, HasDescription {
 
+
+    @Override
+    public String getDescription() {
+        return "A broad test of primitive values and specials such as Enums, EnumSets, Date, String, byte, short, int, .. Byte, Character; Short, Integer, .. <br> plus opaque private field with same name in a private subclass";
+    }
 
     public enum SampleEnum {
         None("","None",0),
@@ -80,14 +86,14 @@ public class Primitives extends PrivatePrimitive implements Serializable {
 
     String st;
 
-    @Compress String st1;
-    @Compress String st2;
+    String st1;
+    String st2;
     @OneOf({"Visible","Hidden"}) String hidden;
-    @Flat @Compress String st3;
-    @Flat @Compress String st4;
-    @Compress String st5;
-    @Flat @Compress String st6;
-    @Compress String st7;
+    @Compress String st3;
+    @Compress String st4;
+    String st5;
+    String st6;
+    String st7;
 
     StyleSheet on = null;
     URL on1 = null;
@@ -97,15 +103,15 @@ public class Primitives extends PrivatePrimitive implements Serializable {
     }
 
     public Primitives(int num) {
-        st = "String"+num;
+        st = "String"+num+"äöü";
         st1 = "String1"+num;
         st2 = st+"1"+num;
         hidden = "Visible";
         st3 = "visible its a hurdle this may be its a hurdle "+num;
-        st4 = "etwas deutsch läuft.. "+num;
+        st4 = "etwas deutsch läuft.. ";
         st5 = st+"1"+num;
         st6 = "Some english, text; fragment. "+num;
-        st7 = st6+" paokasd 1"+num;
+        st7 = st6+" paokasd 1";
     }
 
     // to avoid measurement of pure stream init performance

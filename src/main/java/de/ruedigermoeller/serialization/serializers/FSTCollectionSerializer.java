@@ -37,13 +37,14 @@ public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
     @Override
     public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
         Collection col = (Collection)toWrite;
-        out.writeCInt(col.size());
+        int size = col.size();
+        out.writeCInt(size);
         Class[] possibleClasses = referencedBy.getPossibleClasses();
         if ( (possibleClasses == null || possibleClasses.length == 0) ) {
             possibleClasses = new Class[] {null};
             if ( col instanceof List) {
                 List l = (List) col;
-                for (int i = 0; i < l.size(); i++) {
+                for (int i = 0; i < size; i++) {
                     Object o = l.get(i);
                     out.writeObjectInternal(o, possibleClasses);
                     if ( o != null ) {
@@ -61,7 +62,7 @@ public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
         } else {
             if ( col instanceof List) {
                 List l = (List) col;
-                for (int i = 0; i < l.size(); i++) {
+                for (int i = 0; i < size; i++) {
                     Object o = l.get(i);
                     out.writeObjectInternal(o, possibleClasses);
                 }

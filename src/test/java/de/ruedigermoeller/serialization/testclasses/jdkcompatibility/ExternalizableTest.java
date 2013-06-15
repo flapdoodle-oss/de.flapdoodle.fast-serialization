@@ -1,6 +1,7 @@
 package de.ruedigermoeller.serialization.testclasses.jdkcompatibility;
 
 import de.ruedigermoeller.serialization.annotations.*;
+import de.ruedigermoeller.serialization.testclasses.HasDescription;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.Vector;
  * To change this template use File | Settings | File Templates.
  */
 @Predict(ExternalizableTest.ExternalTest.class)
-public class ExternalizableTest implements Serializable {
+public class ExternalizableTest implements Serializable, HasDescription {
     Vector test = new Vector();
     ArrayList<ExternalTest> li = new ArrayList<ExternalTest>();
     ExternalTest ext = new ExternalTest(31);
@@ -25,6 +26,12 @@ public class ExternalizableTest implements Serializable {
             test.add(new ExternalTest(i));
             li.add(new ExternalTest(i+500));
         }
+    }
+
+    @Override
+    public String getDescription() {
+        return "Performance of Externalizable objects. FST has a penalty (object creation) at write side to be 100% compatible.<br>" +
+                "Future version might have a 'compatibleExternalizable'-Annotation since most externalizable implementations do not require a 100% compatible implementation";
     }
 
     static class ExternalTest implements Externalizable {

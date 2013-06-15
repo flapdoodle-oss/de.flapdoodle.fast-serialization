@@ -1,6 +1,7 @@
 package de.ruedigermoeller.serialization.testclasses.basicstuff;
 
 import de.ruedigermoeller.serialization.annotations.*;
+import de.ruedigermoeller.serialization.testclasses.HasDescription;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -14,7 +15,7 @@ import java.util.concurrent.*;
  * Time: 22:46
  * To change this template use File | Settings | File Templates.
  */
-public class CommonCollections implements Serializable {
+public class CommonCollections implements Serializable, HasDescription {
 
     int z = 0;
     String test = "Test";
@@ -24,6 +25,11 @@ public class CommonCollections implements Serializable {
     HashMap<String,Integer> map = new HashMap<String, Integer>();
     @Conditional
     ArrayList<String> list = new ArrayList<String>();
+
+    @Override
+    public String getDescription() {
+        return "In depth test of collections incl. collections of collections.<br> (ArrayList, ArrayDeque, ConcurrentLinkedQueue, Vector, TreeSet, LinkedList, TreeMap, ConcurrentHashMap, Hashtable, HashMap)";
+    }
 
     class MyComp implements Comparator, Serializable{
         @Override
@@ -41,6 +47,7 @@ public class CommonCollections implements Serializable {
         al = new ConcurrentLinkedQueue(); fillCollectionRandom(al); collections.add(al);
         al = new Vector(); fillCollectionRandom(al); collections.add(al); // fails with jdk impl, why ?
         al = new TreeSet(new MyComp()); fillCollectionRandom(al); collections.add(al);
+        al = new HashSet(); fillCollectionRandom(al); collections.add(al);
         al = new LinkedList(); fillCollectionRandom(al); collections.add(al);
 //
         Map mp = new HashMap(); fillMapRandom(mp); collections.add(mp);

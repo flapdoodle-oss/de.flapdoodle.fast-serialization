@@ -42,6 +42,16 @@ public class FSTDateSerializer extends FSTBasicObjectSerializer implements FSTCr
         }
     }
 
+    /**
+     * @return true if FST can skip a search for same instances in the serialized ObjectGraph. This speeds up reading and writing and makes
+     *         sense for short immutable such as Integer, Short, Character, Date, .. . For those classes it is more expensive (CPU, size) to do a lookup than to just
+     *         write the Object twice in case.
+     */
+    @Override
+    public boolean alwaysCopy() {
+        return true;
+    }
+
     @Override
     public Object instantiate(Class objectClass, FSTObjectInput in, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo referencee, int streamPositioin) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         long l;

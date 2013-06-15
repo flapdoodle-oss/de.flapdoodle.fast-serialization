@@ -14,6 +14,7 @@ import de.ruedigermoeller.serialization.util.FSTUtil;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 
 /**
  * Created with IntelliJ IDEA.
@@ -127,6 +128,10 @@ public class TestRunner {
     }
     SerTest kryotest = new SerTest("kryo") {
 
+        public String getColor() {
+            return "#A0A0A0";
+        }
+
         @Override
         protected void readTest(ByteArrayInputStream bin, Class cl) {
             Input out = new Input(bin);
@@ -157,7 +162,7 @@ public class TestRunner {
 
     SerTest defser = new SerTest("Java built in") {
         public String getColor() {
-            return "#9090ff";
+            return "#c0c0c0";
         }
 
         @Override
@@ -194,6 +199,8 @@ public class TestRunner {
     static FSTConfiguration optconf;
     static {
         optconf = FSTConfiguration.createDefaultConfiguration();
+        optconf.registerAsEqualnessReplaceable(String.class);
+        optconf.registerAsEqualnessReplaceable(BigDecimal.class);
     }
 
     SerTest optFST = new SerTest("FST optimized conf") {
@@ -205,7 +212,7 @@ public class TestRunner {
         };
 
         public String getColor() {
-            return "#909090";
+            return "#9090ff";
         }
 
         @Override
@@ -309,11 +316,20 @@ public class TestRunner {
     }
 
     SerTest defFST = new SerTest("FST default conf") {
+
+        public String getColor() {
+            return "#4040a0";
+        }
+
+        FSTObjectInput in = null;
         @Override
         protected void readTest(ByteArrayInputStream bin, Class cl) {
-            FSTObjectInput in = null;
             try {
-                in = new FSTObjectInput(bin, defconf);
+                if ( true || in == null ) {
+                    in = new FSTObjectInput(bin, defconf);
+                } else {
+                    in.resetForReuse(bin);
+                }
                 Object res = in.readObject(cl);
                 if ( res instanceof Swing && WarmUP == 0) {
                     ((Swing) res).showInFrame("FST Copy");
@@ -413,8 +429,8 @@ public class TestRunner {
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
 //        SerTest tests[] = { defFST, kryotest, defser, optFST, minFST, crossFST};
 //        SerTest tests[] = { optFST, defFST, kryotest, minFST, crossFST};
-        SerTest tests[] = { defFST, optFST,  kryotest};
-//        SerTest tests[] = { defser, kryotest, defFST};
+//        SerTest tests[] = { defFST, optFST,  kryotest};
+        SerTest tests[] = { defFST, kryotest, defser };
 //        SerTest tests[] = { kryotest};
 //        SerTest tests[] = { kryotest, defFST};
 //        SerTest tests[] = { defFST};
@@ -429,12 +445,18 @@ public class TestRunner {
         }
 
         charter.heading("Test Class: "+testClass.getSimpleName());
-        charter.openChart("Size (byte)");
-        for (int i = 0; i < tests.length; i++) {
-            SerTest test = tests[i];
-            charter.chartBar(test.title, test.bout.size(), 300, test.getColor());
+        Object testIns = null;
+        try {
+            if ( testClass.isArray() ) {
+                testIns = testClass.getComponentType().newInstance();
+            } else
+                testIns = testClass.newInstance();
+            if ( testIns instanceof HasDescription ) {
+                charter.text(((HasDescription) testIns).getDescription());
+                charter.text("");
+            }
+        } catch (Exception e) {
         }
-        charter.closeChart();
 
         charter.openChart("Read Time (micros)");
         for (int i = 0; i < tests.length; i++) {
@@ -450,6 +472,13 @@ public class TestRunner {
         }
         charter.closeChart();
 
+        charter.openChart("Size (byte)");
+        for (int i = 0; i < tests.length; i++) {
+            SerTest test = tests[i];
+            charter.chartBar(test.title, test.bout.size(), 300, test.getColor());
+        }
+        charter.closeChart();
+
         return tests;
     }
     HtmlCharter charter = new HtmlCharter("./result.html");
@@ -462,13 +491,15 @@ public class TestRunner {
 
 
         runner.charter.openDoc();
-        runner.charter.text("<i>intel i7 3,4 ghz, 4 core, 8 threads</i>");
+        runner.charter.text("<i>intel i7 3770K 3,5 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
-        WarmUP = 10000; Run = WarmUP+1;
+        WarmUP = 50000; Run = WarmUP+1;
+        runner.runAll(FrequentPrimitives.getArray(200));
+        runner.runAll(new FrequentCollections());
         runner.runAll(new Primitives(0).createPrimArray());
-        runner.runAll(new CommonCollections());
         runner.runAll(new PrimitiveArrays().createPrimArray());
+        runner.runAll(new CommonCollections());
         runner.runAll(Trader.generateTrader(101, true));
         runner.runAll(ManyClasses.getArray() );
         runner.runAll(new ExternalizableTest());

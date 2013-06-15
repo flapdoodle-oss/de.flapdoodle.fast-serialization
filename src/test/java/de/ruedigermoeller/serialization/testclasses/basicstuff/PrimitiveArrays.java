@@ -1,6 +1,7 @@
 package de.ruedigermoeller.serialization.testclasses.basicstuff;
 
 import de.ruedigermoeller.serialization.annotations.*;
+import de.ruedigermoeller.serialization.testclasses.HasDescription;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -13,7 +14,7 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 @Predict(PrimitiveArrays.Dim.class)
-public class PrimitiveArrays implements Serializable {
+public class PrimitiveArrays implements Serializable, HasDescription {
     @Flat byte b[] = {1,2,3,4,5,6,7,8,-1,-2,127,1,2,3,4,5,6,7,8,-1,-2,127,1,2,3,4,5,6,7,8,-1,-2,127,1,2,3,4,5,6,7,8,-1,-2,127,1,2,3,-4,5,6,7,8,-1,-2,127};
     // aim for diff compression
     @Compress @Flat int i[] = {9991,9992,9993,9994,9995,9996,9987,9878,9878,-2,7127,9871,9872,8435,9784,9785,9786,9877,9878,9877,-2,7127,7891,9876,9873,9874,8798,7896,9877,9878,9784,9785,9786,9877,9878,9877,-2,7127,7891,9876,9873,9874,8798,7896,9877,9878,9784,9785,9786,9877,9878,9877,-2,7127,7891,9876,9873,9874,8798,7896,9877,9878,};
@@ -48,6 +49,11 @@ public class PrimitiveArrays implements Serializable {
             res[i] = new PrimitiveArrays();
         }
         return res;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Tests various arrays of int, Dimension, Date, Object. Nested arrays, multidimensional arrays.";
     }
 
     @EqualnessIsBinary

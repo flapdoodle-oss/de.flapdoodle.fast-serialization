@@ -40,6 +40,16 @@ public class FSTStringBufferSerializer extends FSTBasicObjectSerializer {
         out.writeUTF(toWrite.toString()); // cruel slow stuff
     }
 
+    /**
+     * @return true if FST can skip a search for same instances in the serialized ObjectGraph. This speeds up reading and writing and makes
+     *         sense for short immutable such as Integer, Short, Character, Date, .. . For those classes it is more expensive (CPU, size) to do a lookup than to just
+     *         write the Object twice in case.
+     */
+    @Override
+    public boolean alwaysCopy() {
+        return false;
+    }
+
     @Override
     public Object instantiate(Class objectClass, FSTObjectInput in, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo referencee, int streamPositioin) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         String s = in.readUTF();

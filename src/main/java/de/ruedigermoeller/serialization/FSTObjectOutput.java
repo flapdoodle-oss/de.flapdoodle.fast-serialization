@@ -41,6 +41,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     static final byte ONE_OF = -18;
     static final byte BIG_BOOLEAN_FALSE = -17;
     static final byte BIG_BOOLEAN_TRUE = -16;
+    static final byte BIG_LONG = -10;
     static final byte BIG_INT = -9;
     static final byte COPYHANDLE = -8;
     static final byte HANDLE = -7;
@@ -178,12 +179,31 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         }
     }
 
+    FSTClazzInfo.FSTFieldInfo refs[] = new FSTClazzInfo.FSTFieldInfo[20];
+
+    FSTClazzInfo.FSTFieldInfo getCachedFI( Class... possibles ) {
+        if ( curDepth > refs.length ) {
+            return new FSTClazzInfo.FSTFieldInfo(possibles, null, true);
+        } else {
+            FSTClazzInfo.FSTFieldInfo inf = refs[curDepth];
+            if ( inf == null ) {
+                inf = new FSTClazzInfo.FSTFieldInfo(possibles, null, true);
+                refs[curDepth] = inf;
+                return inf;
+            }
+            inf.setPossibleClasses(possibles);
+            return inf;
+        }
+    }
+
     public void writeObjectInternal(Object obj, Class... possibles) throws IOException {
         if ( curDepth == 0 ) {
             throw new RuntimeException("not intended to be called from external application. Use public writeObject instead");
         }
-        FSTClazzInfo.FSTFieldInfo info = new FSTClazzInfo.FSTFieldInfo(possibles, null, conf.getCLInfoRegistry().isIgnoreAnnotations());
+        FSTClazzInfo.FSTFieldInfo info = getCachedFI(possibles);
+        curDepth++;
         writeObjectWithContext(info, obj);
+        curDepth--;
     }
 
     int tmp[] = {0};
@@ -216,6 +236,11 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             writeFByte(BIG_INT);
             writeCInt(((Integer) toWrite).intValue());
             return;
+        } else
+        if ( clazz == Long.class ) {
+            writeFByte(BIG_LONG);
+            writeCLong(((Long) toWrite).longValue());
+            return;
         }
         FSTClazzInfo serializationInfo = null;
         if ( referencee.lastInfo != null && referencee.lastInfo.getClazz() == clazz ) {
@@ -224,9 +249,12 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             serializationInfo = getClassInfoRegistry().getCLInfo(clazz);
             referencee.lastInfo = serializationInfo;
         }
+        // check for custom serializer
+        FSTObjectSerializer ser = serializationInfo.getSer();
         int handle = Integer.MIN_VALUE;
-        if ( ! referencee.isFlat() && ! serializationInfo.isFlat() ) {
-            handle = objects.registerObject(toWrite, false, written,serializationInfo,tmp);
+        if ( ! referencee.isFlat() && ! serializationInfo.isFlat() && (ser == null || !ser.alwaysCopy() ) ) {
+            boolean needsEqualMap = serializationInfo.isEqualIsBinary() || serializationInfo.isEqualIsIdentity();
+            handle = objects.registerObject(toWrite, !needsEqualMap, written,serializationInfo,tmp);
             // determine class header
             if ( handle >= 0 ) {
                 final boolean isIdentical = tmp[0] == 0; //objects.getRegisteredObject(handle) == toWrite;
@@ -257,8 +285,6 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 writeCInt(((Enum) toWrite).ordinal());
             }
         } else {
-            // check for custom serializer
-            FSTObjectSerializer ser = serializationInfo.getSer();
             if ( ser == null && serializationInfo.getWriteReplaceMethod() != null ) {
                 Object replaced = null;
                 try {
@@ -749,7 +775,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         final byte buf[] = buffout.buf;
         final int strlen = str.length();
 
-        writeCInt(strlen);
+        writeCIntUnsafe(strlen);
         buffout.ensureFree(strlen*3);
 
         final byte[] bytearr = buffout.buf;

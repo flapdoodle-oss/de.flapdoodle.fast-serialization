@@ -45,10 +45,10 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * applicable to int and object arrays. If an array contains mostly null or '0', then it is more effective to just encode
- * [index,value] pairs. Note that a null/0 value only costs one byte, so you should have at least a 'null' to value ratio of
+ * [index,value] pairs. Note that a null/0 value in regular encodeing costs one byte, so you should have at least a 'null' to value ratio of
  * 1:3 or 1:4.
  *
- * The Compress annotation (only applicable to int[]) automatically detects the best compression scheme (write speed loss).
+ * The Compress annotation automatically detects the best compression scheme (write speed loss).
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Thin {

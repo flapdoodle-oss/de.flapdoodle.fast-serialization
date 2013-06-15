@@ -51,6 +51,13 @@ public interface FSTObjectSerializer {
     public boolean willHandleClass(Class cl);
 
     /**
+     * @return true if FST can skip a search for same instances in the serialized ObjectGraph. This speeds up reading and writing and makes
+     * sense for short immutable such as Integer, Short, Character, Date, .. . For those classes it is more expensive (CPU, size) to do a lookup than to just
+     * write the Object twice in case.
+     */
+    public boolean alwaysCopy();
+
+    /**
      * return null to delegate object instantiation to FST. If you want to implement object instantiation yourself, usually you leave the readObject method empty
      * and handle instantiation and reading the object here. You must call registerObject immediately after creating it on the FSTObjectInput
      */

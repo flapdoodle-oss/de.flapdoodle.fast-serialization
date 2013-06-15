@@ -20,6 +20,8 @@
 
 package de.ruedigermoeller.serialization.util;
 
+import sun.misc.Unsafe;
+
 import java.util.HashMap;
 
 /**
@@ -231,7 +233,7 @@ public class FSTObject2IntMap<K>
 
     public void clear() {
         FSTUtil.clear(mKeys);
-        FSTUtil.clear(mValues);
+//        FSTUtil.clear(mValues); unneeded ?
         mNumberOfElements = 0;
         if ( next != null ) {
             next.clear();

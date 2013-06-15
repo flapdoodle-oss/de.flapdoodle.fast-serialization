@@ -14,6 +14,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="kryo-2.20-all" level="project" />
+    <orderEntry type="library" name="kryo-2.21-all" level="project" />
   </component>
 </module>
 

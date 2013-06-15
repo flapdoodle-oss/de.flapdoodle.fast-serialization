@@ -77,7 +77,6 @@ public final class FSTConfiguration {
         reg.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
         reg.putSerializer(Character.class, new FSTBigNumberSerializers.FSTCharSerializer(), false);
         reg.putSerializer(Short.class, new FSTBigNumberSerializers.FSTShortSerializer(), false);
-        reg.putSerializer(Long.class, new FSTBigNumberSerializers.FSTLongSerializer(), false);
         reg.putSerializer(Float.class, new FSTBigNumberSerializers.FSTFloatSerializer(), false);
         reg.putSerializer(Double.class, new FSTBigNumberSerializers.FSTDoubleSerializer(), false);
 
@@ -101,22 +100,22 @@ public final class FSTConfiguration {
         FSTConfiguration conf = new FSTConfiguration();
         conf.addDefaultClazzes();
 
-        conf.registerAsEqualnessReplaceable(String.class);
-        conf.registerAsEqualnessReplaceable(BigDecimal.class);
-        conf.registerAsEqualnessReplaceable(BigInteger.class);
-        conf.registerAsEqualnessReplaceable(Currency.class);
-        conf.registerAsEqualnessReplaceable(Date.class);
+//        conf.registerAsEqualnessReplaceable(String.class);
+//        conf.registerAsEqualnessReplaceable(BigDecimal.class);
+//        conf.registerAsEqualnessReplaceable(BigInteger.class);
+//        conf.registerAsEqualnessReplaceable(Currency.class);
+//        conf.registerAsEqualnessReplaceable(Date.class);
 
-        conf.registerAsEqualnessCopyable(Dimension.class);
-        conf.registerAsEqualnessCopyable(Rectangle.class);
-        conf.registerAsEqualnessCopyable(Point.class);
-        conf.registerAsEqualnessCopyable(URI.class);
-        conf.registerAsEqualnessCopyable(URL.class);
-        conf.registerAsEqualnessCopyable(BitSet.class);
-        conf.registerAsEqualnessCopyable(AtomicBoolean.class);
-        conf.registerAsEqualnessCopyable(AtomicInteger.class);
-        conf.registerAsEqualnessCopyable(AtomicLong.class);
-        conf.registerAsEqualnessCopyable(SimpleDateFormat.class);
+//        conf.registerAsEqualnessCopyable(Dimension.class);
+//        conf.registerAsEqualnessCopyable(Rectangle.class);
+//        conf.registerAsEqualnessCopyable(Point.class);
+//        conf.registerAsEqualnessCopyable(URI.class);
+//        conf.registerAsEqualnessCopyable(URL.class);
+//        conf.registerAsEqualnessCopyable(BitSet.class);
+//        conf.registerAsEqualnessCopyable(AtomicBoolean.class);
+//        conf.registerAsEqualnessCopyable(AtomicInteger.class);
+//        conf.registerAsEqualnessCopyable(AtomicLong.class);
+//        conf.registerAsEqualnessCopyable(SimpleDateFormat.class);
 
         conf.copier = new FSTObjectCopy()
         { // FIXME: move copying to serializers ?
@@ -149,7 +148,6 @@ public final class FSTConfiguration {
         reg.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
         reg.putSerializer(Character.class, new FSTBigNumberSerializers.FSTCharSerializer(), false);
         reg.putSerializer(Short.class, new FSTBigNumberSerializers.FSTShortSerializer(), false);
-        reg.putSerializer(Long.class, new FSTBigNumberSerializers.FSTLongSerializer(), false);
         reg.putSerializer(Float.class, new FSTBigNumberSerializers.FSTFloatSerializer(), false);
         reg.putSerializer(Double.class, new FSTBigNumberSerializers.FSTDoubleSerializer(), false);
 
@@ -182,7 +180,6 @@ public final class FSTConfiguration {
         reg.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
         reg.putSerializer(Character.class, new FSTBigNumberSerializers.FSTCharSerializer(), false);
         reg.putSerializer(Short.class, new FSTBigNumberSerializers.FSTShortSerializer(), false);
-        reg.putSerializer(Long.class, new FSTBigNumberSerializers.FSTLongSerializer(), false);
         reg.putSerializer(Float.class, new FSTBigNumberSerializers.FSTFloatSerializer(), false);
         reg.putSerializer(Double.class, new FSTBigNumberSerializers.FSTDoubleSerializer(), false);
         reg.putSerializer(ConcurrentHashMap.class, new FSTMapSerializer(), false); // subclass should register manually

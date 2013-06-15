@@ -1,5 +1,7 @@
 package de.ruedigermoeller.serialization.testclasses.enterprise;
 
+import de.ruedigermoeller.serialization.testclasses.HasDescription;
+
 import java.io.*;
 import java.util.*;
 
@@ -11,7 +13,7 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 
-public class Trader implements Serializable {
+public class Trader implements Serializable, HasDescription {
 
     public static Trader generateTrader(int randomSeed, boolean fillTrArray) {
         Random rand = new Random(randomSeed);
@@ -234,4 +236,8 @@ public class Trader implements Serializable {
                 "";
     }
 
+    @Override
+    public String getDescription() {
+        return "Measures speed on a typical 'Enterprise-Object' using Value-Classes instead of primitive tpyes.";
+    }
 }

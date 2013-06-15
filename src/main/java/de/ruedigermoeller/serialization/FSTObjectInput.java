@@ -227,6 +227,10 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                 }
                 return new Integer(val);
             }
+            case FSTObjectOutput.BIG_LONG: {
+                long val = readCLong();
+                return new Long(val);
+            }
             case FSTObjectOutput.BIG_BOOLEAN_FALSE: {
                 return Boolean.FALSE;
             }
@@ -376,7 +380,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                 c = newObj.getClass();
                 clzSerInfo = conf.getCLInfoRegistry().getCLInfo(c);
             }
-            if ( ! referencee.isFlat() && ! clzSerInfo.isFlat() ) {
+            if ( ! referencee.isFlat() && ! clzSerInfo.isFlat() && (ser==null||!ser.alwaysCopy())) {
                 objects.registerObjectForRead(newObj, readPos);
             }
             if (ser != null) {

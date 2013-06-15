@@ -61,7 +61,7 @@ public class FSTClazzInfoRegistry {
         return res;
     }
 
-    public boolean isIgnoreAnnotations() {
+    public final boolean isIgnoreAnnotations() {
         return ignoreAnnotations;
     }
 

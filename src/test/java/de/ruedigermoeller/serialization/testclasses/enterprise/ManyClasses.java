@@ -1,6 +1,7 @@
 package de.ruedigermoeller.serialization.testclasses.enterprise;
 
 import de.ruedigermoeller.serialization.annotations.Predict;
+import de.ruedigermoeller.serialization.testclasses.HasDescription;
 import de.ruedigermoeller.serialization.testclasses.enterprise.murks.common.ManagingManager;
 import de.ruedigermoeller.serialization.testclasses.enterprise.murks.common.special.common.UnManagedManager;
 import de.ruedigermoeller.serialization.testclasses.enterprise.murks.common.special.common.util.UtilManager;
@@ -26,7 +27,7 @@ import java.util.Date;
         UnmanagedManagingManager.class,UnManagedManager.class,ManagingManager.class,
         ManagingCoordinatorDispatcher.class,ManagingDispatcherCoordinator.class
 })
-public class ManyClasses implements Serializable {
+public class ManyClasses implements Serializable, HasDescription {
 
     ObjectOrientedDataType var;
     ObjectOrientedDataType var1;
@@ -96,5 +97,10 @@ public class ManyClasses implements Serializable {
                 new ManyClasses(15775), new ManyClasses(71413), new ManyClasses(17157),
                 new ManyClasses(168), new ManyClasses(1757),
         };
+    }
+
+    @Override
+    public String getDescription() {
+        return "Tests speed serializing a complex object graph of many different classes with few primitive fields.";
     }
 }
