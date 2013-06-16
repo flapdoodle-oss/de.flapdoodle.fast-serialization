@@ -37,11 +37,44 @@ import java.util.*;
  */
 public final class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
 
-    private static final boolean UNSAFE_WRITE_CINT_ARR = false;
-    private static final boolean UNSAFE_WRITE_CINT = false;
-    private static final boolean UNSAFE_WRITE_FINT = false;
-    private static final boolean UNSAFE_WRITE_FLONG = false;
-    private static final boolean UNSAFE_WRITE_UTF = false;
+
+    private static final boolean UNSAFE_MEMCOPY_ARRAY_INT = true;
+    private static final boolean UNSAFE_MEMCOPY_ARRAY_LONG = true;
+    private static final boolean UNSAFE_WRITE_CINT_ARR = true;
+    private static final boolean UNSAFE_WRITE_CINT = true;
+    private static final boolean UNSAFE_WRITE_FINT = true;
+    private static final boolean UNSAFE_WRITE_FLONG = true;
+    private static final boolean UNSAFE_WRITE_UTF = true;
+
+    final static int bufoff;
+    final static int choff;
+    final static int intoff;
+    final static int longoff;
+    final static int intscal;
+    final static int longscal;
+    final static int chscal;
+
+    static {
+        Unsafe unsafe = FSTUtil.getUnsafe();
+        if ( unsafe != null ) {
+            bufoff = unsafe.arrayBaseOffset(byte[].class);
+            intoff = unsafe.arrayBaseOffset(int[].class);
+            longoff = unsafe.arrayBaseOffset(long[].class);
+            longscal = unsafe.arrayIndexScale(long[].class);
+            intscal = unsafe.arrayIndexScale(int[].class);
+            chscal = unsafe.arrayIndexScale(char[].class);
+            choff = unsafe.arrayBaseOffset(char[].class);
+        } else {
+            longoff = 0;
+            longscal = 0;
+            bufoff = 0;
+            intoff = 0;
+            intscal = 0;
+            choff = 0;
+            chscal = 0;
+        }
+    }
+
 
     static final byte ONE_OF = -18;
     static final byte BIG_BOOLEAN_FALSE = -17;
@@ -621,8 +654,12 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             } else
             if ( componentType == long.class ) {
                 long[] arr = (long[])array;
+                if ( FSTUtil.unsafe != null && UNSAFE_MEMCOPY_ARRAY_LONG) {
+                    writeFLongArrayUnsafe(arr);
+                } else {
                 for ( int i = 0; i < len; i++ )
                     writeFLong(arr[i]);
+                }
             } else
             if ( componentType == boolean.class ) {
                 boolean[] arr = (boolean[])array;
@@ -679,6 +716,17 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 writeArray(new FSTClazzInfo.FSTFieldInfo(referencee.getPossibleClasses(), null, conf.getCLInfoRegistry().isIgnoreAnnotations()), subArr);
             }
         }
+    }
+
+    public void writeFLongArrayUnsafe(long[] arr) throws IOException {
+        final Unsafe unsafe = FSTUtil.unsafe;
+        int length = arr.length;
+        buffout.ensureFree( longscal * length);
+        final byte buf[] = buffout.buf;
+        int siz = length * longscal;
+        unsafe.copyMemory(buf, buffout.pos + bufoff, arr, longoff, siz);
+        buffout.pos += siz;
+        written += siz;
     }
 
     static int charMap[] = new int[256];
@@ -1038,17 +1086,32 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         }
     }
 
+    public void writePlainIntArrUnsafe(int v[]) throws IOException {
+        final Unsafe unsafe = FSTUtil.unsafe;
+        int length = v.length;
+        buffout.ensureFree(4*length);
+        final byte buf[] = buffout.buf;
+        int siz = length * intscal;
+        unsafe.copyMemory(buf, buffout.pos + bufoff, v, intoff, siz);
+        buffout.pos += siz;
+        written += siz;
+    }
+
     public void writePlainIntArr(int v[]) throws IOException {
+        if ( FSTUtil.unsafe != null && UNSAFE_MEMCOPY_ARRAY_INT) {
+            writePlainIntArrUnsafe(v);
+            return;
+        }
         final int free = 4 * v.length;
         buffout.ensureFree(free);
         final byte[] buf = buffout.buf;
         int count = buffout.pos;
         for (int i = 0; i < v.length; i++) {
             final int anInt = v[i];
-            buf[count++] = (byte) ((anInt >>> 24) & 0xFF);
-            buf[count++] = (byte) ((anInt >>> 16) & 0xFF);
-            buf[count++] = (byte) ((anInt >>>  8) & 0xFF);
             buf[count++] = (byte) ((anInt >>> 0) & 0xFF);
+            buf[count++] = (byte) ((anInt >>>  8) & 0xFF);
+            buf[count++] = (byte) ((anInt >>> 16) & 0xFF);
+            buf[count++] = (byte) ((anInt >>> 24) & 0xFF);
         }
         written += count-buffout.pos;
         buffout.pos = count;
@@ -1151,34 +1214,6 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             buf[count++] = (byte) ((anInt >>> 0) & 0xFF);
             buffout.pos = count;
             written += 5;
-        }
-    }
-
-    final static int bufoff;
-    final static int choff;
-    final static int intoff;
-    final static int longoff;
-    final static int intscal;
-    final static int longscal;
-    final static int chscal;
-
-    static {
-        if ( FSTUtil.unsafe != null ) {
-            bufoff = FSTUtil.unsafe.arrayBaseOffset(byte[].class);
-            intoff = FSTUtil.unsafe.arrayBaseOffset(int[].class);
-            longoff = FSTUtil.unsafe.arrayBaseOffset(long[].class);
-            longscal = FSTUtil.unsafe.arrayIndexScale(long[].class);
-            intscal = FSTUtil.unsafe.arrayIndexScale(int[].class);
-            chscal = FSTUtil.unsafe.arrayIndexScale(char[].class);
-            choff = FSTUtil.unsafe.arrayBaseOffset(char[].class);
-        } else {
-            longoff = 0;
-            longscal = 0;
-            bufoff = 0;
-            intoff = 0;
-            intscal = 0;
-            choff = 0;
-            chscal = 0;
         }
     }
 

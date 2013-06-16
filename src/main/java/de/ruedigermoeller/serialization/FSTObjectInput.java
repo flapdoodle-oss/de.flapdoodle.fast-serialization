@@ -39,11 +39,42 @@ import java.util.*;
  */
 public class FSTObjectInput extends DataInputStream implements ObjectInput {
 
-    private static final boolean UNSAFE_READ_CINT_ARR = false;
-    private static final boolean UNSAFE_READ_CINT = false;
-    private static final boolean UNSAFE_READ_FINT = false;
-    private static final boolean UNSAFE_READ_FLONG = false;
-    private static final boolean UNSAFE_READ_UTF = false;
+    private static final boolean UNSAFE_COPY_ARRAY_LONG = true;
+    private static final boolean UNSAFE_COPY_ARRAY_INT = true;
+    private static final boolean UNSAFE_READ_CINT_ARR = true;
+    private static final boolean UNSAFE_READ_CINT = true;
+    private static final boolean UNSAFE_READ_FINT = true;
+    private static final boolean UNSAFE_READ_FLONG = true;
+    private static final boolean UNSAFE_READ_UTF = true;
+
+    final static int bufoff;
+    final static int choff;
+    final static int intoff;
+    final static int longoff;
+    final static int intscal;
+    final static int longscal;
+    final static int chscal;
+
+    static {
+        Unsafe unsafe = FSTUtil.getUnsafe();
+        if ( unsafe != null ) {
+            bufoff = unsafe.arrayBaseOffset(byte[].class);
+            intoff = unsafe.arrayBaseOffset(int[].class);
+            longoff = unsafe.arrayBaseOffset(long[].class);
+            longscal = unsafe.arrayIndexScale(long[].class);
+            intscal = unsafe.arrayIndexScale(int[].class);
+            chscal = unsafe.arrayIndexScale(char[].class);
+            choff = unsafe.arrayBaseOffset(char[].class);
+        } else {
+            longoff = 0;
+            longscal = 0;
+            bufoff = 0;
+            intoff = 0;
+            intscal = 0;
+            choff = 0;
+            chscal = 0;
+        }
+    }
 
     public FSTClazzNameRegistry clnames;
     FSTObjectRegistry objects;
@@ -775,8 +806,12 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                     } else if (referencee.isCompressed() ) {
                         readCompressedArray(len,arr);
                     } else {
-                        readPlainIntArr(len,arr);
-                    }
+                        if ( FSTUtil.unsafe != null && UNSAFE_COPY_ARRAY_INT) {
+                            readPlainIntArrUnsafe(arr);
+                        } else {
+                            readPlainIntArr(len, arr);
+                        }
+                }
                 } else if (arrType == float.class) {
                     float[] arr = (float[]) array;
                     ensureReadAhead(arr.length*4);
@@ -792,10 +827,8 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                 } else if (arrType == long.class) {
                     long[] arr = (long[]) array;
                     ensureReadAhead(arr.length*8);
-                    if ( FSTUtil.unsafe != null ) {
-                        for (int j = 0; j < len; j++) {
-                            arr[j] = readFLongUnsafe();
-                        }
+                    if ( FSTUtil.unsafe != null && UNSAFE_COPY_ARRAY_LONG) {
+                        readLongArrUnsafe(arr);
                     } else {
                         for (int j = 0; j < len; j++) {
                             arr[j] = readFLong();
@@ -868,6 +901,20 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             }
             return array;
         }
+    }
+
+    public void readLongArrUnsafe(long[] arr) {
+        final byte buf[] = input.buf;
+        int siz = arr.length * longscal;
+        FSTUtil.unsafe.copyMemory(buf,input.pos+bufoff,arr,longoff,siz);
+        input.pos += siz;
+    }
+
+    public void readPlainIntArrUnsafe(int[] arr) {
+        final byte buf[] = input.buf;
+        int siz = arr.length * intscal;
+        FSTUtil.unsafe.copyMemory(buf,input.pos+bufoff,arr,intoff,siz);
+        input.pos += siz;
     }
 
     public void readCompressedArray(int len, int arr[]) throws IOException {
@@ -993,10 +1040,10 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         final byte buf[] = input.buf;
         int count = input.pos;
         for (int j = 0; j < len; j++) {
-            int ch1 = (buf[count++]+256)&0xff;
-            int ch2 = (buf[count++]+256)&0xff;
-            int ch3 = (buf[count++]+256)&0xff;
             int ch4 = (buf[count++]+256)&0xff;
+            int ch3 = (buf[count++]+256)&0xff;
+            int ch2 = (buf[count++]+256)&0xff;
+            int ch1 = (buf[count++]+256)&0xff;
             arr[j] = ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
         }
         input.pos = count;
@@ -1033,27 +1080,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         input.pos = count;
     }
 
-    final static int bufoff;
-    final static int choff;
-    final static int intoff;
-    final static int intscal;
-    final static int chscal;
-
-    static {
-        if ( FSTUtil.unsafe != null ) {
-            bufoff = FSTUtil.unsafe.arrayBaseOffset(byte[].class);
-            intoff = FSTUtil.unsafe.arrayBaseOffset(int[].class);
-            intscal = FSTUtil.unsafe.arrayIndexScale(int[].class);
-            chscal = FSTUtil.unsafe.arrayIndexScale(char[].class);
-            choff = FSTUtil.unsafe.arrayBaseOffset(char[].class);
-        } else {
-            bufoff = 0;
-            intoff = 0;
-            intscal = 0;
-            choff = 0;
-            chscal = 0;
-        }
-    }
     private void readCIntArrUnsafe(final int len, final int[] arr) throws IOException {
         final Unsafe unsafe = FSTUtil.unsafe;
         ensureReadAhead(5 * len);
@@ -1149,6 +1175,23 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         ensureReadAhead(1);
         return input.buf[input.pos++];
     }
+
+//    public long readFLongUnsafe() throws IOException {
+//        ensureReadAhead(8);
+//        final Unsafe unsafe = FSTUtil.unsafe;
+//        final byte buf[] = input.buf;
+//        long count = input.pos+bufoff;
+//        long ch8 = (unsafe.getByte(buf,count++)+256)&0xff;
+//        long ch7 = (unsafe.getByte(buf,count++)+256)&0xff;
+//        long ch6 = (unsafe.getByte(buf,count++)+256)&0xff;
+//        long ch5 = (unsafe.getByte(buf,count++)+256)&0xff;
+//        long ch4 = (unsafe.getByte(buf,count++)+256)&0xff;
+//        long ch3 = (unsafe.getByte(buf,count++)+256)&0xff;
+//        long ch2 = (unsafe.getByte(buf,count++)+256)&0xff;
+//        long ch1 = (unsafe.getByte(buf,count++)+256)&0xff;
+//        input.pos += 8;
+//        return ((ch1 << 56) + (ch2 << 48) + (ch3 << 40)+ (ch4 << 32)+(ch5 << 24) + (ch6 << 16) + (ch7 << 8) + (ch8 << 0));
+//    }
 
     public long readFLongUnsafe() throws IOException {
         ensureReadAhead(8);

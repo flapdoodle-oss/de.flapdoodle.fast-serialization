@@ -32,8 +32,8 @@ public class TestRunner {
     }
 
     SerTest kryotest = new KryoTest("Kryo 2.2.1");
-    SerTest defFST = new FSTTest("FST default conf",true);
-    SerTest defFSTNoUns = new FSTTest("FST default no unsafe ",false);
+    SerTest defFST = new FSTTest("FST (with Unsafe)",true);
+    SerTest defFSTNoUns = new FSTTest("FST (no Unsafe)",false);
     SerTest defser = new JavaSerTest("Java built in");
 //    SerTest gridgain = new GridGainTest("GridGain 4.5"); cannot redistribute ..
 
@@ -113,7 +113,7 @@ public class TestRunner {
         runner.charter.text("<i>intel i7 3770K 3,5 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
-        SerTest.WarmUP = 300; SerTest.Run = SerTest.WarmUP+1;
+        SerTest.WarmUP = 20000; SerTest.Run = SerTest.WarmUP+1;
         runner.runAll(FrequentPrimitives.getArray(200));
         runner.runAll(new FrequentCollections());
         runner.runAll(new LargeNativeArrays());
