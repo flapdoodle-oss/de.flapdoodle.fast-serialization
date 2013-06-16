@@ -47,7 +47,12 @@ public class HtmlCharter {
             return;
         }
         out.println("<tr><td><font size=1 color="+ getChartColor() +">");
-        for (int i=0; i<value/div;i++) {
+        int i1 = value / div;
+        if ( i1 > 130 ) {
+            text = "<b>...<font color=red>[bar cut, result is out of scale]</font></b> "+text;
+            i1 = 130;
+        }
+        for (int i=0; i< i1;i++) {
             out.print("&#9608;");
         }
         if ( value%div >= div/2 ) {

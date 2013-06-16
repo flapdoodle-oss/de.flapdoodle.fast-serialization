@@ -788,8 +788,14 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                 } else if (arrType == long.class) {
                     long[] arr = (long[]) array;
                     ensureReadAhead(arr.length*8);
-                    for (int j = 0; j < len; j++) {
-                        arr[j] = readFLong();
+                    if ( FSTUtil.unsafe != null ) {
+                        for (int j = 0; j < len; j++) {
+                            arr[j] = readFLongUnsafe();
+                        }
+                    } else {
+                        for (int j = 0; j < len; j++) {
+                            arr[j] = readFLong();
+                        }
                     }
                 } else if (arrType == boolean.class) {
                     boolean[] arr = (boolean[]) array;
@@ -954,7 +960,19 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         input.buf = bytes;
     }
 
+    public final int readFIntUnsafe() throws IOException {
+        ensureReadAhead(8);
+        final Unsafe unsafe = FSTUtil.unsafe;
+        final byte buf[] = input.buf;
+        int res = unsafe.getInt(buf,input.pos+bufoff);
+        input.pos += 4;
+        return res;
+    }
+
     public final int readFInt() throws IOException {
+        if ( FSTUtil.unsafe != null ) {
+            return readFIntUnsafe();
+        }
         ensureReadAhead(4);
         int count = input.pos;
         final byte buf[] = input.buf;
@@ -1128,7 +1146,19 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         return input.buf[input.pos++];
     }
 
+    public long readFLongUnsafe() throws IOException {
+        ensureReadAhead(8);
+        final Unsafe unsafe = FSTUtil.unsafe;
+        final byte buf[] = input.buf;
+        long res = unsafe.getLong(buf,input.pos+bufoff);
+        input.pos += 8;
+        return res;
+    }
+
     public long readFLong() throws IOException {
+        if ( FSTUtil.unsafe != null ) {
+            return readFLongUnsafe();
+        }
         ensureReadAhead(8);
         int count = input.pos;
         final byte buf[] = input.buf;

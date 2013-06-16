@@ -90,12 +90,9 @@ public class ManyClasses implements Serializable, HasDescription {
 
     public static Object getArray() {
         return new ManyClasses[] {
-                new ManyClasses(13), new ManyClasses(17), new ManyClasses(18),
-                new ManyClasses(55), new ManyClasses(143), new ManyClasses(157),
-                new ManyClasses(1243), new ManyClasses(7143), new ManyClasses(1757),
+                new ManyClasses(13), new ManyClasses(1257), new ManyClasses(18),
                 new ManyClasses(525), new ManyClasses(1243), new ManyClasses(1257),
-                new ManyClasses(15775), new ManyClasses(71413), new ManyClasses(17157),
-                new ManyClasses(168), new ManyClasses(1757),
+                new ManyClasses(915775), new ManyClasses(714913), new ManyClasses(179157),
         };
     }
 

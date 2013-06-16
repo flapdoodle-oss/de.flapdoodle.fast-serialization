@@ -44,7 +44,7 @@ public class PrimitiveArrays implements Serializable, HasDescription {
 
     // to avoid measurement of stream init performance
     public static PrimitiveArrays[] createPrimArray() {
-        PrimitiveArrays res[] = new PrimitiveArrays[20];
+        PrimitiveArrays res[] = new PrimitiveArrays[7];
         for (int i = 0; i < res.length; i++) {
             res[i] = new PrimitiveArrays();
         }
