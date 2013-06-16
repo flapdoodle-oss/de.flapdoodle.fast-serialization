@@ -39,6 +39,12 @@ import java.util.*;
  */
 public class FSTObjectInput extends DataInputStream implements ObjectInput {
 
+    private static final boolean UNSAFE_READ_CINT_ARR = false;
+    private static final boolean UNSAFE_READ_CINT = false;
+    private static final boolean UNSAFE_READ_FINT = false;
+    private static final boolean UNSAFE_READ_FLONG = false;
+    private static final boolean UNSAFE_READ_UTF = false;
+
     public FSTClazzNameRegistry clnames;
     FSTObjectRegistry objects;
 
@@ -545,11 +551,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                     } else if (subInfTzpe == short.class) {
                         serializationInfo.setShortValue(newObj, subInfo, readCShort());
                     } else if (subInfTzpe == int.class) {
-                        if ( subInfo.isPlain() ) {
-                            serializationInfo.setIntValue(newObj, subInfo, readInt());
-                        } else {
-                            serializationInfo.setIntValue(newObj, subInfo, readCInt());
-                        }
+                        serializationInfo.setIntValue(newObj, subInfo, readCInt());
                     } else if (subInfTzpe == double.class) {
                         serializationInfo.setDoubleValue(newObj, subInfo, readCDouble());
                     } else if (subInfTzpe == float.class) {
@@ -685,7 +687,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 
     char[] charBuf;
     public String readStringUTF() throws IOException {
-        if ( FSTUtil.unsafe != null ) {
+        if ( FSTUtil.unsafe != null && UNSAFE_READ_UTF ) {
             return readStringUTFUnsafe();
         }
         int len = readCInt();
@@ -712,7 +714,11 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 
     private String readStringUTFUnsafe() throws IOException {
         final Unsafe unsafe = FSTUtil.unsafe;
-        int len = readCIntUnsafe();
+        int len = 0;
+        if ( UNSAFE_READ_CINT )
+            len = readCIntUnsafe();
+        else
+            len = readCInt();
         if (charBuf == null || charBuf.length < len * 3) {
             charBuf = new char[len * 3];
         }
@@ -768,10 +774,8 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                         readThinArray(len, arr);
                     } else if (referencee.isCompressed() ) {
                         readCompressedArray(len,arr);
-                    } else if (referencee.isPlain() ) {
-                        readPlainIntArr(len,arr);
                     } else {
-                        readCIntArr(len, arr);
+                        readPlainIntArr(len,arr);
                     }
                 } else if (arrType == float.class) {
                     float[] arr = (float[]) array;
@@ -970,7 +974,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     public final int readFInt() throws IOException {
-        if ( FSTUtil.unsafe != null ) {
+        if ( FSTUtil.unsafe != null && UNSAFE_READ_FINT ) {
             return readFIntUnsafe();
         }
         ensureReadAhead(4);
@@ -999,7 +1003,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     private void readCIntArr(int len, int[] arr) throws IOException {
-        if ( FSTUtil.unsafe != null ) {
+        if ( FSTUtil.unsafe != null && UNSAFE_READ_CINT_ARR ) {
             readCIntArrUnsafe(len,arr);
             return;
         }
@@ -1084,7 +1088,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     public final int readCInt() throws IOException {
-        if ( FSTUtil.unsafe != null ) {
+        if ( FSTUtil.unsafe != null && UNSAFE_READ_CINT ) {
             return readCIntUnsafe();
         }
         ensureReadAhead(5);
@@ -1156,7 +1160,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     public long readFLong() throws IOException {
-        if ( FSTUtil.unsafe != null ) {
+        if ( FSTUtil.unsafe != null && UNSAFE_READ_FLONG ) {
             return readFLongUnsafe();
         }
         ensureReadAhead(8);

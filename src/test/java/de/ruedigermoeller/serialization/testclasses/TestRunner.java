@@ -53,7 +53,7 @@ public class TestRunner {
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
 //        SerTest tests[] = { defFST, defFSTNoUns, kryotest, defser, gridgain };
-        SerTest tests[] = { defFST, defFSTNoUns, kryotest, defser };
+        SerTest tests[] = { defFSTNoUns, defFST, kryotest, defser };
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
             test.run(toSer);
@@ -113,7 +113,7 @@ public class TestRunner {
         runner.charter.text("<i>intel i7 3770K 3,5 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
-        SerTest.WarmUP = 30000; SerTest.Run = SerTest.WarmUP+1;
+        SerTest.WarmUP = 300; SerTest.Run = SerTest.WarmUP+1;
         runner.runAll(FrequentPrimitives.getArray(200));
         runner.runAll(new FrequentCollections());
         runner.runAll(new LargeNativeArrays());

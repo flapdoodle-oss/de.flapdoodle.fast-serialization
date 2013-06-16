@@ -37,6 +37,11 @@ import java.util.*;
  */
 public final class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
 
+    private static final boolean UNSAFE_WRITE_CINT_ARR = false;
+    private static final boolean UNSAFE_WRITE_CINT = false;
+    private static final boolean UNSAFE_WRITE_FINT = false;
+    private static final boolean UNSAFE_WRITE_FLONG = false;
+    private static final boolean UNSAFE_WRITE_UTF = false;
 
     static final byte ONE_OF = -18;
     static final byte BIG_BOOLEAN_FALSE = -17;
@@ -54,6 +59,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     static final byte OBJECT = 0;
 
     public static final boolean DUMP = false;
+
 
     public FSTClazzNameRegistry clnames; // immutable
     FSTConfiguration conf; // immutable
@@ -419,12 +425,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                             writeCShort((short) serializationInfo.getShortValue(toWrite, subInfo));
                             break;
                         case FSTClazzInfo.FSTFieldInfo.INT:
-                            if ( subInfo.isPlain() ) {
-                                buffout.ensureFree(4);
-                                writeInt(serializationInfo.getIntValue(toWrite, subInfo));
-                            } else {
-                                writeCInt(serializationInfo.getIntValue(toWrite, subInfo));
-                            }
+                            writeCInt(serializationInfo.getIntValue(toWrite, subInfo));
                             break;
                         case FSTClazzInfo.FSTFieldInfo.LONG:
                             writeCLong(serializationInfo.getLongValue(toWrite, subInfo));
@@ -604,11 +605,8 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 if ( referencee.isCompressed() ) {
                     writeIntArrCompressed((int[]) array);
                 } else
-                if ( referencee.isPlain() ) {
-                    writePlainInt((int[]) array);
-                } else
                 {
-                    writeCIntArr((int[]) array);
+                    writePlainIntArr((int[]) array);
                 }
             } else
             if ( componentType == double.class ) {
@@ -765,7 +763,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     }
 
     public void writeStringUTF(String str) throws IOException {
-        if ( FSTUtil.unsafe != null ) {
+        if ( FSTUtil.unsafe != null && UNSAFE_WRITE_UTF) {
             writeStringUTFUnsafe(str);
             return;
         }
@@ -797,7 +795,10 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         final byte buf[] = buffout.buf;
         final int strlen = str.length();
 
-        writeCIntUnsafe(strlen);
+        if ( UNSAFE_WRITE_CINT )
+            writeCIntUnsafe(strlen);
+        else
+            writeCInt(strlen);
         buffout.ensureFree(strlen*3);
 
         final byte[] bytearr = buffout.buf;
@@ -904,7 +905,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     }
 
     public void writeFInt( int v ) throws IOException {
-        if ( FSTUtil.unsafe != null ) {
+        if ( FSTUtil.unsafe != null && UNSAFE_WRITE_FINT) {
             writeFIntUnsafe(v);
             return;
         }
@@ -929,7 +930,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     }
 
     public void writeFLong( long v ) throws IOException {
-        if ( FSTUtil.unsafe != null ) {
+        if ( FSTUtil.unsafe != null && UNSAFE_WRITE_FLONG) {
             writeFLongUnsafe(v);
             return;
         }
@@ -1037,7 +1038,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         }
     }
 
-    public void writePlainInt( int v[] ) throws IOException {
+    public void writePlainIntArr(int v[]) throws IOException {
         final int free = 4 * v.length;
         buffout.ensureFree(free);
         final byte[] buf = buffout.buf;
@@ -1054,7 +1055,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     }
 
     public void writeCIntArr(int v[]) throws IOException {
-        if (FSTUtil.unsafe!=null) {
+        if (FSTUtil.unsafe!=null && UNSAFE_WRITE_CINT_ARR) {
             writeCIntArrUnsafe(v);
             return;
         }
@@ -1114,7 +1115,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     }
 
     public void writeCInt(int anInt) throws IOException {
-        if ( FSTUtil.unsafe != null ) {
+        if ( FSTUtil.unsafe != null && UNSAFE_WRITE_CINT ) {
             writeCIntUnsafe(anInt);
             return;
         }

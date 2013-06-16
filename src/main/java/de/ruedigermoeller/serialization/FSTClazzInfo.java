@@ -440,7 +440,6 @@ public final class FSTClazzInfo {
         boolean isArr = false;
         boolean isConditional = false;
         boolean isCompressed = false;
-        boolean isPlain = false;
         int integralType;
         FSTClazzInfo lastInfo;
         long memOffset = -1;
@@ -473,7 +472,6 @@ public final class FSTClazzInfo {
             }
             calcIntegral();
             if ( fi != null && ! ignoreAnnotations ) {
-                isPlain = fi.isAnnotationPresent(Plain.class);
                 flat = fi.isAnnotationPresent(Flat.class);
                 thin = fi.isAnnotationPresent(Thin.class);
                 isConditional = fi.isAnnotationPresent(Conditional.class);
@@ -491,14 +489,6 @@ public final class FSTClazzInfo {
 
         public String[] getOneOf() {
             return oneOf;
-        }
-
-        public boolean isPlain() {
-            return isPlain;
-        }
-
-        public void setPlain(boolean plain) {
-            isPlain = plain;
         }
 
         public long getMemOffset() {
