@@ -11,6 +11,11 @@ task sourcesJar(type: Jar, dependsOn:classes) {
     from sourceSets.main.allSource
 }
 
+task testJar(type: Jar, dependsOn:classes) {
+    classifier = 'bench_and_tests'
+    from 'src/test'
+}
+
 compileJava {
     options.compilerArgs << '-XDignore.symbol.file'
     options.compilerArgs << '-nowarn'
