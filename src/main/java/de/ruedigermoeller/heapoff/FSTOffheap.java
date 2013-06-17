@@ -65,7 +65,6 @@ public class FSTOffheap {
     String lock = "Lock";
     ByteBuffer buffer;
     FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
-    OffHeapAccess access;
 
     int lastPosition = 0, currPosition=0;
 
@@ -82,7 +81,6 @@ public class FSTOffheap {
 
     public FSTOffheap(ByteBuffer buffer) throws IOException {
         this.buffer = buffer;
-        access = createAccess();
         conf.registerSerializer(ByteBufferEntry.class, new FSTBasicObjectSerializer() {
 
             @Override
@@ -99,39 +97,6 @@ public class FSTOffheap {
                 return entry;
             }
         }, false);
-    }
-
-    /**
-     * single threaded access
-     * @param handle
-     * @return
-     * @throws IOException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws ClassNotFoundException
-     */
-    public Object getObject( int handle ) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
-        return access.getObject(handle);
-    }
-
-    /**
-     * single threaded access
-     * @param handle
-     * @return
-     * @throws IOException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws ClassNotFoundException
-     */
-    public Object getTag( int handle ) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
-        return access.getTag(handle);
-    }
-
-    /**
-     * single threaded access
-     */
-    public int add(Object toSave, Object tag) throws IOException {
-        return access.add(toSave,tag);
     }
 
     /**

@@ -43,15 +43,18 @@ public class FSTOffHeapMap<K,V> extends AbstractMap<K,V> {
 
     HashMap<K,Integer> hmap;
     FSTOffheap heap;
+    FSTOffheap.OffHeapAccess access;
 
     public FSTOffHeapMap(FSTOffheap heap) {
         this.heap = heap;
         hmap = new HashMap<K, Integer>();
+        access = heap.createAccess();
     }
 
     public FSTOffHeapMap(int siz) throws IOException {
         heap = new FSTOffheap(siz);
         hmap = new HashMap<K, Integer>();
+        access = heap.createAccess();
     }
 
     @Override
@@ -85,7 +88,7 @@ public class FSTOffHeapMap<K,V> extends AbstractMap<K,V> {
     public V get(Object key) {
         Integer integer = hmap.get(key);
         try {
-            return (V)heap.getObject(integer);
+            return (V)access.getObject(integer);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
@@ -103,7 +106,7 @@ public class FSTOffHeapMap<K,V> extends AbstractMap<K,V> {
             if ( hmap.containsKey(key) ) {
                 return get(key);
             }
-            int res = heap.add(value,null);
+            int res = access.add(value,null);
             hmap.put(key,res);
             return value;
         } catch (IOException e) {

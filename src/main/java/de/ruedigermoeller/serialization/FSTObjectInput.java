@@ -1433,7 +1433,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             @Override
             public int read() throws IOException {
                 ensureReadAhead(1);
-                return FSTObjectInput.this.read();
+                return FSTObjectInput.this.readFByte();
             }
 
             @Override
@@ -1495,7 +1495,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             @Override
             public long readLong() throws IOException {
                 ensureReadAhead(8);
-                return FSTObjectInput.this.readLong();
+                return FSTObjectInput.this.readFLong();
             }
 
             @Override

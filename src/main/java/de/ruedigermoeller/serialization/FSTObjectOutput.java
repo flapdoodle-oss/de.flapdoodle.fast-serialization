@@ -1434,7 +1434,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
             @Override
             public void write(int val) throws IOException {
-                FSTObjectOutput.this.writeCInt(val);
+                FSTObjectOutput.this.writeFByte(val);
             }
 
             @Override
@@ -1486,7 +1486,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
             @Override
             public void writeLong(long val) throws IOException {
-                FSTObjectOutput.this.writeLong(val);
+                FSTObjectOutput.this.writeFLong(val);
             }
 
             @Override

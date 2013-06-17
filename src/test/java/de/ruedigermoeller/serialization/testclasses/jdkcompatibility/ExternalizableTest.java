@@ -30,8 +30,7 @@ public class ExternalizableTest implements Serializable, HasDescription {
 
     @Override
     public String getDescription() {
-        return "Performance of Externalizable objects. FST has a penalty (object creation) at write side to be 100% compatible.<br>" +
-                "Future version might have a 'compatibleExternalizable'-Annotation since most externalizable implementations do not require a 100% compatible implementation";
+        return "Performance of Externalizable objects.";
     }
 
     static class ExternalTest implements Externalizable {

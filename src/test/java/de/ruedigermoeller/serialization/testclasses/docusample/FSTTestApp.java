@@ -36,6 +36,10 @@ import java.util.concurrent.Executors;
  * Time: 22:26
  * To change this template use File | Settings | File Templates.
  */
+
+/**
+ * Tests multithreaded en/decoding.
+ */
 public class FSTTestApp {
 
     static FSTConfiguration singletonConf = FSTConfiguration.createDefaultConfiguration();
@@ -98,7 +102,7 @@ public class FSTTestApp {
                     try {
                         new FSTTestApp().test(finalI);
                     } catch (IOException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        e.printStackTrace();
                     }
                 }
             });

@@ -339,13 +339,14 @@ public class OffHeapTest {
         final SimpleOrder or = SimpleOrder.generateOrder(22);
         final int iters = 4000000;
         charter.openChart(tit+" FSTOffheap core operations performance (=> is better)");
+        FSTOffheap.OffHeapAccess acc = off.createAccess();
         long tim = System.currentTimeMillis();
 
         for ( int i = 0; i < iters; i++ ) {
             if ( i == 1237162 ) {
-                off.add(or, "hallo1237162");
+                acc.add(or, "hallo1237162");
             } else {
-                off.add(or, "hallo");
+                acc.add(or, "hallo");
             }
         }
 
