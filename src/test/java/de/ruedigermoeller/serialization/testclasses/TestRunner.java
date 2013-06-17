@@ -53,7 +53,7 @@ public class TestRunner {
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
 //        SerTest tests[] = { defFST, defFSTNoUns, kryotest, defser, gridgain };
-        SerTest tests[] = { defFSTNoUns, defFST, kryotest, defser };
+        SerTest tests[] = { defFST,defFSTNoUns, kryotest, defser };
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
             test.run(toSer);
