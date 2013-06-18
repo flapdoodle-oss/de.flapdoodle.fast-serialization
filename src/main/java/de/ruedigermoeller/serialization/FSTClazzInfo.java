@@ -35,23 +35,23 @@ import java.util.*;
  */
 public final class FSTClazzInfo {
 
-    Class clazz;
-    FSTFieldInfo fieldInfo[]; // serializable fields
-    HashMap<String, FSTFieldInfo> fieldMap = new HashMap<String, FSTFieldInfo>(15); // all fields
-    Constructor cons;
-    Method writeReplaceMethod, readResolveMethod;
-    boolean requiresCompatibleMode;
-
-    HashMap<Class, FSTCompatibilityInfo> compInfo = new HashMap<Class, FSTCompatibilityInfo>(7);
     Class[] predict;
+    private boolean ignoreAnn;
+    HashMap<String, FSTFieldInfo> fieldMap = new HashMap<String, FSTFieldInfo>(15); // all fields
+    Method writeReplaceMethod, readResolveMethod;
+    HashMap<Class, FSTCompatibilityInfo> compInfo = new HashMap<Class, FSTCompatibilityInfo>(7);
+
+    boolean requiresCompatibleMode;
     boolean equalIsIdentity;
     boolean equalIsBinary;
-    boolean flat; // never share instances of this class
-
-    FSTObjectSerializer ser;
-    FSTClazzInfoRegistry reg;
-    private boolean ignoreAnn;
     boolean externalizable;
+    boolean flat; // never share instances of this class
+    FSTObjectSerializer ser;
+    FSTFieldInfo fieldInfo[]; // serializable fields
+    Class clazz;
+    Constructor cons;
+
+    FSTClazzInfoRegistry reg;
 
     public FSTClazzInfo(Class clazz, FSTClazzInfoRegistry infoRegistry, boolean ignoreAnnotations) {
         this.clazz = clazz;
@@ -224,23 +224,20 @@ public final class FSTClazzInfo {
                     return 1;
                 }
                 if ( o1.isConditional() && ! o2.isConditional() ) {
-                    return 1;
+                    res = 1;
                 } else if ( ! o1.isConditional() && o2.isConditional() ) {
-                    return -1;
-                }
-                if ( res == 0 && o1.isIntegral() && !o2.isIntegral() )
-                    return  -1;
-                if ( res == 0 && !o1.isIntegral() && o2.isIntegral() )
-                    return  1;
+                    res = -1;
+                } else if ( o1.isIntegral() && !o2.isIntegral() )
+                    res = -1;
                 if ( res == 0 )
                     res = (int) (o1.getMemOffset()-o2.getMemOffset());
-                if (res == 0) {
-                    res = o1.getField().getDeclaringClass().getName().compareTo(o2.getField().getDeclaringClass().getName());
-                }
                 if ( res == 0 )
                     res = o1.getType().getSimpleName().compareTo(o2.getType().getSimpleName());
                 if (res == 0)
                     res = o1.getField().getName().compareTo(o2.getField().getName());
+                if (res == 0) {
+                    return o1.getField().getDeclaringClass().getName().compareTo(o2.getField().getDeclaringClass().getName());
+                }
                 return res;
             }
         };
@@ -295,17 +292,19 @@ public final class FSTClazzInfo {
         return fstFieldInfo.getField().getShort(obj);
     }
 
+    public final int getIntValueUnsafe(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
+        return FSTUtil.unsafe.getInt(obj,fstFieldInfo.memOffset);
+    }
+
     public final int getIntValue(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
-        if (fstFieldInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
-            return FSTUtil.unsafe.getInt(obj,fstFieldInfo.memOffset);
-        }
         return fstFieldInfo.getField().getInt(obj);
     }
 
+    public final long getLongValueUnsafe(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
+        return FSTUtil.unsafe.getLong(obj,fstFieldInfo.memOffset);
+    }
+
     public final long getLongValue(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
-        if (fstFieldInfo.memOffset >= 0 && FSTUtil.unsafe != null ) {
-            return FSTUtil.unsafe.getLong(obj,fstFieldInfo.memOffset);
-        }
         return fstFieldInfo.getField().getLong(obj);
     }
 
@@ -316,10 +315,11 @@ public final class FSTClazzInfo {
         return fstFieldInfo.getField().getBoolean(obj);
     }
 
+    public final Object getObjectValueUnsafe(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
+        return FSTUtil.unsafe.getObject(obj,fstFieldInfo.memOffset);
+    }
+
     public final Object getObjectValue(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
-        if (FSTUtil.unsafe != null && fstFieldInfo.memOffset >= 0 ) {
-            return FSTUtil.unsafe.getObject(obj,fstFieldInfo.memOffset);
-        }
         return fstFieldInfo.getField().get(obj);
     }
 
@@ -330,10 +330,11 @@ public final class FSTClazzInfo {
         return fstFieldInfo.getField().getFloat(obj);
     }
 
+    public final double getDoubleValueUnsafe(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
+        return FSTUtil.unsafe.getDouble(obj,fstFieldInfo.memOffset);
+    }
+
     public final double getDoubleValue(Object obj, FSTFieldInfo fstFieldInfo) throws IllegalAccessException {
-        if (FSTUtil.unsafe != null && fstFieldInfo.memOffset >= 0 ) {
-            return FSTUtil.unsafe.getDouble(obj,fstFieldInfo.memOffset);
-        }
         return fstFieldInfo.getField().getDouble(obj);
     }
 
@@ -361,19 +362,19 @@ public final class FSTClazzInfo {
         subInfo.getField().setShort(newObj, i1);
     }
 
+    public final void setIntValueUnsafe(Object newObj, FSTFieldInfo subInfo, int i1) throws IllegalAccessException {
+        FSTUtil.unsafe.putInt(newObj,subInfo.memOffset,i1);
+    }
+
     public final void setIntValue(Object newObj, FSTFieldInfo subInfo, int i1) throws IllegalAccessException {
-        if (FSTUtil.unsafe != null &&  subInfo.memOffset >= 0 ) {
-            FSTUtil.unsafe.putInt(newObj,subInfo.memOffset,i1);
-        } else {
-            subInfo.getField().setInt(newObj, i1);
-        }
+        subInfo.getField().setInt(newObj, i1);
+    }
+
+    public final void setLongValueUnsafe(Object newObj, FSTFieldInfo subInfo, long i1) throws IllegalAccessException {
+        FSTUtil.unsafe.putLong(newObj,subInfo.memOffset,i1);
     }
 
     public final void setLongValue(Object newObj, FSTFieldInfo subInfo, long i1) throws IllegalAccessException {
-        if (FSTUtil.unsafe != null && subInfo.memOffset >= 0 ) {
-            FSTUtil.unsafe.putLong(newObj,subInfo.memOffset,i1);
-            return;
-        }
         subInfo.getField().setLong(newObj, i1);
     }
 
@@ -385,11 +386,11 @@ public final class FSTClazzInfo {
         subInfo.getField().setBoolean(newObj, i1);
     }
 
+    public final void setObjectValueUnsafe(Object newObj, FSTFieldInfo subInfo, Object i1) throws IllegalAccessException {
+        FSTUtil.unsafe.putObject(newObj,subInfo.memOffset,i1);
+    }
+
     public final void setObjectValue(Object newObj, FSTFieldInfo subInfo, Object i1) throws IllegalAccessException {
-        if (FSTUtil.unsafe != null && subInfo.memOffset >= 0 ) {
-            FSTUtil.unsafe.putObject(newObj,subInfo.memOffset,i1);
-            return;
-        }
         subInfo.getField().set(newObj, i1);
     }
 
@@ -401,11 +402,11 @@ public final class FSTClazzInfo {
         subInfo.getField().setFloat(newObj, l);
     }
 
+    public final void setDoubleValueUnsafe(Object newObj, FSTFieldInfo subInfo, double l) throws IllegalAccessException {
+        FSTUtil.unsafe.putDouble(newObj,subInfo.memOffset,l);
+    }
+
     public final void setDoubleValue(Object newObj, FSTFieldInfo subInfo, double l) throws IllegalAccessException {
-        if (FSTUtil.unsafe != null && subInfo.memOffset >= 0 ) {
-            FSTUtil.unsafe.putDouble(newObj,subInfo.memOffset,l);
-            return;
-        }
         subInfo.getField().setDouble(newObj, l);
     }
 
@@ -434,19 +435,22 @@ public final class FSTClazzInfo {
 
         Class possibleClasses[];
         Class type;
-        Field field;
-        boolean integral = false;
+        FSTClazzInfo lastInfo;
+        String oneOf[] = null;
+
         int arrayDim;
         Class arrayType;
         boolean flat = false;
         boolean thin = false;
-        boolean isArr = false;
-        boolean isConditional = false;
         boolean isCompressed = false;
+        boolean isConditional = false;
+
+
+        boolean integral = false;
+        boolean isArr = false;
         int integralType;
-        FSTClazzInfo lastInfo;
-        long memOffset = -1;
-        String oneOf[] = null;
+        int memOffset = -1;
+        Field field;
 
         public FSTFieldInfo(Class[] possibleClasses, Field fi, boolean ignoreAnnotations) {
             this.possibleClasses = possibleClasses;
@@ -460,7 +464,7 @@ public final class FSTClazzInfo {
                     fi.setAccessible(true);
                     if ( ! Modifier.isStatic(fi.getModifiers()) ) {
                         try {
-                            memOffset = FSTUtil.unFlaggedUnsafe.objectFieldOffset(fi);
+                            memOffset = (int)FSTUtil.unFlaggedUnsafe.objectFieldOffset(fi);
 //                            int x = 1;
                         } catch ( Throwable th ) {
 //                            int y = 1;
@@ -494,7 +498,7 @@ public final class FSTClazzInfo {
             return oneOf;
         }
 
-        public long getMemOffset() {
+        public int getMemOffset() {
             return memOffset;
         }
 

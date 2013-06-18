@@ -554,6 +554,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         int boolcount = 8;
         final int length = fieldInfo.length;
         int conditional = 0;
+        final boolean isUnsafe = FSTUtil.unsafe != null;
         for (int i = 0; i < length; i++) {
             try {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
@@ -574,21 +575,40 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                         booleanMask = booleanMask << 1;
                         boolcount++;
                         serializationInfo.setBooleanValue(newObj, subInfo, val);
-                    }
-                    if (subInfTzpe == byte.class) {
-                        serializationInfo.setByteValue(newObj, subInfo, readFByte());
-                    } else if (subInfTzpe == char.class) {
-                        serializationInfo.setCharValue(newObj, subInfo, readCChar());
-                    } else if (subInfTzpe == short.class) {
-                        serializationInfo.setShortValue(newObj, subInfo, readCShort());
-                    } else if (subInfTzpe == int.class) {
-                        serializationInfo.setIntValue(newObj, subInfo, readCInt());
-                    } else if (subInfTzpe == double.class) {
-                        serializationInfo.setDoubleValue(newObj, subInfo, readCDouble());
-                    } else if (subInfTzpe == float.class) {
-                        serializationInfo.setFloatValue(newObj, subInfo, readCFloat());
-                    } else if (subInfTzpe == long.class) {
-                        serializationInfo.setLongValue(newObj, subInfo, readCLong());
+                    } else {
+                        if ( isUnsafe ) {
+                            if (subInfTzpe == int.class) {
+                                serializationInfo.setIntValueUnsafe(newObj, subInfo, readCIntUnsafe());
+                            } else if (subInfTzpe == long.class) {
+                                serializationInfo.setLongValueUnsafe(newObj, subInfo, readCLong());
+                            } else if (subInfTzpe == byte.class) {
+                                serializationInfo.setByteValue(newObj, subInfo, readFByte());
+                            } else if (subInfTzpe == char.class) {
+                                serializationInfo.setCharValue(newObj, subInfo, readCChar());
+                            } else if (subInfTzpe == short.class) {
+                                serializationInfo.setShortValue(newObj, subInfo, readCShort());
+                            } else if (subInfTzpe == double.class) {
+                                serializationInfo.setDoubleValueUnsafe(newObj, subInfo, readCDouble());
+                            } else if (subInfTzpe == float.class) {
+                                serializationInfo.setFloatValue(newObj, subInfo, readCFloat());
+                            }
+                        } else {
+                            if (subInfTzpe == int.class) {
+                                serializationInfo.setIntValue(newObj, subInfo, readCInt());
+                            } else if (subInfTzpe == long.class) {
+                                serializationInfo.setLongValue(newObj, subInfo, readCLong());
+                            } else if (subInfTzpe == byte.class) {
+                                serializationInfo.setByteValue(newObj, subInfo, readFByte());
+                            } else if (subInfTzpe == char.class) {
+                                serializationInfo.setCharValue(newObj, subInfo, readCChar());
+                            } else if (subInfTzpe == short.class) {
+                                serializationInfo.setShortValue(newObj, subInfo, readCShort());
+                            } else if (subInfTzpe == double.class) {
+                                serializationInfo.setDoubleValue(newObj, subInfo, readCDouble());
+                            } else if (subInfTzpe == float.class) {
+                                serializationInfo.setFloatValue(newObj, subInfo, readCFloat());
+                            }
+                        }
                     }
                 } else {
                     if ( subInfo.isConditional() ) {
@@ -606,7 +626,10 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                     {
                         subObject = Enum.valueOf(subInfo.getType(), (String) subObject);
                     }
-                    serializationInfo.setObjectValue(newObj, subInfo, subObject);
+                    if ( isUnsafe )
+                        serializationInfo.setObjectValueUnsafe(newObj, subInfo, subObject);
+                    else
+                        serializationInfo.setObjectValue(newObj, subInfo, subObject);
                 }
                 if (DEBUGSTACK) {
                     debugStack.pop();
