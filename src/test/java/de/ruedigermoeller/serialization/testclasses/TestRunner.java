@@ -80,14 +80,14 @@ public class TestRunner {
         charter.openChart("Read Time (micros)");
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
-            charter.chartBar(test.title, (int)(test.timRead*1000/SerTest.Run), 2, test.getColor());
+            charter.chartBar(test.title, (int)(test.timRead*1000/SerTest.Run), 3, test.getColor());
         }
         charter.closeChart();
 
         charter.openChart("Write Time (micros)");
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
-            charter.chartBar(test.title, (int)(test.timWrite*1000/SerTest.Run), 2, test.getColor());
+            charter.chartBar(test.title, (int)(test.timWrite*1000/SerTest.Run), 3, test.getColor());
         }
         charter.closeChart();
 

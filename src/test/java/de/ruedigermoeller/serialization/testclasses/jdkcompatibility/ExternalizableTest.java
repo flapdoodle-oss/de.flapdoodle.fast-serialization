@@ -21,7 +21,7 @@ public class ExternalizableTest implements Serializable, HasDescription {
     ExternalTest ext = new ExternalTest(31);
 
     public ExternalizableTest() {
-        for (int i = 0; i < 250; i++)
+        for (int i = 0; i < 150; i++)
         {
             test.add(new ExternalTest(i));
             li.add(new ExternalTest(i+500));
