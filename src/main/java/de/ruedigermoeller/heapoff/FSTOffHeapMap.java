@@ -22,6 +22,7 @@
  */
 package de.ruedigermoeller.heapoff;
 
+import de.ruedigermoeller.serialization.FSTConfiguration;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
@@ -51,8 +52,8 @@ public class FSTOffHeapMap<K,V> extends AbstractMap<K,V> {
         access = heap.createAccess();
     }
 
-    public FSTOffHeapMap(int siz) throws IOException {
-        heap = new FSTOffheap(siz);
+    public FSTOffHeapMap(int siz, FSTConfiguration conf) throws IOException {
+        heap = new FSTOffheap(siz,conf);
         hmap = new HashMap<K, Integer>();
         access = heap.createAccess();
     }
@@ -88,7 +89,11 @@ public class FSTOffHeapMap<K,V> extends AbstractMap<K,V> {
     public V get(Object key) {
         Integer integer = hmap.get(key);
         try {
-            return (V)access.getObject(integer);
+            Object res = access.getObject(integer);
+            if ( res == null ) {
+                return null;
+            }
+            return (V) res;
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {

@@ -64,7 +64,7 @@ public class FSTOffheap {
 
     String lock = "Lock";
     ByteBuffer buffer;
-    FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
+    FSTConfiguration conf = null;
 
     int lastPosition = 0, currPosition=0;
 
@@ -75,12 +75,13 @@ public class FSTOffheap {
         }
     };
 
-    public FSTOffheap(int sizeMB) throws IOException {
-        this(ByteBuffer.allocateDirect(sizeMB * 1000 * 1000));
+    public FSTOffheap(int sizeMB, FSTConfiguration conf) throws IOException {
+        this(ByteBuffer.allocateDirect(sizeMB * 1000 * 1000), conf);
     }
 
-    public FSTOffheap(ByteBuffer buffer) throws IOException {
+    public FSTOffheap(ByteBuffer buffer, FSTConfiguration conf) throws IOException {
         this.buffer = buffer;
+        this.conf = conf;
         conf.registerSerializer(ByteBufferEntry.class, new FSTBasicObjectSerializer() {
 
             @Override
@@ -97,6 +98,10 @@ public class FSTOffheap {
                 return entry;
             }
         }, false);
+    }
+
+    public FSTConfiguration getConf() {
+        return conf;
     }
 
     /**
@@ -169,7 +174,7 @@ public class FSTOffheap {
 
         protected ByteBufferEntry currentEntry = new ByteBufferEntry();
         protected FSTObjectInput in;
-        FSTObjectOutput out;
+        protected FSTObjectOutput out;
         byte tmpBuf[];
 
         public OffHeapAccess() {

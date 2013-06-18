@@ -159,7 +159,8 @@ public final class FSTOutputStream extends OutputStream {
             copyTo(outstream);
             reset();
         }
-        outstream.flush();
+        if ( outstream != this )
+            outstream.flush();
     }
 
 }
