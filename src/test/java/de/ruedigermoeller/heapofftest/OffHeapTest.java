@@ -1,10 +1,12 @@
 package de.ruedigermoeller.heapofftest;
 
+import com.software.util.DeepEquals;
 import de.ruedigermoeller.heapoff.FSTOffheap;
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTObjectInput;
 import de.ruedigermoeller.serialization.annotations.Flat;
 import de.ruedigermoeller.serialization.testclasses.HtmlCharter;
+import de.ruedigermoeller.serialization.testclasses.enterprise.Trader;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -43,17 +45,26 @@ public class OffHeapTest {
     private static void search(FSTOffheap off, final Object toSearch, int[] count) {
         long tim = System.currentTimeMillis();
         FSTOffheap.OffHeapIterator it = off.iterator();
-        while( it.hasNext() ) {
-            Object tag = it.nextEntry(new FSTObjectInput.ConditionalCallback() {
-                @Override
-                public boolean shouldSkip(Object halfDecoded, int streamPosition, Field field) {
-                    FSTOffheap.ByteBufferEntry be = (FSTOffheap.ByteBufferEntry) halfDecoded;
-                    return !toSearch.equals(be.tag);
+        int counter = 0;
+        try {
+            while( it.hasNext() ) {
+                counter++;
+                Object tag = it.nextEntry(new FSTObjectInput.ConditionalCallback() {
+                    @Override
+                    public boolean shouldSkip(Object halfDecoded, int streamPosition, Field field) {
+                        FSTOffheap.ByteBufferEntry be = (FSTOffheap.ByteBufferEntry) halfDecoded;
+                        return !toSearch.equals(be.tag);
+                    }
+                });
+                if ( it.getCurrentEntry() != null ) {
+                    System.out.println("found ! "+it.getCurrentTag()+" "+Thread.currentThread().getName());
                 }
-            });
-            if ( it.getCurrentEntry() != null ) {
-                System.out.println("found ! "+it.getCurrentTag()+" "+Thread.currentThread().getName());
+                if ( counter == 4000000 ) {
+                    System.out.println("POK");
+                }
             }
+        } finally {
+            System.out.println("count "+counter);
         }
         if ( count != null ) {
             synchronized (count) {
@@ -170,7 +181,7 @@ public class OffHeapTest {
                     while( it.hasNext() ) {
                         it.nextEntry(null);
                     }
-                    if ( count != null ) { //i know .. bad habit sync from earlier times .. does not matter here
+                    if ( count != null ) { //bad habit sync .. does not matter here
                         synchronized (count) {
                             count[0]++;
                         }
@@ -192,39 +203,69 @@ public class OffHeapTest {
         charter.closeChart();
     }
 
-    static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
+    private static void simpleTest(FSTOffheap off) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+        FSTOffheap.OffHeapAccess access = off.createAccess();
+        // simple test:
+        Object[] toSave = {
+                new Object[] {Trader.generateTrader(111, true), new ExampleOrder()},
+                "Hallo1",
+                "hallo2",
+                "Oha"
+        };
+        int handles[] = new int[toSave.length];
+        for (int i = 0; i < handles.length; i++) {
+            handles[i] = access.add(toSave[i],"tag "+i);
+        }
+
+        Object loaded[] = new Object[handles.length];
+        for (int i = 0; i < loaded.length; i++) {
+            loaded[i] = access.getObject(handles[i]);
+            if ( ! DeepEquals.deepEquals(toSave[i], loaded[i]) ) {
+                System.out.println("2 BUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUG !!");
+            }
+        }
+        int count = loaded.length-1;
+        FSTOffheap.OffHeapIterator iterator = off.iterator();
+        while( iterator.hasNext() ) {
+            Object atag = iterator.nextEntry(null);
+            Object content = iterator.getCurrentEntry();
+            System.out.println("pok "+atag+" "+content);
+            if ( ! ("tag "+count).equals(atag) )
+                System.out.println("1 BUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUG !!");
+            count--;
+        }
+        if ( count != -1 )
+            System.out.println("0 BUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUG !!");
+    }
 
     public static void main( String arg[]) throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException, ExecutionException {
         HtmlCharter charter = new HtmlCharter("./offheap.html");
         charter.openDoc();
 
-        System.setProperty("fst.unsafe","true");
-        conf.registerClass(ExampleOrder.class);
-        conf.setPreferSpeed(true);
+        System.setProperty("fst.unsafe", "true");
 
-        FSTOffheap off = new FSTOffheap(1000,conf);
+        FSTOffheap off = new FSTOffheap(1000);
+        off.getConf().registerClass(ExampleOrder.class);
+
+        simpleTest(off);
+//        simpleTest(off);
+
 
         benchOffHeap(true, off, charter, "Direct ByteBuffer");
 
+
+
+        // create off heap on memory mapped file:
         RandomAccessFile randomFile = new RandomAccessFile("./mappedfile.bin", "rw");
         randomFile.setLength(1000*1000*1000);
         FileChannel channel = randomFile.getChannel();
         MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 1000 * 1000 * 1000);
-        benchOffHeap(false, new FSTOffheap(buf,conf), charter, "Memory mapped File:");
+        FSTOffheap off1 = new FSTOffheap(buf);
+        off1.getConf().registerClass(ExampleOrder.class);
+        benchOffHeap(false, off1, charter, "Memory mapped File:");
         randomFile.close();
-
-//        testQu(charter);
-//        benchQu(charter,1,1,true,false,false,false);
-//        benchQu(charter,2,2,true,false,false,false);
-//        benchQu(charter,1,4,true,false,false,false);
-//        benchQu(charter,1,1,true,false,true,false);
-//
-//        benchQu(charter,1,1,false,true,false,false);
-//        benchQu(charter,2,2,false,true,false,false);
-//        benchQu(charter,4,1,false,true,false,false);
-//        benchQu(charter,1,1,false,true,false,true);
-
         charter.closeDoc();
     }
+
 
 }

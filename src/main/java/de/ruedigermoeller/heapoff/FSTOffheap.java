@@ -60,13 +60,14 @@ import java.util.concurrent.Executors;
  */
 public class FSTOffheap {
 
+    static String DUMMY = "FSTDUMMY";
     public static final int HEADER_SIZE = 8;
 
     String lock = "Lock";
     ByteBuffer buffer;
     FSTConfiguration conf = null;
 
-    int lastPosition = 0, currPosition=0;
+    int lastPosition = 0, currPosition = 8; // last object and addposition
 
     FSTObjectInput.ConditionalCallback alwaysSkip = new FSTObjectInput.ConditionalCallback() {
         @Override
@@ -75,12 +76,35 @@ public class FSTOffheap {
         }
     };
 
+    public FSTOffheap(int sizeMB) throws IOException {
+        this(sizeMB, null);
+    }
+
+    /**
+     * Warning: the configuration object passed cannot be shared with another offheap instance !!
+     * @param sizeMB
+     * @param conf
+     * @throws IOException
+     */
     public FSTOffheap(int sizeMB, FSTConfiguration conf) throws IOException {
         this(ByteBuffer.allocateDirect(sizeMB * 1000 * 1000), conf);
     }
 
+    public FSTOffheap(ByteBuffer buffer) throws IOException {
+        this(buffer,null);
+    }
+    /**
+     * Warning: the configuration object passed cannot be shared with another offheap instance or stream !!
+     * @param buffer
+     * @param conf
+     * @throws IOException
+     */
     public FSTOffheap(ByteBuffer buffer, FSTConfiguration conf) throws IOException {
         this.buffer = buffer;
+        if ( conf == null ) {
+            conf = FSTConfiguration.createDefaultConfiguration();
+            conf.setPreferSpeed(true);
+        }
         this.conf = conf;
         conf.registerSerializer(ByteBufferEntry.class, new FSTBasicObjectSerializer() {
 
@@ -225,32 +249,25 @@ public class FSTOffheap {
             if ( out == null ) {
                 out = new FSTObjectOutput(conf);
             }
+            currentEntry.tag = tag;
+            currentEntry.content = toSave;
             out.resetForReUse(null);
             out.writeObject(currentEntry,currentEntry.getClass());
             return out.getWritten();
         }
 
         public int add(Object toSave, Object tag) throws IOException {
-            return add(toSave, tag, false,currPosition);
-        }
-
-        int add(Object toSave, Object tag, boolean preparedOut, int addPosition) throws IOException {
             if ( out == null ) {
                 out = new FSTObjectOutput(conf);
             }
-            if ( ! preparedOut ) {
-                prepareOut(toSave,tag);
-            }
+            prepareOut(toSave,tag);
             synchronized (lock) {
                 // first 4 bytes are length
-                int res = addPosition;
-                currentEntry.content = toSave;
+                int res = currPosition;
                 buffer.putInt(res,out.getWritten());
                 buffer.putInt(res+4,lastPosition);
-                currentEntry.content = toSave;
-                currentEntry.tag = tag;
                 lastPosition = res;
-                buffer.position(addPosition + HEADER_SIZE); // length
+                buffer.position(currPosition + HEADER_SIZE); // length
                 buffer.put(out.getBuffer(),0,out.getWritten());
                 currPosition = buffer.position();
                 return res;
@@ -298,19 +315,12 @@ public class FSTOffheap {
             try {
                 in.setConditionalCallback(callback);
                 currentEntry = getEntry(position);
-                currPosition = position;
+                currentPosition = position;
                 position = currentEntry.prevPosition;
                 return currentEntry.tag;
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-            return null;
         }
 
         /**
@@ -323,16 +333,9 @@ public class FSTOffheap {
                 currentEntry = getEntry(position);
                 position = currentEntry.prevPosition;
                 return currentEntry.tag;
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-            return null;
         }
 
         @Override
