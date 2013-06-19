@@ -63,18 +63,19 @@ public class OffHeapTest {
         System.out.println("search time (no break) "+(System.currentTimeMillis()-tim)+" "+Thread.currentThread().getName());
     }
 
+    @Flat
     public static class ExampleOrder implements Serializable {
-        String product = "ALV";
+        @Flat String product = "ALV";
         long contract = 28374645556l;
         char buySell = 'B';
         int qty = 1000;
         double limit = 22.545;
-        String text = "Bla bla bla Bla";
-        String member = "CBKFR";
-        String owner = "XYZEXTRD013";
+        @Flat String text = "Bla bla bla Bla";
+        @Flat String member = "CBKFR";
+        @Flat String owner = "XYZEXTRD013";
         byte restriction = 1;
         byte type = 3;
-        Date validity = new Date();
+        @Flat Date validity = new Date();
     }
 
     public static void benchOffHeap(boolean header, final FSTOffheap off, HtmlCharter charter, String tit) throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException {
@@ -197,8 +198,9 @@ public class OffHeapTest {
         HtmlCharter charter = new HtmlCharter("./offheap.html");
         charter.openDoc();
 
+        System.setProperty("fst.unsafe","true");
         conf.registerClass(ExampleOrder.class);
-//        conf.setPreferSpeed(true);
+        conf.setPreferSpeed(true);
 
         FSTOffheap off = new FSTOffheap(1000,conf);
 

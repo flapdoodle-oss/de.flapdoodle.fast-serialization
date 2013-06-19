@@ -51,7 +51,7 @@ public final class FSTConfiguration {
     HashMap<Class,List<SoftReference>> cachedObjects = new HashMap<Class, List<SoftReference>>(97);
     FSTClazzNameRegistry classRegistry = new FSTClazzNameRegistry(null, this);
     boolean isCrossLanguage = false;
-    boolean preferSpeed = true;
+    boolean preferSpeed = false;
 
     public static Integer intObjects[];
     {

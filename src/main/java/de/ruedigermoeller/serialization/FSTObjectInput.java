@@ -246,7 +246,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             FSTClazzInfo.FSTFieldInfo info = new FSTClazzInfo.FSTFieldInfo(expected, null, conf.getCLInfoRegistry().isIgnoreAnnotations());
             return readObjectWithHeader(info);
         } catch (Throwable t) {
-            t.printStackTrace();
             throw new IOException(t);
         }
 
@@ -387,8 +386,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                 break;
             }
             default:
-                if (referencee.getPossibleClasses()==null)
-                    System.out.println("pok");
                 c = referencee.getPossibleClasses()[code - 1];
         }
         if (DEBUGSTACK) {
@@ -552,11 +549,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         readObjectFields(referencee,serializationInfo,serializationInfo.getFieldInfo(),newObj);
     }
 
-    void align4() throws IOException {
-        ensureReadAhead(4);
-//        input.pos=(input.pos+4)&~3;
-    }
-
     void readObjectFields(FSTClazzInfo.FSTFieldInfo referencee, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo, Object newObj) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         int booleanMask = 0;
         int boolcount = 8;
@@ -566,8 +558,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         final boolean preferSpeed = conf.isPreferSpeed();
         final Unsafe unsafe = FSTUtil.unsafe;
         for (int i = 0; i < length; i++) {
-            if (preferSpeed)
-                align4();
             try {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
                 if (DEBUGSTACK) {
@@ -592,15 +582,13 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                             if (preferSpeed) {
                                 // speed unsafe
                                 if (subInfTzpe == int.class) {
-                                    // inline
-//                                    serializationInfo.setIntValueUnsafe(newObj, subInfo, readFIntUnsafe());
+                                    // inline serializationInfo.setIntValueUnsafe(newObj, subInfo, readFIntUnsafe());
                                     ensureReadAhead(4);
                                     int res = unsafe.getInt(input.buf,input.pos+bufoff);
                                     input.pos += 4;
                                     FSTUtil.unsafe.putInt(newObj,subInfo.memOffset,res);
                                 } else if (subInfTzpe == long.class) {
-                                    // inline
-//                                    serializationInfo.setLongValueUnsafe(newObj, subInfo, readFLongUnsafe());
+                                    // inline serializationInfo.setLongValueUnsafe(newObj, subInfo, readFLongUnsafe());
                                     ensureReadAhead(8);
                                     long res = unsafe.getLong(input.buf, input.pos + bufoff);
                                     input.pos += 8;
@@ -800,6 +788,9 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 
     char[] charBuf;
     public String readStringUTF() throws IOException {
+        if ( conf.isPreferSpeed() ) {
+            return readStringUTFSpeed();
+        }
         if ( FSTUtil.unsafe != null && UNSAFE_READ_UTF ) {
             return readStringUTFUnsafe();
         }
@@ -825,57 +816,72 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         return new String(charBuf, 0, chcount);
     }
 
-    private String readStringUTFUnsafe() throws IOException {
-        final Unsafe unsafe = FSTUtil.unsafe;
-        int len = 0;
-
-        if ( conf.isPreferSpeed()) {
-            if ( UNSAFE_READ_CINT )
-                len = readFIntUnsafe();
-            else
-                len = readFInt();
+    public String readStringUTFSpeed() throws IOException {
+        if ( FSTUtil.unsafe != null && UNSAFE_READ_UTF ) {
+            Unsafe unsafe = FSTUtil.unsafe;
+            int len = readFIntUnsafe();
             if (charBuf == null || charBuf.length < len * 2) {
                 charBuf = new char[len * 2];
             }
             ensureReadAhead(len * 2);
-            final byte buf[] = input.buf;
-            long count = input.pos+bufoff;
-            long chcount = choff;
+            byte buf[] = input.buf;
+            int count = input.pos+bufoff;
+            int chcount = choff;
             for (int i = 0; i < len; i++) {
                 char c = unsafe.getChar(buf,count);
                 unsafe.putChar(charBuf,chcount,c);
                 chcount+=chscal;
-                count+=2;
+                count+=chscal;
             }
-            input.pos = (int) (count-bufoff);
-            return new String(charBuf, 0, (int) ((chcount-choff)/chscal));
+            input.pos = count-bufoff;
+            return new String(charBuf, 0, len);
         } else {
-            if ( UNSAFE_READ_CINT )
-                len = readCIntUnsafe();
-            else
-                len = readCInt();
-            if (charBuf == null || charBuf.length < len * 3) {
-                charBuf = new char[len * 3];
+            int len = readFInt();
+            if (charBuf == null || charBuf.length < len * 2) {
+                charBuf = new char[len * 2];
             }
-            ensureReadAhead(len * 3);
-            final byte buf[] = input.buf;
-            long count = input.pos+bufoff;
-            long chcount = choff;
+            ensureReadAhead(len * 2);
+            byte buf[] = input.buf;
+            int count = input.pos;
+            int chcount = 0;
             for (int i = 0; i < len; i++) {
-                char head = (char) ((unsafe.getByte(buf,count++) + 256) &0xff);
-                if (head >= 0 && head < 255) {
-                    unsafe.putChar(charBuf,chcount,head);
-                    chcount+=chscal;
-                } else {
-                    int ch1 = ((unsafe.getByte(buf,count++) + 256) &0xff);
-                    int ch2 = ((unsafe.getByte(buf,count++) + 256) &0xff);
-                    unsafe.putChar(charBuf,chcount,(char) ((ch1 << 8) + (ch2 << 0)));
-                    chcount+=chscal;
-                }
+                int ch2 = ((buf[count++] + 256) &0xff);
+                int ch1 = ((buf[count++] + 256) &0xff);
+                charBuf[chcount++] = (char) ((ch1 << 8) + (ch2 << 0));
             }
-            input.pos = (int) (count-bufoff);
-            return new String(charBuf, 0, (int) ((chcount-choff)/chscal));
+            input.pos = count;
+            return new String(charBuf, 0, chcount);
         }
+    }
+
+    private String readStringUTFUnsafe() throws IOException {
+        final Unsafe unsafe = FSTUtil.unsafe;
+        int len = 0;
+        if ( UNSAFE_READ_CINT )
+            len = readCIntUnsafe();
+        else
+            len = readCInt();
+        if (charBuf == null || charBuf.length < len * 3) {
+            charBuf = new char[len * 3];
+        }
+        ensureReadAhead(len * 3);
+        final byte buf[] = input.buf;
+        long count = input.pos+bufoff;
+        long chcount = choff;
+        for (int i = 0; i < len; i++) {
+            char head = (char) ((unsafe.getByte(buf,count++) + 256) &0xff);
+            if (head >= 0 && head < 255) {
+                unsafe.putChar(charBuf,chcount,head);
+                chcount+=chscal;
+            } else {
+                int ch1 = ((unsafe.getByte(buf,count++) + 256) &0xff);
+                int ch2 = ((unsafe.getByte(buf,count++) + 256) &0xff);
+                unsafe.putChar(charBuf,chcount,(char) ((ch1 << 8) + (ch2 << 0)));
+                chcount+=chscal;
+            }
+        }
+        input.pos = (int) (count-bufoff);
+        return new String(charBuf, 0, (int) ((chcount-choff)/chscal));
     }
 
     protected Object readArray(FSTClazzInfo.FSTFieldInfo referencee) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
@@ -1103,7 +1109,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         objects.clearForRead(); clnames.clear();
         input.ensureCapacity(len);
         input.count = len;
-        System.arraycopy(bytes, off, input.buf, 0, len);
+        System.arraycopy(bytes,off,input.buf,0,len);
     }
 
     public void resetForReuseUseArray(byte bytes[], int off, int len) throws IOException {
@@ -1117,7 +1123,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     public final int readFIntUnsafe() throws IOException {
-        ensureReadAhead(4);
+        ensureReadAhead(8);
         final Unsafe unsafe = FSTUtil.unsafe;
         final byte buf[] = input.buf;
         int res = unsafe.getInt(buf,input.pos+bufoff);
