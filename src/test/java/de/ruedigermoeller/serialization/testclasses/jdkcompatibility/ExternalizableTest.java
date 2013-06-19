@@ -66,7 +66,7 @@ public class ExternalizableTest implements Serializable, HasDescription {
 
     static class NestedExternalTest implements Externalizable {
 
-        String pok = "X";
+        String pok = "Some String";
         int i = 22;
 
         int j = 0;

@@ -972,20 +972,29 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         buffout.pos = count;
     }
 
+    char charBuf[];
     public void writeStringUTFSpeed(String str) throws IOException {
         final int strlen = str.length();
         if ( FSTUtil.unsafe != null && UNSAFE_WRITE_UTF) {
             writeFIntUnsafe(strlen);
             Unsafe unsafe = FSTUtil.unsafe;
-            buffout.ensureFree(strlen*2);
-            int count = buffout.pos+bufoff;
-            for (int i=0; i<strlen; i++) {
-                final char c = str.charAt(i);
-                unsafe.putChar(buffout.buf,count,c);
-                written += chscal;
-                buffout.pos += chscal;
-                count+=chscal;
+            int added = chscal * strlen;
+            buffout.ensureFree(added);
+            if (charBuf == null || charBuf.length < strlen) {
+                charBuf = new char[strlen];
             }
+            str.getChars(0,strlen,charBuf,0);
+            unsafe.copyMemory(charBuf,choff,buffout.buf,buffout.pos+bufoff,strlen*chscal);
+            written += added;
+            buffout.pos += added;
+//            int count = buffout.pos+bufoff;
+//            for (int i=0; i<strlen; i++) {
+//                final char c = str.charAt(i);
+//                unsafe.putChar(buffout.buf,count,c);
+//                written += chscal;
+//                buffout.pos += chscal;
+//                count+=chscal;
+//            }
             return;
         } else {
             writeFInt(strlen);

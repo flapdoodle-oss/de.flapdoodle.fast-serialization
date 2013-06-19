@@ -827,13 +827,14 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             byte buf[] = input.buf;
             int count = input.pos+bufoff;
             int chcount = choff;
-            for (int i = 0; i < len; i++) {
-                char c = unsafe.getChar(buf,count);
-                unsafe.putChar(charBuf,chcount,c);
-                chcount+=chscal;
-                count+=chscal;
-            }
-            input.pos = count-bufoff;
+            unsafe.copyMemory(buf,count,charBuf,chcount,len*chscal);
+//            for (int i = 0; i < len; i++) {
+//                char c = unsafe.getChar(buf,count);
+//                unsafe.putChar(charBuf,chcount,c);
+//                chcount+=chscal;
+//                count+=chscal;
+//            }
+            input.pos += len*chscal;
             return new String(charBuf, 0, len);
         } else {
             int len = readFInt();
