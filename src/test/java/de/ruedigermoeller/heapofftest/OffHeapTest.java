@@ -3,6 +3,7 @@ package de.ruedigermoeller.heapofftest;
 import de.ruedigermoeller.heapoff.FSTOffheap;
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTObjectInput;
+import de.ruedigermoeller.serialization.annotations.Flat;
 import de.ruedigermoeller.serialization.testclasses.HtmlCharter;
 
 import java.io.*;
@@ -197,6 +198,7 @@ public class OffHeapTest {
         charter.openDoc();
 
         conf.registerClass(ExampleOrder.class);
+//        conf.setPreferSpeed(true);
 
         FSTOffheap off = new FSTOffheap(1000,conf);
 

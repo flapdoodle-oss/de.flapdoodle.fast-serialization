@@ -32,8 +32,9 @@ public class TestRunner {
     }
 
     SerTest kryotest = new KryoTest("Kryo 2.2.1");
-    SerTest defFST = new FSTTest("FST (with Unsafe)",true);
-    SerTest defFSTNoUns = new FSTTest("FST (no Unsafe)",false);
+    SerTest speedFST = new FSTTest("FST (with Unsafe, preferSpeed=true)",true,true);
+    SerTest defFST = new FSTTest("FST (with Unsafe)",true,false);
+    SerTest defFSTNoUns = new FSTTest("FST (no Unsafe)",false,false);
     SerTest defser = new JavaSerTest("Java built in");
 //    SerTest gridgain = new GridGainTest("GridGain 4.5"); cannot redistribute ..
 
@@ -53,7 +54,7 @@ public class TestRunner {
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
 //        SerTest tests[] = { defFST, defFSTNoUns, kryotest, defser, gridgain };
-        SerTest tests[] = { defFST, defFSTNoUns, kryotest, defser };
+        SerTest tests[] = { speedFST, defFST, defFSTNoUns, kryotest, defser };
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
             test.run(toSer);
@@ -113,7 +114,7 @@ public class TestRunner {
         runner.charter.text("<i>intel i7 3770K 3,5 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
-        SerTest.WarmUP = 20000; SerTest.Run = SerTest.WarmUP+1;
+        SerTest.WarmUP = 10000; SerTest.Run = SerTest.WarmUP+1;
         runner.runAll(FrequentPrimitives.getArray(200));
         runner.runAll(new StringPerformance());
         runner.runAll(new FrequentCollections());

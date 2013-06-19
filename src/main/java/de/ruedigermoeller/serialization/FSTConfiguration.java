@@ -51,6 +51,7 @@ public final class FSTConfiguration {
     HashMap<Class,List<SoftReference>> cachedObjects = new HashMap<Class, List<SoftReference>>(97);
     FSTClazzNameRegistry classRegistry = new FSTClazzNameRegistry(null, this);
     boolean isCrossLanguage = false;
+    boolean preferSpeed = true;
 
     public static Integer intObjects[];
     {
@@ -196,6 +197,11 @@ public final class FSTConfiguration {
         isCrossLanguage = crossLanguage;
     }
 
+    /**
+     * reuse heavy weight objects. If a FSTStream is clsoed, objects are returned and can be reused by new stream instances.
+     * the objects are held in soft references, so there should be no memory issues
+     * @param cachedObs
+     */
     public void returnObject( Object ... cachedObs ) {
         synchronized (cachedObjects) {
             for (int i = 0; i < cachedObs.length; i++) {
@@ -208,6 +214,20 @@ public final class FSTConfiguration {
                 li.add(new SoftReference(cached));
             }
         }
+    }
+
+    public boolean isPreferSpeed() {
+        return preferSpeed;
+    }
+
+    /**
+     * this options lets FST favour speed of encoding over size of the encoded object.
+     * Warning: this option alters the format of the written stream, so both reader and writer should have
+     * the same setting, else exceptions will occur
+     * @param preferSpeed
+     */
+    public void setPreferSpeed(boolean preferSpeed) {
+        this.preferSpeed = preferSpeed;
     }
 
     /**

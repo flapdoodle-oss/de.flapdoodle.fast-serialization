@@ -42,9 +42,10 @@ public class FSTTest extends SerTest {
         defconf.getCLInfoRegistry().setIgnoreAnnotations(true);
     }
 
-    public FSTTest(String desc,boolean uns) {
+    public FSTTest(String desc,boolean uns,boolean preferSpeed) {
         super(desc);
         this.uns = uns;
+        defconf.setPreferSpeed(preferSpeed);
     }
 
     @Override
