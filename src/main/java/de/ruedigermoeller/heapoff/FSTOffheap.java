@@ -223,7 +223,7 @@ public class FSTOffheap {
             res.lock = lock;
         }
 
-        public ByteBufferEntry getEntry(int handle) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+        public ByteBufferEntry getEntry(int handle) throws Exception {
             currentEntry.length = buffer.getInt(handle);
             currentEntry.prevPosition = buffer.getInt(handle+4);
             byte[] buf = getTmpBuf(currentEntry.length);
@@ -235,12 +235,12 @@ public class FSTOffheap {
             return (ByteBufferEntry) in.readObject(ByteBufferEntry.class);
         }
 
-        public Object getObject( int handle ) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+        public Object getObject( int handle ) throws Exception {
             in.setConditionalCallback(null);
             return getEntry(handle).content;
         }
 
-        public Object getTag( int handle ) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+        public Object getTag( int handle ) throws Exception {
             in.setConditionalCallback(alwaysSkip);
             return getEntry(handle).tag;
         }

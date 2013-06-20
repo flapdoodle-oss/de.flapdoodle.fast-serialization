@@ -214,7 +214,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         }
     }
 
-    public Object readObject(Class... possibles) throws ClassNotFoundException, IOException, IllegalAccessException, InstantiationException {
+    public Object readObject(Class... possibles) throws Exception {
         if (curDepth != 0) {
             //System.out.println("Do not call this method from inside serialization");
         }

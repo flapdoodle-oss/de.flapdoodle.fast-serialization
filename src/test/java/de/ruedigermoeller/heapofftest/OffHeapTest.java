@@ -203,7 +203,7 @@ public class OffHeapTest {
         charter.closeChart();
     }
 
-    private static void simpleTest(FSTOffheap off) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+    private static void simpleTest(FSTOffheap off) throws Exception {
         FSTOffheap.OffHeapAccess access = off.createAccess();
         // simple test:
         Object[] toSave = {
@@ -238,7 +238,7 @@ public class OffHeapTest {
             System.out.println("0 BUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUG !!");
     }
 
-    public static void main( String arg[]) throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException, InterruptedException, ExecutionException {
+    public static void main( String arg[]) throws Exception {
         HtmlCharter charter = new HtmlCharter("./offheap.html");
         charter.openDoc();
 

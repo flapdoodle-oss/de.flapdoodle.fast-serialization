@@ -35,4 +35,11 @@ public class ObjectOrientedInt implements Serializable {
         return value;
     }
 
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
 }

@@ -47,7 +47,7 @@ public class OptimizationExample implements Serializable {
 
     }
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public static void main(String[] args) throws Exception {
 //        FSTConfiguration conf = FSTConfiguration.createMinimalConfiguration();
         FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
         OptimizationExample ex = new OptimizationExample();

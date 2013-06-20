@@ -281,7 +281,7 @@ public final class FSTConfiguration {
      * give ~500.000 to 1.000.000 for small objects in order to get accurate results
      * for large objects you can decrease the iterations (give at least 10000)
      */
-    public int calcObjectReadTimeNotAUtility( int iterations, Object obj ) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public int calcObjectReadTimeNotAUtility( int iterations, Object obj ) throws Exception {
         ByteArrayOutputStream bout = new ByteArrayOutputStream(10000);
         FSTObjectOutput ou = new FSTObjectOutput(bout,this);
         ou.writeObject(obj, obj.getClass());
@@ -533,9 +533,27 @@ public final class FSTConfiguration {
     }
 
     /**
+     * take the given array as input. the array is NOT copied
+     * @param arr
+     * @param off
+     * @param len
+     * @return
+     */
+    public FSTObjectInput getObjectInput( byte arr[], int off, int len ) {
+        FSTObjectInput fstObjectInput = input.get();
+        try {
+            fstObjectInput.resetForReuseUseArray(arr,off,len);
+            return fstObjectInput;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
      * utility for thread safety and reuse. Do not close the resulting stream. However you should close
      * the given OutputStream 'out'
-     * @param out
+     * @param out - can be null (temp bytearrays stream is created then)
      * @return
      */
     public FSTObjectOutput getObjectOutput(OutputStream out) {

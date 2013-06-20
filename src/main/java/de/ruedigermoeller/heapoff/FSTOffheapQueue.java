@@ -34,6 +34,9 @@ import java.util.ArrayList;
 import java.util.concurrent.*;
 
 /**
+ *
+ * UNRELEASED UNTESTED !
+ *
  * a queue based on off heap memory. The advantage is, that objects are serialized at the time you add them to the queue.
  * This has several advantages (Client/Server related)
  *  - the size of the queue is defined in memory size, not number of objects (no risk to get OOM)

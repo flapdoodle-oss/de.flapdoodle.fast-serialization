@@ -123,7 +123,7 @@ public class Primitives extends PrivatePrimitive implements Serializable, HasDes
         return res;
     }
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public static void main(String[] args) throws Exception {
 //        FSTConfiguration conf = FSTConfiguration.createMinimalConfiguration();
         FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
         Primitives prim = new Primitives(4);

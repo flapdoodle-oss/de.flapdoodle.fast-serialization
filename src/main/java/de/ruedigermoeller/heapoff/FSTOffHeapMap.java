@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.util.*;
 
 /**
+ * UNRELEASED UNTESTED !
+ *
  * a simple Map implementation based on OffHeapBuffer. Access is not threadsafe and the offheapbuffer
  * is not grown automatically when the limit is reached. Note that every put adds a new Entry to the OffHeapBuffer,
  * so its wise to check using contains before putting an Object (except you explicitely want to overwrite the
@@ -94,13 +96,7 @@ public class FSTOffHeapMap<K,V> extends AbstractMap<K,V> {
                 return null;
             }
             return (V) res;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
