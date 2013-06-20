@@ -24,6 +24,15 @@ import de.ruedigermoeller.serialization.FSTConfiguration;
  * Time: 20:27
  * To change this template use File | Settings | File Templates.
  */
+
+/**
+ * saves an object graph into a byte array. It does not save that much memory in terms of heap usage,
+ * however GC pauses will reduce massively becaus FULL GC with 1GB of byte[] is much faster than
+ * a full GC on say 50 million objects. The objects saved should have some complexity (e.g. several strings
+ * and sub-objects (e.g. value types). Putting plain objects consisting mainly of primitive types will not pay off.
+ *
+ * @param <T>
+ */
 public class FST2ByteCompressed<T> extends FSTCompressed<T> {
 
     FSTConfiguration conf;

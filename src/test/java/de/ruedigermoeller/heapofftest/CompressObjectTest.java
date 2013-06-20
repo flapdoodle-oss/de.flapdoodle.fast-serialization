@@ -54,8 +54,8 @@ public class CompressObjectTest {
             for ( int i = 0; i < 10000000; i++) {
                 SimpleOrder obj = SimpleOrder.generateOrder(i);
                 obj.getOrderQty().setValue(i);
-//                list.add(comp.compress2Byte(obj));
-                list1.add(obj);
+                list.add(comp.compress2Byte(obj));
+//                list1.add(obj);
             }
 
             System.out.println("finished add");
