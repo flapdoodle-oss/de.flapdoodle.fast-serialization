@@ -1,8 +1,7 @@
 package de.ruedigermoeller.heapofftest;
 
 import com.software.util.DeepEquals;
-import de.ruedigermoeller.heapoff.FSTOffheap;
-import de.ruedigermoeller.serialization.FSTConfiguration;
+import de.ruedigermoeller.heapoff.FSTByteBufferOffheap;
 import de.ruedigermoeller.serialization.FSTObjectInput;
 import de.ruedigermoeller.serialization.annotations.Flat;
 import de.ruedigermoeller.serialization.testclasses.HtmlCharter;
@@ -13,7 +12,6 @@ import java.lang.reflect.Field;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -42,9 +40,9 @@ import java.util.concurrent.ExecutionException;
 public class OffHeapTest {
 
 
-    private static void search(FSTOffheap off, final Object toSearch, int[] count) {
+    private static void search(FSTByteBufferOffheap off, final Object toSearch, int[] count) {
         long tim = System.currentTimeMillis();
-        FSTOffheap.OffHeapIterator it = off.iterator();
+        FSTByteBufferOffheap.OffHeapIterator it = off.iterator();
         int counter = 0;
         try {
             while( it.hasNext() ) {
@@ -52,7 +50,7 @@ public class OffHeapTest {
                 Object tag = it.nextEntry(new FSTObjectInput.ConditionalCallback() {
                     @Override
                     public boolean shouldSkip(Object halfDecoded, int streamPosition, Field field) {
-                        FSTOffheap.ByteBufferEntry be = (FSTOffheap.ByteBufferEntry) halfDecoded;
+                        FSTByteBufferOffheap.ByteBufferEntry be = (FSTByteBufferOffheap.ByteBufferEntry) halfDecoded;
                         return !toSearch.equals(be.tag);
                     }
                 });
@@ -89,11 +87,11 @@ public class OffHeapTest {
         @Flat Date validity = new Date();
     }
 
-    public static void benchOffHeap(boolean header, final FSTOffheap off, HtmlCharter charter, String tit) throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+    public static void benchOffHeap(boolean header, final FSTByteBufferOffheap off, HtmlCharter charter, String tit) throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 
         final ExampleOrder or = new ExampleOrder();
         final int iters = 4000000;
-        charter.openChart(tit+" FSTOffheap core operations performance (=> is better)");
+        charter.openChart(tit+" FSTByteBufferOffheap core operations performance (=> is better)");
 
         if ( header ) {
             charter.text("<br><br>The following instance is added 4.000.000 times to the offheap. Each object added to the heap can have a tag. The tag can be used " +
@@ -114,7 +112,7 @@ public class OffHeapTest {
                     "</code></pre>" +
                     "thereafter the offheap is iterated (single/multithreaded) by tag and by element.<br>");
         }
-        FSTOffheap.OffHeapAccess acc = off.createAccess();
+        FSTByteBufferOffheap.OffHeapAccess acc = off.createAccess();
         long tim = System.currentTimeMillis();
         final Integer MYTAG = 999;
 
@@ -142,7 +140,7 @@ public class OffHeapTest {
 
 
         tim = System.currentTimeMillis();
-        FSTOffheap.OffHeapIterator it = off.iterator();
+        FSTByteBufferOffheap.OffHeapIterator it = off.iterator();
         while( it.hasNext() ) {
             it.nextEntry(null);
         }
@@ -177,7 +175,7 @@ public class OffHeapTest {
         for ( int i = 0; i < threads; i++) {
             new Thread("search "+i) {
                 public void run() {
-                    FSTOffheap.OffHeapIterator it = off.iterator();
+                    FSTByteBufferOffheap.OffHeapIterator it = off.iterator();
                     while( it.hasNext() ) {
                         it.nextEntry(null);
                     }
@@ -203,8 +201,8 @@ public class OffHeapTest {
         charter.closeChart();
     }
 
-    private static void simpleTest(FSTOffheap off) throws Exception {
-        FSTOffheap.OffHeapAccess access = off.createAccess();
+    private static void simpleTest(FSTByteBufferOffheap off) throws Exception {
+        FSTByteBufferOffheap.OffHeapAccess access = off.createAccess();
         // simple test:
         Object[] toSave = {
                 new Object[] {Trader.generateTrader(111, true), new ExampleOrder()},
@@ -225,7 +223,7 @@ public class OffHeapTest {
             }
         }
         int count = loaded.length-1;
-        FSTOffheap.OffHeapIterator iterator = off.iterator();
+        FSTByteBufferOffheap.OffHeapIterator iterator = off.iterator();
         while( iterator.hasNext() ) {
             Object atag = iterator.nextEntry(null);
             Object content = iterator.getCurrentEntry();
@@ -244,7 +242,7 @@ public class OffHeapTest {
 
         System.setProperty("fst.unsafe", "true");
 
-        FSTOffheap off = new FSTOffheap(1000);
+        FSTByteBufferOffheap off = new FSTByteBufferOffheap(1000);
         off.getConf().registerClass(ExampleOrder.class);
 
         simpleTest(off);
@@ -260,7 +258,7 @@ public class OffHeapTest {
         randomFile.setLength(1000*1000*1000);
         FileChannel channel = randomFile.getChannel();
         MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 1000 * 1000 * 1000);
-        FSTOffheap off1 = new FSTOffheap(buf);
+        FSTByteBufferOffheap off1 = new FSTByteBufferOffheap(buf);
         off1.getConf().registerClass(ExampleOrder.class);
         benchOffHeap(false, off1, charter, "Memory mapped File:");
         randomFile.close();

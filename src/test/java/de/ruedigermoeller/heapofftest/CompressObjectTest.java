@@ -5,7 +5,13 @@ import de.ruedigermoeller.heapoff.FSTCompressor;
 import de.ruedigermoeller.serialization.testclasses.enterprise.SimpleOrder;
 import de.ruedigermoeller.serialization.testclasses.enterprise.Trader;
 
+import javax.management.Notification;
+import javax.management.NotificationEmitter;
+import javax.management.NotificationListener;
+import javax.management.openmbean.CompositeData;
+import java.lang.management.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -32,9 +38,97 @@ import java.util.ArrayList;
 public class CompressObjectTest {
 
     static Object ref;
+    static void printGCStats() {
+        long totalGarbageCollections = 0;
+        long garbageCollectionTime = 0;
 
-    public static void main(String arg[]) {
+        for(GarbageCollectorMXBean gc :
+                ManagementFactory.getGarbageCollectorMXBeans()) {
+
+            long count = gc.getCollectionCount();
+
+            if(count >= 0) {
+                totalGarbageCollections += count;
+            }
+
+            long time = gc.getCollectionTime();
+
+            if(time >= 0) {
+                garbageCollectionTime += time;
+            }
+        }
+
+        System.out.println("Total Garbage Collections: "
+                + totalGarbageCollections);
+        System.out.println("Total Garbage Collection Time (ms): "
+                + garbageCollectionTime);
+    }
+
+    static void registerGCListener() {
+            ((NotificationEmitter) ManagementFactory.getMemoryMXBean()).addNotificationListener(new NotificationListener() {
+                @Override
+                public void handleNotification(Notification notification, Object handback) {
+                    CompositeData cd = (CompositeData) notification.getUserData();
+                    MemoryNotificationInfo info = MemoryNotificationInfo.from(cd);
+                    printGCStats();
+                }
+            }, null, null);
+            List<MemoryPoolMXBean> beans = ManagementFactory.getMemoryPoolMXBeans();
+
+            MemoryPoolMXBean maxHeap = null;
+            long maxSiz = 0;
+            for (int i = 0; i < beans.size(); i++) {
+                MemoryPoolMXBean memoryPoolMXBean = beans.get(i);
+                if (memoryPoolMXBean.getType() == MemoryType.HEAP) {
+                    long siz = memoryPoolMXBean.getUsage().getMax();
+                    System.out.println("Heap found: " + memoryPoolMXBean.getName() + " " + memoryPoolMXBean.getType());
+                    if (siz > maxSiz) {
+                        maxSiz = siz;
+                        maxHeap = memoryPoolMXBean;
+                    }
+                }
+            }
+
+            if (maxHeap == null) {
+                System.out.println("no heap found");
+            } else {
+                maxHeap.setCollectionUsageThreshold(1000l);
+            }
+    }
+
+    public static void testExampleOrder() {
         FSTCompressor comp = new FSTCompressor();
+        registerGCListener();
+
+        try {
+            System.out.println("start");
+
+            ArrayList<FSTCompressed<OffHeapTest.ExampleOrder>> list = new ArrayList<FSTCompressed<OffHeapTest.ExampleOrder>>();
+
+            ArrayList list1 = new ArrayList();
+            ref = list1;
+
+            for ( int i = 0; i < 10000000; i++) {
+                OffHeapTest.ExampleOrder obj = new OffHeapTest.ExampleOrder();
+//                list.add(comp.compress2Byte(obj));
+                list1.add(obj);
+            }
+
+            System.out.println("finished add");
+
+            while( true ) {
+                System.gc();
+                Thread.sleep(1000);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+    public static void testSimple() {
+        FSTCompressor comp = new FSTCompressor();
+        registerGCListener();
 
         try {
             FSTCompressed<OffHeapTest.ExampleOrder> order = comp.compress2Byte(new OffHeapTest.ExampleOrder());
@@ -60,30 +154,20 @@ public class CompressObjectTest {
 
             System.out.println("finished add");
 
-            int sum = 0;
-            int sum1 = 0;
-            for ( int i = 0; i < list.size(); i++) {
-                sum += list.get(i).get().getOrderQty().getValue();
-                sum1 += i;
+            while( true ) {
+                System.gc();
+                Thread.sleep(1000);
             }
-            System.out.println("sums "+sum+" "+sum1);
-            System.out.println("finished iter 0");
-
-            Thread.sleep(10000);
-            sum = 0;
-            sum1 = 0;
-            for ( int i = 0; i < list.size(); i++) {
-                sum += list.get(i).get().getOrderQty().getValue();
-                sum1 += i;
-            }
-            System.out.println("sums " + sum + " " + sum1);
-            System.out.println("finished iter 1");
-
-            Thread.sleep(10000000);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
     }
+
+    public static void main(String arg[]) {
+        testExampleOrder();
+    }
+
+
 }

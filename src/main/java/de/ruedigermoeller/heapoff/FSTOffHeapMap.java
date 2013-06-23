@@ -45,19 +45,23 @@ import java.util.*;
 public class FSTOffHeapMap<K,V> extends AbstractMap<K,V> {
 
     HashMap<K,Integer> hmap;
-    FSTOffheap heap;
-    FSTOffheap.OffHeapAccess access;
+    FSTByteBufferOffheap heap;
+    FSTByteBufferOffheap.OffHeapAccess access;
 
-    public FSTOffHeapMap(FSTOffheap heap) {
+    public FSTOffHeapMap(FSTByteBufferOffheap heap) {
         this.heap = heap;
         hmap = new HashMap<K, Integer>();
         access = heap.createAccess();
     }
 
-    public FSTOffHeapMap(int siz, FSTConfiguration conf) throws IOException {
-        heap = new FSTOffheap(siz,conf);
+    public FSTOffHeapMap(int sizeMB) throws IOException {
+        heap = new FSTByteBufferOffheap(sizeMB);
         hmap = new HashMap<K, Integer>();
         access = heap.createAccess();
+    }
+
+    public FSTConfiguration getConf() {
+        return getHeap().getConf();
     }
 
     @Override
@@ -211,12 +215,8 @@ public class FSTOffHeapMap<K,V> extends AbstractMap<K,V> {
     // additions
     ///////////////////////////////////////////////////////
 
-    public FSTOffheap getHeap() {
+    public FSTByteBufferOffheap getHeap() {
         return heap;
-    }
-
-    public int getHeapSize() {
-        return getHeap().currPosition;
     }
 
 

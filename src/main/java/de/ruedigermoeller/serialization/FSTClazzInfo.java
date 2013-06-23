@@ -50,11 +50,15 @@ public final class FSTClazzInfo {
     FSTFieldInfo fieldInfo[]; // serializable fields
     Class clazz;
     Constructor cons;
+    int structSize = 0;
 
     FSTClazzInfoRegistry reg;
 
     public FSTClazzInfo(Class clazz, FSTClazzInfoRegistry infoRegistry, boolean ignoreAnnotations) {
         this.clazz = clazz;
+        if ( clazz.getName().indexOf("TestStruct") >= 0 ) {
+            System.out.println("pok");
+        }
         reg = infoRegistry;
         ignoreAnn = ignoreAnnotations;
         createFields(clazz);
@@ -135,17 +139,23 @@ public final class FSTClazzInfo {
     }
 
     public final FSTFieldInfo getFieldInfo(String name, Class declaringClass) {
+        if ( declaringClass == null ) {
+            return fieldMap.get(name);
+        }
         return fieldMap.get(declaringClass.getName() + "#" + name);
     }
 
     private void createFields(Class c) {
-        if (c.isInterface()||c.isPrimitive()) {
+        if (c.isInterface() || c.isPrimitive()) {
             return;
         }
         List<Field> fields = getAllFields(c, null);
+        fieldInfo = new FSTFieldInfo[fields.size()];
         for (int i = 0; i < fields.size(); i++) {
             Field field = fields.get(i);
-            fieldMap.put(field.getDeclaringClass().getName() + "#" + field.getName(), createFieldInfo(field));
+            fieldInfo[i] = createFieldInfo(field);
+            fieldMap.put(field.getDeclaringClass().getName() + "#" + field.getName(), fieldInfo[i]);
+            fieldMap.put(field.getName(), fieldInfo[i]);
         }
 
         // comp info sort order
@@ -217,21 +227,21 @@ public final class FSTClazzInfo {
             @Override
             public int compare(FSTFieldInfo o1, FSTFieldInfo o2) {
                 int res = 0;
-                if ( o1.getType() == boolean.class && o2.getType() != boolean.class ) {
+                if (o1.getType() == boolean.class && o2.getType() != boolean.class) {
                     return -1;
                 }
-                if ( o1.getType() != boolean.class && o2.getType() == boolean.class ) {
+                if (o1.getType() != boolean.class && o2.getType() == boolean.class) {
                     return 1;
                 }
-                if ( o1.isConditional() && ! o2.isConditional() ) {
+                if (o1.isConditional() && !o2.isConditional()) {
                     res = 1;
-                } else if ( ! o1.isConditional() && o2.isConditional() ) {
+                } else if (!o1.isConditional() && o2.isConditional()) {
                     res = -1;
-                } else if ( o1.isIntegral() && !o2.isIntegral() )
+                } else if (o1.isIntegral() && !o2.isIntegral())
                     res = -1;
-                if ( res == 0 )
-                    res = (int) (o1.getMemOffset()-o2.getMemOffset());
-                if ( res == 0 )
+                if (res == 0)
+                    res = (int) (o1.getMemOffset() - o2.getMemOffset());
+                if (res == 0)
                     res = o1.getType().getSimpleName().compareTo(o2.getType().getSimpleName());
                 if (res == 0)
                     res = o1.getField().getName().compareTo(o2.getField().getName());
@@ -241,13 +251,14 @@ public final class FSTClazzInfo {
                 return res;
             }
         };
-        fieldInfo = new FSTFieldInfo[fields.size()];
-        for (int i = 0; i < fields.size(); i++) {
-            Field field = fields.get(i);
-            fieldInfo[i] = createFieldInfo(field);
-            fieldMap.put(field.getDeclaringClass().getName() + "#" + field.getName(), fieldInfo[i]);
-        }
         Arrays.sort(fieldInfo, comp);
+        int off = 0;
+        for (int i = 0; i < fieldInfo.length; i++) {
+            FSTFieldInfo fstFieldInfo = fieldInfo[i];
+            fstFieldInfo.setStructOffset(off);
+            off += fstFieldInfo.getStructSize();
+        }
+        structSize = off;
         writeReplaceMethod = FSTUtil.findDerivedMethod(
                 c, "writeReplace", null, Object.class);
         readResolveMethod = FSTUtil.findDerivedMethod(
@@ -258,6 +269,10 @@ public final class FSTClazzInfo {
         if (readResolveMethod != null) {
             readResolveMethod.setAccessible(true);
         }
+    }
+
+    public int getStructSize() {
+        return structSize;
     }
 
     public boolean useCompatibleMode() {
@@ -444,12 +459,11 @@ public final class FSTClazzInfo {
         boolean thin = false;
         boolean isCompressed = false;
         boolean isConditional = false;
-
-
         boolean integral = false;
         boolean isArr = false;
         int integralType;
         int memOffset = -1;
+        int structOffset = 0;
         Field field;
 
         public FSTFieldInfo(Class[] possibleClasses, Field fi, boolean ignoreAnnotations) {
@@ -492,6 +506,14 @@ public final class FSTClazzInfo {
                 }
             }
 
+        }
+
+        public int getStructOffset() {
+            return structOffset;
+        }
+
+        public void setStructOffset(int structOffset) {
+            this.structOffset = structOffset;
         }
 
         public String[] getOneOf() {
@@ -611,6 +633,9 @@ public final class FSTClazzInfo {
             return type.isPrimitive();
         }
 
+        /**
+         * @return wether this is primitive or an array of primitives
+         */
         public boolean isIntegral() {
             return integral;
         }
@@ -624,6 +649,32 @@ public final class FSTClazzInfo {
         }
         public boolean isFlat() {
             return flat;
+        }
+
+        public int getComponentStructSize() {
+            if ( arrayType == boolean.class || arrayType == byte.class )
+                return 1;
+            if ( arrayType == char.class || arrayType == short.class )
+                return 2;
+            if ( arrayType == int.class || arrayType == float.class )
+                return 4;
+            if ( arrayType == long.class || arrayType == double.class )
+                return 8;
+            return 0; // object => cannot decide
+        }
+
+        public int getStructSize() {
+            if ( type == boolean.class || type == byte.class )
+                return 1;
+            if ( type == char.class || type == short.class )
+                return 2;
+            if ( type == int.class || type == float.class )
+                return 4;
+            if ( type == long.class || type == double.class )
+                return 8;
+            if ( isArray() )
+                return 8; // pointer+length
+            return 4;
         }
     }
 

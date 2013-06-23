@@ -33,18 +33,16 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Core offheap implementation. The offheap is initialized with a fixed size. Multi threaded access is granted using
  * createAccess(). Concurrent read operations perform ok'ish (low blocked time), concurrent write is possible but threads probably will be blocked
  * often.
  *
- * Objects added to the heap have to implement Serializable !!
+ * Objects added to the heap have to implement Serializable.
  *
  * Use this as a base for higher level collection implementation. In order to get dynamically growing offheaps, consider
- * writing a collection wrapper managing ~1GB slices of FSTOffheap objects.
+ * writing a collection wrapper managing ~1GB slices of FSTByteBufferOffheap objects.
  *
  * Each object can be stored with a 'tag'. When iterating the off heap, it is possible to only read the Tag Object to improve
  * performance. E.g. if you write a lot of bloaty 'Person' objects, you'd like to add {name, firstname} as a tag so you can search
@@ -58,7 +56,7 @@ import java.util.concurrent.Executors;
  * Note there is no 'overwrite' operation. You only can add objects, so there is the need to 'reorganize' a heap buffer from
  * time to time.
  */
-public class FSTOffheap {
+public class FSTByteBufferOffheap {
 
     static String DUMMY = "FSTDUMMY";
     public static final int HEADER_SIZE = 8;
@@ -76,7 +74,7 @@ public class FSTOffheap {
         }
     };
 
-    public FSTOffheap(int sizeMB) throws IOException {
+    public FSTByteBufferOffheap(int sizeMB) throws IOException {
         this(sizeMB, null);
     }
 
@@ -86,11 +84,11 @@ public class FSTOffheap {
      * @param conf
      * @throws IOException
      */
-    public FSTOffheap(int sizeMB, FSTConfiguration conf) throws IOException {
+    public FSTByteBufferOffheap(int sizeMB, FSTConfiguration conf) throws IOException {
         this(ByteBuffer.allocateDirect(sizeMB * 1000 * 1000), conf);
     }
 
-    public FSTOffheap(ByteBuffer buffer) throws IOException {
+    public FSTByteBufferOffheap(ByteBuffer buffer) throws IOException {
         this(buffer,null);
     }
     /**
@@ -99,7 +97,7 @@ public class FSTOffheap {
      * @param conf
      * @throws IOException
      */
-    public FSTOffheap(ByteBuffer buffer, FSTConfiguration conf) throws IOException {
+    public FSTByteBufferOffheap(ByteBuffer buffer, FSTConfiguration conf) throws IOException {
         this.buffer = buffer;
         if ( conf == null ) {
             conf = FSTConfiguration.createDefaultConfiguration();
@@ -139,6 +137,13 @@ public class FSTOffheap {
 
     public int getLastPosition() {
         return lastPosition;
+    }
+
+    /**
+     * @return
+     */
+    public int getSize() {
+        return currPosition;
     }
 
     public OffHeapIterator iterator() {

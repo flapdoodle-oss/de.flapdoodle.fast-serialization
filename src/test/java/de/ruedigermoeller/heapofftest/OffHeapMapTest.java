@@ -31,13 +31,11 @@ import java.io.IOException;
  */
 public class OffHeapMapTest {
 
-    static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
-
     public static void benchMap(HtmlCharter charter) throws IOException {
 
-        conf.registerClass(OffHeapTest.ExampleOrder.class);
 
-        FSTOffHeapMap<Integer,OffHeapTest.ExampleOrder> map = new FSTOffHeapMap<Integer, OffHeapTest.ExampleOrder>(1000, conf);
+        FSTOffHeapMap<Integer,OffHeapTest.ExampleOrder> map = new FSTOffHeapMap<Integer, OffHeapTest.ExampleOrder>(1000);
+        map.getConf().registerClass(OffHeapTest.ExampleOrder.class);
         OffHeapTest.ExampleOrder o = new OffHeapTest.ExampleOrder();
         int numelem = 4000000;
         long tim = System.currentTimeMillis();
@@ -45,7 +43,7 @@ public class OffHeapMapTest {
             map.put( i, o);
         }
         tim = System.currentTimeMillis()-tim;
-        charter.openChart("Off Heap Map (FSTOffHeapMap) size:"+map.getHeapSize()/1000/1000+" MB "+numelem+" ExampleOrder's (=> is better)");
+        charter.openChart("Off Heap Map (FSTOffHeapMap) size:"+map.getHeap().getSize()/1000/1000+" MB "+numelem+" ExampleOrder's (=> is better)");
         charter.chartBar("put ExampleOrder objects/second ", (int)((numelem/tim)*1000), 10000, "#a0a0ff");
 
 
@@ -66,7 +64,9 @@ public class OffHeapMapTest {
 
         charter.closeChart();
 
-        FSTOffHeapMap<String,SmallThing> map1 = new FSTOffHeapMap<String, SmallThing>(1000, conf);
+        FSTOffHeapMap<String,SmallThing> map1 = new FSTOffHeapMap<String, SmallThing>(1000);
+        map1.getConf().registerClass(OffHeapTest.ExampleOrder.class);
+
         SmallThing p = new SmallThing();
         numelem = 8000000;
         tim = System.currentTimeMillis();
@@ -74,7 +74,7 @@ public class OffHeapMapTest {
             map1.put("" + i, p);
         }
         tim = System.currentTimeMillis()-tim;
-        charter.openChart("Off Heap Map (FSTOffHeapMap) size:"+map1.getHeapSize()/1000/1000+" MB "+numelem+" SmallThing's (=> is better)");
+        charter.openChart("Off Heap Map (FSTOffHeapMap) size:"+map1.getHeap().getSize()/1000/1000+" MB "+numelem+" SmallThing's (=> is better)");
         charter.chartBar("put SmallThing objects/second ", (int)((numelem/tim)*1000), 10000, "#a0a0ff");
 
 

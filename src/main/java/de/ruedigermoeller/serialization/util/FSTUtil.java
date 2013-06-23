@@ -46,7 +46,44 @@ public class FSTUtil {
         if ( System.getProperty("fst.unsafe","false").equals("true") ) {
             FSTUtil.unsafe = unFlaggedUnsafe;
         }
+        if ( unFlaggedUnsafe != null ) {
+            bufoff = unFlaggedUnsafe.arrayBaseOffset(byte[].class);
+            intoff = unFlaggedUnsafe.arrayBaseOffset(int[].class);
+            longoff = unFlaggedUnsafe.arrayBaseOffset(long[].class);
+            longscal = unFlaggedUnsafe.arrayIndexScale(long[].class);
+            intscal = unFlaggedUnsafe.arrayIndexScale(int[].class);
+            chscal = unFlaggedUnsafe.arrayIndexScale(char[].class);
+            choff = unFlaggedUnsafe.arrayBaseOffset(char[].class);
+            doubleoff = unFlaggedUnsafe.arrayBaseOffset(double[].class);
+            doublescal = unFlaggedUnsafe.arrayIndexScale(double[].class);
+            floatoff = unFlaggedUnsafe.arrayBaseOffset(float[].class);
+            floatscal = unFlaggedUnsafe.arrayIndexScale(float[].class);
+        } else {
+            longoff = 0;
+            longscal = 0;
+            bufoff = 0;
+            intoff = 0;
+            intscal = 0;
+            choff = 0;
+            chscal = 0;
+            doublescal = 0;
+            doubleoff = 0;
+            floatscal = 0;
+            floatoff = 0;
+        }
     }
+
+    public final static int bufoff;
+    public final static int choff;
+    public final static int intoff;
+    public final static int longoff;
+    public final static int doubleoff;
+    public final static int floatoff;
+    public final static int intscal;
+    public final static int longscal;
+    public final static int chscal;
+    public final static int floatscal;
+    public final static int doublescal;
 
     static void clear(int[] arr) {
         int count = 0;
