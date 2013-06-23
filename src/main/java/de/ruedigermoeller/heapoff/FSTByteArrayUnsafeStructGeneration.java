@@ -48,8 +48,12 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     }
 
     @Override
-    public void defineStructFields(ClassPool pool, CtClass newClz, FSTClazzInfo clazzInfo) {
+    public void defineStructFields(FSTStructFactory fac, ClassPool pool, CtClass newClz, FSTClazzInfo clazzInfo) {
         try {
+            CtField facf = new CtField(pool.get(FSTStructFactory.class.getName()),"___fac",newClz);
+            facf.setModifiers(AccessFlag.PUBLIC);
+            newClz.addField(facf);
+
             CtField offs = new CtField(pool.get(long.class.getName()),"___offset",newClz);
             offs.setModifiers(AccessFlag.PUBLIC);
             newClz.addField(offs);
@@ -194,6 +198,9 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
             } else
             if ( type == CtPrimitiveType.doubleType ) {
                 f.replace("$_ = ___unsafe.getDouble(___bytes,"+off+"+___offset);");
+            } else { // object ref
+                f.replace("{ $_ = ("+f.getField().getType().getName()+")___fac.getStructWrapper(___bytes,"+off+"); }");
+//                f.replace("{ Object _o = ___unsafe.toString(); $_ = _o; }");
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex);

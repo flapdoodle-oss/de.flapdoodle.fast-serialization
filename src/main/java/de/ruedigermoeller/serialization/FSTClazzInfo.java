@@ -56,9 +56,6 @@ public final class FSTClazzInfo {
 
     public FSTClazzInfo(Class clazz, FSTClazzInfoRegistry infoRegistry, boolean ignoreAnnotations) {
         this.clazz = clazz;
-        if ( clazz.getName().indexOf("TestStruct") >= 0 ) {
-            System.out.println("pok");
-        }
         reg = infoRegistry;
         ignoreAnn = ignoreAnnotations;
         createFields(clazz);
@@ -252,7 +249,7 @@ public final class FSTClazzInfo {
             }
         };
         Arrays.sort(fieldInfo, comp);
-        int off = 0;
+        int off = 4; // clz header
         for (int i = 0; i < fieldInfo.length; i++) {
             FSTFieldInfo fstFieldInfo = fieldInfo[i];
             fstFieldInfo.setStructOffset(off);

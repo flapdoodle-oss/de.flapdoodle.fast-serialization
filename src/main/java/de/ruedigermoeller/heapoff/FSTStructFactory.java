@@ -54,7 +54,7 @@ public class FSTStructFactory {
         //newClz.setInterfaces(new CtClass[]{pool.get(Externalizable.class.getName()), pool.get(FGRemoteObject.class.getName())});
 
         final FSTClazzInfo clInfo = conf.getClassInfo(clazz);
-        structGen.defineStructFields(pool, newClz, clInfo);
+        structGen.defineStructFields(this, pool, newClz, clInfo);
 
         CtMethod[] methods = orig.getMethods();
         for (int i = 0; i < methods.length; i++) {
@@ -103,10 +103,18 @@ public class FSTStructFactory {
         cl.delegateLoadingOf(clazz.getName());
         cl.delegateLoadingOf(Externalizable.class.getName());
         cl.delegateLoadingOf(Serializable.class.getName());
+        cl.delegateLoadingOf(FSTStructFactory.class.getName());
+//        cl.delegateLoadingOf(SubTestStruct.class.getName());
+
         ccClz = cl.loadClass(cc.getName());
+
+
         return ccClz;
     }
 
+    public Object getStructWrapper(byte b[], int offset) {
+        return null;
+    }
 
     int calcStructSize(Object onHeapStruct) throws IllegalAccessException, NoSuchFieldException {
         if ( onHeapStruct == null ) {
@@ -210,11 +218,18 @@ public class FSTStructFactory {
                 offset += fi.getStructSize();
             } else { // objectref
                 Object obj = clInfo.getObjectValue(onHeapStruct, fi);
+                Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
+                objects[pointerPos] = objectValue;
+                pointerPositions[pointerPos] = offset;
+                pointerPos++;
+                offset += fi.getStructSize();
 //                siz += fi.getStructSize()+calcStructSize(obj);
             }
         }
         for ( int i=0; i < pointerPos; i++) {
             Object o = objects[i];
+            if ( o == null )
+                continue;
             Class c = o.getClass();
             if (c.isArray()) {
                 int siz = 0;
@@ -249,17 +264,26 @@ public class FSTStructFactory {
                 unsafe.putInt(bytes, FSTUtil.bufoff+pointerPositions[i]+4, Array.getLength(o) );
                 offset+=siz;
             } else {
-                throw new RuntimeException("reference type not supported");
+                int newoffset = toOffHeap(o,bytes,offset);
+                unsafe.putInt(bytes, FSTUtil.bufoff+pointerPositions[i], offset );
+                offset = newoffset;
             }
         }
         return offset;
+    }
+    public static class SubTestStruct implements Serializable {
+        long id = 12345;
+        int legs[] = {19,18,17,16};
+
+        public int legs(int i) { return legs[i]; }
+        public void legs(int i, int val) {legs[i] = val;}
     }
 
     public static class TestStruct implements Serializable {
         int intVar=64;
         boolean boolVar;
-        String stringVar = "hops";
         int intarray[] = new int[10];
+        SubTestStruct struct = new SubTestStruct();
 
         public TestStruct() {
             intarray[0] = Integer.MAX_VALUE-1;
@@ -282,14 +306,6 @@ public class FSTStructFactory {
             this.boolVar = boolVar;
         }
 
-        public String getStringVar() {
-            return stringVar;
-        }
-
-        public void setStringVar(String stringVar) {
-            this.stringVar = stringVar;
-        }
-
         public void intarray(int i, int val) {
             intarray[i] = val;
         }
@@ -298,6 +314,9 @@ public class FSTStructFactory {
             return intarray[i];
         }
 
+        public SubTestStruct getStruct() {
+            return struct;
+        }
     }
 
     public int getStructSize(Class clz) {
@@ -307,14 +326,18 @@ public class FSTStructFactory {
     public static void main(String arg[] ) throws Exception {
         FSTStructFactory fac = new FSTStructFactory();
 
+        fac.registerClz(TestStruct.class);
+        fac.registerClz(SubTestStruct.class);
+
         TestStruct toPack = new TestStruct();
         int size = fac.calcStructSize(toPack);
+        System.out.println("Size:"+size);
         byte bytes[] = new byte[size];
         fac.toOffHeap(toPack,bytes,0);
 
         Class<TestStruct> tc = fac.createStructClz(toPack);
         TestStruct testStruct = tc.newInstance();
-        initStructInstance(bytes, tc, testStruct);
+        initStructInstance(fac, bytes, tc, testStruct);
 
         System.out.println("iarr oheap "+testStruct.intarray(0));
         System.out.println("iarr oheap "+testStruct.intarray(9));
@@ -331,10 +354,13 @@ public class FSTStructFactory {
         System.out.println("POK " + testStruct.intarray(3));
         testStruct.intarray(9);
 
+        SubTestStruct sub = testStruct.getStruct();
+
 //        testStruct.setStringVar("Pok");
     }
 
-    private static void initStructInstance(byte[] bytes, Class<TestStruct> tc, TestStruct testStruct) throws IllegalAccessException, NoSuchFieldException {
+    private static void initStructInstance(FSTStructFactory fac, byte[] bytes, Class<TestStruct> tc, TestStruct testStruct) throws IllegalAccessException, NoSuchFieldException {
+        tc.getField("___fac").set(testStruct, fac);
         tc.getField("___bytes").set(testStruct, bytes);
         tc.getField("___unsafe").set(testStruct,unsafe);
         tc.getField("___offset").set(testStruct, FSTUtil.bufoff);
