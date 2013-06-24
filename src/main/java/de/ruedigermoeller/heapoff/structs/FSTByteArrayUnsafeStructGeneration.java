@@ -172,6 +172,16 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     }
 
     @Override
+    public void defineArrayLength(FSTClazzInfo.FSTFieldInfo fieldInfo, FSTClazzInfo clInfo, CtMethod method) {
+        int off = fieldInfo.getStructOffset();
+        try {
+            method.setBody("{ return ___unsafe.getInt(___bytes,"+off+"+4+___offset); }");
+        } catch (CannotCompileException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void defineStructReadAccess(FieldAccess f, CtClass type, FSTClazzInfo.FSTFieldInfo fieldInfo) {
         int off = fieldInfo.getStructOffset();
         try {
@@ -199,7 +209,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
             if ( type == CtPrimitiveType.doubleType ) {
                 f.replace("$_ = ___unsafe.getDouble(___bytes,"+off+"+___offset);");
             } else { // object ref
-                f.replace("{ $_ = ("+f.getField().getType().getName()+")___fac.getStructWrapper(___bytes,"+off+"); }");
+                f.replace("{ int __tmpOff = ___unsafe.getInt(___bytes, "+off+" + ___offset); $_ = ("+f.getField().getType().getName()+")___fac.getStructWrapper(___bytes,__tmpOff); }");
 //                f.replace("{ Object _o = ___unsafe.toString(); $_ = _o; }");
             }
         } catch (Exception ex) {

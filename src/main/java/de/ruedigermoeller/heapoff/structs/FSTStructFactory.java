@@ -43,10 +43,19 @@ public class FSTStructFactory {
     FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
     FSTStructGeneration structGen = new FSTByteArrayUnsafeStructGeneration();
     HashMap<Class, Class> proxyClzMap = new HashMap<Class, Class>();
+    Loader proxyLoader = new Loader(getClass().getClassLoader(), ClassPool.getDefault());
 
     <T> Class<T> createStructClz( Class<T> clazz ) throws Exception {
 //        Class<?> clazz = toPack.getClass();
         String proxyName = clazz.getName()+"_Struct";
+        Class present = null;
+        try {
+            present = proxyLoader.loadClass(proxyName);
+        } catch (ClassNotFoundException ex) {
+            //
+        }
+        if ( present != null )
+            return present;
         ClassPool pool = ClassPool.getDefault();
         CtClass newClz = pool.makeClass(proxyName);
         CtClass orig = pool.get(clazz.getName());
@@ -65,8 +74,12 @@ public class FSTStructFactory {
                     (method.getModifiers() & AccessFlag.FINAL) == 0;
             if ( allowed ) {
                 method = new CtMethod(method,newClz,null);
-                if ( clInfo.getFieldInfo(method.getName(), null) != null ) {
-                    structGen.defineArrayAccessor(clInfo.getFieldInfo(method.getName(), null), clInfo, method);
+                String methName = method.getName();
+                if ( clInfo.getFieldInfo(methName, null) != null ) {
+                    structGen.defineArrayAccessor(clInfo.getFieldInfo(methName, null), clInfo, method);
+                    newClz.addMethod(method);
+                } else if ( methName.endsWith("Len") && clInfo.getFieldInfo(methName.substring(0, methName.length() - 3), null) != null ) {
+                    structGen.defineArrayLength(clInfo.getFieldInfo(methName.substring(0, methName.length() - 3), null), clInfo, method);
                     newClz.addMethod(method);
                 } else {
                     newClz.addMethod(method);
@@ -98,15 +111,14 @@ public class FSTStructFactory {
 
     private <T> Class loadProxyClass(Class<T> clazz, ClassPool pool, CtClass cc) throws ClassNotFoundException {
         Class ccClz;
-        Loader cl = new Loader(clazz.getClassLoader(), pool);
-        cl.delegateLoadingOf(Unsafe.class.getName());
-        cl.delegateLoadingOf(clazz.getName());
-        cl.delegateLoadingOf(Externalizable.class.getName());
-        cl.delegateLoadingOf(Serializable.class.getName());
-        cl.delegateLoadingOf(FSTStructFactory.class.getName());
-//        cl.delegateLoadingOf(SubTestStruct.class.getName());
+        proxyLoader.delegateLoadingOf(Unsafe.class.getName());
+        proxyLoader.delegateLoadingOf(clazz.getName());
+        proxyLoader.delegateLoadingOf(Externalizable.class.getName());
+        proxyLoader.delegateLoadingOf(Serializable.class.getName());
+        proxyLoader.delegateLoadingOf(FSTStructFactory.class.getName());
+//        proxyLoader.delegateLoadingOf(SubTestStruct.class.getName());
 
-        ccClz = cl.loadClass(cc.getName());
+        ccClz = proxyLoader.loadClass(cc.getName());
 
 
         return ccClz;
@@ -123,11 +135,11 @@ public class FSTStructFactory {
 
     public <T> T createWrapper(Class<T> onHeap, byte bytes[], int offset) throws Exception {
         Class proxy = getProxyClass(onHeap);
-        T res = (T) proxy.newInstance();
+        T res = (T) unsafe.allocateInstance(proxy);
         proxy.getField("___fac").set(res, this);
         proxy.getField("___bytes").set(res, bytes);
         proxy.getField("___unsafe").set(res,unsafe);
-        proxy.getField("___offset").set(res, FSTUtil.bufoff);
+        proxy.getField("___offset").set(res, FSTUtil.bufoff+offset);
         return res;
     }
 
@@ -137,7 +149,7 @@ public class FSTStructFactory {
         if (clazz==null)
             throw new RuntimeException("unregistered class "+clzId);
         try {
-            return createWrapper(clazz,b,offset);
+            return createWrapper(clazz, b, offset);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -153,16 +165,17 @@ public class FSTStructFactory {
     }
 
     public Object getStructWrapper(byte b[], int offset) {
-        int clzId = unsafe.getInt(b,FSTUtil.bufoff+offset);
-        Class clazz = mIntToClz.get(clzId);
-        return null;
+//        int realOff = unsafe.getInt(b, FSTUtil.bufoff + offset);
+        if ( offset < 0 )
+            return null;
+        return createStructWrapper(b,offset);
     }
 
     int calcStructSize(Object onHeapStruct) throws IllegalAccessException, NoSuchFieldException {
         if ( onHeapStruct == null ) {
             return 0;
         }
-        int siz = 0;
+        int siz = 4;
         FSTClazzInfo clInfo = conf.getClassInfo(onHeapStruct.getClass());
         FSTClazzInfo.FSTFieldInfo fis[] = clInfo.getFieldInfo();
         for (int i = 0; i < fis.length; i++) {
@@ -277,8 +290,10 @@ public class FSTStructFactory {
         }
         for ( int i=0; i < pointerPos; i++) {
             Object o = objects[i];
-            if ( o == null )
+            if ( o == null ) {
+                unsafe.putInt(bytes, FSTUtil.bufoff+pointerPositions[i], -1 );
                 continue;
+            }
             Class c = o.getClass();
             if (c.isArray()) {
                 int siz = 0;
@@ -321,85 +336,8 @@ public class FSTStructFactory {
         return offset;
     }
 
-    public static class SubTestStruct implements Serializable {
-        long id = 12345;
-        int legs[] = {19,18,17,16};
-
-        public int legs(int i) { return legs[i]; }
-        public void legs(int i, int val) {legs[i] = val;}
-    }
-
-    public static class TestStruct implements Serializable {
-        int intVar=64;
-        boolean boolVar;
-        int intarray[] = new int[10];
-        SubTestStruct struct = new SubTestStruct();
-
-        public TestStruct() {
-            intarray[0] = Integer.MAX_VALUE-1;
-            intarray[9] = Integer.MAX_VALUE;
-        }
-
-        public int getIntVar() {
-            return intVar;
-        }
-
-        public void setIntVar(int intVar) {
-            this.intVar = intVar;
-        }
-
-        public boolean isBoolVar() {
-            return boolVar;
-        }
-
-        public void setBoolVar(boolean boolVar) {
-            this.boolVar = boolVar;
-        }
-
-        public void intarray(int i, int val) {
-            intarray[i] = val;
-        }
-
-        public int intarray( int i ) {
-            return intarray[i];
-        }
-
-        public SubTestStruct getStruct() {
-            return struct;
-        }
-    }
-
     public int getStructSize(Class clz) {
         return conf.getClassInfo(clz).getStructSize();
-    }
-
-    public static void main(String arg[] ) throws Exception {
-        FSTStructFactory fac = new FSTStructFactory();
-
-        fac.registerClz(TestStruct.class);
-        fac.registerClz(SubTestStruct.class);
-
-        TestStruct template = new TestStruct();
-        TestStruct testStruct = fac.toStruct(template);
-
-        System.out.println("iarr oheap "+testStruct.intarray(0));
-        System.out.println("iarr oheap "+testStruct.intarray(9));
-
-        System.out.println("ivar " + testStruct.getIntVar());
-        testStruct.setIntVar(9999);
-        System.out.println("ivar " + testStruct.getIntVar());
-
-        System.out.println("bool " + testStruct.isBoolVar());
-        testStruct.setBoolVar(true);
-        System.out.println("bool " + testStruct.isBoolVar());
-
-        testStruct.intarray(3, 4444);
-        System.out.println("POK " + testStruct.intarray(3));
-        testStruct.intarray(9);
-
-        SubTestStruct sub = testStruct.getStruct();
-
-//        testStruct.setStringVar("Pok");
     }
 
 }
