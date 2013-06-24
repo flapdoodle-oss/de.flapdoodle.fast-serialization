@@ -1,4 +1,4 @@
-package de.ruedigermoeller.heapoff;
+package de.ruedigermoeller.heapoff.structs;
 
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTConfiguration;
@@ -12,7 +12,6 @@ import sun.misc.Unsafe;
 import java.io.Externalizable;
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -43,9 +42,10 @@ public class FSTStructFactory {
 
     FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
     FSTStructGeneration structGen = new FSTByteArrayUnsafeStructGeneration();
+    HashMap<Class, Class> proxyClzMap = new HashMap<Class, Class>();
 
-    <T> Class<T> createStructClz( T toPack ) throws Exception {
-        Class<?> clazz = toPack.getClass();
+    <T> Class<T> createStructClz( Class<T> clazz ) throws Exception {
+//        Class<?> clazz = toPack.getClass();
         String proxyName = clazz.getName()+"_Struct";
         ClassPool pool = ClassPool.getDefault();
         CtClass newClz = pool.makeClass(proxyName);
@@ -112,7 +112,49 @@ public class FSTStructFactory {
         return ccClz;
     }
 
+    public Class getProxyClass(Class clz) throws Exception {
+        Class res = proxyClzMap.get(clz);
+        if ( res == null ) {
+            res = createStructClz(clz);
+            proxyClzMap.put(clz,res);
+        }
+        return res;
+    }
+
+    public <T> T createWrapper(Class<T> onHeap, byte bytes[], int offset) throws Exception {
+        Class proxy = getProxyClass(onHeap);
+        T res = (T) proxy.newInstance();
+        proxy.getField("___fac").set(res, this);
+        proxy.getField("___bytes").set(res, bytes);
+        proxy.getField("___unsafe").set(res,unsafe);
+        proxy.getField("___offset").set(res, FSTUtil.bufoff);
+        return res;
+    }
+
+    public Object createStructWrapper(byte b[], int offset) {
+        int clzId = unsafe.getInt(b,FSTUtil.bufoff+offset);
+        Class clazz = mIntToClz.get(clzId);
+        if (clazz==null)
+            throw new RuntimeException("unregistered class "+clzId);
+        try {
+            return createWrapper(clazz,b,offset);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> T toStruct(T onHeap) {
+        try {
+            byte b[] = toByteArray(onHeap);
+            return (T)createWrapper(onHeap.getClass(),b,0);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Object getStructWrapper(byte b[], int offset) {
+        int clzId = unsafe.getInt(b,FSTUtil.bufoff+offset);
+        Class clazz = mIntToClz.get(clzId);
         return null;
     }
 
@@ -160,7 +202,14 @@ public class FSTStructFactory {
         return integer == null ? 0: integer;
     }
 
-    int toOffHeap(Object onHeapStruct, byte bytes[], int offset) throws IllegalAccessException, NoSuchFieldException {
+    public byte[] toByteArray(Object onHeapStruct) throws IllegalAccessException, NoSuchFieldException {
+        int sz = calcStructSize(onHeapStruct);
+        byte b[] = new byte[sz];
+        toByteArray(onHeapStruct,b,0);
+        return b;
+    }
+
+    public int toByteArray(Object onHeapStruct, byte bytes[], int offset) throws IllegalAccessException, NoSuchFieldException {
         int pointerPositions[] = new int[30];
         Object objects[] = new Object[30];
         int pointerPos = 0;
@@ -264,13 +313,14 @@ public class FSTStructFactory {
                 unsafe.putInt(bytes, FSTUtil.bufoff+pointerPositions[i]+4, Array.getLength(o) );
                 offset+=siz;
             } else {
-                int newoffset = toOffHeap(o,bytes,offset);
+                int newoffset = toByteArray(o, bytes, offset);
                 unsafe.putInt(bytes, FSTUtil.bufoff+pointerPositions[i], offset );
                 offset = newoffset;
             }
         }
         return offset;
     }
+
     public static class SubTestStruct implements Serializable {
         long id = 12345;
         int legs[] = {19,18,17,16};
@@ -329,15 +379,8 @@ public class FSTStructFactory {
         fac.registerClz(TestStruct.class);
         fac.registerClz(SubTestStruct.class);
 
-        TestStruct toPack = new TestStruct();
-        int size = fac.calcStructSize(toPack);
-        System.out.println("Size:"+size);
-        byte bytes[] = new byte[size];
-        fac.toOffHeap(toPack,bytes,0);
-
-        Class<TestStruct> tc = fac.createStructClz(toPack);
-        TestStruct testStruct = tc.newInstance();
-        initStructInstance(fac, bytes, tc, testStruct);
+        TestStruct template = new TestStruct();
+        TestStruct testStruct = fac.toStruct(template);
 
         System.out.println("iarr oheap "+testStruct.intarray(0));
         System.out.println("iarr oheap "+testStruct.intarray(9));
@@ -357,13 +400,6 @@ public class FSTStructFactory {
         SubTestStruct sub = testStruct.getStruct();
 
 //        testStruct.setStringVar("Pok");
-    }
-
-    private static void initStructInstance(FSTStructFactory fac, byte[] bytes, Class<TestStruct> tc, TestStruct testStruct) throws IllegalAccessException, NoSuchFieldException {
-        tc.getField("___fac").set(testStruct, fac);
-        tc.getField("___bytes").set(testStruct, bytes);
-        tc.getField("___unsafe").set(testStruct,unsafe);
-        tc.getField("___offset").set(testStruct, FSTUtil.bufoff);
     }
 
 }
