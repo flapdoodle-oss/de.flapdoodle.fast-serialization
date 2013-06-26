@@ -30,6 +30,7 @@ public class FSTStructArray<T> {
     int size;
     FSTStructFactory fac;
     int clzId = 0;
+    T wrapper;
 
     public FSTStructArray(FSTStructFactory fac, Object template, int size ) {
         this.fac = fac;
@@ -40,10 +41,12 @@ public class FSTStructArray<T> {
         for (int i=0; i < b.length; i+=elemSiz) {
             FSTUtil.unFlaggedUnsafe.putInt(b,FSTUtil.bufoff+i,clId);
         }
+        wrapper = (T) fac.getStructWrapper(b,0);
     }
 
     public T get(int i) {
-        return (T) fac.getStructWrapper(b,elemSiz*i);
+        ((FSTStruct)wrapper)._setOffset(FSTUtil.bufoff+elemSiz*i);
+        return wrapper;
     }
 
     public int size() {
