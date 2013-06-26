@@ -60,7 +60,7 @@ public class FSTStructFactory {
         CtClass newClz = pool.makeClass(proxyName);
         CtClass orig = pool.get(clazz.getName());
         newClz.setSuperclass(orig);
-        //newClz.setInterfaces(new CtClass[]{pool.get(Externalizable.class.getName()), pool.get(FGRemoteObject.class.getName())});
+        newClz.setInterfaces(new CtClass[]{pool.get(FSTStruct.class.getName())});
 
         final FSTClazzInfo clInfo = conf.getClassInfo(clazz);
         structGen.defineStructFields(this, pool, newClz, clInfo);
@@ -106,6 +106,26 @@ public class FSTStructFactory {
             }
         }
 
+        CtMethod setOffset = new CtMethod(CtClass.voidType,"_setOffset", new CtClass[]{CtClass.intType},newClz);
+        setOffset.setBody("{___offset=$1;}");
+        newClz.addMethod(setOffset);
+
+        CtMethod setBase = new CtMethod(CtClass.voidType,"_setBase", new CtClass[]{pool.getCtClass(byte[].class.getName())},newClz);
+        setBase.setBody("{___bytes=$1;}");
+        newClz.addMethod(setBase);
+
+        CtMethod setUnsafe = new CtMethod(CtClass.voidType,"internal_setUnsafe", new CtClass[]{pool.getCtClass(Unsafe.class.getName())},newClz);
+        setUnsafe.setBody("{___unsafe=$1;}");
+        newClz.addMethod(setUnsafe);
+
+        CtMethod setFac = new CtMethod(CtClass.voidType,"internal_setFac", new CtClass[]{pool.getCtClass(FSTStructFactory.class.getName())},newClz);
+        setFac.setBody("{___fac=$1;}");
+        newClz.addMethod(setFac);
+
+//        CtMethod getFac = new CtMethod(pool.getCtClass(FSTStructFactory.class.getName()),"_getFac", new CtClass[]{CtClass.voidType},newClz);
+//        getFac.setBody("{return ___fac;}");
+//        newClz.addMethod(getFac);
+
         return (Class<T>) loadProxyClass(clazz, pool, newClz);
     }
 
@@ -116,6 +136,7 @@ public class FSTStructFactory {
         proxyLoader.delegateLoadingOf(Externalizable.class.getName());
         proxyLoader.delegateLoadingOf(Serializable.class.getName());
         proxyLoader.delegateLoadingOf(FSTStructFactory.class.getName());
+        proxyLoader.delegateLoadingOf(FSTStruct.class.getName());
 //        proxyLoader.delegateLoadingOf(SubTestStruct.class.getName());
 
         ccClz = proxyLoader.loadClass(cc.getName());
@@ -136,20 +157,33 @@ public class FSTStructFactory {
     public <T> T createWrapper(Class<T> onHeap, byte bytes[], int offset) throws Exception {
         Class proxy = getProxyClass(onHeap);
         T res = (T) unsafe.allocateInstance(proxy);
-        proxy.getField("___fac").set(res, this);
-        proxy.getField("___bytes").set(res, bytes);
-        proxy.getField("___unsafe").set(res,unsafe);
-        proxy.getField("___offset").set(res, FSTUtil.bufoff+offset);
+        setWrapperFields(bytes, offset, proxy, res);
         return res;
     }
 
-    public Object createStructWrapper(byte b[], int offset) {
+    private <T> void setWrapperFields(byte[] bytes, int offset, Class proxy, T res) {
+        try {
+            FSTStruct struct = (FSTStruct) res;
+            struct._setBase(bytes);
+            struct._setOffset(FSTUtil.bufoff + offset);
+            struct.internal_setFac(this);
+            struct.internal_setUnsafe(unsafe);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public FSTStruct createStructWrapper(byte b[], int offset) {
         int clzId = unsafe.getInt(b,FSTUtil.bufoff+offset);
+        return createStructWrapper(b, offset, clzId);
+    }
+
+    private FSTStruct createStructWrapper(byte[] b, int offset, Integer clzId) {
         Class clazz = mIntToClz.get(clzId);
         if (clazz==null)
             throw new RuntimeException("unregistered class "+clzId);
         try {
-            return createWrapper(clazz, b, offset);
+            return (FSTStruct) createWrapper(clazz, b, offset);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -164,40 +198,63 @@ public class FSTStructFactory {
         }
     }
 
-    public Object getStructWrapper(byte b[], int offset) {
-//        int realOff = unsafe.getInt(b, FSTUtil.bufoff + offset);
-        if ( offset < 0 )
-            return null;
-        return createStructWrapper(b,offset);
+    ThreadLocal<HashMap<Integer,Object>> cachedWrapperMap = new ThreadLocal<HashMap<Integer, Object>>() {
+        @Override
+        protected HashMap<Integer, Object> initialValue() {
+            return new HashMap<Integer, Object>();
+        }
+    };
+
+    public void detach(int clzId) {
+        cachedWrapperMap.get().remove(clzId);
     }
 
-    int calcStructSize(Object onHeapStruct) throws IllegalAccessException, NoSuchFieldException {
-        if ( onHeapStruct == null ) {
-            return 0;
+    public Object getStructWrapper(byte b[], int offset) {
+        Integer clzId = unsafe.getInt(b, FSTUtil.bufoff + offset);
+        HashMap<Integer, Object> integerObjectHashMap = cachedWrapperMap.get();
+        Object res = integerObjectHashMap.get(clzId);
+        if ( res != null ) {
+            ((FSTStruct)res)._setOffset(FSTUtil.bufoff+offset);
+            ((FSTStruct)res)._setBase(b);
+            setWrapperFields(b,offset,res.getClass(),res);
+            return res;
         }
-        int siz = 4;
-        FSTClazzInfo clInfo = conf.getClassInfo(onHeapStruct.getClass());
-        FSTClazzInfo.FSTFieldInfo fis[] = clInfo.getFieldInfo();
-        for (int i = 0; i < fis.length; i++) {
-            FSTClazzInfo.FSTFieldInfo fi = fis[i];
-            if ( fi.getType().isArray() ) {
-                if ( fi.getType().getComponentType().isArray() ) {
-                    throw new RuntimeException("nested arrays not supported");
-                }
-                if ( fi.isIntegral() ) { // prim array
-                    Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
-                    siz += Array.getLength(objectValue) * fi.getComponentStructSize() + fi.getStructSize();
-                } else { // object array
+        res = createStructWrapper(b,offset,clzId);
+        integerObjectHashMap.put(clzId, res);
+        return res;
+    }
 
-                }
-            } else if ( fi.isIntegral() ) { // && ! array
-                siz += fi.getStructSize();
-            } else { // objectref
-                Object obj = clInfo.getObjectValue(onHeapStruct,fi);
-                siz += fi.getStructSize()+calcStructSize(obj);
+    int calcStructSize(Object onHeapStruct) {
+        try {
+            if ( onHeapStruct == null ) {
+                return 0;
             }
+            int siz = 4;
+            FSTClazzInfo clInfo = conf.getClassInfo(onHeapStruct.getClass());
+            FSTClazzInfo.FSTFieldInfo fis[] = clInfo.getFieldInfo();
+            for (int i = 0; i < fis.length; i++) {
+                FSTClazzInfo.FSTFieldInfo fi = fis[i];
+                if ( fi.getType().isArray() ) {
+                    if ( fi.getType().getComponentType().isArray() ) {
+                        throw new RuntimeException("nested arrays not supported");
+                    }
+                    if ( fi.isIntegral() ) { // prim array
+                        Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
+                        siz += Array.getLength(objectValue) * fi.getComponentStructSize() + fi.getStructSize();
+                    } else { // object array
+
+                    }
+                } else if ( fi.isIntegral() ) { // && ! array
+                    siz += fi.getStructSize();
+                } else { // objectref
+                    Object obj = clInfo.getObjectValue(onHeapStruct,fi);
+                    siz += fi.getStructSize()+calcStructSize(obj);
+                }
+            }
+            return siz;
+        } catch ( Exception e ) {
+            throw new RuntimeException(e);
         }
-        return siz;
     }
 
     HashMap<Integer,Class> mIntToClz = new HashMap<Integer, Class>();

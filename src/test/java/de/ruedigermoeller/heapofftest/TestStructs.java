@@ -1,6 +1,9 @@
 package de.ruedigermoeller.heapofftest;
 
+import de.ruedigermoeller.heapoff.structs.FSTStruct;
+import de.ruedigermoeller.heapoff.structs.FSTStructArray;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
+import de.ruedigermoeller.serialization.util.FSTUtil;
 
 import java.io.Serializable;
 
@@ -94,6 +97,63 @@ public class TestStructs {
         }
     }
 
+    private static void benchIterAccess(FSTStructFactory fac, byte b[], int structLen, int max) {
+        int times = 4;
+        long tim;
+        int sum;
+
+        System.out.println("iter "+max);
+        tim = System.currentTimeMillis();
+        sum = 0;
+        for (int ii=0;ii<times;ii++) {
+            TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
+            int off = 0;
+            for ( int i=0; i<max; i++ ) {
+                sum += struct.getIntVar();
+                ((FSTStruct)struct)._setOffset(FSTUtil.bufoff+off+structLen);
+            }
+        }
+        System.out.println("  iter int "+(System.currentTimeMillis()-tim)+" sum "+sum);
+
+        tim = System.currentTimeMillis();
+        sum = 0;
+        for (int ii=0;ii<times;ii++) {
+            TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
+            int off = 0;
+            for ( int i=0; i<max; i++ ) {
+                sum += struct.intarray(3);
+                ((FSTStruct)struct)._setOffset(FSTUtil.bufoff+off+structLen);
+            }
+        }
+        System.out.println("  iter int array[3]"+(System.currentTimeMillis()-tim));
+
+        tim = System.currentTimeMillis();
+        sum = 0;
+        for (int ii=0;ii<times;ii++) {
+            TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
+            int off = 0;
+            for ( int i=0; i<max; i++ ) {
+                if ( struct.containsInt(77) ) {
+                    sum = 0;
+                }
+                ((FSTStruct)struct)._setOffset(FSTUtil.bufoff+off+structLen);
+            }
+        }
+        System.out.println("  iter int from this "+(System.currentTimeMillis()-tim));
+
+        tim = System.currentTimeMillis();
+        sum = 0;
+        for (int ii=0;ii<times;ii++) {
+            TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
+            int off = 0;
+            for ( int i=0; i<max; i++ ) {
+                sum += struct.getStruct().getId();
+                ((FSTStruct)struct)._setOffset(FSTUtil.bufoff+off+structLen);
+            }
+        }
+        System.out.println("  iter substructure int "+(System.currentTimeMillis()-tim));
+    }
+
     private static void benchAccess(TestStruct[] structs) {
         int times = 4;
         long tim;
@@ -105,7 +165,7 @@ public class TestStructs {
             for ( int i=0; i<structs.length; i++ ) {
                 sum += structs[i].getIntVar();
             }
-        System.out.println("  read int "+(System.currentTimeMillis()-tim));
+        System.out.println("  read int "+(System.currentTimeMillis()-tim)+" sum: "+sum);
 
         tim = System.currentTimeMillis();
         sum = 0;
@@ -141,17 +201,33 @@ public class TestStructs {
         System.out.println("  read substructure int[] "+(System.currentTimeMillis()-tim));
     }
 
-    static FSTStructFactory fac = new FSTStructFactory();
-    static TestStruct structs[] = new TestStruct[3000000];
 
+
+    public static void benchFullGC() {
+        for ( int i = 0; i < 3; i++ ) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+            long tim = System.currentTimeMillis();
+            System.gc();
+            System.out.println("FULL GC TIME "+(System.currentTimeMillis()-tim)+" mem:"+(Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000/1000+" MB");
+        }
+    }
+
+    static TestStruct[] structs = new TestStruct[3000000];
     public static void main0(String arg[] ) throws Exception {
+        FSTStructFactory fac = new FSTStructFactory();
+        fac.registerClz(TestStruct.class);
+        fac.registerClz(SubTestStruct.class);
 
         long tim = System.currentTimeMillis();
         for (int i = 0; i < structs.length; i++) {
             structs[i] = new TestStruct();
         }
         System.out.println("instantiation on heap "+(System.currentTimeMillis()-tim));
-
+        benchFullGC();
         benchAccess(structs);
 
         tim = System.currentTimeMillis();
@@ -160,6 +236,7 @@ public class TestStructs {
         }
         System.out.println("moving off heap "+(System.currentTimeMillis()-tim));
         benchAccess(structs);
+        benchFullGC();
 
         TestStruct template = new TestStruct();
         byte[] bytes = fac.toByteArray(template);
@@ -167,22 +244,45 @@ public class TestStructs {
         for (int i = 0; i < structs.length; i++) {
             byte b[] = new byte[bytes.length];
             System.arraycopy(bytes,0,b,0,b.length);
-            structs[i] = (TestStruct) fac.getStructWrapper(b,0);
+            structs[i] = (TestStruct) fac.createStructWrapper(b,0);
         }
         System.out.println("instantiate off heap new byte[] per object "+(System.currentTimeMillis()-tim));
         benchAccess(structs);
+        benchFullGC();
 
         tim = System.currentTimeMillis();
         byte hugeArray[] = new byte[bytes.length*structs.length];
         int off = 0;
         for (int i = 0; i < structs.length; i++) {
             System.arraycopy(bytes,0,hugeArray,off,bytes.length);
-            structs[i] = (TestStruct) fac.getStructWrapper(hugeArray,off);
+            structs[i] = (TestStruct) fac.createStructWrapper(hugeArray,off);
             off += bytes.length;
         }
-        System.out.println("instantiate off heap single byte array "+(System.currentTimeMillis()-tim));
+        System.out.println("instantiate off heap huge single byte array " + (System.currentTimeMillis() - tim));
         benchAccess(structs);
+        benchFullGC();
+        int structLen = bytes.length / structs.length;
+        int max = structs.length;
+        structs = null;
+        System.out.println("iterative access on huge array");
+        benchIterAccess(fac,hugeArray, structLen,max);
 
+        System.out.println("iterate structarray");
+        FSTStructArray<TestStruct> arr = new FSTStructArray<TestStruct>(fac, new TestStruct(), max);
+        tim = System.currentTimeMillis();
+        for ( int j=0; j < 4; j++ )
+            for ( int i = 0; i < arr.size(); i++) {
+                arr.get(i).setIntVar(1);
+            }
+        System.out.println("   structarr set int " + (System.currentTimeMillis() - tim));
+
+        tim = System.currentTimeMillis();
+        int sum = 0;
+        for ( int j=0; j < 4; j++ )
+            for ( int i = 0; i < arr.size(); i++) {
+                sum += arr.get(i).getIntVar();
+            }
+        System.out.println("   structarr get int " + (System.currentTimeMillis() - tim));
 
 //
 //        System.out.println("iarr oheap "+testStruct.intarray(0));
@@ -208,14 +308,11 @@ public class TestStructs {
     }
 
     public static void main(String arg[] ) throws Exception {
-        fac.registerClz(TestStruct.class);
-        fac.registerClz(SubTestStruct.class);
-        System.out.println("WarmUp");
+        benchFullGC();
         main0(arg);
-        structs = new TestStruct[3000000]; // prevent escape analysis
-        System.gc();
-        System.out.println("BENCH ------------------------------");
-        main0(arg);
+        System.out.println("BENCH FINISHED ------------------------------------------------------------------------");
+        while( true )
+            benchFullGC();
     }
 
 }
