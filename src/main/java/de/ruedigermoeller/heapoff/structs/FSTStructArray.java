@@ -38,7 +38,7 @@ public class FSTStructArray<T> {
         this.size = size;
         int clId = fac.getClzId(template.getClass());
         for (int i=0; i < b.length; i+=elemSiz) {
-            FSTUtil.unFlaggedUnsafe.putInt(FSTUtil.bufoff+i,clId);
+            FSTUtil.unFlaggedUnsafe.putInt(b,FSTUtil.bufoff+i,clId);
         }
     }
 
