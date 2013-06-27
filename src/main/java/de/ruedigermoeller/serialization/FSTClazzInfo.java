@@ -128,6 +128,13 @@ public final class FSTClazzInfo {
             return res;
         }
         res.addAll(Arrays.asList(c.getDeclaredFields()));
+        for (int i = 0; i < res.size(); i++) {
+            Field field = res.get(i);
+            if ( Modifier.isStatic(field.getModifiers()) ) {
+                res.remove(i);
+                i--;
+            }
+        }
         return getAllFields(c.getSuperclass(), res);
     }
 
@@ -669,8 +676,12 @@ public final class FSTClazzInfo {
                 return 4;
             if ( type == long.class || type == double.class )
                 return 8;
-            if ( isArray() )
-                return 8; // pointer+length
+            if ( isArray() ) {
+                if ( isIntegral() )
+                    return 8; // pointer+length
+                if ( isIntegral() )
+                    return 4; // length+[pointer,pointer,..]
+            }
             return 4;
         }
     }

@@ -31,36 +31,36 @@ public class FSTStructArray<T> {
     int elemSiz;
     int size;
     FSTStructFactory fac;
-//    int clzId = 0;
+    //    int clzId = 0;
     ThreadLocal<T> wrapper = new ThreadLocal<T>() {
-    @Override
-    protected T initialValue() {
-        return (T) fac.getStructWrapper(b,0);
-    }
-};
+        @Override
+        protected T initialValue() {
+            return (T) fac.getStructWrapper(b, 0);
+        }
+    };
 
 
-    public FSTStructArray(FSTStructFactory fac, Object template, int size ) {
-        if (size<=0) {
+    public FSTStructArray(FSTStructFactory fac, Object template, int size) {
+        if (size <= 0) {
             throw new RuntimeException("size must be > 0");
         }
         this.fac = fac;
         elemSiz = fac.calcStructSize(template);
-        b = new byte[size*elemSiz];
+        b = new byte[size * elemSiz];
         this.size = size;
         byte[] bytes = fac.toByteArray(template);
         //int clId = fac.getClzId(template.getClass());
-        for (int i=0; i < b.length; i+=elemSiz) {
+        for (int i = 0; i < b.length; i += elemSiz) {
             //FSTUtil.unFlaggedUnsafe.putInt(b,FSTUtil.bufoff+i,clId);
-            fac.unsafe.copyMemory(bytes,0,b,FSTUtil.bufoff+i,elemSiz);
+            fac.unsafe.copyMemory(bytes, 0, b, FSTUtil.bufoff + i, elemSiz);
         }
     }
 
     public T get(int i) {
-        if ( i < 0 || i >= size )
-            throw new ArrayIndexOutOfBoundsException("index: "+i+" size:"+size);
+        if (i < 0 || i >= size)
+            throw new ArrayIndexOutOfBoundsException("index: " + i + " size:" + size);
         T wrap = wrapper.get();
-        ((FSTStruct) wrap)._setOffset(FSTUtil.bufoff+elemSiz*i);
+        ((FSTStruct) wrap)._setOffset(FSTUtil.bufoff + elemSiz * i);
         return wrap;
     }
 
@@ -77,7 +77,7 @@ public class FSTStructArray<T> {
     }
 
     public T createPointer(int index) {
-        return  (T) fac.createStructWrapper(b,index*elemSiz);
+        return (T) fac.createStructWrapper(b, index * elemSiz);
     }
 
     final class StructArrIterator<T> implements Iterator<T> {
@@ -87,8 +87,8 @@ public class FSTStructArray<T> {
         final int eSiz;
 
         StructArrIterator() {
-            current = (T) fac.createStructWrapper(b,0);
-            maxPos = b.length+FSTUtil.bufoff;
+            current = (T) fac.createStructWrapper(b, 0);
+            maxPos = b.length + FSTUtil.bufoff;
             this.eSiz = elemSiz;
         }
 

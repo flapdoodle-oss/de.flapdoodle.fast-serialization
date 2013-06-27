@@ -6,6 +6,7 @@ import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Iterator;
 
 /**
@@ -49,6 +50,7 @@ public class TestStructs {
         boolean boolVar;
         int intarray[] = new int[50];
         SubTestStruct struct = new SubTestStruct();
+        Object [] anArray = { "Hello", new Date(), "test1", 10000 };
 
         public TestStruct() {
             intarray[0] = Integer.MAX_VALUE-1;
@@ -87,6 +89,14 @@ public class TestStructs {
 
         public int intarray( int i ) {
             return intarray[i];
+        }
+
+        public Object anArray(int i) {
+            return anArray[i];
+        }
+
+        public void anArray(int i, Object val) {
+            anArray[i] = val;
         }
 
         public int intarrayLen() {
@@ -215,9 +225,17 @@ public class TestStructs {
 
     static TestStruct[] structs = new TestStruct[1000000];
     public static void main0(String arg[] ) throws Exception {
+
         FSTStructFactory fac = new FSTStructFactory();
         fac.registerClz(TestStruct.class);
         fac.registerClz(SubTestStruct.class);
+
+        TestStruct onHeap = new TestStruct();
+        System.out.println("siz:" + fac.calcStructSize(onHeap) );
+        byte byteof[] = fac.toByteArray(onHeap);
+
+        if ( 1==1 )
+            return;
 
         long tim = System.currentTimeMillis();
         for (int i = 0; i < structs.length; i++) {

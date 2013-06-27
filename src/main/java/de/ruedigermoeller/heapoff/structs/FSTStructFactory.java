@@ -107,11 +107,11 @@ public class FSTStructFactory {
         }
 
         CtMethod setOffset = new CtMethod(CtClass.voidType,"_setOffset", new CtClass[]{CtClass.longType},newClz);
-        setOffset.setBody("{___offset=$1;}");
+        setOffset.setBody("{___offset=$1;if (___offset-"+FSTUtil.bufoff+" > ___bytes.length || ___offset<"+FSTUtil.bufoff+" ) throw new RuntimeException(\"Illegal offset\"); }");
         newClz.addMethod(setOffset);
 
         CtMethod addOffset = new CtMethod(CtClass.voidType,"_addOffset", new CtClass[]{CtClass.longType},newClz);
-        addOffset.setBody("{___offset+=$1;}");
+        addOffset.setBody("{___offset+=$1;if (___offset-"+FSTUtil.bufoff+" > ___bytes.length || ___offset<"+FSTUtil.bufoff+" ) throw new RuntimeException(\"Illegal offset\"); }");
         newClz.addMethod(addOffset);
 
         CtMethod getOffset = new CtMethod(CtClass.longType,"_getOffset", new CtClass[]{},newClz);
@@ -142,6 +142,7 @@ public class FSTStructFactory {
         proxyLoader.delegateLoadingOf(Unsafe.class.getName());
         proxyLoader.delegateLoadingOf(clazz.getName());
         proxyLoader.delegateLoadingOf(Externalizable.class.getName());
+        proxyLoader.delegateLoadingOf(FSTUtil.class.getName());
         proxyLoader.delegateLoadingOf(Serializable.class.getName());
         proxyLoader.delegateLoadingOf(FSTStructFactory.class.getName());
         proxyLoader.delegateLoadingOf(FSTStruct.class.getName());
@@ -233,7 +234,7 @@ public class FSTStructFactory {
         return res;
     }
 
-    int calcStructSize(Object onHeapStruct) {
+    public int calcStructSize(Object onHeapStruct) {
         try {
             if ( onHeapStruct == null ) {
                 return 0;
@@ -251,7 +252,12 @@ public class FSTStructFactory {
                         Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
                         siz += Array.getLength(objectValue) * fi.getComponentStructSize() + fi.getStructSize();
                     } else { // object array
-
+                        Object objectValue[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
+                        siz += 4 + objectValue.length*4;
+                        for (int j = 0; j < objectValue.length; j++) {
+                            Object o = objectValue[j];
+                            siz+=calcStructSize(o);
+                        }
                     }
                 } else if ( fi.isIntegral() ) { // && ! array
                     siz += fi.getStructSize();
@@ -317,7 +323,16 @@ public class FSTStructFactory {
                     pointerPos++;
                     offset += fi.getStructSize();
                 } else { // object array
-
+                    Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
+                    unsafe.putInt(bytes,FSTUtil.bufoff+offset,objArr.length);
+                    offset+=4;
+                    for (int j = 0; j < objArr.length; j++) {
+                        Object objectValue = objArr[j];
+                        objects[pointerPos] = objectValue;
+                        pointerPositions[pointerPos] = offset;
+                        pointerPos++;
+                        offset += 4;
+                    }
                 }
             } else if ( fi.isIntegral() ) { // && ! array
                 Class type = fi.getType();
@@ -392,7 +407,10 @@ public class FSTStructFactory {
                     siz = Array.getLength(o) * FSTUtil.doublescal;
                     unsafe.copyMemory(o,FSTUtil.doubleoff, bytes, FSTUtil.bufoff+offset, siz);
                 } else {
-                    throw new RuntimeException("reference type not supported");
+                    // object array treted like a sequence of object refs
+                    int newoffset = toByteArray(o, bytes, offset);
+                    unsafe.putInt(bytes, FSTUtil.bufoff+pointerPositions[i], offset );
+                    offset = newoffset;
                 }
                 unsafe.putInt(bytes, FSTUtil.bufoff+pointerPositions[i], offset );
                 unsafe.putInt(bytes, FSTUtil.bufoff+pointerPositions[i]+4, Array.getLength(o) );

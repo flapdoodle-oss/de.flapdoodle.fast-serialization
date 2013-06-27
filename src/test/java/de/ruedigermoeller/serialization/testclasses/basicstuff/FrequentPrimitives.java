@@ -28,6 +28,9 @@ import java.io.Serializable;
  */
 public class FrequentPrimitives implements Serializable, HasDescription {
 
+    static String staticString = "Should not serialize this";
+    final static String finalStaticString = "Should not serialize this. Should not serialize this. Should not serialize this. Should not serialize this. Should not serialize this.";
+
     public static FrequentPrimitives[] getArray(int siz) {
         FrequentPrimitives[] res = new FrequentPrimitives[siz];
         for (int i = 0; i < res.length; i++) {

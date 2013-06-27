@@ -1,9 +1,10 @@
 apply plugin: 'java'
 apply plugin: 'maven'
-version="1.13"
+version="1.14"
 
 dependencies {
     compile fileTree("src/test/lib")
+    compile fileTree("lib")
 }
 
 task sourcesJar(type: Jar, dependsOn:classes) {
