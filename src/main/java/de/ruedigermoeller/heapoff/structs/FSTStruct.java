@@ -25,8 +25,11 @@ import sun.misc.Unsafe;
  * To change this template use File | Settings | File Templates.
  */
 public interface FSTStruct {
-    public void _setOffset(int off);
+    public void _setOffset(long off);
+    public long  _getOffset();
+    public void _addOffset(long off);
     public void _setBase(byte[] base);
+
     public void internal_setFac(FSTStructFactory fac);
     public void internal_setUnsafe(Unsafe uns);
 //    public FSTStructFactory _getFac();

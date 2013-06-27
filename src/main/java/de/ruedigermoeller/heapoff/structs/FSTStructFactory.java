@@ -106,9 +106,17 @@ public class FSTStructFactory {
             }
         }
 
-        CtMethod setOffset = new CtMethod(CtClass.voidType,"_setOffset", new CtClass[]{CtClass.intType},newClz);
+        CtMethod setOffset = new CtMethod(CtClass.voidType,"_setOffset", new CtClass[]{CtClass.longType},newClz);
         setOffset.setBody("{___offset=$1;}");
         newClz.addMethod(setOffset);
+
+        CtMethod addOffset = new CtMethod(CtClass.voidType,"_addOffset", new CtClass[]{CtClass.longType},newClz);
+        addOffset.setBody("{___offset+=$1;}");
+        newClz.addMethod(addOffset);
+
+        CtMethod getOffset = new CtMethod(CtClass.longType,"_getOffset", new CtClass[]{},newClz);
+        getOffset.setBody("{return ___offset;}");
+        newClz.addMethod(getOffset);
 
         CtMethod setBase = new CtMethod(CtClass.voidType,"_setBase", new CtClass[]{pool.getCtClass(byte[].class.getName())},newClz);
         setBase.setBody("{___bytes=$1;}");
@@ -122,7 +130,7 @@ public class FSTStructFactory {
         setFac.setBody("{___fac=$1;}");
         newClz.addMethod(setFac);
 
-//        CtMethod getFac = new CtMethod(pool.getCtClass(FSTStructFactory.class.getName()),"_getFac", new CtClass[]{CtClass.voidType},newClz);
+//        CtMethod getFac = new CtMethod(pool.getCtClass(FSTStructFactory.class.getName()),"_getFac", new CtClass[]{},newClz);
 //        getFac.setBody("{return ___fac;}");
 //        newClz.addMethod(getFac);
 
@@ -157,6 +165,7 @@ public class FSTStructFactory {
     public <T> T createWrapper(Class<T> onHeap, byte bytes[], int offset) throws Exception {
         Class proxy = getProxyClass(onHeap);
         T res = (T) unsafe.allocateInstance(proxy);
+//        T res = (T) proxy.newInstance();
         setWrapperFields(bytes, offset, proxy, res);
         return res;
     }
@@ -272,11 +281,15 @@ public class FSTStructFactory {
         return integer == null ? 0: integer;
     }
 
-    public byte[] toByteArray(Object onHeapStruct) throws IllegalAccessException, NoSuchFieldException {
-        int sz = calcStructSize(onHeapStruct);
-        byte b[] = new byte[sz];
-        toByteArray(onHeapStruct,b,0);
-        return b;
+    public byte[] toByteArray(Object onHeapStruct) {
+        try {
+            int sz = calcStructSize(onHeapStruct);
+            byte b[] = new byte[sz];
+            toByteArray(onHeapStruct,b,0);
+            return b;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public int toByteArray(Object onHeapStruct, byte bytes[], int offset) throws IllegalAccessException, NoSuchFieldException {

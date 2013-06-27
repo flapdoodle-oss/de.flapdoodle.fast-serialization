@@ -6,6 +6,7 @@ import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -102,15 +103,14 @@ public class TestStructs {
         long tim;
         int sum;
 
-        System.out.println("iter "+max);
+        System.out.println("iter "+4*max+" direct");
         tim = System.currentTimeMillis();
         sum = 0;
         for (int ii=0;ii<times;ii++) {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
-            int off = 0;
             for ( int i=0; i<max; i++ ) {
                 sum += struct.getIntVar();
-                ((FSTStruct)struct)._setOffset(FSTUtil.bufoff+off+structLen);
+                ((FSTStruct)struct)._addOffset(structLen);
             }
         }
         System.out.println("  iter int "+(System.currentTimeMillis()-tim)+" sum "+sum);
@@ -119,10 +119,9 @@ public class TestStructs {
         sum = 0;
         for (int ii=0;ii<times;ii++) {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
-            int off = 0;
             for ( int i=0; i<max; i++ ) {
                 sum += struct.intarray(3);
-                ((FSTStruct)struct)._setOffset(FSTUtil.bufoff+off+structLen);
+                ((FSTStruct)struct)._addOffset(structLen);
             }
         }
         System.out.println("  iter int array[3]"+(System.currentTimeMillis()-tim));
@@ -131,12 +130,11 @@ public class TestStructs {
         sum = 0;
         for (int ii=0;ii<times;ii++) {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
-            int off = 0;
             for ( int i=0; i<max; i++ ) {
                 if ( struct.containsInt(77) ) {
                     sum = 0;
                 }
-                ((FSTStruct)struct)._setOffset(FSTUtil.bufoff+off+structLen);
+                ((FSTStruct)struct)._addOffset(structLen);
             }
         }
         System.out.println("  iter int from this "+(System.currentTimeMillis()-tim));
@@ -145,10 +143,9 @@ public class TestStructs {
         sum = 0;
         for (int ii=0;ii<times;ii++) {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
-            int off = 0;
             for ( int i=0; i<max; i++ ) {
                 sum += struct.getStruct().getId();
-                ((FSTStruct)struct)._setOffset(FSTUtil.bufoff+off+structLen);
+                ((FSTStruct)struct)._addOffset(structLen);
             }
         }
         System.out.println("  iter substructure int "+(System.currentTimeMillis()-tim));
@@ -216,7 +213,7 @@ public class TestStructs {
         }
     }
 
-    static TestStruct[] structs = new TestStruct[3000000];
+    static TestStruct[] structs = new TestStruct[1000000];
     public static void main0(String arg[] ) throws Exception {
         FSTStructFactory fac = new FSTStructFactory();
         fac.registerClz(TestStruct.class);
@@ -278,12 +275,40 @@ public class TestStructs {
 
         tim = System.currentTimeMillis();
         int sum = 0;
-        for ( int j=0; j < 4; j++ )
-            for ( int i = 0; i < arr.size(); i++) {
+        for ( int j=0; j < 4; j++ ) {
+            final int size = arr.size();
+            for ( int i = 0; i < size; i++) {
                 sum += arr.get(i).getIntVar();
             }
+        }
         System.out.println("   structarr get int " + (System.currentTimeMillis() - tim));
 
+        tim = System.currentTimeMillis();
+        sum = 0;
+        for ( int j=0; j < 4; j++ )
+            for (Iterator<TestStruct> iterator = arr.iterator(); iterator.hasNext(); ) {
+                TestStruct next = iterator.next();
+                sum += next.getIntVar();
+            }
+        System.out.println("   structarr iterator get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+
+        tim = System.currentTimeMillis();
+        sum = 0;
+        for ( int j=0; j < 4; j++ ) {
+            final TestStruct next = arr.createPointer(0);
+            final int elemSiz = arr.getElemSiz();
+            final int size = arr.size();
+            for (int i= 0; i < size; i++ ) {
+                sum+=next.getIntVar();
+                ((FSTStruct)next)._addOffset(elemSiz);
+            }
+        }
+        System.out.println("   structarr iterator offset iter get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+
+        benchFullGC();
+
+
+        System.out.println(bytes.length); // avoid opt
 //
 //        System.out.println("iarr oheap "+testStruct.intarray(0));
 //        System.out.println("iarr oheap "+testStruct.intarray(9));
