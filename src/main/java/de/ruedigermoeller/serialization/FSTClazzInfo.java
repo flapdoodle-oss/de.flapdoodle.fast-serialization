@@ -130,7 +130,7 @@ public final class FSTClazzInfo {
         res.addAll(Arrays.asList(c.getDeclaredFields()));
         for (int i = 0; i < res.size(); i++) {
             Field field = res.get(i);
-            if ( Modifier.isStatic(field.getModifiers()) ) {
+            if ( Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers() )) {
                 res.remove(i);
                 i--;
             }
