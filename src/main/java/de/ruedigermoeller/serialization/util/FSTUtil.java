@@ -39,10 +39,9 @@ public class FSTUtil {
     static Object[] EmptyObjArray = new Object[1000];
     static ObjectStreamField[] NO_FIELDS = new ObjectStreamField[0];
     public static Unsafe unsafe;
-    public static Unsafe unFlaggedUnsafe; // even if unsafe is disabled, use it for memoffset computation
+    public static Unsafe unFlaggedUnsafe = FSTUtil.getUnsafe(); // even if unsafe is disabled, use it for memoffset computation
 
     static {
-        FSTUtil.unFlaggedUnsafe = FSTUtil.getUnsafe();
         if ( System.getProperty("fst.unsafe","false").equals("true") ) {
             FSTUtil.unsafe = unFlaggedUnsafe;
         }

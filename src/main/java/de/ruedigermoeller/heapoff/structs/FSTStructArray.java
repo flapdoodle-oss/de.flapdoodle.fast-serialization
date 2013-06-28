@@ -27,18 +27,18 @@ import java.util.Iterator;
  * To change this template use File | Settings | File Templates.
  */
 public class FSTStructArray<T> {
+
     byte b[];
     int elemSiz;
     int size;
     FSTStructFactory fac;
-    //    int clzId = 0;
+
     ThreadLocal<T> wrapper = new ThreadLocal<T>() {
         @Override
         protected T initialValue() {
             return (T) fac.getStructWrapper(b, 0);
         }
     };
-
 
     public FSTStructArray(FSTStructFactory fac, Object template, int size) {
         if (size <= 0) {

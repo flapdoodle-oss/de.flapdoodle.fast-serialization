@@ -38,6 +38,7 @@ public class FSTClazzInfoRegistry {
     FSTSerializerRegistry serializerRegistry = new FSTSerializerRegistry();
     boolean ignoreAnnotations = false;
     final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
+    private boolean ignoreSerialInterfaces = false;
 
     public FSTClazzInfoRegistry() {
     }
@@ -76,5 +77,13 @@ public class FSTClazzInfoRegistry {
 
     public FSTSerializerRegistryDelegate getSerializerRegistryDelegate() {
         return serializerRegistry.getDelegate();
+    }
+
+    public void setIgnoreSerialInterfaces(boolean ignoreSerialInterfaces) {
+        this.ignoreSerialInterfaces = ignoreSerialInterfaces;
+    }
+
+    public boolean isIgnoreSerialInterfaces() {
+        return ignoreSerialInterfaces;
     }
 }

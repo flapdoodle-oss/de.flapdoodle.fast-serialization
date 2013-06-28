@@ -709,7 +709,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             writeClass(toWrite);
             return;
         }
-        if ( toWrite instanceof Serializable == false ) {
+        if ( toWrite instanceof Serializable == false && ! conf.isIgnoreSerialInterfaces() ) {
             throw new RuntimeException(toWrite.getClass().getName()+" is not serializable. referenced by "+referencee.getDesc());
         }
         if ( toWrite.getClass() == referencee.getType() && ! clsInfo.useCompatibleMode() && ! conf.isCrossLanguage() ) {

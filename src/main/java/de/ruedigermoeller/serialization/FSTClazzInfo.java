@@ -59,21 +59,23 @@ public final class FSTClazzInfo {
         reg = infoRegistry;
         ignoreAnn = ignoreAnnotations;
         createFields(clazz);
-        if (Externalizable.class.isAssignableFrom(clazz)) {
-            externalizable = true;
-            cons = FSTUtil.findConstructorForExternalize(clazz);
-        } else {
-            externalizable = false;
-            cons = FSTUtil.findConstructorForSerializable(clazz);
-        }
-        if ( ! ignoreAnnotations ) {
-            Predict annotation = (Predict) clazz.getAnnotation(Predict.class);
-            if (annotation != null) {
-                predict = annotation.value();
+        if ( !reg.isIgnoreSerialInterfaces() ) {
+            if (Externalizable.class.isAssignableFrom(clazz)) {
+                externalizable = true;
+                cons = FSTUtil.findConstructorForExternalize(clazz);
+            } else {
+                externalizable = false;
+                cons = FSTUtil.findConstructorForSerializable(clazz);
             }
-            equalIsIdentity = clazz.isAnnotationPresent(EqualnessIsIdentity.class);
-            equalIsBinary = clazz.isAnnotationPresent(EqualnessIsBinary.class);
-            flat = clazz.isAnnotationPresent(Flat.class);
+            if ( ! ignoreAnnotations ) {
+                Predict annotation = (Predict) clazz.getAnnotation(Predict.class);
+                if (annotation != null) {
+                    predict = annotation.value();
+                }
+                equalIsIdentity = clazz.isAnnotationPresent(EqualnessIsIdentity.class);
+                equalIsBinary = clazz.isAnnotationPresent(EqualnessIsBinary.class);
+                flat = clazz.isAnnotationPresent(Flat.class);
+            }
         }
 
         if (cons != null) {

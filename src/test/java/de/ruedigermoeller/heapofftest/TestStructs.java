@@ -3,6 +3,7 @@ package de.ruedigermoeller.heapofftest;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructArray;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
+import de.ruedigermoeller.heapoff.structs.structtypes.FSTStructString;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 
 import java.io.Serializable;
@@ -33,24 +34,45 @@ import java.util.Iterator;
  */
 public class TestStructs {
 
-    public static class SubTestStruct implements Serializable {
+    public static class SubTestStruct {
+        FSTStructString testString = new FSTStructString("HalloTest");
         long id = 12345;
         int legs[] = {19,18,17,16};
+        Object [] anArray = { new FSTStructString("Hello",13), new FSTStructString("Oha",14) };
+
+        Object nullobj = null;
 
         public long getId() {
             return id;
         }
+
+        public FSTStructString getTestString() {
+            return testString;
+        }
+
+        public Object getNullobj() {
+            return nullobj;
+        }
+
+        public void setNullobj(Object nullobj) {
+            this.nullobj = nullobj;
+        }
+
         public int legs(int i) { return legs[i]; }
         public void legs(int i, int val) {legs[i] = val;}
         public int legsLen() { return legs.length; }
+
+        public Object anArray(int i) { return anArray[i]; }
+        public void anArray(int i, Object val) { anArray[i] = val; }
+        public int anArrayLen() { return anArray.length; }
+
     }
 
-    public static class TestStruct implements Serializable {
+    public static class TestStruct {
         int intVar=64;
         boolean boolVar;
         int intarray[] = new int[50];
         SubTestStruct struct = new SubTestStruct();
-        Object [] anArray = { "Hello", new Date(), "test1", 10000 };
 
         public TestStruct() {
             intarray[0] = Integer.MAX_VALUE-1;
@@ -89,14 +111,6 @@ public class TestStructs {
 
         public int intarray( int i ) {
             return intarray[i];
-        }
-
-        public Object anArray(int i) {
-            return anArray[i];
-        }
-
-        public void anArray(int i, Object val) {
-            anArray[i] = val;
         }
 
         public int intarrayLen() {
@@ -223,22 +237,34 @@ public class TestStructs {
         }
     }
 
-    static TestStruct[] structs = new TestStruct[1000000];
+    static TestStruct[] structs = new TestStruct[4000000];
     public static void main0(String arg[] ) throws Exception {
 
         FSTStructFactory fac = new FSTStructFactory();
         fac.registerClz(TestStruct.class);
         fac.registerClz(SubTestStruct.class);
+        fac.registerClz(FSTStructString.class);
+
+        FSTStructString os = fac.toStruct(new FSTStructString("Hallo"));
+        System.out.println("POK:"+os);
 
         TestStruct onHeap = new TestStruct();
-        System.out.println("siz:" + fac.calcStructSize(onHeap) );
-        byte byteof[] = fac.toByteArray(onHeap);
+        TestStruct offHeap = fac.toStruct(onHeap);
 
-        if ( 1==1 )
-            return;
+        System.out.println("ti "+((FSTStructString)offHeap.getStruct().anArray(0)).getTestInt()+" "+((FSTStructString)offHeap.getStruct().anArray(1)).getTestInt());
+        System.out.println(offHeap.getStruct().getId() + " '" + ((FSTStructString) offHeap.getStruct().anArray(0)) + "' '" + offHeap.getStruct().anArray(1) + "'");
+        FSTStructString testString = offHeap.getStruct().getTestString();
+        String s = testString.toString();
+        System.out.println("pok1:"+ testString+"'");
+
+//        if ( 1==1 )
+//            return;
 
         long tim = System.currentTimeMillis();
-        for (int i = 0; i < structs.length; i++) {
+        for (int i = 0; i < structs.length; i+=2) {
+            structs[i] = new TestStruct();
+        }
+        for (int i = 1; i < structs.length; i+=2) {
             structs[i] = new TestStruct();
         }
         System.out.println("instantiation on heap "+(System.currentTimeMillis()-tim));
@@ -284,12 +310,12 @@ public class TestStructs {
 
         System.out.println("iterate structarray");
         FSTStructArray<TestStruct> arr = new FSTStructArray<TestStruct>(fac, new TestStruct(), max);
-        tim = System.currentTimeMillis();
-        for ( int j=0; j < 4; j++ )
-            for ( int i = 0; i < arr.size(); i++) {
-                arr.get(i).setIntVar(1);
-            }
-        System.out.println("   structarr set int " + (System.currentTimeMillis() - tim));
+//        tim = System.currentTimeMillis();
+//        for ( int j=0; j < 4; j++ )
+//            for ( int i = 0; i < arr.size(); i++) {
+//                arr.get(i).setIntVar(1);
+//            }
+//        System.out.println("   structarr set int " + (System.currentTimeMillis() - tim));
 
         tim = System.currentTimeMillis();
         int sum = 0;
@@ -312,10 +338,11 @@ public class TestStructs {
 
         tim = System.currentTimeMillis();
         sum = 0;
+        final TestStruct next = arr.createPointer(0);
+        final int elemSiz = arr.getElemSiz();
+        final int size = arr.size();
         for ( int j=0; j < 4; j++ ) {
-            final TestStruct next = arr.createPointer(0);
-            final int elemSiz = arr.getElemSiz();
-            final int size = arr.size();
+            ((FSTStruct)next)._setOffset(FSTUtil.bufoff);
             for (int i= 0; i < size; i++ ) {
                 sum+=next.getIntVar();
                 ((FSTStruct)next)._addOffset(elemSiz);

@@ -12,6 +12,7 @@ import sun.misc.Unsafe;
 import java.io.Externalizable;
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -298,10 +299,17 @@ public class FSTStructFactory {
         }
     }
 
+    static class ForwardEntry {
+        ForwardEntry(int pointerPos, Object forwardObject) {
+            this.pointerPos = pointerPos;
+            this.forwardObject = forwardObject;
+        }
+
+        int pointerPos;
+        Object forwardObject;
+    }
     public int toByteArray(Object onHeapStruct, byte bytes[], int offset) throws IllegalAccessException, NoSuchFieldException {
-        int pointerPositions[] = new int[30];
-        Object objects[] = new Object[30];
-        int pointerPos = 0;
+        ArrayList<ForwardEntry> positions = new ArrayList<ForwardEntry>();
         if ( onHeapStruct == null ) {
             return offset;
         }
@@ -318,9 +326,7 @@ public class FSTStructFactory {
                 }
                 if ( fi.isIntegral() ) { // prim array
                     Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
-                    objects[pointerPos] = objectValue;
-                    pointerPositions[pointerPos] = offset;
-                    pointerPos++;
+                    positions.add(new ForwardEntry(offset,objectValue));
                     offset += fi.getStructSize();
                 } else { // object array
                     Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
@@ -328,9 +334,7 @@ public class FSTStructFactory {
                     offset+=4;
                     for (int j = 0; j < objArr.length; j++) {
                         Object objectValue = objArr[j];
-                        objects[pointerPos] = objectValue;
-                        pointerPositions[pointerPos] = offset;
-                        pointerPos++;
+                        positions.add(new ForwardEntry(offset,objectValue));
                         offset += 4;
                     }
                 }
@@ -366,17 +370,16 @@ public class FSTStructFactory {
             } else { // objectref
                 Object obj = clInfo.getObjectValue(onHeapStruct, fi);
                 Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
-                objects[pointerPos] = objectValue;
-                pointerPositions[pointerPos] = offset;
-                pointerPos++;
+                positions.add(new ForwardEntry(offset,objectValue));
                 offset += fi.getStructSize();
 //                siz += fi.getStructSize()+calcStructSize(obj);
             }
         }
-        for ( int i=0; i < pointerPos; i++) {
-            Object o = objects[i];
+        for ( int i=0; i < positions.size(); i++) {
+            ForwardEntry en = positions.get(i);
+            Object o = en.forwardObject;
             if ( o == null ) {
-                unsafe.putInt(bytes, FSTUtil.bufoff+pointerPositions[i], -1 );
+                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, -1 );
                 continue;
             }
             Class c = o.getClass();
@@ -409,22 +412,22 @@ public class FSTStructFactory {
                 } else {
                     // object array treted like a sequence of object refs
                     int newoffset = toByteArray(o, bytes, offset);
-                    unsafe.putInt(bytes, FSTUtil.bufoff+pointerPositions[i], offset );
+                    unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, offset );
                     offset = newoffset;
                 }
-                unsafe.putInt(bytes, FSTUtil.bufoff+pointerPositions[i], offset );
-                unsafe.putInt(bytes, FSTUtil.bufoff+pointerPositions[i]+4, Array.getLength(o) );
+                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, offset );
+                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos+4, Array.getLength(o) );
                 offset+=siz;
             } else {
                 int newoffset = toByteArray(o, bytes, offset);
-                unsafe.putInt(bytes, FSTUtil.bufoff+pointerPositions[i], offset );
+                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, offset );
                 offset = newoffset;
             }
         }
         return offset;
     }
 
-    public int getStructSize(Class clz) {
+    public int getShallowStructSize(Class clz) {
         return conf.getClassInfo(clz).getStructSize();
     }
 

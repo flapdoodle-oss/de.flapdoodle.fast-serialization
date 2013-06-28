@@ -112,58 +112,69 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
         try {
             Class arrayType = fieldInfo.getArrayType();
             int off = fieldInfo.getStructOffset();
-            String prefix ="{ int _st_off=___unsafe.getInt(___bytes,"+off+"+___offset);"+
+            String prefix ="{ int _st_off=___unsafe.getInt(___bytes,"+off+"+___offset)+"+FSTUtil.bufoff+";"+ // array base offset in byte arr
                     "int _st_len=___unsafe.getInt(___bytes,"+off+"+4+___offset); "+
                     "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException($1);";
             if ( method.getReturnType() == CtClass.voidType ) {
                 if ( arrayType == boolean.class ) {
-                    method.setBody(prefix+"___unsafe.putBoolean(___bytes, _st_off+$1+___offset,$2);}");
+                    method.setBody(prefix+"___unsafe.putBoolean(___bytes, _st_off+$1,$2);}");
                 } else
                 if ( arrayType == byte.class ) {
-                    method.setBody(prefix+"___unsafe.putByte(___bytes, _st_off+$1+___offset,$2);}");
+                    method.setBody(prefix+"___unsafe.putByte(___bytes, _st_off+$1,$2);}");
                 } else
                 if ( arrayType == char.class ) {
-                    method.setBody(prefix+"___unsafe.putChar(___bytes, _st_off+$1*2+___offset,$2);}");
+                    method.setBody(prefix+"___unsafe.putChar(___bytes, _st_off+$1*2,$2);}");
                 } else
                 if ( arrayType == short.class ) {
-                    method.setBody(prefix+" ___unsafe.putShort(___bytes, _st_off+$1*2+___offset,$2);}");
+                    method.setBody(prefix+" ___unsafe.putShort(___bytes, _st_off+$1*2,$2);}");
                 } else
                 if ( arrayType == int.class ) {
-                    method.setBody(prefix+" ___unsafe.putInt(___bytes, _st_off+$1*4+___offset,$2);}");
+                    method.setBody(prefix+" ___unsafe.putInt(___bytes, _st_off+$1*4,$2);}");
                 } else
                 if ( arrayType == long.class ) {
-                    method.setBody(prefix+"___unsafe.putLong(___bytes, _st_off+$1*8+___offset,$2);}");
+                    method.setBody(prefix+"___unsafe.putLong(___bytes, _st_off+$1*8,$2);}");
                 } else
                 if ( arrayType == double.class ) {
-                    method.setBody(prefix+"___unsafe.putDouble(___bytes, _st_off+$1*8+___offset,$2);}");
+                    method.setBody(prefix+"___unsafe.putDouble(___bytes, _st_off+$1*8,$2);}");
                 } else
                 if ( arrayType == float.class ) {
-                    method.setBody(prefix+"___unsafe.putFloat(___bytes, _st_off+$1*4+___offset,$2);}");
+                    method.setBody(prefix+"___unsafe.putFloat(___bytes, _st_off+$1*4,$2);}");
+                } else {
+                    method.setBody("{throw new RuntimeException(\"unssupported to rewrite Objects\");}");
                 }
             } else {
                 if ( arrayType == boolean.class ) {
-                    method.setBody(prefix+"return ___unsafe.getBoolean(___bytes, _st_off+$1+___offset);}");
+                    method.setBody(prefix+"return ___unsafe.getBoolean(___bytes, _st_off+$1);}");
                 } else
                 if ( arrayType == byte.class ) {
-                    method.setBody(prefix+"return ___unsafe.getByte(___bytes, _st_off+$1+___offset);}");
+                    method.setBody(prefix+"return ___unsafe.getByte(___bytes, _st_off+$1);}");
                 } else
                 if ( arrayType == char.class ) {
-                    method.setBody(prefix+"return ___unsafe.getChar(___bytes, _st_off+$1*2+___offset);}");
+                    method.setBody(prefix+"return ___unsafe.getChar(___bytes, _st_off+$1*2); }");
                 } else
                 if ( arrayType == short.class ) {
-                    method.setBody(prefix+"return ___unsafe.getShort(___bytes, _st_off+$1*2+___offset);}");
+                    method.setBody(prefix+"return ___unsafe.getShort(___bytes, _st_off+$1*2);}");
                 } else
                 if ( arrayType == int.class ) {
-                    method.setBody(prefix+"return ___unsafe.getInt(___bytes, _st_off+$1*4+___offset);}");
+                    method.setBody(prefix+"return ___unsafe.getInt(___bytes, _st_off+$1*4);}");
                 } else
                 if ( arrayType == long.class ) {
-                    method.setBody(prefix+"return ___unsafe.getLong(___bytes, _st_off+$1*8+___offset);}");
+                    method.setBody(prefix+"return ___unsafe.getLong(___bytes, _st_off+$1*8);}");
                 } else
                 if ( arrayType == double.class ) {
-                    method.setBody(prefix+"return ___unsafe.getDouble(___bytes, _st_off+$1*8+___offset);}");
+                    method.setBody(prefix+"return ___unsafe.getDouble(___bytes, _st_off+$1*8);}");
                 } else
                 if ( arrayType == float.class ) {
-                    method.setBody(prefix+"return ___unsafe.getFloat(___bytes, _st_off+$1*4+___offset);}");
+                    method.setBody(prefix+"return ___unsafe.getFloat(___bytes, _st_off+$1*4);}");
+                } else { // object array
+                    String meth =
+                    "{"+
+                        "int _st_len=___unsafe.getInt(___bytes,"+off+"+___offset); "+
+                        "int _st_off=___unsafe.getInt(___bytes,"+off+"+$1*4+4+___offset);"+
+                        "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException($1);"+
+                        "return ___fac.getStructWrapper(___bytes,_st_off);"+
+                    "}";
+                    method.setBody(meth);
                 }
             }
         } catch (Exception ex) {

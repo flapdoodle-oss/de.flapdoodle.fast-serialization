@@ -168,6 +168,12 @@ public final class FSTConfiguration {
         serializationInfoRegistry.serializerRegistry.putSerializer(clazz, ser, alsoForAllSubclasses);
     }
 
+    public static FSTConfiguration createStructConfiguration() {
+        FSTConfiguration conf = new FSTConfiguration();
+        conf.setIgnoreSerialInterfaces(true);
+        return conf;
+    }
+
     public static FSTConfiguration createMinimalConfiguration() {
         FSTConfiguration conf = new FSTConfiguration();
         conf.addDefaultClazzes();
@@ -562,4 +568,11 @@ public final class FSTConfiguration {
         return fstObjectOutput;
     }
 
+    public void setIgnoreSerialInterfaces(boolean ignoreSerialInterfaces) {
+        serializationInfoRegistry.setIgnoreSerialInterfaces(ignoreSerialInterfaces);
+    }
+
+    public boolean isIgnoreSerialInterfaces() {
+        return serializationInfoRegistry.isIgnoreSerialInterfaces();
+    }
 }
