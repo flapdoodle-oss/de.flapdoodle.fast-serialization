@@ -171,8 +171,8 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                     "{"+
                         "int _st_len=___unsafe.getInt(___bytes,"+off+"+___offset); "+
                         "int _st_off=___unsafe.getInt(___bytes,"+off+"+$1*4+4+___offset);"+
-                        "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException($1);"+
-                        "return ___fac.getStructWrapper(___bytes,_st_off);"+
+                        "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException($1+\" size \"+_st_len);"+
+                        "return ("+fieldInfo.getArrayType().getName()+")___fac.getStructWrapper(___bytes,_st_off);"+
                     "}";
                     method.setBody(meth);
                 }
@@ -183,10 +183,23 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     }
 
     @Override
+    public void defineArrayIndex(FSTClazzInfo.FSTFieldInfo fieldInfo, FSTClazzInfo clInfo, CtMethod method) {
+        int off = fieldInfo.getStructOffset();
+        try {
+            method.setBody("{ return "+off+"; }");
+        } catch (CannotCompileException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void defineArrayLength(FSTClazzInfo.FSTFieldInfo fieldInfo, FSTClazzInfo clInfo, CtMethod method) {
         int off = fieldInfo.getStructOffset();
         try {
-            method.setBody("{ return ___unsafe.getInt(___bytes,"+off+"+4+___offset); }");
+            if ( fieldInfo.getArrayType().isPrimitive() )
+                method.setBody("{ return ___unsafe.getInt(___bytes,"+off+"+4+___offset); }");
+            else
+                method.setBody("{ return ___unsafe.getInt(___bytes,"+off+"+___offset); }");
         } catch (CannotCompileException e) {
             throw new RuntimeException(e);
         }

@@ -20,32 +20,51 @@ package de.ruedigermoeller.heapoff.structs.structtypes;
  * <p/>
  * Date: 28.06.13
  * Time: 20:50
- * To change this template use File | Settings | File Templates.
+ *
  */
-public class FSTStructString implements Comparable {
 
-    int testInt = 13;
+import java.io.Serializable;
+
+/**
+ * this class can be used to represent strings in structs. the content is rewritable, but cannot grow.
+ * max length is determined once you create the struct object.
+ */
+public class FSTEmbeddedString implements Comparable,Serializable {
+
+    int len = 0;
     char chars[];
 
-    public FSTStructString(int size) {
+    public FSTEmbeddedString(int size) {
         chars = new char[size];
+        len = 0;
     }
 
-    public FSTStructString(String s) {
+    public FSTEmbeddedString(String s) {
         chars = s.toCharArray();
+        len = s.length();
     }
 
-    public FSTStructString(String oha, int i) {
-        this(oha);
-        testInt = i;
+    /**
+     * modify content of this StructString. The length of the new String must not exceed
+     * the length of internal char array
+     * @param s
+     */
+    public void setString(String s) {
+        if ( s.length() > charsLen() ) {
+            throw new RuntimeException("String length exceeds buffer size");
+        }
+        for (int i=0; i < s.length(); i++) {
+            chars(i,s.charAt(i));
+        }
+        len = s.length();
     }
 
-    public int getTestInt() {
-        return testInt;
+    public int getLen() {
+        return len;
     }
 
-    public void setTestInt(int testInt) {
-        this.testInt = testInt;
+    public void setLen(int len) {
+        this.len = len;
     }
 
     public void chars(int i, char val) {
@@ -56,9 +75,9 @@ public class FSTStructString implements Comparable {
         return chars[i];
     }
 
-    public int compareTo(FSTStructString str) {
-        int l1 = charsLen();
-        int l2 = str.charsLen();
+    public int compareTo(FSTEmbeddedString str) {
+        int l1 = len;
+        int l2 = str.getLen();
         int max = Math.min(l1, l2);
         int i = 0;
         while (i < max) {
@@ -78,8 +97,8 @@ public class FSTStructString implements Comparable {
 
     public String toString() {
         // fixme: optimize this by pointing directly to underlying array
-        char ch[] = new char[charsLen()];
-        for ( int i=0; i < charsLen(); i++ ) {
+        char ch[] = new char[len];
+        for ( int i=0; i < len; i++ ) {
             ch[i] = chars(i);
         }
         return new String(ch);
@@ -87,8 +106,9 @@ public class FSTStructString implements Comparable {
 
     @Override
     public int hashCode() {
-        int len = charsLen();
-        if ( len > 1)
+        if ( len > 6)
+            return chars(0)+chars(3)<<16+chars(len-1)<<32+chars(len-3)<<48;
+        else if ( len > 1)
             return chars(0)+chars(1)<<16+chars(len-1)<<32+chars(len-2)<<48;
         else if ( len > 0 )
             return chars(0);
@@ -96,12 +116,12 @@ public class FSTStructString implements Comparable {
     }
 
     public boolean equals( Object o ) {
-        if ( o instanceof FSTStructString ) {
-            FSTStructString ss = (FSTStructString) o;
-            if ( ss.charsLen() != charsLen() ) {
+        if ( o instanceof FSTEmbeddedString) {
+            FSTEmbeddedString ss = (FSTEmbeddedString) o;
+            if ( ss.getLen() != getLen() ) {
                 return false;
             }
-            for ( int i = 0; i < ss.charsLen(); i++ ) {
+            for ( int i = 0; i < ss.getLen(); i++ ) {
                 if ( ss.chars(i) != ss.chars(i) ) {
                     return false;
                 }
@@ -113,8 +133,8 @@ public class FSTStructString implements Comparable {
 
     @Override
     public int compareTo(Object o) {
-        if ( o instanceof FSTStructString ) {
-            return compareTo((FSTStructString)o);
+        if ( o instanceof FSTEmbeddedString) {
+            return compareTo((FSTEmbeddedString)o);
         }
         return -1;
     }

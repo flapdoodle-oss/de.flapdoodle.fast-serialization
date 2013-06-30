@@ -26,6 +26,17 @@ import java.util.Iterator;
  * Time: 21:31
  * To change this template use File | Settings | File Templates.
  */
+
+/**
+ * An array consisting of directly packed structs. All structs have to be of same memory size.
+ *
+ * the struct objects are directly embedded in a row, there is no index table or similar involved.
+ * Up to 2 GB of packed struct objects can be held without increasing Full GC duration
+ *
+ * Note that get() and iterator just deliver a pointer to a struct of the array.
+ * In order to detach an object and reference it from outside you need to use 'createPointer'
+ * @param <T>
+ */
 public class FSTStructArray<T> {
 
     byte b[];

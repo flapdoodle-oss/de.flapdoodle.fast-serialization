@@ -1,6 +1,4 @@
-package de.ruedigermoeller.heapoff.structs;
-
-import sun.misc.Unsafe;
+package de.ruedigermoeller.heapofftest.gcbenchmarks;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -20,20 +18,14 @@ import sun.misc.Unsafe;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  * <p/>
- * Date: 26.06.13
- * Time: 19:55
+ * Date: 30.06.13
+ * Time: 01:45
  * To change this template use File | Settings | File Templates.
  */
-public interface FSTStruct {
-    public void _setOffset(long off);
-    public long  _getOffset();
-    public void _addOffset(long off);
-    public void _setBase(byte[] base);
-    public byte[] _getBase();
-    public FSTStructFactory _getFac();
-    public boolean _isIdenticTo(FSTStruct other);
+public class BusinessObjectGC extends BasicGCBench {
 
-    public void internal_setFac(FSTStructFactory fac);
-    public void internal_setUnsafe(Unsafe uns);
-//    public FSTStructFactory _getFac();
+
+    public static class BusinessObject {
+
+    }
 }

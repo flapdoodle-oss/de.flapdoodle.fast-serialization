@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -40,13 +41,16 @@ import java.util.HashMap;
 public class FSTStructFactory {
 
     static Unsafe unsafe = FSTUtil.unFlaggedUnsafe;
+    static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
+    ConcurrentHashMap<Class, Class> proxyClzMap = new ConcurrentHashMap<Class, Class>();
+    static Loader proxyLoader = new Loader(FSTStructFactory.class.getClassLoader(), ClassPool.getDefault());
 
-    FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
     FSTStructGeneration structGen = new FSTByteArrayUnsafeStructGeneration();
-    HashMap<Class, Class> proxyClzMap = new HashMap<Class, Class>();
-    Loader proxyLoader = new Loader(getClass().getClassLoader(), ClassPool.getDefault());
 
     <T> Class<T> createStructClz( Class<T> clazz ) throws Exception {
+        if ( Modifier.isFinal(clazz.getModifiers()) || Modifier.isAbstract(clazz.getModifiers()) ) {
+            throw new RuntimeException("Cannot add final classes to structs");
+        }
 //        Class<?> clazz = toPack.getClass();
         String proxyName = clazz.getName()+"_Struct";
         Class present = null;
@@ -73,14 +77,34 @@ public class FSTStructFactory {
             boolean allowed = ((method.getModifiers() & AccessFlag.ABSTRACT) == 0 ) &&
                     (method.getModifiers() & AccessFlag.NATIVE) == 0 &&
                     (method.getModifiers() & AccessFlag.FINAL) == 0;
+            if ( (method.getModifiers() & AccessFlag.FINAL) != 0 && ! method.getDeclaringClass().getName().equals("java.lang.Object")) {
+                throw new RuntimeException("final methods are not allowed for struct classes:"+method.getName());
+            }
+            if ( (method.getModifiers() & AccessFlag.PRIVATE) != 0 && ! method.getDeclaringClass().getName().equals("java.lang.Object")) {
+                throw new RuntimeException("private methods are not allowed for struct classes:"+method.getName());
+            }
             if ( allowed ) {
                 method = new CtMethod(method,newClz,null);
                 String methName = method.getName();
-                if ( clInfo.getFieldInfo(methName, null) != null ) {
-                    structGen.defineArrayAccessor(clInfo.getFieldInfo(methName, null), clInfo, method);
+                FSTClazzInfo.FSTFieldInfo arrayFi = clInfo.getFieldInfo(methName, null);
+                FSTClazzInfo.FSTFieldInfo lenfi = methName.length() > 2 ? clInfo.getFieldInfo(methName.substring(0, methName.length() - 3), null) : null;
+                FSTClazzInfo.FSTFieldInfo indexfi = methName.length()>4 ? clInfo.getFieldInfo(methName.substring(0, methName.length() - 5), null) : null;
+                if ( arrayFi == null || !arrayFi.isArray() || arrayFi.getArrayType().isArray() )
+                    arrayFi = null;
+                if ( lenfi == null || !lenfi.isArray() || lenfi.getArrayType().isArray() )
+                    lenfi = null;
+                if ( indexfi == null || !indexfi.isArray() || indexfi.getArrayType().isArray() )
+                    indexfi = null;
+                if ( indexfi != null ) {
+                    structGen.defineArrayIndex(indexfi, clInfo, method);
                     newClz.addMethod(method);
-                } else if ( methName.endsWith("Len") && clInfo.getFieldInfo(methName.substring(0, methName.length() - 3), null) != null ) {
-                    structGen.defineArrayLength(clInfo.getFieldInfo(methName.substring(0, methName.length() - 3), null), clInfo, method);
+                } else
+                if ( arrayFi != null ) {
+                    structGen.defineArrayAccessor(arrayFi, clInfo, method);
+                    newClz.addMethod(method);
+                } else if ( methName.endsWith("Len") && lenfi != null )
+                {
+                    structGen.defineArrayLength(lenfi, clInfo, method);
                     newClz.addMethod(method);
                 } else {
                     newClz.addMethod(method);
@@ -108,11 +132,11 @@ public class FSTStructFactory {
         }
 
         CtMethod setOffset = new CtMethod(CtClass.voidType,"_setOffset", new CtClass[]{CtClass.longType},newClz);
-        setOffset.setBody("{___offset=$1;if (___offset-"+FSTUtil.bufoff+" > ___bytes.length || ___offset<"+FSTUtil.bufoff+" ) throw new RuntimeException(\"Illegal offset\"); }");
+        setOffset.setBody("{___offset=$1;if (___offset-"+FSTUtil.bufoff+" > ___bytes.length || ___offset<"+FSTUtil.bufoff+" ) throw new RuntimeException(\"Illegal offset \"+___offset+\" bytelen:\"+___bytes.length); }");
         newClz.addMethod(setOffset);
 
         CtMethod addOffset = new CtMethod(CtClass.voidType,"_addOffset", new CtClass[]{CtClass.longType},newClz);
-        addOffset.setBody("{___offset+=$1;if (___offset-"+FSTUtil.bufoff+" > ___bytes.length || ___offset<"+FSTUtil.bufoff+" ) throw new RuntimeException(\"Illegal offset\"); }");
+        addOffset.setBody("{___offset+=$1;if (___offset-"+FSTUtil.bufoff+" > ___bytes.length || ___offset<"+FSTUtil.bufoff+" ) throw new RuntimeException(\"Illegal offset \"+___offset+\" bytelen:\"+___bytes.length); }");
         newClz.addMethod(addOffset);
 
         CtMethod getOffset = new CtMethod(CtClass.longType,"_getOffset", new CtClass[]{},newClz);
@@ -131,9 +155,13 @@ public class FSTStructFactory {
         setFac.setBody("{___fac=$1;}");
         newClz.addMethod(setFac);
 
-//        CtMethod getFac = new CtMethod(pool.getCtClass(FSTStructFactory.class.getName()),"_getFac", new CtClass[]{},newClz);
-//        getFac.setBody("{return ___fac;}");
-//        newClz.addMethod(getFac);
+        CtMethod getFac = new CtMethod(pool.getCtClass(FSTStructFactory.class.getName()),"_getFac", new CtClass[]{},newClz);
+        getFac.setBody("{return ___fac;}");
+        newClz.addMethod(getFac);
+
+        CtMethod getBase = new CtMethod(pool.getCtClass(byte[].class.getName()),"_getBase", new CtClass[]{},newClz);
+        getBase.setBody("{return ___bytes;}");
+        newClz.addMethod(getBase);
 
         return (Class<T>) loadProxyClass(clazz, pool, newClz);
     }
@@ -148,10 +176,7 @@ public class FSTStructFactory {
         proxyLoader.delegateLoadingOf(FSTStructFactory.class.getName());
         proxyLoader.delegateLoadingOf(FSTStruct.class.getName());
 //        proxyLoader.delegateLoadingOf(SubTestStruct.class.getName());
-
         ccClz = proxyLoader.loadClass(cc.getName());
-
-
         return ccClz;
     }
 
@@ -221,12 +246,15 @@ public class FSTStructFactory {
     }
 
     public Object getStructWrapper(byte b[], int offset) {
+        if ( offset < 0 ) {
+            return null;
+        }
         Integer clzId = unsafe.getInt(b, FSTUtil.bufoff + offset);
         HashMap<Integer, Object> integerObjectHashMap = cachedWrapperMap.get();
         Object res = integerObjectHashMap.get(clzId);
         if ( res != null ) {
-            ((FSTStruct)res)._setOffset(FSTUtil.bufoff+offset);
             ((FSTStruct)res)._setBase(b);
+            ((FSTStruct)res)._setOffset(FSTUtil.bufoff + offset);
             setWrapperFields(b,offset,res.getClass(),res);
             return res;
         }
@@ -300,14 +328,18 @@ public class FSTStructFactory {
     }
 
     static class ForwardEntry {
+
         ForwardEntry(int pointerPos, Object forwardObject) {
             this.pointerPos = pointerPos;
             this.forwardObject = forwardObject;
         }
 
+        boolean isArray =false;
         int pointerPos;
         Object forwardObject;
     }
+
+
     public int toByteArray(Object onHeapStruct, byte bytes[], int offset) throws IllegalAccessException, NoSuchFieldException {
         ArrayList<ForwardEntry> positions = new ArrayList<ForwardEntry>();
         if ( onHeapStruct == null ) {
@@ -334,8 +366,13 @@ public class FSTStructFactory {
                     offset+=4;
                     for (int j = 0; j < objArr.length; j++) {
                         Object objectValue = objArr[j];
-                        positions.add(new ForwardEntry(offset,objectValue));
-                        offset += 4;
+                        if ( objectValue == null ) {
+                            unsafe.putInt(bytes, FSTUtil.bufoff + offset, -1);
+                            offset+=4;
+                        } else {
+                            positions.add(new ForwardEntry(offset,objectValue));
+                            offset += 4;
+                        }
                     }
                 }
             } else if ( fi.isIntegral() ) { // && ! array
@@ -369,9 +406,14 @@ public class FSTStructFactory {
                 offset += fi.getStructSize();
             } else { // objectref
                 Object obj = clInfo.getObjectValue(onHeapStruct, fi);
-                Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
-                positions.add(new ForwardEntry(offset,objectValue));
-                offset += fi.getStructSize();
+                if ( obj == null ) {
+                    unsafe.putInt(bytes, FSTUtil.bufoff + offset, -1);
+                    offset+=fi.getStructSize();
+                } else {
+                    Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
+                    positions.add(new ForwardEntry(offset,objectValue));
+                    offset += fi.getStructSize();
+                }
 //                siz += fi.getStructSize()+calcStructSize(obj);
             }
         }
@@ -379,8 +421,7 @@ public class FSTStructFactory {
             ForwardEntry en = positions.get(i);
             Object o = en.forwardObject;
             if ( o == null ) {
-                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, -1 );
-                continue;
+                throw new RuntimeException("this is a bug");
             }
             Class c = o.getClass();
             if (c.isArray()) {
