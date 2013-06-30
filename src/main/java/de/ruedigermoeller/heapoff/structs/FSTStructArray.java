@@ -51,7 +51,7 @@ public class FSTStructArray<T> {
         }
     };
 
-    public FSTStructArray(FSTStructFactory fac, Object template, int size) {
+    public FSTStructArray(FSTStructFactory fac, T template, int size) {
         if (size <= 0) {
             throw new RuntimeException("size must be > 0");
         }
