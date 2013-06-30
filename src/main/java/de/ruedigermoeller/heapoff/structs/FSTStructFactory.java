@@ -40,11 +40,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FSTStructFactory {
 
+    public static final int MAX_CLASSES = 1000;
     static Unsafe unsafe = FSTUtil.unFlaggedUnsafe;
     static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
-    ConcurrentHashMap<Class, Class> proxyClzMap = new ConcurrentHashMap<Class, Class>();
     static Loader proxyLoader = new Loader(FSTStructFactory.class.getClassLoader(), ClassPool.getDefault());
 
+    ConcurrentHashMap<Class, Class> proxyClzMap = new ConcurrentHashMap<Class, Class>();
+    ConcurrentHashMap<Class, FSTStructTypeConverter> typeConverterMap = new ConcurrentHashMap<Class, FSTStructTypeConverter>();
     FSTStructGeneration structGen = new FSTByteArrayUnsafeStructGeneration();
 
     <T> Class<T> createStructClz( Class<T> clazz ) throws Exception {
@@ -234,15 +236,15 @@ public class FSTStructFactory {
         }
     }
 
-    ThreadLocal<HashMap<Integer,Object>> cachedWrapperMap = new ThreadLocal<HashMap<Integer, Object>>() {
+    ThreadLocal<Object[]> cachedWrapperMap = new ThreadLocal<Object[]>() {
         @Override
-        protected HashMap<Integer, Object> initialValue() {
-            return new HashMap<Integer, Object>();
+        protected Object[] initialValue() {
+            return new Object[MAX_CLASSES];
         }
     };
 
     public void detach(int clzId) {
-        cachedWrapperMap.get().remove(clzId);
+        cachedWrapperMap.get()[clzId] = null;
     }
 
     public Object getStructWrapper(byte b[], int offset) {
@@ -250,8 +252,8 @@ public class FSTStructFactory {
             return null;
         }
         Integer clzId = unsafe.getInt(b, FSTUtil.bufoff + offset);
-        HashMap<Integer, Object> integerObjectHashMap = cachedWrapperMap.get();
-        Object res = integerObjectHashMap.get(clzId);
+        Object[] wrapperMap = cachedWrapperMap.get();
+        Object res = wrapperMap[clzId];
         if ( res != null ) {
             ((FSTStruct)res)._setBase(b);
             ((FSTStruct)res)._setOffset(FSTUtil.bufoff + offset);
@@ -259,7 +261,7 @@ public class FSTStructFactory {
             return res;
         }
         res = createStructWrapper(b,offset,clzId);
-        integerObjectHashMap.put(clzId, res);
+        wrapperMap[clzId] = res;
         return res;
     }
 

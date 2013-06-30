@@ -54,6 +54,8 @@ public class TestStructs {
         public Object anArray(int i) { return anArray[i]; }
         public void anArray(int i, Object val) { anArray[i] = val; }
         public int anArrayLen() { return anArray.length; }
+
+
     }
 
     public static class SubTestStruct implements Serializable {
