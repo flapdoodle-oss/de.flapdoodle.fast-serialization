@@ -1,7 +1,7 @@
 package de.ruedigermoeller.heapofftest;
 
 import de.ruedigermoeller.heapoff.FSTCompressor;
-import de.ruedigermoeller.heapoff.structs.FSTStruct;
+import de.ruedigermoeller.heapoff.structs.FSTStructDeprecated;
 import de.ruedigermoeller.heapoff.structs.FSTStructArray;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.structtypes.FSTEmbeddedList;
@@ -158,7 +158,7 @@ public class TestStructs {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
             for ( int i=0; i<max; i++ ) {
                 sum += struct.getIntVar();
-                ((FSTStruct)struct)._addOffset(structLen);
+                ((FSTStructDeprecated)struct)._addOffset(structLen);
             }
         }
         System.out.println("  iter int "+(System.currentTimeMillis()-tim)+" sum "+sum);
@@ -169,7 +169,7 @@ public class TestStructs {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
             for ( int i=0; i<max; i++ ) {
                 sum += struct.intarray(3);
-                ((FSTStruct)struct)._addOffset(structLen);
+                ((FSTStructDeprecated)struct)._addOffset(structLen);
             }
         }
         System.out.println("  iter int array[3]"+(System.currentTimeMillis()-tim));
@@ -182,7 +182,7 @@ public class TestStructs {
                 if ( struct.containsInt(77) ) {
                     sum = 0;
                 }
-                ((FSTStruct)struct)._addOffset(structLen);
+                ((FSTStructDeprecated)struct)._addOffset(structLen);
             }
         }
         System.out.println("  iter int from this "+(System.currentTimeMillis()-tim));
@@ -193,7 +193,7 @@ public class TestStructs {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
             for ( int i=0; i<max; i++ ) {
                 sum += struct.getStruct().getId();
-                ((FSTStruct)struct)._addOffset(structLen);
+                ((FSTStructDeprecated)struct)._addOffset(structLen);
             }
         }
         System.out.println("  iter substructure int "+(System.currentTimeMillis()-tim));
@@ -488,10 +488,10 @@ public class TestStructs {
         final int elemSiz = arr.getElemSiz();
         final int size = arr.size();
         for ( int j=0; j < 4; j++ ) {
-            ((FSTStruct)next)._setOffset(FSTUtil.bufoff);
+            ((FSTStructDeprecated)next)._setOffset(FSTUtil.bufoff);
             for (int i= 0; i < size; i++ ) {
                 sum+=next.getIntVar();
-                ((FSTStruct)next)._addOffset(elemSiz);
+                ((FSTStructDeprecated)next)._addOffset(elemSiz);
             }
         }
         System.out.println("   structarr iterator offset iter get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);

@@ -24,14 +24,14 @@ import sun.misc.Unsafe;
  * Time: 19:55
  * To change this template use File | Settings | File Templates.
  */
-public interface FSTStruct {
+public interface FSTStructDeprecated {
     public void _setOffset(long off);
     public long  _getOffset();
     public void _addOffset(long off);
     public void _setBase(byte[] base);
     public byte[] _getBase();
     public FSTStructFactory _getFac();
-    public boolean _isIdenticTo(FSTStruct other);
+    public boolean _isIdenticTo(FSTStructDeprecated other);
 
     public void internal_setFac(FSTStructFactory fac);
     public void internal_setUnsafe(Unsafe uns);

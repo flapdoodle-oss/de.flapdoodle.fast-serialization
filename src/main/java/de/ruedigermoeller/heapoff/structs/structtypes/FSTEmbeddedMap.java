@@ -1,6 +1,6 @@
 package de.ruedigermoeller.heapoff.structs.structtypes;
 
-import de.ruedigermoeller.heapoff.structs.FSTStruct;
+import de.ruedigermoeller.heapoff.structs.FSTStructDeprecated;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 import sun.misc.Unsafe;
@@ -76,8 +76,8 @@ public class FSTEmbeddedMap<K,V> implements Serializable {
         }
         int kvlen = keyValLen();
         int hpos = 2 * ((key.hashCode() & 0x7FFFFFFF) % (kvlen>>1));
-        if ( this instanceof FSTStruct ) {
-            FSTStruct structThis = (FSTStruct) this;
+        if ( this instanceof FSTStructDeprecated) {
+            FSTStructDeprecated structThis = (FSTStructDeprecated) this;
             byte base[] = structThis._getBase();
             FSTStructFactory fac = structThis._getFac();
             int arroffset = keyValIndex()+4+FSTUtil.bufoff;// first int is length, skip, add base byte[] offset

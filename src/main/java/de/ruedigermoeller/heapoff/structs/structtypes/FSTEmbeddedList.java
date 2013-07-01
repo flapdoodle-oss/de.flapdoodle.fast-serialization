@@ -1,9 +1,5 @@
 package de.ruedigermoeller.heapoff.structs.structtypes;
 
-import de.ruedigermoeller.heapoff.structs.FSTStruct;
-import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
-import de.ruedigermoeller.serialization.util.FSTUtil;
-
 import java.io.Serializable;
 import java.util.*;
 

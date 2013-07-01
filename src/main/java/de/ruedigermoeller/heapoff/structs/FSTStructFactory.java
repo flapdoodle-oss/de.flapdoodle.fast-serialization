@@ -67,7 +67,7 @@ public class FSTStructFactory {
         CtClass newClz = pool.makeClass(proxyName);
         CtClass orig = pool.get(clazz.getName());
         newClz.setSuperclass(orig);
-        newClz.setInterfaces(new CtClass[]{pool.get(FSTStruct.class.getName())});
+        newClz.setInterfaces(new CtClass[]{pool.get(FSTStructDeprecated.class.getName())});
 
         final FSTClazzInfo clInfo = conf.getClassInfo(clazz);
         structGen.defineStructFields(this, pool, newClz, clInfo);
@@ -176,7 +176,7 @@ public class FSTStructFactory {
         proxyLoader.delegateLoadingOf(FSTUtil.class.getName());
         proxyLoader.delegateLoadingOf(Serializable.class.getName());
         proxyLoader.delegateLoadingOf(FSTStructFactory.class.getName());
-        proxyLoader.delegateLoadingOf(FSTStruct.class.getName());
+        proxyLoader.delegateLoadingOf(FSTStructDeprecated.class.getName());
 //        proxyLoader.delegateLoadingOf(SubTestStruct.class.getName());
         ccClz = proxyLoader.loadClass(cc.getName());
         return ccClz;
@@ -201,7 +201,7 @@ public class FSTStructFactory {
 
     private <T> void setWrapperFields(byte[] bytes, int offset, Class proxy, T res) {
         try {
-            FSTStruct struct = (FSTStruct) res;
+            FSTStructDeprecated struct = (FSTStructDeprecated) res;
             struct._setBase(bytes);
             struct._setOffset(FSTUtil.bufoff + offset);
             struct.internal_setFac(this);
@@ -211,17 +211,17 @@ public class FSTStructFactory {
         }
     }
 
-    public FSTStruct createStructWrapper(byte b[], int offset) {
+    public FSTStructDeprecated createStructWrapper(byte b[], int offset) {
         int clzId = unsafe.getInt(b,FSTUtil.bufoff+offset);
         return createStructWrapper(b, offset, clzId);
     }
 
-    private FSTStruct createStructWrapper(byte[] b, int offset, Integer clzId) {
+    private FSTStructDeprecated createStructWrapper(byte[] b, int offset, Integer clzId) {
         Class clazz = mIntToClz.get(clzId);
         if (clazz==null)
             throw new RuntimeException("unregistered class "+clzId);
         try {
-            return (FSTStruct) createWrapper(clazz, b, offset);
+            return (FSTStructDeprecated) createWrapper(clazz, b, offset);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -255,8 +255,8 @@ public class FSTStructFactory {
         Object[] wrapperMap = cachedWrapperMap.get();
         Object res = wrapperMap[clzId];
         if ( res != null ) {
-            ((FSTStruct)res)._setBase(b);
-            ((FSTStruct)res)._setOffset(FSTUtil.bufoff + offset);
+            ((FSTStructDeprecated)res)._setBase(b);
+            ((FSTStructDeprecated)res)._setOffset(FSTUtil.bufoff + offset);
             setWrapperFields(b,offset,res.getClass(),res);
             return res;
         }

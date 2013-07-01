@@ -71,7 +71,7 @@ public class FSTStructArray<T> {
         if (i < 0 || i >= size)
             throw new ArrayIndexOutOfBoundsException("index: " + i + " size:" + size);
         T wrap = wrapper.get();
-        ((FSTStruct) wrap)._setOffset(FSTUtil.bufoff + elemSiz * i);
+        ((FSTStructDeprecated) wrap)._setOffset(FSTUtil.bufoff + elemSiz * i);
         return wrap;
     }
 
@@ -105,12 +105,12 @@ public class FSTStructArray<T> {
 
         @Override
         public final boolean hasNext() {
-            return ((FSTStruct) current)._getOffset() < maxPos;
+            return ((FSTStructDeprecated) current)._getOffset() < maxPos;
         }
 
         @Override
         public final T next() {
-            ((FSTStruct) current)._addOffset(elemSiz);
+            ((FSTStructDeprecated) current)._addOffset(elemSiz);
             return current;
         }
 
