@@ -19,8 +19,6 @@
  */
 package de.ruedigermoeller.serialization;
 
-import de.ruedigermoeller.serialization.util.*;
-
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -38,7 +36,7 @@ public class FSTClazzInfoRegistry {
     FSTSerializerRegistry serializerRegistry = new FSTSerializerRegistry();
     boolean ignoreAnnotations = false;
     final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
-    private boolean ignoreSerialInterfaces = false;
+    private boolean structMode = false;
 
     public FSTClazzInfoRegistry() {
     }
@@ -79,11 +77,11 @@ public class FSTClazzInfoRegistry {
         return serializerRegistry.getDelegate();
     }
 
-    public void setIgnoreSerialInterfaces(boolean ignoreSerialInterfaces) {
-        this.ignoreSerialInterfaces = ignoreSerialInterfaces;
+    public void setStructMode(boolean structMode) {
+        this.structMode = structMode;
     }
 
-    public boolean isIgnoreSerialInterfaces() {
-        return ignoreSerialInterfaces;
+    public boolean isStructMode() {
+        return structMode;
     }
 }

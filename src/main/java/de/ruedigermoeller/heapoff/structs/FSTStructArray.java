@@ -37,7 +37,7 @@ import java.util.Iterator;
  * In order to detach an object and reference it from outside you need to use 'createPointer'
  * @param <T>
  */
-public class FSTStructArray<T> {
+public class FSTStructArray<T extends FSTStruct> {
 
     byte b[];
     int elemSiz;
@@ -71,7 +71,7 @@ public class FSTStructArray<T> {
         if (i < 0 || i >= size)
             throw new ArrayIndexOutOfBoundsException("index: " + i + " size:" + size);
         T wrap = wrapper.get();
-        ((FSTStructDeprecated) wrap)._setOffset(FSTUtil.bufoff + elemSiz * i);
+        wrap.setAbsoluteOffset(FSTUtil.bufoff + elemSiz * i);
         return wrap;
     }
 
@@ -91,7 +91,7 @@ public class FSTStructArray<T> {
         return (T) fac.createStructWrapper(b, index * elemSiz);
     }
 
-    final class StructArrIterator<T> implements Iterator<T> {
+    final class StructArrIterator<T extends FSTStruct> implements Iterator<T> {
 
         T current;
         final int maxPos;
@@ -105,12 +105,12 @@ public class FSTStructArray<T> {
 
         @Override
         public final boolean hasNext() {
-            return ((FSTStructDeprecated) current)._getOffset() < maxPos;
+            return current.getAbsoluteOffset() < maxPos;
         }
 
         @Override
         public final T next() {
-            ((FSTStructDeprecated) current)._addOffset(elemSiz);
+            current.addOffset(elemSiz);
             return current;
         }
 

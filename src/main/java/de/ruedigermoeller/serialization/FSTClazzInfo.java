@@ -59,7 +59,7 @@ public final class FSTClazzInfo {
         reg = infoRegistry;
         ignoreAnn = ignoreAnnotations;
         createFields(clazz);
-        if ( !reg.isIgnoreSerialInterfaces() ) {
+        if ( !reg.isStructMode() ) {
             if (Externalizable.class.isAssignableFrom(clazz)) {
                 externalizable = true;
                 cons = FSTUtil.findConstructorForExternalize(clazz);
@@ -132,7 +132,8 @@ public final class FSTClazzInfo {
         res.addAll(Arrays.asList(c.getDeclaredFields()));
         for (int i = 0; i < res.size(); i++) {
             Field field = res.get(i);
-            if ( Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers() )) {
+            if ( Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers()) )
+            {
                 res.remove(i);
                 i--;
             }

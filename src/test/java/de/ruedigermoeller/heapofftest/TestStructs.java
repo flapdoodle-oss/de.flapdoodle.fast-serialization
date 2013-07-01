@@ -1,15 +1,14 @@
 package de.ruedigermoeller.heapofftest;
 
 import de.ruedigermoeller.heapoff.FSTCompressor;
-import de.ruedigermoeller.heapoff.structs.FSTStructDeprecated;
+import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructArray;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
-import de.ruedigermoeller.heapoff.structs.structtypes.FSTEmbeddedList;
-import de.ruedigermoeller.heapoff.structs.structtypes.FSTEmbeddedMap;
-import de.ruedigermoeller.heapoff.structs.structtypes.FSTEmbeddedString;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructList;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,10 +37,10 @@ import java.util.Iterator;
  */
 public class TestStructs {
 
-    public static class SimpleTest implements Serializable {
+    public static class SimpleTest extends FSTStruct {
         Object nullObject = null;
         long id = 12345;
-        Object [] anArray = { null, null, new FSTEmbeddedString("NotNull"), null };
+        Object [] anArray = { null, null, new StructString("NotNull"), null };
 
         public Object getNullObject() {
             return nullObject;
@@ -58,11 +57,11 @@ public class TestStructs {
 
     }
 
-    public static class SubTestStruct implements Serializable {
-        FSTEmbeddedString testString = new FSTEmbeddedString("HalloTest");
+    public static class SubTestStruct extends FSTStruct {
+        StructString testString = new StructString("HalloTest");
         long id = 12345;
         int legs[] = {19,18,17,16};
-        Object [] anArray = { new FSTEmbeddedString("Hello"), new FSTEmbeddedString("Oha") };
+        Object [] anArray = { new StructString("Hello"), new StructString("Oha") };
 
         Object nullobj = null;
 
@@ -70,7 +69,7 @@ public class TestStructs {
             return id;
         }
 
-        public FSTEmbeddedString getTestString() {
+        public StructString getTestString() {
             return testString;
         }
 
@@ -92,7 +91,7 @@ public class TestStructs {
 
     }
 
-    public static class TestStruct implements Serializable {
+    public static class TestStruct extends FSTStruct {
         int intVar=64;
         boolean boolVar;
         int intarray[] = new int[50];
@@ -158,7 +157,7 @@ public class TestStructs {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
             for ( int i=0; i<max; i++ ) {
                 sum += struct.getIntVar();
-                ((FSTStructDeprecated)struct)._addOffset(structLen);
+                struct.addOffset(structLen);
             }
         }
         System.out.println("  iter int "+(System.currentTimeMillis()-tim)+" sum "+sum);
@@ -169,7 +168,7 @@ public class TestStructs {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
             for ( int i=0; i<max; i++ ) {
                 sum += struct.intarray(3);
-                ((FSTStructDeprecated)struct)._addOffset(structLen);
+                struct.addOffset(structLen);
             }
         }
         System.out.println("  iter int array[3]"+(System.currentTimeMillis()-tim));
@@ -182,7 +181,7 @@ public class TestStructs {
                 if ( struct.containsInt(77) ) {
                     sum = 0;
                 }
-                ((FSTStructDeprecated)struct)._addOffset(structLen);
+                struct.addOffset(structLen);
             }
         }
         System.out.println("  iter int from this "+(System.currentTimeMillis()-tim));
@@ -193,7 +192,7 @@ public class TestStructs {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
             for ( int i=0; i<max; i++ ) {
                 sum += struct.getStruct().getId();
-                ((FSTStructDeprecated)struct)._addOffset(structLen);
+                struct.addOffset(structLen);
             }
         }
         System.out.println("  iter substructure int "+(System.currentTimeMillis()-tim));
@@ -267,32 +266,32 @@ public class TestStructs {
         FSTStructFactory fac = new FSTStructFactory();
         fac.registerClz(TestStruct.class);
         fac.registerClz(SubTestStruct.class);
-        fac.registerClz(FSTEmbeddedString.class);
-        fac.registerClz(FSTEmbeddedMap.class);
+        fac.registerClz(StructString.class);
+        fac.registerClz(StructMap.class);
 
-        FSTEmbeddedMap mp = new FSTEmbeddedMap(11);
-        mp.put(new FSTEmbeddedString("Emil"),new FSTEmbeddedString("Möller-Lienemann"));
-        mp.put(new FSTEmbeddedString("Felix"),new FSTEmbeddedString("Möller-Fricker"));
-        mp.put(new FSTEmbeddedString("Rüdiger"),new FSTEmbeddedString("Möller"));
+        StructMap mp = new StructMap(11);
+        mp.put(new StructString("Emil"),new StructString("Möller-Lienemann"));
+        mp.put(new StructString("Felix"),new StructString("Möller-Fricker"));
+        mp.put(new StructString("Rüdiger"),new StructString("Möller"));
 
-        System.out.println("hm:"+mp.get(new FSTEmbeddedString("Emil")));
-        System.out.println("hm:"+mp.get(new FSTEmbeddedString("POK")));
-        System.out.println("hm:"+mp.get(new FSTEmbeddedString("Felix")));
-        System.out.println("hm:"+mp.get(new FSTEmbeddedString("Rüdiger")));
+        System.out.println("hm:"+mp.get(new StructString("Emil")));
+        System.out.println("hm:"+mp.get(new StructString("POK")));
+        System.out.println("hm:"+mp.get(new StructString("Felix")));
+        System.out.println("hm:"+mp.get(new StructString("Rüdiger")));
         mp = fac.toStruct(mp);
-        System.out.println("hm:"+mp.get(new FSTEmbeddedString("Emil")));
-        System.out.println("hm:"+mp.get(new FSTEmbeddedString("POK")));
-        System.out.println("hm:"+mp.get(new FSTEmbeddedString("Felix")));
-        System.out.println("hm:"+mp.get(new FSTEmbeddedString("Rüdiger")));
+        System.out.println("hm:"+mp.get(new StructString("Emil")));
+        System.out.println("hm:"+mp.get(new StructString("POK")));
+        System.out.println("hm:"+mp.get(new StructString("Felix")));
+        System.out.println("hm:"+mp.get(new StructString("Rüdiger")));
 
-        HashMap<FSTEmbeddedString,FSTEmbeddedString> testMap = new HashMap<FSTEmbeddedString, FSTEmbeddedString>();
+        HashMap<StructString,StructString> testMap = new HashMap<StructString, StructString>();
         for ( int i = 0; i < 100; i++ ) {
-            testMap.put(new FSTEmbeddedString("oij"+i), new FSTEmbeddedString("val"+i));
+            testMap.put(new StructString("oij"+i), new StructString("val"+i));
         }
-        FSTEmbeddedMap<FSTEmbeddedString,FSTEmbeddedString> stMap = new FSTEmbeddedMap<FSTEmbeddedString, FSTEmbeddedString>(testMap);
+        StructMap<StructString,StructString> stMap = new StructMap<StructString, StructString>(testMap);
 
-        FSTEmbeddedString toSearch = new FSTEmbeddedString("oij"+11);
-        FSTEmbeddedString toNotFind = new FSTEmbeddedString("notThere");
+        StructString toSearch = new StructString("oij"+11);
+        StructString toNotFind = new StructString("notThere");
         long tim = System.currentTimeMillis();
         for ( int i = 0; i < 8000000; i++) {
             if ( testMap.get(toSearch) == null ) {
@@ -335,13 +334,13 @@ public class TestStructs {
         System.out.println("lookup off structmap "+(System.currentTimeMillis()-tim));
 
 
-        ArrayList<FSTEmbeddedString> stringList = new ArrayList<FSTEmbeddedString>(11111);
+        ArrayList<StructString> stringList = new ArrayList<StructString>(11111);
         for (int i = 0; i < 11111; i++) {
-            stringList.add( new FSTEmbeddedString("pok "+i) );
+            stringList.add( new StructString("pok "+i) );
         }
 
-        FSTEmbeddedList<FSTEmbeddedString> embedList = new FSTEmbeddedList<FSTEmbeddedString>(stringList);
-        FSTEmbeddedString sstring = new FSTEmbeddedString("pok 10000");
+        StructList<StructString> embedList = new StructList<StructString>(stringList);
+        StructString sstring = new StructString("pok 10000");
         tim = System.currentTimeMillis();
         for ( int i = 0; i < 1000; i++) {
             if (stringList.indexOf(sstring)!=10000)
@@ -377,7 +376,7 @@ public class TestStructs {
         System.out.println("sub arr 0 " + subTest.anArray(0));
         System.out.println("sub arr 1 " + subTest.anArray(1));
 
-        FSTEmbeddedString os = fac.toStruct(new FSTEmbeddedString("Hallo"));
+        StructString os = fac.toStruct(new StructString("Hallo"));
         System.out.println("POK:"+os);
 
         TestStruct onHeap = new TestStruct();
@@ -401,8 +400,8 @@ public class TestStructs {
 
         SubTestStruct struct = offHeap.getStruct();
 
-        System.out.println(offHeap.getStruct().getId() + " '" + ((FSTEmbeddedString) offHeap.getStruct().anArray(0)) + "' '" + offHeap.getStruct().anArray(1) + "'");
-        FSTEmbeddedString testString = offHeap.getStruct().getTestString();
+        System.out.println(offHeap.getStruct().getId() + " '" + ((StructString) offHeap.getStruct().anArray(0)) + "' '" + offHeap.getStruct().anArray(1) + "'");
+        StructString testString = offHeap.getStruct().getTestString();
         String s = testString.toString();
         System.out.println("pok1:"+ testString+"'");
 
@@ -488,10 +487,10 @@ public class TestStructs {
         final int elemSiz = arr.getElemSiz();
         final int size = arr.size();
         for ( int j=0; j < 4; j++ ) {
-            ((FSTStructDeprecated)next)._setOffset(FSTUtil.bufoff);
+            next.setAbsoluteOffset(FSTUtil.bufoff);
             for (int i= 0; i < size; i++ ) {
                 sum+=next.getIntVar();
-                ((FSTStructDeprecated)next)._addOffset(elemSiz);
+                next.addOffset(elemSiz);
             }
         }
         System.out.println("   structarr iterator offset iter get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
@@ -521,6 +520,47 @@ public class TestStructs {
 //        System.out.println("sub.legs0 " + sub.legs(0));
 
 //        testStruct.setStringVar("Pok");
+    }
+
+    public static class NewStruct extends FSTStruct {
+        int a = 14;
+        int intarr[] = new int[30];
+        StructString str = new StructString(30);
+
+        public int getA() {
+            return a;
+        }
+
+        public StructString getStr() {
+            return str;
+        }
+
+        public void setA(int i) {
+            a = i;
+        }
+
+        public void intarr(int i, int val) {
+            intarr[i] = val;
+        }
+        public int intarr(int i) {
+            return intarr[i];
+        }
+        public int intarrLen() {
+            return intarr.length;
+        }
+    }
+
+    public static void main1(String arg[] ) throws Exception {
+        FSTStructFactory fac = new FSTStructFactory();
+        fac.registerClz(NewStruct.class);
+        fac.registerClz(StructString.class);
+        fac.registerClz(StructMap.class);
+
+        NewStruct structPointer = fac.toStruct(new NewStruct());
+        System.out.println("New Struct a " + structPointer.getA());
+        System.out.println("New Struct aLen "+structPointer.intarrLen());
+        structPointer.getStr().setString("Hallo");
+        System.out.println("New Struct str " + structPointer.getStr());
     }
 
     public static void main(String arg[] ) throws Exception {

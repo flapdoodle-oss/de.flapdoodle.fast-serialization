@@ -29,8 +29,6 @@ import javassist.expr.FieldAccess;
 public interface FSTStructGeneration {
 
     FSTStructGeneration newInstance();
-    void initStructInstance(Class tc, Object instance);
-    void defineStructFields(FSTStructFactory fac, ClassPool pool, CtClass newClz, FSTClazzInfo clazzInfo);
     void defineStructWriteAccess(FieldAccess f, CtClass type, FSTClazzInfo.FSTFieldInfo fieldInfo);
     void defineStructReadAccess(FieldAccess f, CtClass type, FSTClazzInfo.FSTFieldInfo fieldInfo);
     void defineArrayAccessor(FSTClazzInfo.FSTFieldInfo fieldInfo, FSTClazzInfo clInfo, CtMethod method);

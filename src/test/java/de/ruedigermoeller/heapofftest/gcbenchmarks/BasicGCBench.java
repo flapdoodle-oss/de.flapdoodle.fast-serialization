@@ -1,8 +1,8 @@
 package de.ruedigermoeller.heapofftest.gcbenchmarks;
 
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
-import de.ruedigermoeller.heapoff.structs.structtypes.FSTEmbeddedMap;
-import de.ruedigermoeller.heapoff.structs.structtypes.FSTEmbeddedString;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -30,8 +30,8 @@ public class BasicGCBench {
     FSTStructFactory fac = new FSTStructFactory();
 
     public BasicGCBench() {
-        fac.registerClz(FSTEmbeddedString.class);
-        fac.registerClz(FSTEmbeddedMap.class);
+        fac.registerClz(StructString.class);
+        fac.registerClz(StructMap.class);
     }
 
     public static long benchFullGC() {

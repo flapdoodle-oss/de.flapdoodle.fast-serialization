@@ -235,6 +235,8 @@ public class FSTUtil {
 
     public static Unsafe getUnsafe() {
         try {
+            if ( unFlaggedUnsafe !=null )
+                return unFlaggedUnsafe;
             Field f = Unsafe.class.getDeclaredField("theUnsafe");
             f.setAccessible(true);
             return (Unsafe)f.get(null);

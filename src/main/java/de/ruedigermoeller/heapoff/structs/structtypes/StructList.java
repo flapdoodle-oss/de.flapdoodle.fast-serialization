@@ -1,5 +1,7 @@
 package de.ruedigermoeller.heapoff.structs.structtypes;
 
+import de.ruedigermoeller.heapoff.structs.FSTStruct;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -25,17 +27,17 @@ import java.util.*;
  * Time: 01:49
  * To change this template use File | Settings | File Templates.
  */
-public class FSTEmbeddedList<E> implements Serializable {
+public class StructList<E> extends FSTStruct {
 
     Object[] elems;
     int size;
 
-    public FSTEmbeddedList(int size) {
+    public StructList(int size) {
         this.size = size;
         elems = new Object[size];
     }
 
-    public FSTEmbeddedList(Collection<E> col) {
+    public StructList(Collection<E> col) {
         elems = new Object[col.size()];
         for (Iterator<E> iterator = col.iterator(); iterator.hasNext(); ) {
             add(iterator.next());

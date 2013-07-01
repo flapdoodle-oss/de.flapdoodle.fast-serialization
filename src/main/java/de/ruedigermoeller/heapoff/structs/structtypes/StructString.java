@@ -23,23 +23,23 @@ package de.ruedigermoeller.heapoff.structs.structtypes;
  *
  */
 
-import java.io.Serializable;
+import de.ruedigermoeller.heapoff.structs.FSTStruct;
 
 /**
  * this class can be used to represent strings in structs. the content is rewritable, but cannot grow.
  * max length is determined once you create the struct object.
  */
-public class FSTEmbeddedString implements Comparable,Serializable {
+public class StructString extends FSTStruct implements Comparable {
 
     int len = 0;
     char chars[];
 
-    public FSTEmbeddedString(int size) {
+    public StructString(int size) {
         chars = new char[size];
         len = 0;
     }
 
-    public FSTEmbeddedString(String s) {
+    public StructString(String s) {
         chars = s.toCharArray();
         len = s.length();
     }
@@ -75,7 +75,7 @@ public class FSTEmbeddedString implements Comparable,Serializable {
         return chars[i];
     }
 
-    public int compareTo(FSTEmbeddedString str) {
+    public int compareTo(StructString str) {
         int l1 = len;
         int l2 = str.getLen();
         int max = Math.min(l1, l2);
@@ -116,8 +116,8 @@ public class FSTEmbeddedString implements Comparable,Serializable {
     }
 
     public boolean equals( Object o ) {
-        if ( o instanceof FSTEmbeddedString) {
-            FSTEmbeddedString ss = (FSTEmbeddedString) o;
+        if ( o instanceof StructString) {
+            StructString ss = (StructString) o;
             if ( ss.getLen() != getLen() ) {
                 return false;
             }
@@ -133,8 +133,8 @@ public class FSTEmbeddedString implements Comparable,Serializable {
 
     @Override
     public int compareTo(Object o) {
-        if ( o instanceof FSTEmbeddedString) {
-            return compareTo((FSTEmbeddedString)o);
+        if ( o instanceof StructString) {
+            return compareTo((StructString)o);
         }
         return -1;
     }

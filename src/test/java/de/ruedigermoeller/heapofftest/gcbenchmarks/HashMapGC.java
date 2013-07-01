@@ -1,6 +1,6 @@
 package de.ruedigermoeller.heapofftest.gcbenchmarks;
 
-import de.ruedigermoeller.heapoff.structs.structtypes.FSTEmbeddedMap;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 
 import java.util.HashMap;
 
@@ -52,7 +52,7 @@ public class HashMapGC extends BasicGCBench {
 
     int size = 8000000;
     HashMap map;
-    FSTEmbeddedMap fstEmbeddedMap;
+    StructMap structMap;
 
     public void benchInt() {
 
@@ -64,17 +64,17 @@ public class HashMapGC extends BasicGCBench {
         map = null;
         System.out.println("freed HashMap<int,int> "+benchFullGC());
 
-        fstEmbeddedMap = new FSTEmbeddedMap(size*2);
+        structMap = new StructMap(size*2);
         for ( int i=0; i<size; i++) {
-            fstEmbeddedMap.put(i,i);
+            structMap.put(i,i);
         }
-        System.out.println("GC FSTEmbeddedMap<int,int> "+benchFullGC());
+        System.out.println("GC StructMap<int,int> "+benchFullGC());
 
-        fstEmbeddedMap = fac.toStruct(fstEmbeddedMap);
-        System.out.println("GC off heaped FSTEmbeddedMap<int,int> "+benchFullGC());
+        structMap = fac.toStruct(structMap);
+        System.out.println("GC off heaped StructMap<int,int> "+benchFullGC());
 
-        fstEmbeddedMap = null;
-        System.out.println("GC freed FSTEmbeddedMap<int,int> "+benchFullGC());
+        structMap = null;
+        System.out.println("GC freed StructMap<int,int> "+benchFullGC());
 
     }
 
@@ -88,17 +88,17 @@ public class HashMapGC extends BasicGCBench {
         map = null;
         System.out.println("freed HashMap<MyInt,MyInt> "+benchFullGC());
 
-        fstEmbeddedMap = new FSTEmbeddedMap(size*2);
+        structMap = new StructMap(size*2);
         for ( int i=0; i<size; i++) {
-            fstEmbeddedMap.put(new MyInt(i), new MyInt(i) );
+            structMap.put(new MyInt(i), new MyInt(i) );
         }
-        System.out.println("GC FSTEmbeddedMap<MyInt,MyInt> "+benchFullGC());
+        System.out.println("GC StructMap<MyInt,MyInt> "+benchFullGC());
 
-        fstEmbeddedMap = fac.toStruct(fstEmbeddedMap);
-        System.out.println("GC off heaped FSTEmbeddedMap<MyInt,MyInt> "+benchFullGC());
+        structMap = fac.toStruct(structMap);
+        System.out.println("GC off heaped StructMap<MyInt,MyInt> "+benchFullGC());
 
-        fstEmbeddedMap = null;
-        System.out.println("GC freed FSTEmbeddedMap<MyInt,MyInt> "+benchFullGC());
+        structMap = null;
+        System.out.println("GC freed StructMap<MyInt,MyInt> "+benchFullGC());
 
     }
 

@@ -26,15 +26,11 @@ import java.io.*;
 import java.lang.ref.SoftReference;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created with IntelliJ IDEA.
@@ -569,10 +565,10 @@ public final class FSTConfiguration {
     }
 
     public void setIgnoreSerialInterfaces(boolean ignoreSerialInterfaces) {
-        serializationInfoRegistry.setIgnoreSerialInterfaces(ignoreSerialInterfaces);
+        serializationInfoRegistry.setStructMode(ignoreSerialInterfaces);
     }
 
     public boolean isIgnoreSerialInterfaces() {
-        return serializationInfoRegistry.isIgnoreSerialInterfaces();
+        return serializationInfoRegistry.isStructMode();
     }
 }

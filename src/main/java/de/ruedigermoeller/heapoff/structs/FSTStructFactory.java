@@ -50,6 +50,7 @@ public class FSTStructFactory {
     FSTStructGeneration structGen = new FSTByteArrayUnsafeStructGeneration();
 
     <T> Class<T> createStructClz( Class<T> clazz ) throws Exception {
+        //FIXME: ensure FSTStruct is superclass
         if ( Modifier.isFinal(clazz.getModifiers()) || Modifier.isAbstract(clazz.getModifiers()) ) {
             throw new RuntimeException("Cannot add final classes to structs");
         }
@@ -67,10 +68,8 @@ public class FSTStructFactory {
         CtClass newClz = pool.makeClass(proxyName);
         CtClass orig = pool.get(clazz.getName());
         newClz.setSuperclass(orig);
-        newClz.setInterfaces(new CtClass[]{pool.get(FSTStructDeprecated.class.getName())});
 
         final FSTClazzInfo clInfo = conf.getClassInfo(clazz);
-        structGen.defineStructFields(this, pool, newClz, clInfo);
 
         CtMethod[] methods = orig.getMethods();
         for (int i = 0; i < methods.length; i++) {
@@ -78,11 +77,13 @@ public class FSTStructFactory {
             final Class curClz = Class.forName( method.getDeclaringClass().getName() );
             boolean allowed = ((method.getModifiers() & AccessFlag.ABSTRACT) == 0 ) &&
                     (method.getModifiers() & AccessFlag.NATIVE) == 0 &&
-                    (method.getModifiers() & AccessFlag.FINAL) == 0;
-            if ( (method.getModifiers() & AccessFlag.FINAL) != 0 && ! method.getDeclaringClass().getName().equals("java.lang.Object")) {
+                    (method.getModifiers() & AccessFlag.FINAL) == 0 &&
+                    ! method.getDeclaringClass().getName().equals(FSTStruct.class.getName()) &&
+                    ! method.getDeclaringClass().getName().equals(Object.class.getName());
+            if ( allowed && (method.getModifiers() & AccessFlag.FINAL) != 0 && ! method.getDeclaringClass().getName().equals("java.lang.Object") ) {
                 throw new RuntimeException("final methods are not allowed for struct classes:"+method.getName());
             }
-            if ( (method.getModifiers() & AccessFlag.PRIVATE) != 0 && ! method.getDeclaringClass().getName().equals("java.lang.Object")) {
+            if ( allowed && (method.getModifiers() & AccessFlag.PRIVATE) != 0 && ! method.getDeclaringClass().getName().equals("java.lang.Object")) {
                 throw new RuntimeException("private methods are not allowed for struct classes:"+method.getName());
             }
             if ( allowed ) {
@@ -133,38 +134,6 @@ public class FSTStructFactory {
             }
         }
 
-        CtMethod setOffset = new CtMethod(CtClass.voidType,"_setOffset", new CtClass[]{CtClass.longType},newClz);
-        setOffset.setBody("{___offset=$1;if (___offset-"+FSTUtil.bufoff+" > ___bytes.length || ___offset<"+FSTUtil.bufoff+" ) throw new RuntimeException(\"Illegal offset \"+___offset+\" bytelen:\"+___bytes.length); }");
-        newClz.addMethod(setOffset);
-
-        CtMethod addOffset = new CtMethod(CtClass.voidType,"_addOffset", new CtClass[]{CtClass.longType},newClz);
-        addOffset.setBody("{___offset+=$1;if (___offset-"+FSTUtil.bufoff+" > ___bytes.length || ___offset<"+FSTUtil.bufoff+" ) throw new RuntimeException(\"Illegal offset \"+___offset+\" bytelen:\"+___bytes.length); }");
-        newClz.addMethod(addOffset);
-
-        CtMethod getOffset = new CtMethod(CtClass.longType,"_getOffset", new CtClass[]{},newClz);
-        getOffset.setBody("{return ___offset;}");
-        newClz.addMethod(getOffset);
-
-        CtMethod setBase = new CtMethod(CtClass.voidType,"_setBase", new CtClass[]{pool.getCtClass(byte[].class.getName())},newClz);
-        setBase.setBody("{___bytes=$1;}");
-        newClz.addMethod(setBase);
-
-        CtMethod setUnsafe = new CtMethod(CtClass.voidType,"internal_setUnsafe", new CtClass[]{pool.getCtClass(Unsafe.class.getName())},newClz);
-        setUnsafe.setBody("{___unsafe=$1;}");
-        newClz.addMethod(setUnsafe);
-
-        CtMethod setFac = new CtMethod(CtClass.voidType,"internal_setFac", new CtClass[]{pool.getCtClass(FSTStructFactory.class.getName())},newClz);
-        setFac.setBody("{___fac=$1;}");
-        newClz.addMethod(setFac);
-
-        CtMethod getFac = new CtMethod(pool.getCtClass(FSTStructFactory.class.getName()),"_getFac", new CtClass[]{},newClz);
-        getFac.setBody("{return ___fac;}");
-        newClz.addMethod(getFac);
-
-        CtMethod getBase = new CtMethod(pool.getCtClass(byte[].class.getName()),"_getBase", new CtClass[]{},newClz);
-        getBase.setBody("{return ___bytes;}");
-        newClz.addMethod(getBase);
-
         return (Class<T>) loadProxyClass(clazz, pool, newClz);
     }
 
@@ -176,7 +145,7 @@ public class FSTStructFactory {
         proxyLoader.delegateLoadingOf(FSTUtil.class.getName());
         proxyLoader.delegateLoadingOf(Serializable.class.getName());
         proxyLoader.delegateLoadingOf(FSTStructFactory.class.getName());
-        proxyLoader.delegateLoadingOf(FSTStructDeprecated.class.getName());
+        proxyLoader.delegateLoadingOf(FSTStruct.class.getName());
 //        proxyLoader.delegateLoadingOf(SubTestStruct.class.getName());
         ccClz = proxyLoader.loadClass(cc.getName());
         return ccClz;
@@ -191,43 +160,31 @@ public class FSTStructFactory {
         return res;
     }
 
-    public <T> T createWrapper(Class<T> onHeap, byte bytes[], int offset) throws Exception {
+    public <T extends FSTStruct> T createWrapper(Class<T> onHeap, byte bytes[], int index) throws Exception {
         Class proxy = getProxyClass(onHeap);
         T res = (T) unsafe.allocateInstance(proxy);
 //        T res = (T) proxy.newInstance();
-        setWrapperFields(bytes, offset, proxy, res);
+        res.baseOn(bytes, FSTUtil.bufoff+index, this);
         return res;
     }
 
-    private <T> void setWrapperFields(byte[] bytes, int offset, Class proxy, T res) {
-        try {
-            FSTStructDeprecated struct = (FSTStructDeprecated) res;
-            struct._setBase(bytes);
-            struct._setOffset(FSTUtil.bufoff + offset);
-            struct.internal_setFac(this);
-            struct.internal_setUnsafe(unsafe);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public FSTStructDeprecated createStructWrapper(byte b[], int offset) {
+    public FSTStruct createStructWrapper(byte b[], int offset) {
         int clzId = unsafe.getInt(b,FSTUtil.bufoff+offset);
         return createStructWrapper(b, offset, clzId);
     }
 
-    private FSTStructDeprecated createStructWrapper(byte[] b, int offset, Integer clzId) {
+    private FSTStruct createStructWrapper(byte[] b, int offset, Integer clzId) {
         Class clazz = mIntToClz.get(clzId);
         if (clazz==null)
             throw new RuntimeException("unregistered class "+clzId);
         try {
-            return (FSTStructDeprecated) createWrapper(clazz, b, offset);
+            return (FSTStruct) createWrapper(clazz, b, offset);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public <T> T toStruct(T onHeap) {
+    public <T extends FSTStruct> T toStruct(T onHeap) {
         try {
             byte b[] = toByteArray(onHeap);
             return (T)createWrapper(onHeap.getClass(),b,0);
@@ -255,9 +212,7 @@ public class FSTStructFactory {
         Object[] wrapperMap = cachedWrapperMap.get();
         Object res = wrapperMap[clzId];
         if ( res != null ) {
-            ((FSTStructDeprecated)res)._setBase(b);
-            ((FSTStructDeprecated)res)._setOffset(FSTUtil.bufoff + offset);
-            setWrapperFields(b,offset,res.getClass(),res);
+            ((FSTStruct)res).baseOn(b, FSTUtil.bufoff + offset, this);
             return res;
         }
         res = createStructWrapper(b,offset,clzId);
@@ -275,12 +230,18 @@ public class FSTStructFactory {
             FSTClazzInfo.FSTFieldInfo fis[] = clInfo.getFieldInfo();
             for (int i = 0; i < fis.length; i++) {
                 FSTClazzInfo.FSTFieldInfo fi = fis[i];
+                if ( fi.getField().getDeclaringClass() == FSTStruct.class )
+                    continue;
+                // FIXME: check for null refs, check for FSTStruct subclasses
                 if ( fi.getType().isArray() ) {
                     if ( fi.getType().getComponentType().isArray() ) {
                         throw new RuntimeException("nested arrays not supported");
                     }
                     if ( fi.isIntegral() ) { // prim array
                         Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
+                        if ( objectValue == null ) {
+                            throw new RuntimeException("arrays in struct templates must not be null !");
+                        }
                         siz += Array.getLength(objectValue) * fi.getComponentStructSize() + fi.getStructSize();
                     } else { // object array
                         Object objectValue[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
@@ -342,79 +303,81 @@ public class FSTStructFactory {
     }
 
 
-    public int toByteArray(Object onHeapStruct, byte bytes[], int offset) throws IllegalAccessException, NoSuchFieldException {
+    public int toByteArray(Object onHeapStruct, byte bytes[], int index) throws IllegalAccessException, NoSuchFieldException {
         ArrayList<ForwardEntry> positions = new ArrayList<ForwardEntry>();
         if ( onHeapStruct == null ) {
-            return offset;
+            return index;
         }
         int clzId = getClzId(onHeapStruct.getClass());
-        unsafe.putInt(bytes,FSTUtil.bufoff+offset,clzId);
-        offset+=4;
+        unsafe.putInt(bytes,FSTUtil.bufoff+index,clzId);
+        index+=4;
         FSTClazzInfo clInfo = conf.getClassInfo(onHeapStruct.getClass());
         FSTClazzInfo.FSTFieldInfo fis[] = clInfo.getFieldInfo();
         for (int i = 0; i < fis.length; i++) {
             FSTClazzInfo.FSTFieldInfo fi = fis[i];
+            if ( fi.getField().getDeclaringClass() == FSTStruct.class )
+                continue;
             if ( fi.getType().isArray() ) {
                 if ( fi.getType().getComponentType().isArray() ) {
                     throw new RuntimeException("nested arrays not supported");
                 }
                 if ( fi.isIntegral() ) { // prim array
                     Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
-                    positions.add(new ForwardEntry(offset,objectValue));
-                    offset += fi.getStructSize();
+                    positions.add(new ForwardEntry(index,objectValue));
+                    index += fi.getStructSize();
                 } else { // object array
                     Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
-                    unsafe.putInt(bytes,FSTUtil.bufoff+offset,objArr.length);
-                    offset+=4;
+                    unsafe.putInt(bytes,FSTUtil.bufoff+index,objArr.length);
+                    index+=4;
                     for (int j = 0; j < objArr.length; j++) {
                         Object objectValue = objArr[j];
                         if ( objectValue == null ) {
-                            unsafe.putInt(bytes, FSTUtil.bufoff + offset, -1);
-                            offset+=4;
+                            unsafe.putInt(bytes, FSTUtil.bufoff + index, -1);
+                            index+=4;
                         } else {
-                            positions.add(new ForwardEntry(offset,objectValue));
-                            offset += 4;
+                            positions.add(new ForwardEntry(index,objectValue));
+                            index += 4;
                         }
                     }
                 }
             } else if ( fi.isIntegral() ) { // && ! array
                 Class type = fi.getType();
                 if ( type == boolean.class ) {
-                    unsafe.putBoolean(bytes, FSTUtil.bufoff + offset, clInfo.getBooleanValue(onHeapStruct, fi));
+                    unsafe.putBoolean(bytes, FSTUtil.bufoff + index, clInfo.getBooleanValue(onHeapStruct, fi));
                 } else
                 if ( type == byte.class ) {
-                    unsafe.putByte(bytes, FSTUtil.bufoff + offset, (byte) clInfo.getByteValue(onHeapStruct, fi));
+                    unsafe.putByte(bytes, FSTUtil.bufoff + index, (byte) clInfo.getByteValue(onHeapStruct, fi));
                 } else
                 if ( type == char.class ) {
-                    unsafe.putChar(bytes, FSTUtil.bufoff + offset, (char) clInfo.getCharValue(onHeapStruct,fi));
+                    unsafe.putChar(bytes, FSTUtil.bufoff + index, (char) clInfo.getCharValue(onHeapStruct,fi));
                 } else
                 if ( type == short.class ) {
-                    unsafe.putShort(bytes, FSTUtil.bufoff + offset, (short) clInfo.getShortValue(onHeapStruct, fi));
+                    unsafe.putShort(bytes, FSTUtil.bufoff + index, (short) clInfo.getShortValue(onHeapStruct, fi));
                 } else
                 if ( type == int.class ) {
-                    unsafe.putInt( bytes, FSTUtil.bufoff+offset, clInfo.getIntValue(onHeapStruct,fi) );
+                    unsafe.putInt( bytes, FSTUtil.bufoff+index, clInfo.getIntValue(onHeapStruct,fi) );
                 } else
                 if ( type == long.class ) {
-                    unsafe.putLong( bytes, FSTUtil.bufoff+offset, clInfo.getLongValue(onHeapStruct,fi) );
+                    unsafe.putLong( bytes, FSTUtil.bufoff+index, clInfo.getLongValue(onHeapStruct,fi) );
                 } else
                 if ( type == float.class ) {
-                    unsafe.putFloat(bytes, FSTUtil.bufoff + offset, clInfo.getFloatValue(onHeapStruct, fi));
+                    unsafe.putFloat(bytes, FSTUtil.bufoff + index, clInfo.getFloatValue(onHeapStruct, fi));
                 } else
                 if ( type == double.class ) {
-                    unsafe.putDouble(bytes, FSTUtil.bufoff + offset, clInfo.getDoubleValue(onHeapStruct, fi));
+                    unsafe.putDouble(bytes, FSTUtil.bufoff + index, clInfo.getDoubleValue(onHeapStruct, fi));
                 } else {
                     throw new RuntimeException("this is an error");
                 }
-                offset += fi.getStructSize();
+                index += fi.getStructSize();
             } else { // objectref
                 Object obj = clInfo.getObjectValue(onHeapStruct, fi);
                 if ( obj == null ) {
-                    unsafe.putInt(bytes, FSTUtil.bufoff + offset, -1);
-                    offset+=fi.getStructSize();
+                    unsafe.putInt(bytes, FSTUtil.bufoff + index, -1);
+                    index+=fi.getStructSize();
                 } else {
                     Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
-                    positions.add(new ForwardEntry(offset,objectValue));
-                    offset += fi.getStructSize();
+                    positions.add(new ForwardEntry(index,objectValue));
+                    index += fi.getStructSize();
                 }
 //                siz += fi.getStructSize()+calcStructSize(obj);
             }
@@ -430,44 +393,44 @@ public class FSTStructFactory {
                 int siz = 0;
                 if ( c == byte[].class ) {
                     siz = Array.getLength(o);
-                    unsafe.copyMemory(o,FSTUtil.bufoff, bytes, FSTUtil.bufoff+offset, siz);
+                    unsafe.copyMemory(o,FSTUtil.bufoff, bytes, FSTUtil.bufoff+index, siz);
                 } else if ( c == boolean[].class ) {
                     siz = Array.getLength(o);
-                    unsafe.copyMemory(o,FSTUtil.bufoff, bytes, FSTUtil.bufoff+offset, siz);
+                    unsafe.copyMemory(o,FSTUtil.bufoff, bytes, FSTUtil.bufoff+index, siz);
                 } else if ( c == char[].class ) {
                     siz = Array.getLength(o) * FSTUtil.chscal;
-                    unsafe.copyMemory(o,FSTUtil.choff, bytes, FSTUtil.bufoff+offset, siz);
+                    unsafe.copyMemory(o,FSTUtil.choff, bytes, FSTUtil.bufoff+index, siz);
                 } else if ( c == short[].class ) {
                     siz = Array.getLength(o) * FSTUtil.chscal;
-                    unsafe.copyMemory(o,FSTUtil.choff, bytes, FSTUtil.bufoff+offset, siz);
+                    unsafe.copyMemory(o,FSTUtil.choff, bytes, FSTUtil.bufoff+index, siz);
                 } else if ( c == int[].class ) {
                     siz = Array.getLength(o) * FSTUtil.intscal;
-                    unsafe.copyMemory(o,FSTUtil.intoff, bytes, FSTUtil.bufoff+offset, siz);
+                    unsafe.copyMemory(o,FSTUtil.intoff, bytes, FSTUtil.bufoff+index, siz);
                 } else if ( c == long[].class ) {
                     siz = Array.getLength(o) * FSTUtil.longscal;
-                    unsafe.copyMemory(o,FSTUtil.longoff, bytes, FSTUtil.bufoff+offset, siz);
+                    unsafe.copyMemory(o,FSTUtil.longoff, bytes, FSTUtil.bufoff+index, siz);
                 } else if ( c == float[].class ) {
                     siz = Array.getLength(o) * FSTUtil.floatscal;
-                    unsafe.copyMemory(o,FSTUtil.floatoff, bytes, FSTUtil.bufoff+offset, siz);
+                    unsafe.copyMemory(o,FSTUtil.floatoff, bytes, FSTUtil.bufoff+index, siz);
                 } else if ( c == double[].class ) {
                     siz = Array.getLength(o) * FSTUtil.doublescal;
-                    unsafe.copyMemory(o,FSTUtil.doubleoff, bytes, FSTUtil.bufoff+offset, siz);
+                    unsafe.copyMemory(o,FSTUtil.doubleoff, bytes, FSTUtil.bufoff+index, siz);
                 } else {
                     // object array treted like a sequence of object refs
-                    int newoffset = toByteArray(o, bytes, offset);
-                    unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, offset );
-                    offset = newoffset;
+                    int newoffset = toByteArray(o, bytes, index);
+                    unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index );
+                    index = newoffset;
                 }
-                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, offset );
+                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index );
                 unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos+4, Array.getLength(o) );
-                offset+=siz;
+                index+=siz;
             } else {
-                int newoffset = toByteArray(o, bytes, offset);
-                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, offset );
-                offset = newoffset;
+                int newoffset = toByteArray(o, bytes, index);
+                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index );
+                index = newoffset;
             }
         }
-        return offset;
+        return index;
     }
 
     public int getShallowStructSize(Class clz) {

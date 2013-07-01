@@ -1,11 +1,10 @@
 package de.ruedigermoeller.heapoff.structs.structtypes;
 
-import de.ruedigermoeller.heapoff.structs.FSTStructDeprecated;
+import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 import sun.misc.Unsafe;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -37,7 +36,7 @@ import java.util.Map;
  * @param <K>
  * @param <V>
  */
-public class FSTEmbeddedMap<K,V> implements Serializable {
+public class StructMap<K,V> extends FSTStruct {
 
     Object keyVal[];
     int    size;
@@ -45,7 +44,7 @@ public class FSTEmbeddedMap<K,V> implements Serializable {
     /**
      * creates a new Hashtable with 'entrySize' elements allocated
      */
-    public FSTEmbeddedMap(int entrySize)
+    public StructMap(int entrySize)
     {
         entrySize = Math.max(3, entrySize);
         keyVal    = new Object[entrySize * 2];
@@ -54,12 +53,12 @@ public class FSTEmbeddedMap<K,V> implements Serializable {
     /**
      * creates a new Hashtable with 3 elements allocated
      */
-    public FSTEmbeddedMap()
+    public StructMap()
     {
         this(3);
     }
 
-    public FSTEmbeddedMap(Map<K, V> toCopy)
+    public StructMap(Map<K, V> toCopy)
     {
         this(toCopy.size()*2);
         for (Iterator iterator = toCopy.entrySet().iterator(); iterator.hasNext(); ) {
@@ -76,34 +75,16 @@ public class FSTEmbeddedMap<K,V> implements Serializable {
         }
         int kvlen = keyValLen();
         int hpos = 2 * ((key.hashCode() & 0x7FFFFFFF) % (kvlen>>1));
-        if ( this instanceof FSTStructDeprecated) {
-            FSTStructDeprecated structThis = (FSTStructDeprecated) this;
-            byte base[] = structThis._getBase();
-            FSTStructFactory fac = structThis._getFac();
-            int arroffset = keyValIndex()+4+FSTUtil.bufoff;// first int is length, skip, add base byte[] offset
-            Unsafe unsafe = FSTUtil.unFlaggedUnsafe;
-            int pos = hpos;
-            int objPointer = unsafe.getInt(base,arroffset+pos*4);
-            while ( objPointer > 0 )
-            {
-                if (key.equals(fac.getStructWrapper(base, objPointer)))
-                    break;
-                pos = (pos + 2) % kvlen;
-                objPointer = unsafe.getInt(base, arroffset + pos * 4);
-            }
-            return pos / 2;
-        } else {
-            int pos = hpos;
-            Object o = keyVal[pos];
-            while ( o != null )
-            {
-                if (key.equals(o))
-                    break;
-                pos = (pos + 2) % kvlen;
-                o = keyVal[pos];
-            }
-            return pos / 2;
+        int pos = hpos;
+        Object o = keyVal(pos);
+        while ( o != null )
+        {
+            if (key.equals(o))
+                break;
+            pos = (pos + 2) % kvlen;
+            o = keyVal(pos);
         }
+        return pos / 2;
     }
 
     public int size()
@@ -178,7 +159,7 @@ public class FSTEmbeddedMap<K,V> implements Serializable {
 
     public static void main(String[] args)
     {
-        FSTEmbeddedMap<Integer,Integer> smt = new FSTEmbeddedMap(8000);
+        StructMap<Integer,Integer> smt = new StructMap(8000);
 
         for (int ii = 0; ii < 4000; ii++)
         {
