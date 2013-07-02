@@ -32,7 +32,7 @@ import java.util.Map;
  */
 
 /**
- * a simple open adressed hashmap, which allows read access when embedded in structs. Note it is fixed size (
+ * a simple open adressed hashmap, which allows read access when embedded in structs. Note it is fixed size.
  * @param <K>
  * @param <V>
  */

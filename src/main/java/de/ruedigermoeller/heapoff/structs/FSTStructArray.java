@@ -44,12 +44,7 @@ public class FSTStructArray<T extends FSTStruct> {
     int size;
     FSTStructFactory fac;
 
-    ThreadLocal<T> wrapper = new ThreadLocal<T>() {
-        @Override
-        protected T initialValue() {
-            return (T) fac.getStructWrapper(b, 0);
-        }
-    };
+    transient ThreadLocal<T> wrapper;
 
     public FSTStructArray(FSTStructFactory fac, T template, int size) {
         if (size <= 0) {
@@ -70,6 +65,14 @@ public class FSTStructArray<T extends FSTStruct> {
     public T get(int i) {
         if (i < 0 || i >= size)
             throw new ArrayIndexOutOfBoundsException("index: " + i + " size:" + size);
+        if ( wrapper == null ) {
+            wrapper = new ThreadLocal<T>() {
+                @Override
+                protected T initialValue() {
+                    return (T) fac.getStructWrapper(b, 0);
+                }
+            };
+        }
         T wrap = wrapper.get();
         wrap.setAbsoluteOffset(FSTUtil.bufoff + elemSiz * i);
         return wrap;
@@ -88,7 +91,9 @@ public class FSTStructArray<T extends FSTStruct> {
     }
 
     public T createPointer(int index) {
-        return (T) fac.createStructWrapper(b, index * elemSiz);
+        T res = (T) fac.createStructWrapper(b, index * elemSiz);
+        res.setElementSize(elemSiz);
+        return res;
     }
 
     final class StructArrIterator<T extends FSTStruct> implements Iterator<T> {

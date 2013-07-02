@@ -1,5 +1,7 @@
 package de.ruedigermoeller.heapoff.structs;
 
+import de.ruedigermoeller.heapoff.structs.impl.FSTByteArrayUnsafeStructGeneration;
+import de.ruedigermoeller.heapoff.structs.impl.FSTStructGeneration;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.util.FSTUtil;
@@ -46,7 +48,6 @@ public class FSTStructFactory {
     static Loader proxyLoader = new Loader(FSTStructFactory.class.getClassLoader(), ClassPool.getDefault());
 
     ConcurrentHashMap<Class, Class> proxyClzMap = new ConcurrentHashMap<Class, Class>();
-    ConcurrentHashMap<Class, FSTStructTypeConverter> typeConverterMap = new ConcurrentHashMap<Class, FSTStructTypeConverter>();
     FSTStructGeneration structGen = new FSTByteArrayUnsafeStructGeneration();
 
     <T> Class<T> createStructClz( Class<T> clazz ) throws Exception {

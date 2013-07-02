@@ -1,4 +1,4 @@
-package de.ruedigermoeller.heapoff.structs;
+package de.ruedigermoeller.heapoff.structs.impl;
 
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import javassist.*;

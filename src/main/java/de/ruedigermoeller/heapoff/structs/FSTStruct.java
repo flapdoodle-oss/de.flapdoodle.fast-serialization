@@ -34,7 +34,7 @@ public class FSTStruct implements Serializable {
     transient protected long ___offset;
     transient protected byte[] ___bytes;
     transient protected FSTStructFactory ___fac;
-
+    transient int ___elementSize;
 
     protected Unsafe getUnsafe() {
         return unsafe;
@@ -76,6 +76,38 @@ public class FSTStruct implements Serializable {
 
     public boolean isIdenticTo(FSTStruct other) {
         return other.getBase() == ___bytes && other.getAbsoluteOffset() == ___offset;
+    }
+
+    public boolean isOffHeap() {
+        return ___fac != null;
+    }
+
+    public int getElementSize() {
+        return ___elementSize;
+    }
+
+    public void setElementSize(int ___elementSize) {
+        this.___elementSize = ___elementSize;
+    }
+
+    /**
+     *  Warning: no bounds checking. Moving the pointer outside the underlying byte[] will cause access violations
+     */
+    public void next() {
+        if ( ___elementSize > 0 )
+            ___offset += ___elementSize;
+        else
+            throw new RuntimeException("not pointing to a struct array");
+    }
+
+    /**
+     *  Warning: no bounds checking. Moving the pointer outside the underlying byte[] will cause access violations
+     */
+    public void previous() {
+        if ( ___elementSize > 0 )
+            ___offset -= ___elementSize;
+        else
+            throw new RuntimeException("not pointing to a struct array");
     }
 
 }

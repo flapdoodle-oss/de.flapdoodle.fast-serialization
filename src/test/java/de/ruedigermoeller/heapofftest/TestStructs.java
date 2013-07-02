@@ -9,9 +9,7 @@ import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -161,6 +159,18 @@ public class TestStructs {
             }
         }
         System.out.println("  iter int "+(System.currentTimeMillis()-tim)+" sum "+sum);
+
+        tim = System.currentTimeMillis();
+        sum = 0;
+        for (int ii=0;ii<times;ii++) {
+            TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
+            struct.setElementSize(structLen);
+            for ( int i=0; i<max; i++ ) {
+                sum += struct.getIntVar();
+                struct.next();
+            }
+        }
+        System.out.println("  iter int with next()"+(System.currentTimeMillis()-tim)+" sum "+sum);
 
         tim = System.currentTimeMillis();
         sum = 0;
@@ -398,7 +408,6 @@ public class TestStructs {
 
         TestStruct offHeap = fac.toStruct(onHeap);
 
-        SubTestStruct struct = offHeap.getStruct();
 
         System.out.println(offHeap.getStruct().getId() + " '" + ((StructString) offHeap.getStruct().anArray(0)) + "' '" + offHeap.getStruct().anArray(1) + "'");
         StructString testString = offHeap.getStruct().getTestString();
@@ -413,8 +422,19 @@ public class TestStructs {
             structs[i] = new TestStruct();
         }
         System.out.println("instantiation on heap "+(System.currentTimeMillis()-tim));
-        benchFullGC();
         benchAccess(structs);
+        benchFullGC();
+
+        ArrayList<TestStruct> testStructs = new ArrayList<TestStruct>(structs.length);
+        testStructs.addAll(Arrays.asList(structs));
+        tim = System.currentTimeMillis();
+        int dummy = 0;
+        for ( int j=0; j < 4; j++ )
+            for (int i = 0; i < testStructs.size(); i++) {
+                dummy += testStructs.get(i).getIntVar();
+            }
+        if ( dummy >= 0 )
+            System.out.println("iter int collection " + (System.currentTimeMillis() - tim));
 
         tim = System.currentTimeMillis();
         for (int i = 0; i < structs.length; i++) {
@@ -447,7 +467,7 @@ public class TestStructs {
         System.out.println("instantiate off heap huge single byte array " + (System.currentTimeMillis() - tim));
         benchAccess(structs);
         benchFullGC();
-        int structLen = bytes.length / structs.length;
+        int structLen = bytes.length;
         int max = structs.length;
         structs = null;
         System.out.println("iterative access on huge array");
@@ -455,12 +475,6 @@ public class TestStructs {
 
         System.out.println("iterate structarray");
         FSTStructArray<TestStruct> arr = new FSTStructArray<TestStruct>(fac, new TestStruct(), max);
-//        tim = System.currentTimeMillis();
-//        for ( int j=0; j < 4; j++ )
-//            for ( int i = 0; i < arr.size(); i++) {
-//                arr.get(i).setIntVar(1);
-//            }
-//        System.out.println("   structarr set int " + (System.currentTimeMillis() - tim));
 
         tim = System.currentTimeMillis();
         int sum = 0;

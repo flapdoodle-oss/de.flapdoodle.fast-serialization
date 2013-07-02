@@ -1,11 +1,9 @@
-package de.ruedigermoeller.heapoff.structs;
+package de.ruedigermoeller.heapoff.structs.impl;
 
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 import javassist.*;
-import javassist.bytecode.AccessFlag;
 import javassist.expr.FieldAccess;
-import sun.misc.Unsafe;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
