@@ -27,7 +27,7 @@ import de.ruedigermoeller.serialization.FSTConfiguration;
 
 /**
  * saves an object graph into a byte array. It does not save that much memory in terms of heap usage,
- * however GC pauses will reduce massively becaus FULL GC with 1GB of byte[] is much faster than
+ * however GC pauses will reduce massively because FULL GC with 1GB of byte[] is much faster than
  * a full GC on say 50 million objects. The objects saved should have some complexity (e.g. several strings
  * and sub-objects (e.g. value types). Putting plain objects consisting mainly of primitive types will not pay off.
  *
