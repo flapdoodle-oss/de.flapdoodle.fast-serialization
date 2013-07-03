@@ -37,7 +37,8 @@ public class FSTGCMark {
     }
 
     static HashMap map = new HashMap();
-    static int hmRange = 1000000 * 2; //
+    static int hmFillRange = 1000000 * 30; //
+    static int hmRange = hmFillRange/10; //
     static int operationStep = 1000;
 
     int operCount;
@@ -63,7 +64,7 @@ public class FSTGCMark {
             int key = (int) (rand.nextDouble() * hmRange);
             map.put(key, ""+new UseLessWrapper(new int[100]));
         }
-        for ( int i = 0; i < operationStep/8; i++) {
+        for ( int i = 0; i < operationStep/32; i++) {
             int key = (int) (rand.nextDouble() * hmRange);
             Object[] wrapped = new Object[100];
             for (int j = 0; j < wrapped.length; j++) {
@@ -72,25 +73,26 @@ public class FSTGCMark {
             map.put(key, new UseLessWrapper(wrapped));
         }
         for ( int i = 0; i < operationStep/64; i++) {
-            int key = (int) (rand.nextDouble() * hmRange);
+            int key = (int) (rand.nextDouble() * hmRange/64);
             map.put(key, new UseLessWrapper(new int[1000]));
         }
         for ( int i = 0; i < 4; i++) {
-            int key = (int) (rand.nextDouble() * hmRange);
+            int key = (int) (rand.nextDouble() * 16);
             map.put(key, new UseLessWrapper(new byte[1000000]));
         }
     }
 
     public void fillMap() {
-        for ( int i = 0; i < hmRange; i++) {
+        for ( int i = 0; i < hmFillRange; i++) {
             map.put(i, new UseLessWrapper(new Dimension(i,i)));
         }
     }
 
     public void run() {
+        fillMap();
         long time = System.currentTimeMillis();
         int count = 0;
-        while ( (System.currentTimeMillis()-time) < 60000) {
+        while ( (System.currentTimeMillis()-time) < 60000*5) {
             count++;
             long tim = System.currentTimeMillis();
             operateStep();
