@@ -37,8 +37,8 @@ public class FSTGCMark {
     }
 
     static HashMap map = new HashMap();
-    static int hmFillRange = 1000000 * 40; //
-    static int mutatingRange = 200000; //
+    static int hmFillRange = 1000000 * 30; //
+    static int mutatingRange = 2000000; //
     static int operationStep = 1000;
 
     int operCount;
@@ -47,7 +47,42 @@ public class FSTGCMark {
     int secondDelayCount[] = new int[100];
     Random rand = new Random(1000);
 
+    int stepCount = 0;
     public void operateStep() {
+        stepCount++;
+
+        if ( stepCount%100 == 0 ) {
+            // enforce some tenuring
+            for ( int i = 0; i < operationStep; i++) {
+                int key = (int) (rand.nextDouble() * mutatingRange)+mutatingRange;
+                map.put(key,  new UseLessWrapper(new UseLessWrapper(""+stepCount)));
+            }
+        }
+
+        if ( stepCount%200 == 199 ) {
+            // enforce some tenuring
+            for ( int i = 0; i < operationStep; i++) {
+                int key = (int) (rand.nextDouble() * mutatingRange)+mutatingRange*2;
+                map.put(key,  new UseLessWrapper(new UseLessWrapper("a"+stepCount)));
+            }
+        }
+
+        if ( stepCount%400 == 299 ) {
+            // enforce some tenuring
+            for ( int i = 0; i < operationStep; i++) {
+                int key = (int) (rand.nextDouble() * mutatingRange)+mutatingRange*3;
+                map.put(key,  new UseLessWrapper(new UseLessWrapper("a"+stepCount)));
+            }
+        }
+
+        if ( stepCount%1000 == 999 ) {
+            // enforce some tenuring
+            for ( int i = 0; i < operationStep; i++) {
+                int key = (int) (rand.nextDouble() * mutatingRange)+mutatingRange*4;
+                map.put(key,  new UseLessWrapper(new UseLessWrapper("a"+stepCount)));
+            }
+        }
+
         for ( int i = 0; i < operationStep/2; i++) {
             int key = (int) (rand.nextDouble() * mutatingRange);
             map.put(key, new UseLessWrapper(new Dimension(key,key)));
@@ -84,17 +119,17 @@ public class FSTGCMark {
 
     public void fillMap() {
         for ( int i = 0; i < hmFillRange; i++) {
-            map.put(i, new UseLessWrapper(new UseLessWrapper(new Dimension(i,i))));
+            map.put(i, new UseLessWrapper(new UseLessWrapper(""+i)));
         }
     }
 
     public void run() {
         fillMap();
         System.gc();
-        System.out.println("static alloc "+(Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000/1000+"mb");
+        System.out.println("static alloc " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000 + "mb");
         long time = System.currentTimeMillis();
         int count = 0;
-        while ( (System.currentTimeMillis()-time) < 60000*5) {
+        while ( (System.currentTimeMillis()-time) < runtime) {
             count++;
             long tim = System.currentTimeMillis();
             operateStep();
@@ -114,22 +149,24 @@ public class FSTGCMark {
         for (int i = 0; i < milliDelayCount.length; i++) {
             int i1 = milliDelayCount[i];
             if ( i1 > 0 ) {
-                System.out.println("["+i+"-"+(i+1)+"] "+i1);
+                System.out.println("["+i+"]\t"+i1);
             }
         }
         for (int i = 0; i < hundredMilliDelayCount.length; i++) {
             int i1 = hundredMilliDelayCount[i];
             if ( i1 > 0 ) {
-                System.out.println("["+i*100+"-"+(i*100+100)+"] "+i1);
+                System.out.println("["+i*100+"]\t"+i1);
             }
         }
         for (int i = 0; i < secondDelayCount.length; i++) {
             int i1 = secondDelayCount[i];
             if ( i1 > 0 ) {
-                System.out.println("["+i*1000+"-"+(i*1000+1000)+"] "+i1);
+                System.out.println("["+i*1000+"]\t"+i1);
             }
         }
     }
+
+    int runtime = 60000 * 5;
 
     public static void main( String arg[] ) {
 
