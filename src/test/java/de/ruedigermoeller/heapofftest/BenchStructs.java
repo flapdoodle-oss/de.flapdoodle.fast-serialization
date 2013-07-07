@@ -33,7 +33,7 @@ import java.util.*;
  * Time: 19:45
  * To change this template use File | Settings | File Templates.
  */
-public class TestStructs {
+public class BenchStructs {
 
     public static class SimpleTest extends FSTStruct {
         Object nullObject = null;
@@ -155,7 +155,7 @@ public class TestStructs {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
             for ( int i=0; i<max; i++ ) {
                 sum += struct.getIntVar();
-                struct.addOffset(structLen);
+                struct.___offset+=structLen;
             }
         }
         System.out.println("  iter int "+(System.currentTimeMillis()-tim)+" sum "+sum);
@@ -164,7 +164,7 @@ public class TestStructs {
         sum = 0;
         for (int ii=0;ii<times;ii++) {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
-            struct.setElementSize(structLen);
+            struct.___elementSize = structLen;
             for ( int i=0; i<max; i++ ) {
                 sum += struct.getIntVar();
                 struct.next();
@@ -178,7 +178,7 @@ public class TestStructs {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
             for ( int i=0; i<max; i++ ) {
                 sum += struct.intarray(3);
-                struct.addOffset(structLen);
+                struct.___offset+=structLen;
             }
         }
         System.out.println("  iter int array[3]"+(System.currentTimeMillis()-tim));
@@ -191,7 +191,7 @@ public class TestStructs {
                 if ( struct.containsInt(77) ) {
                     sum = 0;
                 }
-                struct.addOffset(structLen);
+                struct.___offset+=structLen;
             }
         }
         System.out.println("  iter int from this "+(System.currentTimeMillis()-tim));
@@ -202,7 +202,7 @@ public class TestStructs {
             TestStruct struct = (TestStruct) fac.createStructWrapper(b,0);
             for ( int i=0; i<max; i++ ) {
                 sum += struct.getStruct().getId();
-                struct.addOffset(structLen);
+                struct.___offset+=structLen;
             }
         }
         System.out.println("  iter substructure int "+(System.currentTimeMillis()-tim));
@@ -349,29 +349,29 @@ public class TestStructs {
             stringList.add( new StructString("pok "+i) );
         }
 
-        StructList<StructString> embedList = new StructList<StructString>(stringList);
-        StructString sstring = new StructString("pok 10000");
-        tim = System.currentTimeMillis();
-        for ( int i = 0; i < 1000; i++) {
-            if (stringList.indexOf(sstring)!=10000)
-                System.out.println("BUG");
-        }
-        System.out.println("index stringlist "+(System.currentTimeMillis()-tim));
-
-        tim = System.currentTimeMillis();
-        for ( int i = 0; i < 1000; i++) {
-            if (embedList.indexOf(sstring)!=10000)
-                System.out.println("BUG");
-        }
-        System.out.println("index embed stringlist "+(System.currentTimeMillis()-tim));
-
-        embedList = fac.toStruct(embedList);
-        tim = System.currentTimeMillis();
-        for ( int i = 0; i < 1000; i++) {
-            if (embedList.indexOf(sstring)!=10000)
-                System.out.println("BUG");
-        }
-        System.out.println("index offheap embed stringlist "+(System.currentTimeMillis()-tim));
+//        StructList<StructString> embedList = new StructList<StructString>(stringList);
+//        StructString sstring = new StructString("pok 10000");
+//        tim = System.currentTimeMillis();
+//        for ( int i = 0; i < 1000; i++) {
+//            if (stringList.indexOf(sstring)!=10000)
+//                System.out.println("BUG");
+//        }
+//        System.out.println("index stringlist "+(System.currentTimeMillis()-tim));
+//
+//        tim = System.currentTimeMillis();
+//        for ( int i = 0; i < 1000; i++) {
+//            if (embedList.indexOf(sstring)!=10000)
+//                System.out.println("BUG");
+//        }
+//        System.out.println("index embed stringlist "+(System.currentTimeMillis()-tim));
+//
+//        embedList = fac.toStruct(embedList);
+//        tim = System.currentTimeMillis();
+//        for ( int i = 0; i < 1000; i++) {
+//            if (embedList.indexOf(sstring)!=10000)
+//                System.out.println("BUG");
+//        }
+//        System.out.println("index offheap embed stringlist "+(System.currentTimeMillis()-tim));
 
         SimpleTest simpleTest = fac.toStruct(new SimpleTest());
         System.out.println("st null " + simpleTest.getNullObject());
@@ -501,10 +501,10 @@ public class TestStructs {
         final int elemSiz = arr.getElemSiz();
         final int size = arr.size();
         for ( int j=0; j < 4; j++ ) {
-            next.setAbsoluteOffset(FSTUtil.bufoff);
+            next.___offset = FSTUtil.bufoff;
             for (int i= 0; i < size; i++ ) {
                 sum+=next.getIntVar();
-                next.addOffset(elemSiz);
+                next.___offset+=elemSiz;
             }
         }
         System.out.println("   structarr iterator offset iter get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);

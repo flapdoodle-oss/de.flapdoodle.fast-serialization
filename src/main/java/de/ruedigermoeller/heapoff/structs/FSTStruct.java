@@ -31,46 +31,54 @@ public class FSTStruct implements Serializable {
 
     public static Unsafe unsafe = FSTUtil.getUnsafe();
 
-    transient protected long ___offset;
-    transient protected byte[] ___bytes;
-    transient protected FSTStructFactory ___fac;
-    transient int ___elementSize;
+    transient public long ___offset;
+    transient public byte[] ___bytes;
+    transient public FSTStructFactory ___fac;
+    public transient int ___elementSize;
 
     protected Unsafe getUnsafe() {
         return unsafe;
     }
+
     /**
      * must include bytearray offset in case of unsafe use
      * @param off
      */
-    public void setAbsoluteOffset(long off) {
+    protected void setAbsoluteOffset(long off) {
         ___offset = off;
     }
 
-    public long getAbsoluteOffset() {
+    protected long getAbsoluteOffset() {
         return ___offset;
     }
 
-    public void addOffset(long off) {
+    public int getByteSize() {
+        return unsafe.getInt(___bytes,___offset);
+    }
+
+    public int getClzId() {
+        if ( ! isOffHeap() )
+            throw new RuntimeException("cannot call on heap");
+        return unsafe.getInt(___bytes,___offset+4);
+    }
+
+    protected void addOffset(long off) {
         ___offset+=off;
     }
 
-    public void setBase(byte[] base) {
+    protected void setBase(byte[] base) {
         ___bytes = base;
     }
+
     public byte[] getBase() {
         return ___bytes;
-    }
-
-    public void setFac(FSTStructFactory fac) {
-        ___fac = fac;
     }
 
     public FSTStructFactory getFac() {
         return ___fac;
     }
 
-    public void baseOn( byte base[], long offset, FSTStructFactory fac ) {
+    public void baseOn( byte base[], long offset, FSTStructFactory fac) {
         ___bytes = base; ___offset = offset; ___fac = fac;
     }
 
@@ -86,8 +94,12 @@ public class FSTStruct implements Serializable {
         return ___elementSize;
     }
 
-    public void setElementSize(int ___elementSize) {
+    protected void setElementSize(int ___elementSize) {
         this.___elementSize = ___elementSize;
+    }
+
+    public boolean isPointer() {
+        return ___elementSize > 0;
     }
 
     /**

@@ -135,7 +135,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                         "int _st_len=unsafe.getInt(___bytes,"+off+"+___offset); "+
                         "int _st_off=unsafe.getInt(___bytes,"+off+"+$1*4+4+___offset);"+
                         "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException($1+\" size \"+_st_len);"+
-                        "return ("+fieldInfo.getArrayType().getName()+")___fac.getStructWrapper(___bytes,_st_off);"+
+                        "return ("+fieldInfo.getArrayType().getName()+")___fac.getStructPointer(___bytes,_st_off);"+
                     "}";
                     method.setBody(meth);
                 }
@@ -196,7 +196,8 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
             if ( type == CtPrimitiveType.doubleType ) {
                 f.replace("$_ = unsafe.getDouble(___bytes,"+off+"+___offset);");
             } else { // object ref
-                f.replace("{ int __tmpOff = unsafe.getInt(___bytes, "+off+" + ___offset); $_ = ("+f.getField().getType().getName()+")___fac.getStructWrapper(___bytes,__tmpOff); }");
+                String typeString = type.getName();
+                f.replace("{ int __tmpOff = unsafe.getInt(___bytes, "+off+" + ___offset); $_ = ("+ typeString +")___fac.getStructPointer(___bytes,__tmpOff); }");
 //                f.replace("{ Object _o = unsafe.toString(); $_ = _o; }");
             }
         } catch (Exception ex) {

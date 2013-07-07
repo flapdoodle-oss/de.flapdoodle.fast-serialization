@@ -77,8 +77,8 @@ public class FSTGCMark {
 
         if ( stepCount%1000 == 999 ) {
             // enforce some tenuring
-            for ( int i = 0; i < operationStep; i++) {
-                int key = (int) (rand.nextDouble() * mutatingRange)+mutatingRange*4;
+            for ( int i = 0; i < operationStep*2; i++) {
+                int key = (int) (rand.nextDouble() * hmFillRange);
                 map.put(key,  new UseLessWrapper(new UseLessWrapper("a"+stepCount)));
             }
         }
@@ -168,9 +168,10 @@ public class FSTGCMark {
 
     int runtime = 60000 * 5;
 
-    public static void main( String arg[] ) {
+    public static void main( String arg[] ) throws InterruptedException {
 
         FSTGCMark fstgcMark = new FSTGCMark();
+        Thread.sleep(10000);
         fstgcMark.run();
         fstgcMark.dumpResult();
 

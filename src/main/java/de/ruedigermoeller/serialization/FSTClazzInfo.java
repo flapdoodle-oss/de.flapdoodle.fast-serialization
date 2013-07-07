@@ -259,7 +259,7 @@ public final class FSTClazzInfo {
             }
         };
         Arrays.sort(fieldInfo, comp);
-        int off = 4; // clz header
+        int off = 8; // clz header: length + clzId
         for (int i = 0; i < fieldInfo.length; i++) {
             FSTFieldInfo fstFieldInfo = fieldInfo[i];
             fstFieldInfo.setStructOffset(off);

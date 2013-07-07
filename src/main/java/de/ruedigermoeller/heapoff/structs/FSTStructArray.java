@@ -69,7 +69,7 @@ public class FSTStructArray<T extends FSTStruct> {
             wrapper = new ThreadLocal<T>() {
                 @Override
                 protected T initialValue() {
-                    return (T) fac.getStructWrapper(b, 0);
+                    return (T) fac.getStructPointer(b, 0);
                 }
             };
         }
