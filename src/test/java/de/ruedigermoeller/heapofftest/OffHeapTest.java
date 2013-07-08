@@ -57,9 +57,6 @@ public class OffHeapTest {
                 if ( it.getCurrentEntry() != null ) {
                     System.out.println("found ! "+it.getCurrentTag()+" "+Thread.currentThread().getName());
                 }
-                if ( counter == 4000000 ) {
-                    System.out.println("POK");
-                }
             }
         } finally {
             System.out.println("count "+counter);

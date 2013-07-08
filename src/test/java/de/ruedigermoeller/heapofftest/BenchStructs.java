@@ -2,9 +2,8 @@ package de.ruedigermoeller.heapofftest;
 
 import de.ruedigermoeller.heapoff.FSTCompressor;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
-import de.ruedigermoeller.heapoff.structs.FSTStructArray;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
-import de.ruedigermoeller.heapoff.structs.structtypes.StructList;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 import de.ruedigermoeller.serialization.util.FSTUtil;
@@ -349,7 +348,7 @@ public class BenchStructs {
             stringList.add( new StructString("pok "+i) );
         }
 
-//        StructList<StructString> embedList = new StructList<StructString>(stringList);
+//        StructArray<StructString> embedList = new StructArray<StructString>(stringList);
 //        StructString sstring = new StructString("pok 10000");
 //        tim = System.currentTimeMillis();
 //        for ( int i = 0; i < 1000; i++) {
@@ -415,10 +414,7 @@ public class BenchStructs {
         System.out.println("pok1:"+ testString+"'");
 
         tim = System.currentTimeMillis();
-        for (int i = 0; i < structs.length; i+=2) {
-            structs[i] = new TestStruct();
-        }
-        for (int i = 1; i < structs.length; i+=2) {
+        for (int i = 0; i < structs.length; i++) {
             structs[i] = new TestStruct();
         }
         System.out.println("instantiation on heap "+(System.currentTimeMillis()-tim));
@@ -474,12 +470,13 @@ public class BenchStructs {
         benchIterAccess(fac,hugeArray, structLen,max);
 
         System.out.println("iterate structarray");
-        FSTStructArray<TestStruct> arr = new FSTStructArray<TestStruct>(fac, new TestStruct(), max);
+        StructArray<TestStruct> arr = new StructArray<TestStruct>(max, new TestStruct(), fac);
+        arr = fac.toStruct(arr);
 
         tim = System.currentTimeMillis();
         int sum = 0;
         for ( int j=0; j < 4; j++ ) {
-            final int size = arr.size();
+            final int size = arr.getSize();
             for ( int i = 0; i < size; i++) {
                 sum += arr.get(i).getIntVar();
             }
@@ -498,10 +495,10 @@ public class BenchStructs {
         tim = System.currentTimeMillis();
         sum = 0;
         final TestStruct next = arr.createPointer(0);
-        final int elemSiz = arr.getElemSiz();
-        final int size = arr.size();
+        final int elemSiz = arr.getElementSize();
+        final int size = arr.getSize();
         for ( int j=0; j < 4; j++ ) {
-            next.___offset = FSTUtil.bufoff;
+            next.___offset = arr.getObjectArrayOffset();
             for (int i= 0; i < size; i++ ) {
                 sum+=next.getIntVar();
                 next.___offset+=elemSiz;

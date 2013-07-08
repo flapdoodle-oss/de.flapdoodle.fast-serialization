@@ -62,7 +62,6 @@ public class AnotherOffheapThingy<T> {
         un.copyMemory(test,0, b, 0, siz);
 
         other = copyObj(un,test, (int) siz);
-        System.out.println("POK");
 
     }
 }

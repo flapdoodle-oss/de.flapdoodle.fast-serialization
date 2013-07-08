@@ -2,10 +2,9 @@ package de.ruedigermoeller.heapofftest.structs;
 
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
-import de.ruedigermoeller.heapoff.structs.structtypes.StructList;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
-import sun.security.krb5.internal.crypto.Aes128CtsHmacSha1EType;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -34,15 +33,16 @@ public class StructTest {
     public static void main( String arg[] ) {
 
         FSTStructFactory fac = FSTStructFactory.getInstance();
-        fac.registerClz(StructList.class);
+        fac.registerClz(FSTStruct.class);
         fac.registerClz(StructString.class);
+        fac.registerClz(StructArray.class);
         fac.registerClz(StructMap.class);
         fac.registerClz(TestData.class);
 
         TestData data = new TestData();
         data.setNested(new TestData());
         int elemSize = FSTStructFactory.getInstance().calcStructSize(new TestData());
-//        data.dataStructList = new StructList<TestData>(50, elemSize);
+//        data.dataStructArray = new StructArray<TestData>(50, elemSize);
         int siz = fac.calcStructSize(data);
         TestData data1 = fac.toStruct(data);
         System.out.println("Size: "+siz+" "+data1.getByteSize()+" "+data1.getString());
@@ -50,7 +50,7 @@ public class StructTest {
         compareTestData( data, data1 );
         compareTestData( data.getNested(), data1.getNested() );
 
-        StructList<StructString> sl = new StructList<StructString>(10,fac.calcStructSize(new StructString(10)));
+        StructArray<StructString> sl = new StructArray(10,fac.calcStructSize(new StructString(10)));
 
         sl = fac.toStruct(sl);
         System.out.println("len "+sl.getByteSize()+" "+sl.getObjectArrayOffset()+" "+sl.___offset);
@@ -61,11 +61,21 @@ public class StructTest {
         System.out.println("cont " + sl.get(0));
         sl.get(0).setString("Hallo");
         System.out.println("cont " + sl.get(0));
-//        StructList<TestData> dataStructList = data1.getDataStructList();
-//        TestData structListData = dataStructList.get(0);
-//        dataStructList.set(0,data);
-//        dataStructList.set(1,data1);
-//        compareTestData(dataStructList.get(0),dataStructList.get(1));
+
+        for ( int i=0; i < sl.getSize(); i++ ) {
+            sl.set(i,new StructString("Hallo"+i));
+        }
+
+        sl.set(5,null);
+        for ( int i=0; i < sl.getSize(); i++ ) {
+            System.out.println(sl.get(i));
+        }
+
+//        StructArray<TestData> dataStructArray = data1.getDataStructArray();
+//        TestData structListData = dataStructArray.get(0);
+//        dataStructArray.set(0,data);
+//        dataStructArray.set(1,data1);
+//        compareTestData(dataStructArray.get(0),dataStructArray.get(1));
 
         data.getString().setString("Hallo");
     }

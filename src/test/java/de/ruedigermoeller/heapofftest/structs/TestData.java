@@ -1,8 +1,7 @@
 package de.ruedigermoeller.heapofftest.structs;
 
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
-import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
-import de.ruedigermoeller.heapoff.structs.structtypes.StructList;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 
 /**
@@ -31,7 +30,7 @@ public class TestData extends FSTStruct {
 
     TestData nested;
     StructString string = new StructString(50);
-    StructList<TestData> dataStructList;
+    StructArray dataStructArray;
 
     byte a = 0;
     short b = 11111;
@@ -101,8 +100,8 @@ public class TestData extends FSTStruct {
     public int arrfLen() { return arrf.length; }
     public int arrgLen() { return arrg.length; }
 
-    public StructList<TestData> getDataStructList() {
-        return dataStructList;
+    public StructArray getDataStructArray() {
+        return dataStructArray;
     }
 
     public StructString getString() {

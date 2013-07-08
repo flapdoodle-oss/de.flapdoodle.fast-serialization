@@ -60,7 +60,7 @@ public class FSTStructFactory {
     FSTStructGeneration structGen = new FSTByteArrayUnsafeStructGeneration();
 
     <T> Class<T> createStructClz( Class<T> clazz ) throws Exception {
-        //FIXME: ensure FSTStruct is superclass
+        //FIXME: ensure FSTStruct is superclass, check protected, no private methods+fields
         if ( Modifier.isFinal(clazz.getModifiers()) || Modifier.isAbstract(clazz.getModifiers()) ) {
             throw new RuntimeException("Cannot add final classes to structs");
         }
@@ -81,6 +81,9 @@ public class FSTStructFactory {
 
         final FSTClazzInfo clInfo = conf.getClassInfo(clazz);
 
+        if ( newClz.getName().indexOf("StructArray") >= 0 ) {
+            System.out.println("Pok");
+        }
         CtMethod[] methods = orig.getMethods();
         for (int i = 0; i < methods.length; i++) {
             CtMethod method = methods[i];
@@ -90,6 +93,7 @@ public class FSTStructFactory {
                     (method.getModifiers() & AccessFlag.FINAL) == 0 &&
                     ! method.getDeclaringClass().getName().equals(FSTStruct.class.getName()) &&
                     ! method.getDeclaringClass().getName().equals(Object.class.getName());
+            allowed &= method.getAnnotation(NoAssist.class) == null;
             if ( allowed && (method.getModifiers() & AccessFlag.FINAL) != 0 && ! method.getDeclaringClass().getName().equals("java.lang.Object") ) {
                 throw new RuntimeException("final methods are not allowed for struct classes:"+method.getName());
             }
@@ -97,7 +101,10 @@ public class FSTStructFactory {
                 throw new RuntimeException("private methods are not allowed for struct classes:"+method.getName());
             }
             if ( allowed ) {
-                method = new CtMethod(method,newClz,null);
+                ClassMap mp = new ClassMap();
+                mp.fix(clazz.getName());
+                mp.fix(clazz.getSuperclass().getName());
+                method = new CtMethod(method,newClz,mp);
                 String methName = method.getName();
                 FSTClazzInfo.FSTFieldInfo arrayFi = clInfo.getFieldInfo(methName, null);
                 FSTClazzInfo.FSTFieldInfo lenfi = methName.length() > 2 ? clInfo.getFieldInfo(methName.substring(0, methName.length() - 3), null) : null;
@@ -112,7 +119,7 @@ public class FSTStructFactory {
                     structGen.defineArrayIndex(indexfi, clInfo, method);
                     newClz.addMethod(method);
                 } else
-                if ( arrayFi != null ) {
+                if (  arrayFi != null ) {
                     structGen.defineArrayAccessor(arrayFi, clInfo, method);
                     newClz.addMethod(method);
                 } else if ( methName.endsWith("Len") && lenfi != null )
@@ -121,7 +128,7 @@ public class FSTStructFactory {
                     newClz.addMethod(method);
                 } else {
                     newClz.addMethod(method);
-                    System.out.println("instrument "+newClz.getName()+"#"+method.getName());
+                    System.out.println("instrument "+newClz.getName()+"#"+method.getName()+" returns "+method.getReturnType().getName());
                     method.instrument( new ExprEditor() {
                         @Override
                         public void edit(FieldAccess f) throws CannotCompileException {
@@ -161,7 +168,6 @@ public class FSTStructFactory {
         proxyLoader.delegateLoadingOf(Serializable.class.getName());
         proxyLoader.delegateLoadingOf(FSTStructFactory.class.getName());
         proxyLoader.delegateLoadingOf(FSTStruct.class.getName());
-//        proxyLoader.delegateLoadingOf(SubTestStruct.class.getName());
         ccClz = proxyLoader.loadClass(cc.getName());
         return ccClz;
     }
@@ -184,7 +190,7 @@ public class FSTStructFactory {
     }
 
     public FSTStruct createStructWrapper(byte b[], int offset) {
-        int clzId = unsafe.getInt(b,FSTUtil.bufoff+offset);
+        int clzId = unsafe.getInt(b,FSTUtil.bufoff+offset+4);
         return createStructPointer(b, offset, clzId);
     }
 
@@ -428,8 +434,6 @@ public class FSTStructFactory {
                 }
             }
         }
-        if (positions == null)
-            System.out.println("POK");
         for ( int i=0; i < positions.size(); i++) {
             ForwardEntry en = positions.get(i);
             Object o = en.forwardObject;

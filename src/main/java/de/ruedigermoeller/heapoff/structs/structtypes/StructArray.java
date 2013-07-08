@@ -2,8 +2,11 @@ package de.ruedigermoeller.heapoff.structs.structtypes;
 
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
+import de.ruedigermoeller.heapoff.structs.NoAssist;
 import de.ruedigermoeller.heapoff.structs.impl.FSTEmbeddedBinary;
 import de.ruedigermoeller.serialization.util.FSTUtil;
+
+import java.util.Iterator;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -27,70 +30,89 @@ import de.ruedigermoeller.serialization.util.FSTUtil;
  * Time: 01:49
  * To change this template use File | Settings | File Templates.
  */
-public class StructList<E extends FSTStruct> extends FSTStruct implements FSTEmbeddedBinary {
+public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEmbeddedBinary {
 
-    transient E template; // expect to be offheap
-    transient Object[] elems;
-    int elemSize;
-    int size;
+    protected transient FSTStruct template; // expect to be offheap
+    protected transient FSTStruct[] elems;
+    protected int elemSize;
+    protected int size;
 
     /**
      * initializes an inline-object array filled with null values
      * @param size
      * @param elemSize
      */
-    public StructList(int size, int elemSize ) {
+    public StructArray(int size, int elemSize) {
         this.size = size;
-        elems = new Object[size];
         this.elemSize = elemSize;
     }
 
     /**
      * initializes with a template. When off heaped, all elements are filled with a copy of that template.
-     * Warning: if this is used, this class behaves different off-heap compared to offheap. On Heap the template
+     * Warning: if this is used, this class behaves different off-heap compared to on-heap. On Heap the template
      * element is ignored.
      *
      * @param size
      * @param template
      */
-    public StructList(int size, E template ) {
+    @NoAssist
+    public StructArray(int size, E template) {
         if ( ! template.isOffHeap() ) {
             throw new RuntimeException("template should be offheap. Use constructor including FSTStructFactory");
         }
         this.size = size;
         this.template = template;
-        elems = new Object[size];
     }
 
-    public StructList(int size, E templateOnHeap, FSTStructFactory fac ) {
-        template = fac.toStruct(template);
+    @NoAssist
+    public StructArray(int size, E templateOnHeap, FSTStructFactory fac) {
+        if ( templateOnHeap.isOffHeap() )
+            template = templateOnHeap;
+        else
+            template = fac.toStruct((FSTStruct) templateOnHeap);
+        elemSize = template.getByteSize();
         this.size = size;
-        elems = new Object[size];
-        this.template = templateOnHeap;
     }
 
+    @NoAssist
     public E get( int i ) {
-        int __siz = getSize();
+        return (E) getInternal(i); // workaround javassist limit: no generics
+    }
+
+    protected Object getInternal( int i ) {
+        int __siz = size;
         if ( i < 0 || i >= __siz ) {
             throw new ArrayIndexOutOfBoundsException("index:"+i+" size: "+__siz);
         }
         if ( isOffHeap() ) {
-            return (E) ___fac.getStructPointerByOffset(___bytes, getObjectArrayOffset() + elemSize * i);
+            return ___fac.getStructPointerByOffset(___bytes, getObjectArrayOffset() + elemSize * i);
         } else {
-            return (E) elems[i];
+            if ( elems == null )
+                return null;
+            return elems[i];
         }
     }
 
-    public void set( int i, E value ) {
-        int __siz = getSize();
+    @NoAssist
+    public void set(int i, E value ) {
+        setInternal(i,value); // workaround javassist limit: no generics
+    }
+
+    protected void setInternal(int i, Object myValue0 ) {
+        FSTStruct value = (FSTStruct) myValue0;
+        int __siz = size;
         if ( i < 0 || i >= __siz ) {
             throw new ArrayIndexOutOfBoundsException("index:"+i+" size: "+__siz);
         }
         if ( isOffHeap() ) {
+            if ( value == null ) {
+                clearEntry(___bytes, getObjectArrayIndex()+elemSize*i);
+                return;
+            }
             if ( value.isOffHeap() ) {
                 int byteSize = value.getByteSize();
                 if ( byteSize > elemSize )
-                    throw new RuntimeException("elemt is too large to fit");
+                    throw new RuntimeException("element is too large to fit");
                 FSTStruct.unsafe.copyMemory(___bytes,getObjectArrayOffset()+elemSize*i, value.getBase(), value.___offset, byteSize);
             } else {
                 try {
@@ -100,6 +122,9 @@ public class StructList<E extends FSTStruct> extends FSTStruct implements FSTEmb
                 }
             }
         } else {
+            if ( elems == null ) {
+                elems = new FSTStruct[size];
+            }
             elems[i] = value;
         }
     }
@@ -112,6 +137,10 @@ public class StructList<E extends FSTStruct> extends FSTStruct implements FSTEmb
         return ___offset+getByteSize()-elemSize*size;
     }
 
+    public long getObjectArrayIndex() {
+        return ___offset+getByteSize()-elemSize*size-FSTUtil.bufoff;
+    }
+
     @Override
     public int getEmbeddedSizeAdditon(FSTStructFactory fac) {
         return elemSize*size;
@@ -120,10 +149,10 @@ public class StructList<E extends FSTStruct> extends FSTStruct implements FSTEmb
     @Override
     public int insertEmbedded(FSTStructFactory fac, byte[] base, int targetIndex) {
         if ( isOffHeap() ) {
-            throw new RuntimeException("expected onheap template");
+            throw new RuntimeException("expected onheap");
         }
-        for (int i = 0; i < elems.length; i++) {
-            Object elem = elems[i];
+        for (int i = 0; i < size; i++) {
+            Object elem = get(i);
             if ( elem != null ) {
                 try {
                     getFac().toByteArray(elem,base,targetIndex);
@@ -131,15 +160,63 @@ public class StructList<E extends FSTStruct> extends FSTStruct implements FSTEmb
                     throw new RuntimeException(e);
                 }
             } else {
-                if ( template != null ) {
-                    unsafe.copyMemory(base,(long)targetIndex+FSTUtil.bufoff,template.___bytes, template.___offset,template.getByteSize());
-                } else {
-                    unsafe.setMemory(base,(long)targetIndex+FSTUtil.bufoff,(long)elemSize,(byte)0);
-                }
+                clearEntry(base, targetIndex);
             }
             targetIndex+=elemSize;
         }
         return targetIndex;
     }
 
+    protected void clearEntry(byte[] base, long targetIndex) {
+        if ( template != null ) {
+            unsafe.copyMemory(base, targetIndex + FSTUtil.bufoff, template.___bytes, template.___offset, template.getByteSize());
+        } else {
+            unsafe.setMemory(base, targetIndex +FSTUtil.bufoff,(long)elemSize,(byte)0);
+        }
+    }
+
+    @NoAssist
+    public Iterator<E> iterator() {
+        return new StructArrIterator<E>();
+    }
+
+    @NoAssist
+    public E createPointer(int index) {
+        if ( ! isOffHeap() )
+            throw new RuntimeException("must be offheap to call this");
+        E res = (E) ___fac.createStructWrapper(___bytes, index * elemSize);
+        res.___elementSize = ___elementSize;
+        return res;
+    }
+
+    final class StructArrIterator<T extends FSTStruct> implements Iterator<T> {
+
+        T current;
+        final int maxPos;
+        final int eSiz;
+        final byte[] bytes;
+
+        StructArrIterator() {
+            bytes = ___bytes;
+            current = (T) ___fac.createStructWrapper(bytes, 0);
+            maxPos = bytes.length + FSTUtil.bufoff;
+            this.eSiz = elemSize;
+        }
+
+        @Override
+        public final boolean hasNext() {
+            return current.___offset < maxPos;
+        }
+
+        @Override
+        public final T next() {
+            current.___offset+=___elementSize;
+            return current;
+        }
+
+        @Override
+        public void remove() {
+            throw new RuntimeException("unsupported operation");
+        }
+    }
 }
