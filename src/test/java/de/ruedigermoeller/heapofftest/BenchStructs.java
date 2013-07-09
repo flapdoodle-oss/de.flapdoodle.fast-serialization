@@ -6,7 +6,6 @@ import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
-import de.ruedigermoeller.serialization.util.FSTUtil;
 
 import java.util.*;
 
@@ -142,8 +141,7 @@ public class BenchStructs {
         }
     }
 
-    private static void benchIterAccess(FSTStructFactory fac, byte b[], int structLen, int max) {
-        int times = 4;
+    private static void benchIterAccess(FSTStructFactory fac, byte b[], final int structLen, final int max) {
         long tim;
         int sum;
 
@@ -208,7 +206,6 @@ public class BenchStructs {
     }
 
     private static void benchAccess(TestStruct[] structs) {
-        int times = 4;
         long tim;
         int sum;
 
@@ -269,7 +266,8 @@ public class BenchStructs {
         }
     }
 
-    static TestStruct[] structs = new TestStruct[4000000];
+    static int times = 80;
+    static TestStruct[] structs = new TestStruct[400000];
     public static void main0(String arg[] ) throws Exception {
 
         FSTStructFactory fac = new FSTStructFactory();
@@ -425,7 +423,7 @@ public class BenchStructs {
         testStructs.addAll(Arrays.asList(structs));
         tim = System.currentTimeMillis();
         int dummy = 0;
-        for ( int j=0; j < 4; j++ )
+        for ( int j=0; j < times; j++ )
             for (int i = 0; i < testStructs.size(); i++) {
                 dummy += testStructs.get(i).getIntVar();
             }
@@ -472,10 +470,11 @@ public class BenchStructs {
         System.out.println("iterate structarray");
         StructArray<TestStruct> arr = new StructArray<TestStruct>(max, new TestStruct(), fac);
         arr = fac.toStruct(arr);
+        int tmp = arr.getStructElemSize();
 
         tim = System.currentTimeMillis();
         int sum = 0;
-        for ( int j=0; j < 4; j++ ) {
+        for ( int j=0; j < times; j++ ) {
             final int size = arr.getSize();
             for ( int i = 0; i < size; i++) {
                 sum += arr.get(i).getIntVar();
@@ -485,26 +484,43 @@ public class BenchStructs {
 
         tim = System.currentTimeMillis();
         sum = 0;
-        for ( int j=0; j < 4; j++ )
+        for ( int j=0; j < times; j++ ) {
+            int count = 0;
             for (Iterator<TestStruct> iterator = arr.iterator(); iterator.hasNext(); ) {
                 TestStruct next = iterator.next();
                 sum += next.getIntVar();
+                count++;
             }
+            if (count>=arr.getSize())
+                System.out.println("to many iters "+count);
+        }
         System.out.println("   structarr iterator get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
 
         tim = System.currentTimeMillis();
         sum = 0;
-        final TestStruct next = arr.createPointer(0);
-        final int elemSiz = arr.getElementSize();
+        TestStruct next = arr.createPointer(0);
+        final int elemSiz = arr.getElementInArraySize();
         final int size = arr.getSize();
-        for ( int j=0; j < 4; j++ ) {
+        for ( int j=0; j < times; j++ ) {
             next.___offset = arr.getObjectArrayOffset();
             for (int i= 0; i < size; i++ ) {
                 sum+=next.getIntVar();
                 next.___offset+=elemSiz;
             }
         }
-        System.out.println("   structarr iterator offset iter get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+        System.out.println("   structarr iterator offset direct get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+
+        tim = System.currentTimeMillis();
+        sum = 0;
+        next = arr.createPointer(0);
+        for ( int j=0; j < times; j++ ) {
+            next.___offset = arr.getObjectArrayOffset();
+            for (int i= 0; i < size; i++ ) {
+                sum+=next.getIntVar();
+                next.next();
+            }
+        }
+        System.out.println("   structarr iterator offset next() get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
 
         benchFullGC();
 
@@ -577,7 +593,7 @@ public class BenchStructs {
     public static void main(String arg[] ) throws Exception {
         main0(arg);
         System.out.println("BENCH FINISHED ------------------------------------------------------------------------");
-        while( true )
+//        while( true )
             benchFullGC();
     }
 

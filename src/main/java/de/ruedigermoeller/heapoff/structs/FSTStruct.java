@@ -90,15 +90,11 @@ public class FSTStruct implements Serializable {
         return ___fac != null;
     }
 
-    public int getElementSize() {
+    public int getElementInArraySize() {
         return ___elementSize;
     }
 
-    protected void setElementSize(int ___elementSize) {
-        this.___elementSize = ___elementSize;
-    }
-
-    public boolean isPointer() {
+    public boolean isStructArrayPointer() {
         return ___elementSize > 0;
     }
 

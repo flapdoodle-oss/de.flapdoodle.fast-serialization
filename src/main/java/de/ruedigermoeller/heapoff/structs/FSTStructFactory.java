@@ -81,9 +81,6 @@ public class FSTStructFactory {
 
         final FSTClazzInfo clInfo = conf.getClassInfo(clazz);
 
-        if ( newClz.getName().indexOf("StructArray") >= 0 ) {
-            System.out.println("Pok");
-        }
         CtMethod[] methods = orig.getMethods();
         for (int i = 0; i < methods.length; i++) {
             CtMethod method = methods[i];
@@ -128,7 +125,7 @@ public class FSTStructFactory {
                     newClz.addMethod(method);
                 } else {
                     newClz.addMethod(method);
-                    System.out.println("instrument "+newClz.getName()+"#"+method.getName()+" returns "+method.getReturnType().getName());
+//                    System.out.println("instrument "+newClz.getName()+"#"+method.getName()+" returns "+method.getReturnType().getName());
                     method.instrument( new ExprEditor() {
                         @Override
                         public void edit(FieldAccess f) throws CannotCompileException {
@@ -138,7 +135,7 @@ public class FSTStructFactory {
                                     type = f.getField().getType();
                                     FSTClazzInfo.FSTFieldInfo fieldInfo = clInfo.getFieldInfo(f.getFieldName(), curClz);
                                     if ( fieldInfo == null ) {
-                                        System.out.println("no field for "+f.getFieldName());
+//                                        System.out.println("no field for "+f.getFieldName());
                                         return;
                                     }
                                     if ( f.isReader() ) {
@@ -255,6 +252,9 @@ public class FSTStructFactory {
             return null;
         }
         Integer clzId = unsafe.getInt(b, FSTUtil.bufoff + index+4);
+        if (clzId.intValue()==0) {
+            return null;
+        }
         Object[] wrapperMap = cachedWrapperMap.get();
         Object res = wrapperMap[clzId];
         if ( res != null ) {

@@ -42,7 +42,7 @@ public class StructTest {
         TestData data = new TestData();
         data.setNested(new TestData());
         int elemSize = FSTStructFactory.getInstance().calcStructSize(new TestData());
-//        data.dataStructArray = new StructArray<TestData>(50, elemSize);
+        data.dataStructArray = new StructArray<TestData>(50, elemSize);
         int siz = fac.calcStructSize(data);
         TestData data1 = fac.toStruct(data);
         System.out.println("Size: "+siz+" "+data1.getByteSize()+" "+data1.getString());
@@ -71,13 +71,6 @@ public class StructTest {
             System.out.println(sl.get(i));
         }
 
-//        StructArray<TestData> dataStructArray = data1.getDataStructArray();
-//        TestData structListData = dataStructArray.get(0);
-//        dataStructArray.set(0,data);
-//        dataStructArray.set(1,data1);
-//        compareTestData(dataStructArray.get(0),dataStructArray.get(1));
-
-        data.getString().setString("Hallo");
     }
 
     private static void compareTestData(TestData data, TestData data1) {

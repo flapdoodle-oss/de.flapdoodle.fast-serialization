@@ -74,6 +74,10 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
         this.size = size;
     }
 
+    public int getStructElemSize() {
+        return elemSize;
+    }
+
     @NoAssist
     public E get( int i ) {
         return (E) getInternal(i); // workaround javassist limit: no generics
@@ -112,7 +116,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
             if ( value.isOffHeap() ) {
                 int byteSize = value.getByteSize();
                 if ( byteSize > elemSize )
-                    throw new RuntimeException("element is too large to fit");
+                    throw new RuntimeException("element is too large to fit: tried "+byteSize+" size:"+elemSize+" class "+myValue0.getClass().getName());
                 FSTStruct.unsafe.copyMemory(___bytes,getObjectArrayOffset()+elemSize*i, value.getBase(), value.___offset, byteSize);
             } else {
                 try {
@@ -149,7 +153,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
     @Override
     public int insertEmbedded(FSTStructFactory fac, byte[] base, int targetIndex) {
         if ( isOffHeap() ) {
-            throw new RuntimeException("expected onheap");
+            throw new RuntimeException("expected to be onheap");
         }
         for (int i = 0; i < size; i++) {
             Object elem = get(i);
@@ -169,7 +173,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
 
     protected void clearEntry(byte[] base, long targetIndex) {
         if ( template != null ) {
-            unsafe.copyMemory(base, targetIndex + FSTUtil.bufoff, template.___bytes, template.___offset, template.getByteSize());
+            unsafe.copyMemory(template.___bytes, template.___offset, base, targetIndex + FSTUtil.bufoff, template.getByteSize());
         } else {
             unsafe.setMemory(base, targetIndex +FSTUtil.bufoff,(long)elemSize,(byte)0);
         }
@@ -180,27 +184,26 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
         return new StructArrIterator<E>();
     }
 
-    @NoAssist
     public E createPointer(int index) {
         if ( ! isOffHeap() )
             throw new RuntimeException("must be offheap to call this");
-        E res = (E) ___fac.createStructWrapper(___bytes, index * elemSize);
-        res.___elementSize = ___elementSize;
+        E res = (E) ___fac.createStructWrapper(___bytes, (int) (getObjectArrayIndex() + index * elemSize));
+        res.___elementSize = elemSize;
         return res;
     }
 
     final class StructArrIterator<T extends FSTStruct> implements Iterator<T> {
 
         T current;
-        final int maxPos;
+        final long maxPos;
         final int eSiz;
         final byte[] bytes;
 
         StructArrIterator() {
             bytes = ___bytes;
-            current = (T) ___fac.createStructWrapper(bytes, 0);
-            maxPos = bytes.length + FSTUtil.bufoff;
-            this.eSiz = elemSize;
+            current = (T) ___fac.createStructWrapper(bytes, (int) getObjectArrayIndex());
+            maxPos = getSize()*getStructElemSize() + getObjectArrayOffset();
+            this.eSiz = getStructElemSize();
         }
 
         @Override
@@ -210,7 +213,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
 
         @Override
         public final T next() {
-            current.___offset+=___elementSize;
+            current.___offset+=eSiz;
             return current;
         }
 
