@@ -201,9 +201,10 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
 
         StructArrIterator() {
             bytes = ___bytes;
-            current = (T) ___fac.createStructWrapper(bytes, (int) getObjectArrayIndex());
-            maxPos = getSize()*getStructElemSize() + getObjectArrayOffset();
             this.eSiz = getStructElemSize();
+            current = (T) ___fac.createStructWrapper(bytes, (int) getObjectArrayIndex());
+            current.___offset-=eSiz;
+            maxPos = getSize()*eSiz + getObjectArrayOffset()-eSiz;
         }
 
         @Override
