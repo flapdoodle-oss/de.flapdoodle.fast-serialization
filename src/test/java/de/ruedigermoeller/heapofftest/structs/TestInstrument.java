@@ -35,7 +35,15 @@ public class TestInstrument extends FSTStruct {
         // build template
         TestInstrument ti = new TestInstrument();
         // max 4 legs
-//        ti.legs = new StructArray<TestInstrumentLeg>(4,FSTStructFactory.getInstance().toStruct(new TestInstrumentLeg()));
+        ti.legs = new StructArray<TestInstrumentLeg>(4,FSTStructFactory.getInstance().toStruct(new TestInstrumentLeg()));
+        return ti;
+    }
+
+    public static TestInstrument createInstrumentTemplateOnHeap() {
+        // build template
+        TestInstrument ti = new TestInstrument();
+        // max 4 legs
+        ti.legs = new StructArray<TestInstrumentLeg>(4,1);
         return ti;
     }
 
@@ -44,7 +52,7 @@ public class TestInstrument extends FSTStruct {
     protected StructString description = new StructString(50);
     protected TestMarket market = new TestMarket();
     protected int numLegs;
-//    protected StructArray<TestInstrumentLeg> legs;
+    protected StructArray<TestInstrumentLeg> legs;
 
     public StructString getMnemonic() {
         return mnemonic;
@@ -54,9 +62,9 @@ public class TestInstrument extends FSTStruct {
         return market;
     }
 
-//    public StructArray<TestInstrumentLeg> getLegs() {
-//        return legs;
-//    }
+    public StructArray<TestInstrumentLeg> getLegs() {
+        return legs;
+    }
 
     public long getInstrId() {
         return instrId;
@@ -70,20 +78,20 @@ public class TestInstrument extends FSTStruct {
         return numLegs;
     }
 
-//    public void addLeg( TestInstrumentLeg leg ) {
-//        if ( leg.getInstrument().getNumLegs() > 0 )
-//            throw new RuntimeException("cannot nest strategy instruments");
-//        legs.set(numLegs++, leg);
-//    }
+    public void addLeg( TestInstrumentLeg leg ) {
+        if ( leg.getInstrument().getNumLegs() > 0 )
+            throw new RuntimeException("cannot nest strategy instruments");
+        legs.set(numLegs++, leg);
+    }
 
-//    public int getAccumulatedQty() {
-//        int siz = legs.getStructElemSize();
-//        int result = 1;
-//        for (StructArray<TestInstrumentLeg>.StructArrIterator<TestInstrumentLeg> iterator = legs.iterator(); iterator.hasNext(); ) {
-//            result += iterator.next(siz).getLegQty();
-//        }
-//        return result;
-//    }
+    public int getAccumulatedQty() {
+        int result = 1;
+        int maxIter = numLegs;
+        for ( int i = 0; i < maxIter; i++ ) {
+            result+=legs.get(i).getLegQty();
+        }
+        return result;
+    }
 
     public StructString getDescription() {
         return description;
@@ -97,7 +105,7 @@ public class TestInstrument extends FSTStruct {
                 ", description=" + description +
                 ", market=" + market +
                 ", numLegs=" + numLegs +
-//                ", legs=" + legs +
+                ", legs=" + legs +
                 '}';
     }
 }

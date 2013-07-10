@@ -53,6 +53,9 @@ public class FSTStruct implements Serializable {
     }
 
     public int getByteSize() {
+        if ( !isOffHeap() ) {
+            return 0;
+        }
         return unsafe.getInt(___bytes,___offset);
     }
 

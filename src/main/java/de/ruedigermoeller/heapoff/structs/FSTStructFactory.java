@@ -66,6 +66,7 @@ public class FSTStructFactory {
         registerClz(FSTStruct.class);
         registerClz(StructString.class);
         registerClz(StructArray.class);
+        registerClz(StructArray.StructArrIterator.class);
         registerClz(ReadOnlyStructMap.class);
     }
 
@@ -172,6 +173,7 @@ public class FSTStructFactory {
         proxyLoader.delegateLoadingOf(Serializable.class.getName());
         proxyLoader.delegateLoadingOf(FSTStructFactory.class.getName());
         proxyLoader.delegateLoadingOf(FSTStruct.class.getName());
+        proxyLoader.delegateLoadingOf(StructArray.StructArrIterator.class.getName());
         ccClz = proxyLoader.loadClass(cc.getName());
         return ccClz;
     }
@@ -479,12 +481,12 @@ public class FSTStructFactory {
                     unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index );
                     index = newoffset;
                 }
-                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index );
+                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index-initialIndex );
                 unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos+4, Array.getLength(o) );
                 index+=siz;
             } else {
                 int newoffset = toByteArray(o, bytes, index);
-                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index );
+                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index-initialIndex );
                 index = newoffset;
             }
         }

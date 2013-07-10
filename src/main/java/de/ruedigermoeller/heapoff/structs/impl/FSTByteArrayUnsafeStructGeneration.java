@@ -75,7 +75,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
         try {
             Class arrayType = fieldInfo.getArrayType();
             int off = fieldInfo.getStructOffset();
-            String prefix ="{ int _st_off=unsafe.getInt(___bytes,"+off+"+___offset)+"+FSTUtil.bufoff+";"+ // array base offset in byte arr
+            String prefix ="{ int _st_off=___offset + unsafe.getInt(___bytes,"+off+"+___offset);"+ // array base offset in byte arr
                     "int _st_len=unsafe.getInt(___bytes,"+off+"+4+___offset); "+
                     "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException($1);";
             if ( method.getReturnType() == CtClass.voidType ) {
@@ -133,9 +133,9 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                     String meth =
                     "{"+
                         "int _st_len=unsafe.getInt(___bytes,"+off+"+___offset); "+
-                        "int _st_off=unsafe.getInt(___bytes,"+off+"+$1*4+4+___offset);"+
+                        "long _st_off=unsafe.getInt(___bytes,"+off+"+$1*4+4+___offset)+___offset;"+
                         "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException($1+\" size \"+_st_len);"+
-                        "return ("+fieldInfo.getArrayType().getName()+")___fac.getStructPointer(___bytes,_st_off);"+
+                        "return ("+fieldInfo.getArrayType().getName()+")___fac.getStructPointerByOffset(___bytes,_st_off);"+
                     "}";
                     method.setBody(meth);
                 }
@@ -197,7 +197,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 f.replace("$_ = unsafe.getDouble(___bytes,"+off+"+___offset);");
             } else { // object ref
                 String typeString = type.getName();
-                f.replace("{ int __tmpOff = unsafe.getInt(___bytes, "+off+" + ___offset); $_ = ("+ typeString +")___fac.getStructPointer(___bytes,__tmpOff); }");
+                f.replace("{ long __tmpOff = ___offset + unsafe.getInt(___bytes, "+off+" + ___offset); $_ = ("+ typeString +")___fac.getStructPointerByOffset(___bytes,__tmpOff); }");
 //                f.replace("{ Object _o = unsafe.toString(); $_ = _o; }");
             }
         } catch (Exception ex) {

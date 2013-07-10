@@ -4,6 +4,8 @@ import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.serialization.testclasses.HtmlCharter;
 
+import java.util.Iterator;
+
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
  * <p/>
@@ -32,16 +34,27 @@ public class BenchStructIter {
         int size = arr.getSize();
         for ( int i = 0; i < size; i++ ) {
             TestInstrument testInstrument = arr.get(i);
+            if ( testInstrument == null ) { // if on heap, no prefilled array
+                testInstrument = TestInstrument.createInstrumentTemplateOnHeap();
+                arr.set(i,testInstrument);
+            }
             testInstrument.setInstrId(i);
             testInstrument.getMnemonic().setString("I"+i);
-            testInstrument.getMarket().getMnemonic().setString("XEUR");
-//            for ( int j=0; j < i%4; j++ ) {
-//                TestInstrumentLeg leg = new TestInstrumentLeg();
-//                leg.setLegQty(j);
-//                leg.getInstrument().getMnemonic().setString("I"+j);
-//                testInstrument.addLeg(leg);
-//            }
+            testInstrument.getMarket().getMnemonic().setString((i % 2) == 0 ? "XEUR" : "XETR");
+            for ( int j=0; j < i%4; j++ ) {
+                TestInstrumentLeg leg = new TestInstrumentLeg();
+                leg.setLegQty(i%4);
+                leg.getInstrument().getMnemonic().setString("I"+j);
+                testInstrument.addLeg(leg);
+            }
         }
+    }
+
+    static long test(Runnable r) {
+//        r.run();
+        long tim = System.currentTimeMillis();
+        r.run();
+        return (System.currentTimeMillis()-tim);
     }
 
     public static void main( String arg[] ) {
@@ -51,11 +64,165 @@ public class BenchStructIter {
 //        charter.text("<i>intel i7 3770K 3,5 ghz, 4 core, 8 threads</i>");
 //        charter.text("<i>" + System.getProperty("java.runtime.version") + "," + System.getProperty("java.vm.name") + "," + System.getProperty("os.name") + "</i>");
 
-        FSTStructFactory fac = FSTStructFactory.getInstance();
+        final FSTStructFactory fac = FSTStructFactory.getInstance();
         fac.registerClz(TestDate.class,TestInstrument.class,TestInstrumentLeg.class,TestMarket.class,TestTimeZone.class);
 
-        StructArray<TestInstrument> instruments = fac.toStructArray(1, TestInstrument.createInstrumentTemplate());
-        fillInstruments(instruments);
+        final StructArray<TestInstrument> offheap[] = new StructArray[] { null };
+        final StructArray<TestInstrument> onheap[] = new StructArray[] { null };
+
+        long oninstTime = test( new Runnable() {
+            public void run() {
+                StructArray<TestInstrument> instruments = new StructArray<TestInstrument>(1000000,1 /*dummy for testing*/);
+                fillInstruments(instruments);
+                System.out.println("allocated " + instruments.getSize() + " instruments");
+                onheap[0] = instruments;
+            }
+        });
+        System.out.println("duration on heap instantiation "+oninstTime);
+
+        long instTime = test( new Runnable() {
+            public void run() {
+                StructArray<TestInstrument> instruments = fac.toStructArray(1000000, TestInstrument.createInstrumentTemplate());
+                fillInstruments(instruments);
+                System.out.println("allocated " + instruments.getSize() + " instruments using " + instruments.getByteSize() / 1000 / 1000 + " MB");
+                offheap[0] = instruments;
+            }
+        });
+        System.out.println("duration off heap instantiation "+instTime);
+        final int iterMul = 10;
+
+        for ( int xx = 0; xx < 5; xx++ ) {
+            System.out.println();
+
+            long offCalcQty = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    int sum = 0;
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        for ( int i = 0; i < instruments.getSize(); i++ ) {
+                            sum+=instruments.get(i).getAccumulatedQty();
+                        }
+                    }
+                    System.out.println("sum offheap "+sum);
+                }
+            });
+            System.out.println("duration naive off heap iteration calcQty "+offCalcQty);
+
+            long offCalcQty1 = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    int sum = 0;
+                    final int siz = instruments.getStructElemSize();
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        for (StructArray<TestInstrument>.StructArrIterator<TestInstrument> iterator = instruments.iterator(); iterator.hasNext(); ) {
+                            TestInstrument next = iterator.next(siz);
+                            sum+=next.getAccumulatedQty();
+                        }
+                    }
+                    System.out.println("sum offheap "+sum);
+                }
+            });
+            System.out.println("duration opt iterator off heap iteration calcQty "+offCalcQty1);
+
+            long offCalcQty2 = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    int sum = 0;
+                    final int siz = instruments.getStructElemSize();
+                    final int count = instruments.getSize();
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        TestInstrument p = instruments.createPointer(0);
+                        for (int i=0; i < count; i++ ) {
+                            sum+=p.getAccumulatedQty();
+                            p.next(siz);
+                        }
+                    }
+                    System.out.println("sum offheap "+sum);
+                }
+            });
+            System.out.println("duration opt pointer off heap iteration calcQty "+offCalcQty2);
+
+            long offCalcQty3 = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    int sum = 0;
+                    final int siz = instruments.getStructElemSize();
+                    final int count = instruments.getSize();
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        TestInstrument p = instruments.createPointer(0);
+                        for (int i=0; i < count; i++ ) {
+                            sum+=p.getAccumulatedQty();
+                            p.___offset+=siz;
+                        }
+                    }
+                    System.out.println("sum offheap "+sum);
+                }
+            });
+            System.out.println("duration opt DIRECT pointer off heap iteration calcQty "+offCalcQty3);
+
+            long onCalcQty = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = onheap[0];
+                    int sum = 0;
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        final int size = instruments.getSize();
+                        for ( int i = 0; i < size; i++ ) {
+                            sum+=instruments.get(i).getAccumulatedQty();
+                        }
+                    }
+                    System.out.println("sum onheap "+sum);
+                }
+            });
+            System.out.println("duration on heap iteration calcQty "+onCalcQty);
+
+            long intAccessOff = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    int sum = 0;
+                    final int siz = instruments.getStructElemSize();
+                    final int count = instruments.getSize();
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        TestInstrument p = instruments.createPointer(0);
+                        for (int i=0; i < count; i++ ) {
+                            sum+=p.getInstrId();
+                            p.___offset+=siz;
+                        }
+                    }
+                    System.out.println("sum offheap "+sum);
+                }
+            });
+            System.out.println("duration opt DIRECT pointer int access iteration "+intAccessOff);
+
+            long intAccessOn = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    int sum = 0;
+                    final int siz = instruments.getStructElemSize();
+                    final int count = instruments.getSize();
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        TestInstrument p = instruments.createPointer(0);
+                        for (int i=0; i < count; i++ ) {
+                            sum+=p.getInstrId();
+                            p.___offset+=siz;
+                        }
+                    }
+                    System.out.println("sum onheap "+sum);
+                }
+            });
+            System.out.println("duration onheap int access iteration "+intAccessOn);
+
+        }
+//        int size = instruments.getSize();
+//        for (int i = 0; i < size; i++) {
+//            System.out.println(instruments.get(i));
+//        }
 
 //        TestInstrument instrument = fac.toStruct(TestInstrument.createInstrumentTemplate());
 //        instrument.setInstrId(99);
