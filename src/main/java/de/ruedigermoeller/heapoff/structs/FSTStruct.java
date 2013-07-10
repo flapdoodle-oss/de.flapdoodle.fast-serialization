@@ -99,9 +99,20 @@ public class FSTStruct implements Serializable {
     }
 
     /**
+     * important: iterators, array access and access to substructures of a struct always return
+     * pointers, which are cached per thread. To keep a pointer to a struct (e.g. search struct array and find an
+     * element which should be kept as result) you need to detach it (removed from cache). Cost of detach is like an
+     * object creation in case it is in the cache.
+     */
+    public void detach() {
+        if ( isOffHeap() ) {
+            ___fac.detach(this);
+        }
+    }
+    /**
      *  Warning: no bounds checking. Moving the pointer outside the underlying byte[] will cause access violations
      */
-    public void next() {
+    public final void next() {
         if ( ___elementSize > 0 )
             ___offset += ___elementSize;
         else
@@ -111,7 +122,14 @@ public class FSTStruct implements Serializable {
     /**
      *  Warning: no bounds checking. Moving the pointer outside the underlying byte[] will cause access violations
      */
-    public void previous() {
+    public final void next(int offset) {
+        ___offset += offset;
+    }
+
+    /**
+     *  Warning: no bounds checking. Moving the pointer outside the underlying byte[] will cause access violations
+     */
+    public final void previous() {
         if ( ___elementSize > 0 )
             ___offset -= ___elementSize;
         else

@@ -3,6 +3,9 @@ package de.ruedigermoeller.heapoff.structs;
 import de.ruedigermoeller.heapoff.structs.impl.FSTByteArrayUnsafeStructGeneration;
 import de.ruedigermoeller.heapoff.structs.impl.FSTEmbeddedBinary;
 import de.ruedigermoeller.heapoff.structs.impl.FSTStructGeneration;
+import de.ruedigermoeller.heapoff.structs.structtypes.ReadOnlyStructMap;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.util.FSTUtil;
@@ -59,12 +62,18 @@ public class FSTStructFactory {
     ConcurrentHashMap<Class, Class> proxyClzMap = new ConcurrentHashMap<Class, Class>();
     FSTStructGeneration structGen = new FSTByteArrayUnsafeStructGeneration();
 
+    public FSTStructFactory() {
+        registerClz(FSTStruct.class);
+        registerClz(StructString.class);
+        registerClz(StructArray.class);
+        registerClz(ReadOnlyStructMap.class);
+    }
+
     <T> Class<T> createStructClz( Class<T> clazz ) throws Exception {
         //FIXME: ensure FSTStruct is superclass, check protected, no private methods+fields
         if ( Modifier.isFinal(clazz.getModifiers()) || Modifier.isAbstract(clazz.getModifiers()) ) {
             throw new RuntimeException("Cannot add final classes to structs");
         }
-//        Class<?> clazz = toPack.getClass();
         String proxyName = clazz.getName()+"_Struct";
         Class present = null;
         try {
@@ -125,7 +134,6 @@ public class FSTStructFactory {
                     newClz.addMethod(method);
                 } else {
                     newClz.addMethod(method);
-//                    System.out.println("instrument "+newClz.getName()+"#"+method.getName()+" returns "+method.getReturnType().getName());
                     method.instrument( new ExprEditor() {
                         @Override
                         public void edit(FieldAccess f) throws CannotCompileException {
@@ -135,7 +143,6 @@ public class FSTStructFactory {
                                     type = f.getField().getType();
                                     FSTClazzInfo.FSTFieldInfo fieldInfo = clInfo.getFieldInfo(f.getFieldName(), curClz);
                                     if ( fieldInfo == null ) {
-//                                        System.out.println("no field for "+f.getFieldName());
                                         return;
                                     }
                                     if ( f.isReader() ) {
@@ -181,14 +188,13 @@ public class FSTStructFactory {
     public <T extends FSTStruct> T createWrapper(Class<T> onHeap, byte bytes[], int index) throws Exception {
         Class proxy = getProxyClass(onHeap);
         T res = (T) unsafe.allocateInstance(proxy);
-//        T res = (T) proxy.newInstance();
         res.baseOn(bytes, FSTUtil.bufoff+index, this);
         return res;
     }
 
-    public FSTStruct createStructWrapper(byte b[], int offset) {
-        int clzId = unsafe.getInt(b,FSTUtil.bufoff+offset+4);
-        return createStructPointer(b, offset, clzId);
+    public FSTStruct createStructWrapper(byte b[], int index) {
+        int clzId = unsafe.getInt(b,FSTUtil.bufoff+index+4);
+        return createStructPointer(b, index, clzId);
     }
 
     private FSTStruct createStructPointer(byte[] b, int index, Integer clzId) {
@@ -200,6 +206,12 @@ public class FSTStructFactory {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public <T extends FSTStruct> StructArray<T> toStructArray(int size, T onHeap) {
+        onHeap = toStruct(onHeap);
+        StructArray<T> arr = new StructArray<T>(size,onHeap);
+        return toStruct(arr);
     }
 
     public <T extends FSTStruct> T toStruct(T onHeap) {
@@ -224,12 +236,15 @@ public class FSTStructFactory {
         }
     };
 
-    public void detach(int clzId) {
-        cachedWrapperMap.get()[clzId] = null;
+    public void detach(FSTStruct structPointer) {
+        int id = structPointer.getClzId();
+        Object o = cachedWrapperMap.get()[id];
+        if ( o == structPointer )
+            cachedWrapperMap.get()[id] = null;
     }
 
     public Object getStructPointerByOffset(byte b[], long offset) {
-        if ( offset < 0 ) {
+        if ( offset < FSTUtil.bufoff ) {
             return null;
         }
         Integer clzId = unsafe.getInt(b, offset+4);
@@ -248,22 +263,7 @@ public class FSTStructFactory {
     }
 
     public Object getStructPointer(byte b[], int index) {
-        if ( index < 0 ) {
-            return null;
-        }
-        Integer clzId = unsafe.getInt(b, FSTUtil.bufoff + index+4);
-        if (clzId.intValue()==0) {
-            return null;
-        }
-        Object[] wrapperMap = cachedWrapperMap.get();
-        Object res = wrapperMap[clzId];
-        if ( res != null ) {
-            ((FSTStruct)res).baseOn(b, FSTUtil.bufoff + index, this);
-            return res;
-        }
-        res = createStructPointer(b, index, clzId);
-        wrapperMap[clzId] = res;
-        return res;
+        return getStructPointerByOffset(b,FSTUtil.bufoff+index);
     }
 
     public int calcStructSize(Object onHeapStruct) {
@@ -317,10 +317,16 @@ public class FSTStructFactory {
     HashMap<Class,Integer> mClzToInt = new HashMap<Class,Integer>();
 
     int idCount = 1;
-    public void registerClz(Class c) {
-        int id = idCount++;
-        mIntToClz.put(id,c);
-        mClzToInt.put(c,id);
+    public void registerClz(Class ... classes) {
+        for (int i = 0; i < classes.length; i++) {
+            Class c = classes[i];
+            if ( mClzToInt.containsKey(c) ) {
+                continue;
+            }
+            int id = idCount++;
+            mIntToClz.put(id,c);
+            mClzToInt.put(c,id);
+        }
     }
 
     public int getClzId(Class c) {

@@ -2,8 +2,8 @@ package de.ruedigermoeller.heapofftest.structs;
 
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
+import de.ruedigermoeller.heapoff.structs.structtypes.ReadOnlyStructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
-import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 
 /**
@@ -33,10 +33,6 @@ public class StructTest {
     public static void main( String arg[] ) {
 
         FSTStructFactory fac = FSTStructFactory.getInstance();
-        fac.registerClz(FSTStruct.class);
-        fac.registerClz(StructString.class);
-        fac.registerClz(StructArray.class);
-        fac.registerClz(StructMap.class);
         fac.registerClz(TestData.class);
 
         TestData data = new TestData();

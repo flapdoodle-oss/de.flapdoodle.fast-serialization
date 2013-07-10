@@ -3,8 +3,8 @@ package de.ruedigermoeller.heapofftest;
 import de.ruedigermoeller.heapoff.FSTCompressor;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
+import de.ruedigermoeller.heapoff.structs.structtypes.ReadOnlyStructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
-import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 
 import java.util.*;
@@ -274,9 +274,18 @@ public class BenchStructs {
         fac.registerClz(TestStruct.class);
         fac.registerClz(SubTestStruct.class);
         fac.registerClz(StructString.class);
-        fac.registerClz(StructMap.class);
+        fac.registerClz(ReadOnlyStructMap.class);
 
-        StructMap mp = new StructMap(11);
+//        StructArray<TestStruct> arrT = fac.toStructArray(100, new TestStruct());
+//        for (int i = 0; i < arrT.getSize(); i++) {
+//            arrT.get(i).setIntVar(i);
+//        }
+//        for (Iterator<TestStruct> iterator = arrT.iterator(); iterator.hasNext(); ) {
+//            TestStruct next = iterator.next();
+//            System.out.println("next "+next.getIntVar());
+//        }
+
+        ReadOnlyStructMap mp = new ReadOnlyStructMap(11);
         mp.put(new StructString("Emil"),new StructString("Möller-Lienemann"));
         mp.put(new StructString("Felix"),new StructString("Möller-Fricker"));
         mp.put(new StructString("Rüdiger"),new StructString("Möller"));
@@ -295,7 +304,7 @@ public class BenchStructs {
         for ( int i = 0; i < 100; i++ ) {
             testMap.put(new StructString("oij"+i), new StructString("val"+i));
         }
-        StructMap<StructString,StructString> stMap = new StructMap<StructString, StructString>(testMap);
+        ReadOnlyStructMap<StructString,StructString> stMap = new ReadOnlyStructMap<StructString, StructString>(testMap);
 
         StructString toSearch = new StructString("oij"+11);
         StructString toNotFind = new StructString("notThere");
@@ -468,8 +477,7 @@ public class BenchStructs {
         benchIterAccess(fac,hugeArray, structLen,max);
 
         System.out.println("iterate structarray");
-        StructArray<TestStruct> arr = new StructArray<TestStruct>(max, new TestStruct(), fac);
-        arr = fac.toStruct(arr);
+        StructArray<TestStruct> arr = fac.toStructArray(max, new TestStruct());
         int tmp = arr.getStructElemSize();
 
         tim = System.currentTimeMillis();
@@ -485,16 +493,33 @@ public class BenchStructs {
         tim = System.currentTimeMillis();
         sum = 0;
         for ( int j=0; j < times; j++ ) {
-            int count = 0;
             for (Iterator<TestStruct> iterator = arr.iterator(); iterator.hasNext(); ) {
                 TestStruct next = iterator.next();
                 sum += next.getIntVar();
-                count++;
             }
-            if (count>=arr.getSize())
-                System.out.println("to many iters "+count);
         }
         System.out.println("   structarr iterator get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+
+        tim = System.currentTimeMillis();
+        sum = 0;
+        final int es = arr.getStructElemSize();
+        for ( int j=0; j < times; j++ ) {
+            for (StructArray<TestStruct>.StructArrIterator<TestStruct> iterator = arr.iterator(); iterator.hasNext(); ) {
+                sum += iterator.next(es).getIntVar();
+            }
+        }
+        System.out.println("   structarr iterator(int) get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+
+        tim = System.currentTimeMillis();
+        sum = 0;
+        final int arrsize = arr.getSize();
+        for ( int j=0; j < times; j++ ) {
+            StructArray<TestStruct>.StructArrIterator<TestStruct> iterator = arr.iterator();
+            for (int i=0; i < arrsize; i++) {
+                sum += iterator.next(es).getIntVar();
+            }
+        }
+        System.out.println("   structarr iterator(int) get int NO hasNext " + (System.currentTimeMillis() - tim) + " sum:"+sum);
 
         tim = System.currentTimeMillis();
         sum = 0;
@@ -508,7 +533,7 @@ public class BenchStructs {
                 next.___offset+=elemSiz;
             }
         }
-        System.out.println("   structarr iterator offset direct get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+        System.out.println("   structarr pointer offset direct get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
 
         tim = System.currentTimeMillis();
         sum = 0;
@@ -520,7 +545,18 @@ public class BenchStructs {
                 next.next();
             }
         }
-        System.out.println("   structarr iterator offset next() get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+        System.out.println("   structarr pointer with next() get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+
+        tim = System.currentTimeMillis();
+        sum = 0;
+        for ( int j=0; j < times; j++ ) {
+            next = arr.createPointer(0);
+            for (int i= 0; i < size; i++ ) {
+                sum+=next.getIntVar();
+                next.next(elemSiz);
+            }
+        }
+        System.out.println("   structarr pointer with next(int) get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
 
         benchFullGC();
 
@@ -581,7 +617,7 @@ public class BenchStructs {
         FSTStructFactory fac = new FSTStructFactory();
         fac.registerClz(NewStruct.class);
         fac.registerClz(StructString.class);
-        fac.registerClz(StructMap.class);
+        fac.registerClz(ReadOnlyStructMap.class);
 
         NewStruct structPointer = fac.toStruct(new NewStruct());
         System.out.println("New Struct a " + structPointer.getA());

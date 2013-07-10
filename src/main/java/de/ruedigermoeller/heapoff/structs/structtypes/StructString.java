@@ -39,6 +39,12 @@ public class StructString extends FSTStruct implements Comparable {
         len = 0;
     }
 
+    public StructString(String init, int size) {
+        chars = new char[size];
+        len = 0;
+        setString(init);
+    }
+
     public StructString(String s) {
         chars = s.toCharArray();
         len = s.length();
@@ -96,7 +102,7 @@ public class StructString extends FSTStruct implements Comparable {
     }
 
     public String toString() {
-        // fixme: optimize this by pointing directly to underlying array
+        // fixme: optimize this by direct copy
         char ch[] = new char[len];
         for ( int i=0; i < len; i++ ) {
             ch[i] = chars(i);
@@ -106,6 +112,7 @@ public class StructString extends FSTStruct implements Comparable {
 
     @Override
     public int hashCode() {
+        // well that's a dummy implementation ..
         if ( len > 6)
             return chars(0)+chars(3)<<16+chars(len-1)<<32+chars(len-3)<<48;
         else if ( len > 1)

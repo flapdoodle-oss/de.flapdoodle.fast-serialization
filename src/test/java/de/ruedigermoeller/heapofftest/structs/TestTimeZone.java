@@ -1,8 +1,9 @@
-package de.ruedigermoeller.heapofftest.gcbenchmarks;
+package de.ruedigermoeller.heapofftest.structs;
 
-import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
-import de.ruedigermoeller.heapoff.structs.structtypes.ReadOnlyStructMap;
+import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
+
+import java.util.TimeZone;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -22,31 +23,24 @@ import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  * <p/>
- * Date: 29.06.13
- * Time: 23:11
+ * Date: 10.07.13
+ * Time: 01:29
  * To change this template use File | Settings | File Templates.
  */
-public class BasicGCBench {
-    FSTStructFactory fac = new FSTStructFactory();
+public class TestTimeZone extends FSTStruct {
 
-    public BasicGCBench() {
-        fac.registerClz(StructString.class);
-        fac.registerClz(ReadOnlyStructMap.class);
+    protected StructString zoneId = new StructString("GMT", 10);
+
+    public StructString getZoneId() {
+        return zoneId;
     }
 
-    public static long benchFullGC() {
-        long dur = 0;
-        for ( int i = 0; i < 5; i++ ) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            long tim = System.currentTimeMillis();
-            System.gc();
-            dur = System.currentTimeMillis() - tim;
-            System.out.println("FULL GC TIME "+ dur +" mem:"+(Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000/1000+" MB");
-        }
-        return dur;
+    public void setZoneId(StructString zoneId) {
+        this.zoneId = zoneId;
     }
+
+    public TimeZone getTimeZone() {
+        return TimeZone.getTimeZone(zoneId.toString());
+    }
+
 }

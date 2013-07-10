@@ -1,9 +1,6 @@
 package de.ruedigermoeller.heapoff.structs.structtypes;
 
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
-import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
-import de.ruedigermoeller.serialization.util.FSTUtil;
-import sun.misc.Unsafe;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -36,7 +33,7 @@ import java.util.Map;
  * @param <K>
  * @param <V>
  */
-public class StructMap<K,V> extends FSTStruct {
+public class ReadOnlyStructMap<K,V> extends FSTStruct {
 
     Object keyVal[];
     int    size;
@@ -44,7 +41,7 @@ public class StructMap<K,V> extends FSTStruct {
     /**
      * creates a new Hashtable with 'entrySize' elements allocated
      */
-    public StructMap(int entrySize)
+    public ReadOnlyStructMap(int entrySize)
     {
         entrySize = Math.max(3, entrySize);
         keyVal    = new Object[entrySize * 2];
@@ -53,12 +50,12 @@ public class StructMap<K,V> extends FSTStruct {
     /**
      * creates a new Hashtable with 3 elements allocated
      */
-    public StructMap()
+    public ReadOnlyStructMap()
     {
         this(3);
     }
 
-    public StructMap(Map<K, V> toCopy)
+    public ReadOnlyStructMap(Map<K, V> toCopy)
     {
         this(toCopy.size()*2);
         for (Iterator iterator = toCopy.entrySet().iterator(); iterator.hasNext(); ) {
@@ -159,7 +156,7 @@ public class StructMap<K,V> extends FSTStruct {
 
     public static void main(String[] args)
     {
-        StructMap<Integer,Integer> smt = new StructMap(8000);
+        ReadOnlyStructMap<Integer,Integer> smt = new ReadOnlyStructMap(8000);
 
         for (int ii = 0; ii < 4000; ii++)
         {

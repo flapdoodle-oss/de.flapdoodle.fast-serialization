@@ -62,6 +62,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
         }
         this.size = size;
         this.template = template;
+        this.elemSize = template.getByteSize();
     }
 
     @NoAssist
@@ -150,23 +151,24 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
         return elemSize*size;
     }
 
-    @Override
+    @Override @NoAssist
     public int insertEmbedded(FSTStructFactory fac, byte[] base, int targetIndex) {
         if ( isOffHeap() ) {
-            throw new RuntimeException("expected to be onheap");
-        }
-        for (int i = 0; i < size; i++) {
-            Object elem = get(i);
-            if ( elem != null ) {
-                try {
-                    getFac().toByteArray(elem,base,targetIndex);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+            throw new RuntimeException("template must be completely on heap");
+        } else {
+            for (int i = 0; i < size; i++) {
+                Object elem = get(i);
+                if ( elem != null ) {
+                    try {
+                        getFac().toByteArray(elem,base,targetIndex);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    clearEntry(base, targetIndex);
                 }
-            } else {
-                clearEntry(base, targetIndex);
+                targetIndex+=elemSize;
             }
-            targetIndex+=elemSize;
         }
         return targetIndex;
     }
@@ -180,7 +182,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
     }
 
     @NoAssist
-    public Iterator<E> iterator() {
+    public StructArrIterator<E> iterator() {
         return new StructArrIterator<E>();
     }
 
@@ -192,12 +194,21 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
         return res;
     }
 
-    final class StructArrIterator<T extends FSTStruct> implements Iterator<T> {
+    @Override
+    public String toString() {
+        return "StructArray{" +
+                "elemSize=" + elemSize +
+                ", size=" + size +
+                '}';
+    }
+
+    public final class StructArrIterator<T extends FSTStruct> implements Iterator<T> {
 
         T current;
         final long maxPos;
         final int eSiz;
         final byte[] bytes;
+        boolean hasNextElem = true;
 
         StructArrIterator() {
             bytes = ___bytes;
@@ -205,17 +216,29 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
             current = (T) ___fac.createStructWrapper(bytes, (int) getObjectArrayIndex());
             current.___offset-=eSiz;
             maxPos = getSize()*eSiz + getObjectArrayOffset()-eSiz;
+            hasNextElem = current.___offset < maxPos;
         }
 
         @Override
         public final boolean hasNext() {
-            return current.___offset < maxPos;
+            return hasNextElem;
         }
 
         @Override
         public final T next() {
             current.___offset+=eSiz;
+            hasNextElem = current.___offset < maxPos;
             return current;
+        }
+
+        public final T next(final int offset) {
+            current.___offset+=offset;
+            hasNextElem = current.___offset < maxPos;
+            return current;
+        }
+
+        public int getElementSize() {
+            return eSiz;
         }
 
         @Override

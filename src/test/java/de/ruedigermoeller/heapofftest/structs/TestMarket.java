@@ -1,7 +1,6 @@
-package de.ruedigermoeller.heapofftest.gcbenchmarks;
+package de.ruedigermoeller.heapofftest.structs;
 
-import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
-import de.ruedigermoeller.heapoff.structs.structtypes.ReadOnlyStructMap;
+import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 
 /**
@@ -22,31 +21,36 @@ import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  * <p/>
- * Date: 29.06.13
- * Time: 23:11
+ * Date: 10.07.13
+ * Time: 01:26
  * To change this template use File | Settings | File Templates.
  */
-public class BasicGCBench {
-    FSTStructFactory fac = new FSTStructFactory();
+public class TestMarket extends FSTStruct {
 
-    public BasicGCBench() {
-        fac.registerClz(StructString.class);
-        fac.registerClz(ReadOnlyStructMap.class);
+    protected StructString mnemonic = new StructString(5);
+    protected TestDate opens = new TestDate(0);
+    protected TestDate closes = new TestDate(0);
+    protected TestTimeZone zone = new TestTimeZone();
+
+    public StructString getMnemonic() {
+        return mnemonic;
     }
 
-    public static long benchFullGC() {
-        long dur = 0;
-        for ( int i = 0; i < 5; i++ ) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            long tim = System.currentTimeMillis();
-            System.gc();
-            dur = System.currentTimeMillis() - tim;
-            System.out.println("FULL GC TIME "+ dur +" mem:"+(Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000/1000+" MB");
-        }
-        return dur;
+    public TestDate getOpens() {
+        return opens;
+    }
+
+    public TestDate getCloses() {
+        return closes;
+    }
+
+    @Override
+    public String toString() {
+        return "TestMarket{" +
+                "mnemonic=" + mnemonic +
+                ", opens=" + opens +
+                ", closes=" + closes +
+                ", zone=" + zone +
+                '}';
     }
 }
