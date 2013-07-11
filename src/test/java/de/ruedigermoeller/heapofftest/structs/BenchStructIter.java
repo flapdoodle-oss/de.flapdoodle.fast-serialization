@@ -2,6 +2,8 @@ package de.ruedigermoeller.heapofftest.structs;
 
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
+import de.ruedigermoeller.heapofftest.gcbenchmarks.BasicGCBench;
 import de.ruedigermoeller.serialization.testclasses.HtmlCharter;
 
 import java.util.Iterator;
@@ -57,6 +59,9 @@ public class BenchStructIter {
         return (System.currentTimeMillis()-tim);
     }
 
+    final static StructArray<TestInstrument> offheap[] = new StructArray[] { null };
+    final static StructArray<TestInstrument> onheap[] = new StructArray[] { null };
+
     public static void main( String arg[] ) {
 
 //        HtmlCharter charter = new HtmlCharter("./structiter.html");
@@ -67,8 +72,6 @@ public class BenchStructIter {
         final FSTStructFactory fac = FSTStructFactory.getInstance();
         fac.registerClz(TestDate.class,TestInstrument.class,TestInstrumentLeg.class,TestMarket.class,TestTimeZone.class);
 
-        final StructArray<TestInstrument> offheap[] = new StructArray[] { null };
-        final StructArray<TestInstrument> onheap[] = new StructArray[] { null };
 
         long oninstTime = test( new Runnable() {
             public void run() {
@@ -79,6 +82,7 @@ public class BenchStructIter {
             }
         });
         System.out.println("duration on heap instantiation "+oninstTime);
+        BasicGCBench.benchFullGC();
 
         long instTime = test( new Runnable() {
             public void run() {
@@ -90,6 +94,8 @@ public class BenchStructIter {
         });
         System.out.println("duration off heap instantiation "+instTime);
         final int iterMul = 10;
+
+        BasicGCBench.benchFullGC();
 
         for ( int xx = 0; xx < 5; xx++ ) {
             System.out.println();
@@ -164,6 +170,37 @@ public class BenchStructIter {
             });
             System.out.println("duration opt DIRECT pointer off heap iteration calcQty "+offCalcQty3);
 
+            long offCalcQty4 = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    int sum = 0;
+                    final int siz = instruments.getStructElemSize();
+                    final int count = instruments.getSize();
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        TestInstrument p = instruments.createPointer(0);
+                        StructArray<TestInstrumentLeg> lp = (StructArray<TestInstrumentLeg>) p.getLegs().detach();
+                        TestInstrumentLeg legp = (TestInstrumentLeg) lp.get(0).detach();
+                        final long arroff = lp.___offset - p.___offset; // relative offset of StructArray<TestInstrumentLeg>
+                        final long legoff = legp.___offset - p.___offset; // relative offset of first TestInstrumentLeg of StructArray<TestInstrumentLeg>
+                        final int legSiz = lp.getStructElemSize(); // size of a leg in StructArray<TestInstrumentLeg>
+                        for (int i=0; i < count; i++ ) {
+                            int legs = p.getNumLegs();
+                            sum++;
+                            for ( int k = 0; k < legs; k++ ) {
+                                sum+=legp.getLegQty();
+                                legp.___offset += legSiz;
+                            }
+                            p.___offset+=siz;
+                            lp.___offset=p.___offset+arroff;
+                            legp.___offset=p.___offset+legoff;
+                        }
+                    }
+                    System.out.println("sum offheap "+sum);
+                }
+            });
+            System.out.println("duration opt hacked pointer off heap iteration calcQty "+offCalcQty4);
+
             long onCalcQty = test( new Runnable() {
                 public void run() {
                     StructArray<TestInstrument> instruments = onheap[0];
@@ -201,16 +238,13 @@ public class BenchStructIter {
 
             long intAccessOn = test( new Runnable() {
                 public void run() {
-                    StructArray<TestInstrument> instruments = offheap[0];
+                    StructArray<TestInstrument> instruments = onheap[0];
                     int sum = 0;
-                    final int siz = instruments.getStructElemSize();
                     final int count = instruments.getSize();
                     for ( int j = 0; j < iterMul; j++ ) {
                         sum = 0;
-                        TestInstrument p = instruments.createPointer(0);
                         for (int i=0; i < count; i++ ) {
-                            sum+=p.getInstrId();
-                            p.___offset+=siz;
+                            sum+=instruments.get(i).getInstrId();
                         }
                     }
                     System.out.println("sum onheap "+sum);
@@ -218,6 +252,61 @@ public class BenchStructIter {
             });
             System.out.println("duration onheap int access iteration "+intAccessOn);
 
+            long stringSearchAccessOff = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    final int siz = instruments.getStructElemSize();
+                    final int count = instruments.getSize();
+                    StructString str = new StructString("I999999");
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        TestInstrument p = instruments.createPointer(0);
+                        for (int i=0; i < count; i++ ) {
+                            if ( str.equals(p.getMnemonic())) {
+//                                System.out.println("found "+i);
+                                break;
+                            }
+                            p.___offset+=siz;
+                        }
+                    }
+                }
+            });
+            System.out.println("duration opt DIRECT pointer string compare iteration "+stringSearchAccessOff);
+
+            long stringSearchAccessOff1 = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    final int siz = instruments.getStructElemSize();
+                    final int count = instruments.getSize();
+                    StructString str = new StructString("I999999");
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        StructString sp = (StructString) instruments.createPointer(0).getMnemonic().detach();
+                        for (int i=0; i < count; i++ ) {
+                            if ( str.equals(sp)) {
+                                break;
+                            }
+                            sp.___offset+=siz;
+                        }
+                    }
+                }
+            });
+            System.out.println("duration opt DIRECT String pointer string compare iteration "+stringSearchAccessOff1);
+
+            long stringSearchAccessOon = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = onheap[0];
+                    final int count = instruments.getSize();
+                    StructString str = new StructString("I999999");
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        for (int i=0; i < count; i++ ) {
+                            if ( str.equals(instruments.get(i).getMnemonic())) {
+//                                System.out.println("found "+i);
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
+            System.out.println("duration onheap string compare iteration "+stringSearchAccessOon);
         }
 //        int size = instruments.getSize();
 //        for (int i = 0; i < size; i++) {

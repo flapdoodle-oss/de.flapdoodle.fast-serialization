@@ -54,20 +54,48 @@ public class FSTStructFactory {
         return instance;
     }
 
-    public static final int MAX_CLASSES = 1000;
+    public static final int MAX_CLASSES = 500;
+    public static final int NUM_CACHED_POINTERS = 10;
     static Unsafe unsafe = FSTUtil.unFlaggedUnsafe;
     static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
     static Loader proxyLoader = new Loader(FSTStructFactory.class.getClassLoader(), ClassPool.getDefault());
 
     ConcurrentHashMap<Class, Class> proxyClzMap = new ConcurrentHashMap<Class, Class>();
     FSTStructGeneration structGen = new FSTByteArrayUnsafeStructGeneration();
+    ThreadLocal<Object[]> cachedWrapperMap[] = new ThreadLocal[NUM_CACHED_POINTERS];
+    ThreadLocal<Integer> cachedWrapperIndex = new ThreadLocal<Integer>() {
+        @Override
+        protected Integer initialValue() {
+            return 0;
+        }
+    };
 
     public FSTStructFactory() {
+        initPointerCache();
         registerClz(FSTStruct.class);
         registerClz(StructString.class);
         registerClz(StructArray.class);
         registerClz(StructArray.StructArrIterator.class);
         registerClz(ReadOnlyStructMap.class);
+    }
+
+    final void incWrapperIndex() {
+        int value = cachedWrapperIndex.get() + 1;
+        cachedWrapperIndex.set(value);
+        if ( value == NUM_CACHED_POINTERS)
+            cachedWrapperIndex.set(0);
+    }
+
+    final void initPointerCache() {
+        for (int i = 0; i < cachedWrapperMap.length; i++) {
+            cachedWrapperMap[i] =
+                new ThreadLocal<Object[]>() {
+                    @Override
+                    protected Object[] initialValue() {
+                        return new Object[MAX_CLASSES];
+                    }
+                };
+        }
     }
 
     <T> Class<T> createStructClz( Class<T> clazz ) throws Exception {
@@ -231,18 +259,15 @@ public class FSTStructFactory {
         }
     }
 
-    ThreadLocal<Object[]> cachedWrapperMap = new ThreadLocal<Object[]>() {
-        @Override
-        protected Object[] initialValue() {
-            return new Object[MAX_CLASSES];
-        }
-    };
-
     public void detach(FSTStruct structPointer) {
         int id = structPointer.getClzId();
-        Object o = cachedWrapperMap.get()[id];
-        if ( o == structPointer )
-            cachedWrapperMap.get()[id] = null;
+        for (int i = 0; i < cachedWrapperMap.length; i++) {
+            ThreadLocal<Object[]> threadLocal = cachedWrapperMap[i];
+            if ( threadLocal.get()[id] == structPointer ) {
+                threadLocal.get()[id] = null;
+                break;
+            }
+        }
     }
 
     public Object getStructPointerByOffset(byte b[], long offset) {
@@ -253,14 +278,16 @@ public class FSTStructFactory {
         if (clzId.intValue() == 0) {
             return null;
         }
-        Object[] wrapperMap = cachedWrapperMap.get();
+        Object[] wrapperMap = cachedWrapperMap[cachedWrapperIndex.get()].get();
         Object res = wrapperMap[clzId];
         if ( res != null ) {
             ((FSTStruct)res).baseOn(b, offset, this);
+            incWrapperIndex();
             return res;
         }
         res = createStructPointer(b, (int) (offset - FSTUtil.bufoff), clzId);
         wrapperMap[clzId] = res;
+        incWrapperIndex();
         return res;
     }
 

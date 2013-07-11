@@ -107,10 +107,11 @@ public class FSTStruct implements Serializable {
      * element which should be kept as result) you need to detach it (removed from cache). Cost of detach is like an
      * object creation in case it is in the cache.
      */
-    public void detach() {
+    public FSTStruct detach() {
         if ( isOffHeap() ) {
             ___fac.detach(this);
         }
+        return this;
     }
     /**
      *  Warning: no bounds checking. Moving the pointer outside the underlying byte[] will cause access violations
