@@ -352,12 +352,13 @@ public class FSTStructFactory {
 
     static class ForwardEntry {
 
-        ForwardEntry(int pointerPos, Object forwardObject) {
+        ForwardEntry(int pointerPos, Object forwardObject, FSTClazzInfo.FSTFieldInfo fsfi) {
             this.pointerPos = pointerPos;
             this.forwardObject = forwardObject;
+            fi = fsfi;
         }
 
-        boolean isArray =false;
+        FSTClazzInfo.FSTFieldInfo fi;
         int pointerPos;
         Object forwardObject;
     }
@@ -384,22 +385,25 @@ public class FSTStructFactory {
                 }
                 if ( fi.isIntegral() ) { // prim array
                     Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
-                    positions.add(new ForwardEntry(index,objectValue));
+                    positions.add(new ForwardEntry(index,objectValue,fi));
                     index += fi.getStructSize();
                 } else { // object array
                     Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
-                    unsafe.putInt(bytes,FSTUtil.bufoff+index,objArr.length);
-                    index+=4;
-                    for (int j = 0; j < objArr.length; j++) {
-                        Object objectValue = objArr[j];
-                        if ( objectValue == null ) {
-                            unsafe.putInt(bytes, FSTUtil.bufoff + index, -1);
-                            index+=4;
-                        } else {
-                            positions.add(new ForwardEntry(index,objectValue));
-                            index += 4;
-                        }
-                    }
+                    positions.add(new ForwardEntry(index,objArr,fi));
+                    index += fi.getStructSize();
+//                    Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
+//                    unsafe.putInt(bytes,FSTUtil.bufoff+index,objArr.length);
+//                    index+=4;
+//                    for (int j = 0; j < objArr.length; j++) {
+//                        Object objectValue = objArr[j];
+//                        if ( objectValue == null ) {
+//                            unsafe.putInt(bytes, FSTUtil.bufoff + index, -1);
+//                            index+=4;
+//                        } else {
+//                            positions.add(new ForwardEntry(index,objectValue,fi));
+//                            index += 4;
+//                        }
+//                    }
                 }
             } else if ( fi.isIntegral() ) { // && ! array
                 Class type = fi.getType();
@@ -437,7 +441,7 @@ public class FSTStructFactory {
                     index+=fi.getStructSize();
                 } else {
                     Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
-                    positions.add(new ForwardEntry(index,objectValue));
+                    positions.add(new ForwardEntry(index,objectValue,fi));
                     index += fi.getStructSize();
                 }
             }
@@ -476,15 +480,24 @@ public class FSTStructFactory {
                     siz = Array.getLength(o) * FSTUtil.doublescal;
                     unsafe.copyMemory(o,FSTUtil.doubleoff, bytes, FSTUtil.bufoff+index, siz);
                 } else {
-                    // object array treated like a sequence of object refs
-                    int newoffset = toByteArray(o, bytes, index);
-                    unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index );
-                    index = newoffset;
+                    Object[] objArr = (Object[]) o;
+                    unsafe.putInt(bytes,FSTUtil.bufoff+index,objArr.length);
+                    index+=4;
+                    for (int j = 0; j < objArr.length; j++) {
+                        Object objectValue = objArr[j];
+                        if ( objectValue == null ) {
+                            unsafe.putInt(bytes, FSTUtil.bufoff + index, -1);
+                            index+=4;
+                        } else {
+                            positions.add(new ForwardEntry(index,objectValue,en.fi));
+                            index += 4;
+                        }
+                    }
                 }
                 unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index-initialIndex );
                 unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos+4, Array.getLength(o) );
                 index+=siz;
-            } else {
+            } else { // object ref or objarray elem
                 int newoffset = toByteArray(o, bytes, index);
                 unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index-initialIndex );
                 index = newoffset;

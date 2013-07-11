@@ -588,7 +588,13 @@ public class BenchStructs {
     public static class NewStruct extends FSTStruct {
         int a = 14;
         int intarr[] = {0,1,2,3,4,5};
-        StructString str = new StructString(30);
+        Object[] objArr = new Object[]{
+            new StructString("arr One", 10),
+            new StructString("arr Two", 10),
+            new StructString("arr Three", 20),
+        };
+        StructString str = new StructString("Oops", 30);
+        StructString str1 = new StructString("1Oops", 30);
 
         public int getA() {
             return a;
@@ -600,6 +606,16 @@ public class BenchStructs {
 
         public void setA(int i) {
             a = i;
+        }
+
+        public void objArr(int i, Object val) {
+            objArr[i] = val;
+        }
+        public Object objArr(int i) {
+            return objArr[i];
+        }
+        public int objArrLen() {
+            return objArr.length;
         }
 
         public void intarr(int i, int val) {
@@ -617,6 +633,10 @@ public class BenchStructs {
             return "NewStruct{" +
                     "a=" + a +
                     ", str=" + str +
+                    ", str1=" + str1 +
+                    ", obj[0]=" + objArr(0) +
+                    ", obj[1]=" + objArr(1) +
+                    ", obj[2]=" + objArr(2) +
                     '}';
         }
     }
@@ -634,6 +654,16 @@ public class BenchStructs {
             System.out.println(structPointer.intarr(i));
         }
 
+        for (int i = 0; i < structPointer.objArrLen(); i++) {
+            System.out.println(structPointer.objArr(i));
+        }
+        structPointer.objArr(1,new StructString("POKPOK"));
+        structPointer.objArr(0,new StructString("POKPOK 0"));
+        System.out.println("--");
+        for (int i = 0; i < structPointer.objArrLen(); i++) {
+            System.out.println(structPointer.objArr(i));
+        }
+
         structPointer.getStr().setString("Hallo");
         System.out.println("New Struct str " + structPointer.getStr());
 
@@ -645,7 +675,7 @@ public class BenchStructs {
     }
 
     public static void main(String arg[] ) throws Exception {
-        main0(arg);
+        main1(arg);
         System.out.println("BENCH FINISHED ------------------------------------------------------------------------");
 //        while( true )
             benchFullGC();

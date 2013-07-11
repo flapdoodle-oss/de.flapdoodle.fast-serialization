@@ -113,6 +113,7 @@ public class FSTStruct implements Serializable {
         }
         return this;
     }
+
     /**
      *  Warning: no bounds checking. Moving the pointer outside the underlying byte[] will cause access violations
      */

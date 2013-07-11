@@ -177,7 +177,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
         if ( template != null ) {
             unsafe.copyMemory(template.___bytes, template.___offset, base, targetIndex + FSTUtil.bufoff, template.getByteSize());
         } else {
-            unsafe.setMemory(base, targetIndex +FSTUtil.bufoff,(long)elemSize,(byte)0);
+//            unsafe.setMemory(base, targetIndex +FSTUtil.bufoff,(long)elemSize,(byte)0);
         }
     }
 
