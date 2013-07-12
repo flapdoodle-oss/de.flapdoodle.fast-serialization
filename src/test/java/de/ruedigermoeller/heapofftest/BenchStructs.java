@@ -657,12 +657,12 @@ public class BenchStructs {
         for (int i = 0; i < structPointer.objArrLen(); i++) {
             System.out.println(structPointer.objArr(i));
         }
-        structPointer.objArr(1,new StructString("POKPOK"));
-        structPointer.objArr(0,new StructString("POKPOK 0"));
-        System.out.println("--");
-        for (int i = 0; i < structPointer.objArrLen(); i++) {
-            System.out.println(structPointer.objArr(i));
-        }
+//        structPointer.objArr(1,new StructString("POKPOK"));
+//        structPointer.objArr(0,new StructString("POKPOK 0"));
+//        System.out.println("--");
+//        for (int i = 0; i < structPointer.objArrLen(); i++) {
+//            System.out.println(structPointer.objArr(i));
+//        }
 
         structPointer.getStr().setString("Hallo");
         System.out.println("New Struct str " + structPointer.getStr());

@@ -680,10 +680,10 @@ public final class FSTClazzInfo {
             if ( type == long.class || type == double.class )
                 return 8;
             if ( isArray() ) {
-//                if ( isIntegral() )
+                if ( isIntegral() )
                     return 8; // pointer+length
-//                if ( isIntegral() )
-//                    return 4; // length+[pointer,pointer,..]
+                else
+                    return 12; // pointer+length+elemsiz
             }
             return 4;
         }

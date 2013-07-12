@@ -103,23 +103,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 if ( arrayType == float.class ) {
                     method.setBody(prefix+"unsafe.putFloat(___bytes, _st_off+$1*4,$2);}");
                 } else {
-                    String meth =
-                    "{"+
-                            "de.ruedigermoeller.heapoff.structs.FSTStruct struct = (de.ruedigermoeller.heapoff.structs.FSTStruct)$2;"+
-                            "int _st_len=unsafe.getInt(___bytes,"+off+"+___offset); "+
-                            "long _st_off=unsafe.getInt(___bytes,"+off+"+$1*4+4+___offset)+___offset;"+
-                            "if ( !struct.isOffHeap() ) {"+
-                            "    struct=___fac.toStruct(struct);"+ // FIMXE: do direct toByte to avoid tmp alloc !
-                            "}"+
-                            "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException($1+\" size \"+_st_len);"+
-                            "int objectLen = unsafe.getInt(___bytes,_st_off);"+
-                            "if ( objectLen <= struct.getByteSize() )"+
-                            "    throw new RuntimeException(\"Illegal size when rewriting object array value\");"+
-                            "unsafe.copyMemory(struct.___bytes,struct.___offset,___bytes,_st_off,(long)struct.getByteSize());"+
-                            "unsafe.putInt(___bytes,_st_off,objectLen);"+
-                     "}";
-                    method.setBody(meth);
-//                    method.setBody("{throw new RuntimeException(\"unssupported to rewrite Objects\");}");
+                    method.setBody("{throw new RuntimeException(\"unssupported to rewrite Objects\");}");
                 }
             } else {
                 if ( arrayType == boolean.class ) {
@@ -147,11 +131,9 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                     method.setBody(prefix+"return unsafe.getFloat(___bytes, _st_off+$1*4);}");
                 } else { // object array
                     String meth =
-                    "{"+
-                        "int _st_len=unsafe.getInt(___bytes,"+off+"+___offset); "+
-                        "long _st_off=unsafe.getInt(___bytes,"+off+"+4+___offset)+___offset;"+
-                        "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException($1+\" size \"+_st_len);"+
-                        "return ("+fieldInfo.getArrayType().getName()+")___fac.getStructPointerByOffset(___bytes,_st_off);"+
+                    prefix+
+                        "int _elem_len=unsafe.getInt(___bytes,"+off+"+8+___offset); "+
+                        "return ("+fieldInfo.getArrayType().getName()+")___fac.getStructPointerByOffset(___bytes,(long)_st_off+$1*_elem_len);"+
                     "}";
                     method.setBody(meth);
                 }
@@ -175,10 +157,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     public void defineArrayLength(FSTClazzInfo.FSTFieldInfo fieldInfo, FSTClazzInfo clInfo, CtMethod method) {
         int off = fieldInfo.getStructOffset();
         try {
-            if ( fieldInfo.getArrayType().isPrimitive() )
-                method.setBody("{ return unsafe.getInt(___bytes,"+off+"+4+___offset); }");
-            else
-                method.setBody("{ return unsafe.getInt(___bytes,"+off+"+___offset); }");
+            method.setBody("{ return unsafe.getInt(___bytes,"+off+"+4+___offset); }");
         } catch (CannotCompileException e) {
             throw new RuntimeException(e);
         }

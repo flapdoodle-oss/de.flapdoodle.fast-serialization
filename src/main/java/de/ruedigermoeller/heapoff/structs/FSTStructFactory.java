@@ -195,7 +195,7 @@ public class FSTStructFactory {
     }
 
     public FSTStruct createStructWrapper(byte b[], int index) {
-        int clzId = unsafe.getInt(b,FSTUtil.bufoff+index+4);
+        int clzId = unsafe.getInt(b, FSTUtil.bufoff + index + 4);
         return createStructPointer(b, index, clzId);
     }
 
@@ -293,11 +293,13 @@ public class FSTStructFactory {
                         siz += Array.getLength(objectValue) * fi.getComponentStructSize() + fi.getStructSize();
                     } else { // object array
                         Object objectValue[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
-                        siz += 4 + objectValue.length*4;
+                        int elemSiz = 0;
                         for (int j = 0; j < objectValue.length; j++) {
                             Object o = objectValue[j];
-                            siz+=calcStructSize(o);
+                            if ( o != null )
+                                elemSiz=Math.max( elemSiz, calcStructSize(o) );
                         }
+                        siz += Array.getLength(objectValue) * elemSiz + fi.getStructSize();
                     }
                 } else if ( fi.isIntegral() ) { // && ! array
                     siz += fi.getStructSize();
@@ -391,6 +393,13 @@ public class FSTStructFactory {
                     Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
                     positions.add(new ForwardEntry(index,objArr,fi));
                     index += fi.getStructSize();
+                    int elemSiz = 0;
+                    for (int j = 0; j < objArr.length; j++) {
+                        Object o = objArr[j];
+                        if ( o != null )
+                            elemSiz = Math.max(calcStructSize(o),elemSiz);
+                    }
+                    unsafe.putInt(bytes, FSTUtil.bufoff+index-4,elemSiz);
 //                    Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
 //                    unsafe.putInt(bytes,FSTUtil.bufoff+index,objArr.length);
 //                    index+=4;
@@ -481,16 +490,17 @@ public class FSTStructFactory {
                     unsafe.copyMemory(o,FSTUtil.doubleoff, bytes, FSTUtil.bufoff+index, siz);
                 } else {
                     Object[] objArr = (Object[]) o;
-                    unsafe.putInt(bytes,FSTUtil.bufoff+index,objArr.length);
-                    index+=4;
+                    int elemSiz = unsafe.getInt(bytes, FSTUtil.bufoff+en.pointerPos+8);
+                    siz = Array.getLength(o) * elemSiz;
+                    int tmpIndex = index;
                     for (int j = 0; j < objArr.length; j++) {
                         Object objectValue = objArr[j];
                         if ( objectValue == null ) {
-                            unsafe.putInt(bytes, FSTUtil.bufoff + index, -1);
-                            index+=4;
+                            unsafe.putInt(bytes, FSTUtil.bufoff + tmpIndex, -1);
+                            tmpIndex += elemSiz;
                         } else {
-                            positions.add(new ForwardEntry(index,objectValue,en.fi));
-                            index += 4;
+                            toByteArray(objectValue,bytes,tmpIndex);
+                            tmpIndex += elemSiz;
                         }
                     }
                 }
