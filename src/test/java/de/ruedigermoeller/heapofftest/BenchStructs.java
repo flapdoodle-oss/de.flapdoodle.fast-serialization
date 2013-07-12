@@ -586,15 +586,15 @@ public class BenchStructs {
     }
 
     public static class NewStruct extends FSTStruct {
-        int a = 14;
-        int intarr[] = {0,1,2,3,4,5};
+        protected int a = 14;
+        protected int intarr[] = {0,1,2,3,4,5};
         Object[] objArr = new Object[]{
             new StructString("arr One", 10),
             new StructString("arr Two", 10),
             new StructString("arr Three", 20),
         };
-        StructString str = new StructString("Oops", 30);
-        StructString str1 = new StructString("1Oops", 30);
+        protected StructString str = new StructString("Oops", 30);
+        protected StructString str1 = new StructString("1Oops", 30);
 
         public int getA() {
             return a;
@@ -639,9 +639,13 @@ public class BenchStructs {
                     ", obj[2]=" + objArr(2) +
                     '}';
         }
+
+        public void setStr(StructString str) {
+            this.str = str;
+        }
     }
 
-    public static void main1(String arg[] ) throws Exception {
+    public static void main1(String arg[]) throws Exception {
         FSTStructFactory fac = new FSTStructFactory();
         fac.registerClz(NewStruct.class);
         fac.registerClz(StructString.class);
@@ -649,7 +653,7 @@ public class BenchStructs {
 
         NewStruct structPointer = fac.toStruct(new NewStruct());
         System.out.println("New Struct a " + structPointer.getA());
-        System.out.println("New Struct aLen "+structPointer.intarrLen());
+        System.out.println("New Struct aLen " + structPointer.intarrLen());
         for (int i = 0; i < structPointer.intarrLen(); i++) {
             System.out.println(structPointer.intarr(i));
         }
@@ -657,21 +661,25 @@ public class BenchStructs {
         for (int i = 0; i < structPointer.objArrLen(); i++) {
             System.out.println(structPointer.objArr(i));
         }
-//        structPointer.objArr(1,new StructString("POKPOK"));
-//        structPointer.objArr(0,new StructString("POKPOK 0"));
-//        System.out.println("--");
-//        for (int i = 0; i < structPointer.objArrLen(); i++) {
-//            System.out.println(structPointer.objArr(i));
-//        }
+        structPointer.objArr(1, new StructString("POKPOK"));
+        structPointer.objArr(0, new StructString("POKPOK 0"));
+        System.out.println("--");
+        for (int i = 0; i < structPointer.objArrLen(); i++) {
+            System.out.println(structPointer.objArr(i));
+        }
 
         structPointer.getStr().setString("Hallo");
         System.out.println("New Struct str " + structPointer.getStr());
 
-        StructArray<NewStruct> array = fac.toStructArray(10,new NewStruct());
+        structPointer.setStr(new StructString("Olla"));
+        System.out.println("New Struct str by value " + structPointer.getStr());
+
+        StructArray<NewStruct> array = fac.toStructArray(10, new NewStruct());
         array.get(0).setA(10);
         array.get(1).setA(11);
         array.get(2).setA(12);
-        System.out.println("pok "+array.get(0)+" "+array.get(1)+" "+array.get(2));
+        array.get(1).setStr(new StructString("replaced"));
+        System.out.println("pok " + array.get(0) + " " + array.get(1) + " " + array.get(2));
     }
 
     public static void main(String arg[] ) throws Exception {

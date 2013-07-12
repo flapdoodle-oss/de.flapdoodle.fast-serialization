@@ -63,7 +63,19 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 f.replace("unsafe.putDouble(___bytes,"+off+"+___offset,$1);");
             } else
             {
-                f.replace("{if ( 1 != 0 ) throw new RuntimeException(\"cannot rewrite subobject in structs. Field:"+f.getFieldName()+"\" );}");
+                String code =
+                "{"+
+                    "long tmpOff = ___offset + unsafe.getInt(___bytes, "+off+" + ___offset);"+
+                    "int obj_len=unsafe.getInt(___bytes,tmpOff); "+
+                    "de.ruedigermoeller.heapoff.structs.FSTStruct struct = (de.ruedigermoeller.heapoff.structs.FSTStruct)$1;"+
+                    "if ( !struct.isOffHeap() ) {"+
+                    "    struct=___fac.toStruct(struct);"+ // FIMXE: do direct toByte to avoid tmp alloc
+                    "}"+
+                    "if (struct.getByteSize() > obj_len ) throw new RuntimeException(\"object too large to be written\");"+
+                    "unsafe.copyMemory(struct.___bytes,struct.___offset,___bytes,tmpOff,(long)struct.getByteSize());"+
+                    "unsafe.putInt(___bytes,tmpOff, obj_len);"+ // rewrite original size
+                "}";
+                f.replace(code);
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -103,7 +115,18 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 if ( arrayType == float.class ) {
                     method.setBody(prefix+"unsafe.putFloat(___bytes, _st_off+$1*4,$2);}");
                 } else {
-                    method.setBody("{throw new RuntimeException(\"unssupported to rewrite Objects\");}");
+                    method.setBody(
+                    prefix+
+                        "int _elem_len=unsafe.getInt(___bytes,"+off+"+8+___offset); "+
+                        "de.ruedigermoeller.heapoff.structs.FSTStruct struct = (de.ruedigermoeller.heapoff.structs.FSTStruct)$2;"+
+                        "if ( !struct.isOffHeap() ) {"+
+                        "    struct=___fac.toStruct(struct);"+ // FIMXE: do direct toByte to avoid tmp alloc
+                        "}"+
+                        "if ( _elem_len <= struct.getByteSize() )"+
+                        "    throw new RuntimeException(\"Illegal size when rewriting object array value\");"+
+                        "unsafe.copyMemory(struct.___bytes,struct.___offset,___bytes,(long)_st_off+$1*_elem_len,(long)struct.getByteSize());"+
+                    "}"
+                    );
                 }
             } else {
                 if ( arrayType == boolean.class ) {
