@@ -592,6 +592,7 @@ public class BenchStructs {
             new StructString("arr One", 10),
             new StructString("arr Two", 10),
             new StructString("arr Three", 20),
+            null
         };
         protected StructString str = new StructString("Oops", 30);
         protected StructString str1 = new StructString("1Oops", 30);
@@ -674,10 +675,14 @@ public class BenchStructs {
         structPointer.setStr(new StructString("Olla"));
         System.out.println("New Struct str by value " + structPointer.getStr());
 
+        structPointer.setStr(null);
+        System.out.println("New Struct str set null: " + structPointer.getStr());
+
         StructArray<NewStruct> array = fac.toStructArray(10, new NewStruct());
         array.get(0).setA(10);
         array.get(1).setA(11);
         array.get(2).setA(12);
+        array.get(0).objArr(1,null);
         array.get(1).setStr(new StructString("replaced"));
         System.out.println("pok " + array.get(0) + " " + array.get(1) + " " + array.get(2));
     }

@@ -66,6 +66,10 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 String code =
                 "{"+
                     "long tmpOff = ___offset + unsafe.getInt(___bytes, "+off+" + ___offset);"+
+                    "if ( $1 == null ) { " +
+                        "unsafe.putInt(___bytes,tmpOff+4,-1); " +
+                        "return; " +
+                    "}"+
                     "int obj_len=unsafe.getInt(___bytes,tmpOff); "+
                     "de.ruedigermoeller.heapoff.structs.FSTStruct struct = (de.ruedigermoeller.heapoff.structs.FSTStruct)$1;"+
                     "if ( !struct.isOffHeap() ) {"+
@@ -119,6 +123,10 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                     prefix+
                         "int _elem_len=unsafe.getInt(___bytes,"+off+"+8+___offset); "+
                         "de.ruedigermoeller.heapoff.structs.FSTStruct struct = (de.ruedigermoeller.heapoff.structs.FSTStruct)$2;"+
+                        "if ( struct == null ) { " +
+                            "unsafe.putInt(___bytes,(long)_st_off+$1*_elem_len+4,-1); " +
+                            "return; " +
+                        "}"+
                         "if ( !struct.isOffHeap() ) {"+
                         "    struct=___fac.toStruct(struct);"+ // FIMXE: do direct toByte to avoid tmp alloc
                         "}"+

@@ -250,7 +250,7 @@ public class FSTStructFactory {
             return null;
         }
         Integer clzId = unsafe.getInt(b, offset+4);
-        if (clzId.intValue() == 0) {
+        if (clzId.intValue() <= 0) {
             return null;
         }
         Object[] wrapperMap = cachedWrapperMap.get();
