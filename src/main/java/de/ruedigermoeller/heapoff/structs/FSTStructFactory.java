@@ -101,6 +101,7 @@ public class FSTStructFactory {
                     ! method.getDeclaringClass().getName().equals(FSTStruct.class.getName()) &&
                     ! method.getDeclaringClass().getName().equals(Object.class.getName());
             allowed &= method.getAnnotation(NoAssist.class) == null;
+            allowed &= (method.getModifiers() & AccessFlag.STATIC) == 0;
             if ( allowed && (method.getModifiers() & AccessFlag.FINAL) != 0 && ! method.getDeclaringClass().getName().equals("java.lang.Object") ) {
                 throw new RuntimeException("final methods are not allowed for struct classes:"+method.getName());
             }
@@ -293,13 +294,20 @@ public class FSTStructFactory {
                         siz += Array.getLength(objectValue) * fi.getComponentStructSize() + fi.getStructSize();
                     } else { // object array
                         Object objectValue[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
-                        int elemSiz = 0;
-                        for (int j = 0; j < objectValue.length; j++) {
-                            Object o = objectValue[j];
-                            if ( o != null )
-                                elemSiz=Math.max( elemSiz, calcStructSize(o) );
+                        int elemSiz = computeElemSize(objectValue, fi);
+                        TemplatedArray takeFirst = fi.getField().getAnnotation(TemplatedArray.class);
+                        if ( takeFirst != null ) {
+                            if (takeFirst.value() > 0 ) {
+                                siz += takeFirst.value() * elemSiz + fi.getStructSize();
+                            } else {
+                                if ( objectValue.length < 2 || objectValue[1] instanceof Integer == false ) {
+                                    throw new RuntimeException("Expect array[1] to be integer specifying size if TemplatedArray arg is < 1");
+                                }
+                                siz += ((Integer)objectValue[1]) * elemSiz + fi.getStructSize();
+                            }
+                        } else {
+                            siz += Array.getLength(objectValue) * elemSiz + fi.getStructSize();
                         }
-                        siz += Array.getLength(objectValue) * elemSiz + fi.getStructSize();
                     }
                 } else if ( fi.isIntegral() ) { // && ! array
                     siz += fi.getStructSize();
@@ -315,6 +323,21 @@ public class FSTStructFactory {
         } catch ( Exception e ) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected int computeElemSize(Object[] objectValue, FSTClazzInfo.FSTFieldInfo fi) {
+        TemplatedArray annotation = fi.getField().getAnnotation(TemplatedArray.class);
+        if ( annotation != null ) {
+            Object template = objectValue[0];
+            return calcStructSize(template);
+        }
+        int elemSiz = 0;
+        for (int j = 0; j < objectValue.length; j++) {
+            Object o = objectValue[j];
+            if ( o != null )
+                elemSiz=Math.max( elemSiz, calcStructSize(o) );
+        }
+        return elemSiz;
     }
 
     HashMap<Integer,Class> mIntToClz = new HashMap<Integer, Class>();
@@ -363,6 +386,7 @@ public class FSTStructFactory {
         FSTClazzInfo.FSTFieldInfo fi;
         int pointerPos;
         Object forwardObject;
+        Object template;
     }
 
 
@@ -391,14 +415,26 @@ public class FSTStructFactory {
                     index += fi.getStructSize();
                 } else { // object array
                     Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
-                    positions.add(new ForwardEntry(index,objArr,fi));
-                    index += fi.getStructSize();
-                    int elemSiz = 0;
-                    for (int j = 0; j < objArr.length; j++) {
-                        Object o = objArr[j];
-                        if ( o != null )
-                            elemSiz = Math.max(calcStructSize(o),elemSiz);
+                    TemplatedArray takeFirst = fi.getField().getAnnotation(TemplatedArray.class);
+                    if ( takeFirst != null ) {
+                        Object[] prev = objArr;
+                        if ( takeFirst.value() < 1 && (objArr.length < 2 || objArr[1] instanceof Integer == false) ) {
+                            throw new RuntimeException("Expect array[1] to be integer specifying size if TemplatedArray arg is < 1");
+                        }
+                        int len = takeFirst.value();
+                        if ( len < 1 ) {
+                            len = ((Integer)objArr[1]).intValue();
+                        }
+                        objArr = new Object[len]; // fixme: waste
+                        objArr[0] = prev[0];
                     }
+                    ForwardEntry fe = new ForwardEntry(index, objArr, fi);
+                    if ( takeFirst != null ) {
+                        fe.template = objArr[0];
+                    }
+                    positions.add(fe);
+                    index += fi.getStructSize();
+                    int elemSiz = computeElemSize(objArr,fi);
                     unsafe.putInt(bytes, FSTUtil.bufoff+index-4,elemSiz);
 //                    Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
 //                    unsafe.putInt(bytes,FSTUtil.bufoff+index,objArr.length);
@@ -493,14 +529,22 @@ public class FSTStructFactory {
                     int elemSiz = unsafe.getInt(bytes, FSTUtil.bufoff+en.pointerPos+8);
                     siz = Array.getLength(o) * elemSiz;
                     int tmpIndex = index;
+                    byte templatearr[] = null;
+                    if (en.template != null)
+                        templatearr = toByteArray(en.template);
                     for (int j = 0; j < objArr.length; j++) {
                         Object objectValue = objArr[j];
-                        if ( objectValue == null ) {
-                            unsafe.putInt(bytes, FSTUtil.bufoff + tmpIndex, -1);
-                            tmpIndex += elemSiz;
+                        if ( templatearr != null ) {
+                            unsafe.copyMemory(templatearr,FSTUtil.bufoff,bytes,FSTUtil.bufoff+tmpIndex,templatearr.length);
+                            tmpIndex+=elemSiz;
                         } else {
-                            toByteArray(objectValue,bytes,tmpIndex);
-                            tmpIndex += elemSiz;
+                            if ( objectValue == null ) {
+                                unsafe.putInt(bytes, FSTUtil.bufoff + tmpIndex, -1);
+                                tmpIndex += elemSiz;
+                            } else {
+                                toByteArray(objectValue, bytes, tmpIndex);
+                                tmpIndex += elemSiz;
+                            }
                         }
                     }
                 }

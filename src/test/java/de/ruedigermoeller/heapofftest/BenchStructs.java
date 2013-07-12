@@ -3,6 +3,7 @@ package de.ruedigermoeller.heapofftest;
 import de.ruedigermoeller.heapoff.FSTCompressor;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
+import de.ruedigermoeller.heapoff.structs.TemplatedArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.ReadOnlyStructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
@@ -588,11 +589,10 @@ public class BenchStructs {
     public static class NewStruct extends FSTStruct {
         protected int a = 14;
         protected int intarr[] = {0,1,2,3,4,5};
+
+        @TemplatedArray(4)
         Object[] objArr = new Object[]{
-            new StructString("arr One", 10),
-            new StructString("arr Two", 10),
-            new StructString("arr Three", 20),
-            null
+            new StructString("uh",50)
         };
         protected StructString str = new StructString("Oops", 30);
         protected StructString str1 = new StructString("1Oops", 30);
