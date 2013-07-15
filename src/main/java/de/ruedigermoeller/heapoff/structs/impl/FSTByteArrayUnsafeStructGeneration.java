@@ -176,9 +176,19 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
 
     @Override
     public void defineArrayIndex(FSTClazzInfo.FSTFieldInfo fieldInfo, FSTClazzInfo clInfo, CtMethod method) {
-        int off = fieldInfo.getStructOffset();
+        int index = fieldInfo.getStructOffset();
         try {
-            method.setBody("{ return "+off+"; }");
+            method.setBody("{ return "+index+"; }");
+        } catch (CannotCompileException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void defineArrayPointer(FSTClazzInfo.FSTFieldInfo indexfi, FSTClazzInfo clInfo, CtMethod method) {
+        int index = indexfi.getStructOffset();
+        try {
+            method.setBody("{ return ("+indexfi.getArrayType().getName()+")___fac.createTypedArrayBasePointer(___bytes, ___offset, "+index+"); }");
         } catch (CannotCompileException e) {
             throw new RuntimeException(e);
         }

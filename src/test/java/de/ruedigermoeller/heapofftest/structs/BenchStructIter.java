@@ -3,10 +3,6 @@ package de.ruedigermoeller.heapofftest.structs;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
-import de.ruedigermoeller.heapofftest.gcbenchmarks.BasicGCBench;
-import de.ruedigermoeller.serialization.testclasses.HtmlCharter;
-
-import java.util.Iterator;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -32,8 +28,10 @@ import java.util.Iterator;
  */
 public class BenchStructIter {
 
+    public static final int SIZE = 400000;
+
     static void fillInstruments(StructArray<TestInstrument> arr) {
-        int size = arr.getSize();
+        int size = arr.size();
         for ( int i = 0; i < size; i++ ) {
             TestInstrument testInstrument = arr.get(i);
             if ( testInstrument == null ) { // if on heap, no prefilled array
@@ -43,11 +41,20 @@ public class BenchStructIter {
             testInstrument.setInstrId(i);
             testInstrument.getMnemonic().setString("I"+i);
             testInstrument.getMarket().getMnemonic().setString((i % 2) == 0 ? "XEUR" : "XETR");
+            if (testInstrument.isOffHeap()) {
+                testInstrument.setNumLegs(i%4);
+            }
             for ( int j=0; j < i%4; j++ ) {
-                TestInstrumentLeg leg = new TestInstrumentLeg();
-                leg.setLegQty(i%4);
-                leg.getInstrument().getMnemonic().setString("I"+j);
-                testInstrument.addLeg(leg);
+                if (arr.isOffHeap()) {
+                    TestInstrumentLeg leg = testInstrument.legs(j);
+                    leg.setLegQty(i%4);
+                    leg.getInstrument().getMnemonic().setString("I"+j);
+                } else {
+                    TestInstrumentLeg leg = new TestInstrumentLeg();
+                    leg.setLegQty(i%4);
+                    leg.getInstrument().getMnemonic().setString("I"+j);
+                    testInstrument.addLeg(leg);
+                }
             }
         }
     }
@@ -75,27 +82,27 @@ public class BenchStructIter {
 
         long oninstTime = test( new Runnable() {
             public void run() {
-                StructArray<TestInstrument> instruments = new StructArray<TestInstrument>(1000000,1 /*dummy for testing*/);
+                StructArray<TestInstrument> instruments = new StructArray<TestInstrument>(SIZE, new TestInstrument());
                 fillInstruments(instruments);
-                System.out.println("allocated " + instruments.getSize() + " instruments");
+                System.out.println("allocated " + instruments.size() + " instruments");
                 onheap[0] = instruments;
             }
         });
         System.out.println("duration on heap instantiation "+oninstTime);
-        BasicGCBench.benchFullGC();
+//        BasicGCBench.benchFullGC();
 
         long instTime = test( new Runnable() {
             public void run() {
-                StructArray<TestInstrument> instruments = fac.toStructArray(1000000, TestInstrument.createInstrumentTemplate());
+                StructArray<TestInstrument> instruments = fac.toStructArray(SIZE, TestInstrument.createInstrumentTemplate());
                 fillInstruments(instruments);
-                System.out.println("allocated " + instruments.getSize() + " instruments using " + instruments.getByteSize() / 1000 / 1000 + " MB");
+                System.out.println("allocated " + instruments.size() + " instruments using " + instruments.getByteSize() / 1000 / 1000 + " MB");
                 offheap[0] = instruments;
             }
         });
         System.out.println("duration off heap instantiation "+instTime);
-        final int iterMul = 10;
+        final int iterMul = 50;
 
-        BasicGCBench.benchFullGC();
+//        BasicGCBench.benchFullGC();
 
         for ( int xx = 0; xx < 5; xx++ ) {
             System.out.println();
@@ -106,7 +113,7 @@ public class BenchStructIter {
                     int sum = 0;
                     for ( int j = 0; j < iterMul; j++ ) {
                         sum = 0;
-                        for ( int i = 0; i < instruments.getSize(); i++ ) {
+                        for ( int i = 0; i < instruments.size(); i++ ) {
                             sum+=instruments.get(i).getAccumulatedQty();
                         }
                     }
@@ -137,7 +144,7 @@ public class BenchStructIter {
                     StructArray<TestInstrument> instruments = offheap[0];
                     int sum = 0;
                     final int siz = instruments.getStructElemSize();
-                    final int count = instruments.getSize();
+                    final int count = instruments.size();
                     for ( int j = 0; j < iterMul; j++ ) {
                         sum = 0;
                         TestInstrument p = instruments.createPointer(0);
@@ -151,12 +158,31 @@ public class BenchStructIter {
             });
             System.out.println("duration opt pointer off heap iteration calcQty "+offCalcQty2);
 
+            long offCalcQty21 = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    int sum = 0;
+                    final int siz = instruments.getStructElemSize();
+                    final int count = instruments.size();
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        TestInstrument p = instruments.createPointer(0);
+                        for (int i=0; i < count; i++ ) {
+                            sum+=p.getAccumulatedQtyOff();
+                            p.next(siz);
+                        }
+                    }
+                    System.out.println("sum offheap "+sum);
+                }
+            });
+            System.out.println("duration opt pointer off heap iteration spevialized calcQty "+offCalcQty21);
+
             long offCalcQty3 = test( new Runnable() {
                 public void run() {
                     StructArray<TestInstrument> instruments = offheap[0];
                     int sum = 0;
                     final int siz = instruments.getStructElemSize();
-                    final int count = instruments.getSize();
+                    final int count = instruments.size();
                     for ( int j = 0; j < iterMul; j++ ) {
                         sum = 0;
                         TestInstrument p = instruments.createPointer(0);
@@ -175,15 +201,13 @@ public class BenchStructIter {
                     StructArray<TestInstrument> instruments = offheap[0];
                     int sum = 0;
                     final int siz = instruments.getStructElemSize();
-                    final int count = instruments.getSize();
+                    final int count = instruments.size();
                     for ( int j = 0; j < iterMul; j++ ) {
                         sum = 0;
                         TestInstrument p = instruments.createPointer(0);
-                        StructArray<TestInstrumentLeg> lp = (StructArray<TestInstrumentLeg>) p.getLegs().detach();
-                        TestInstrumentLeg legp = (TestInstrumentLeg) lp.get(0).detach();
-                        final long arroff = lp.___offset - p.___offset; // relative offset of StructArray<TestInstrumentLeg>
+                        TestInstrumentLeg legp = (TestInstrumentLeg) p.legs(0).detach();
+                        final int legSiz = legp.getByteSize();
                         final long legoff = legp.___offset - p.___offset; // relative offset of first TestInstrumentLeg of StructArray<TestInstrumentLeg>
-                        final int legSiz = lp.getStructElemSize(); // size of a leg in StructArray<TestInstrumentLeg>
                         for (int i=0; i < count; i++ ) {
                             int legs = p.getNumLegs();
                             sum++;
@@ -192,7 +216,6 @@ public class BenchStructIter {
                                 legp.___offset += legSiz;
                             }
                             p.___offset+=siz;
-                            lp.___offset=p.___offset+arroff;
                             legp.___offset=p.___offset+legoff;
                         }
                     }
@@ -207,7 +230,7 @@ public class BenchStructIter {
                     int sum = 0;
                     for ( int j = 0; j < iterMul; j++ ) {
                         sum = 0;
-                        final int size = instruments.getSize();
+                        final int size = instruments.size();
                         for ( int i = 0; i < size; i++ ) {
                             sum+=instruments.get(i).getAccumulatedQty();
                         }
@@ -217,12 +240,34 @@ public class BenchStructIter {
             });
             System.out.println("duration on heap iteration calcQty "+onCalcQty);
 
+            long onCalcQty1 = test( new Runnable() {
+                public void run() {
+                    Object[] instruments = onheap[0].elems;
+                    int sum = 0;
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        final int size = instruments.length;
+                        for ( int i = 0; i < size; i++ ) {
+                            sum++;
+                            final TestInstrument instrument = (TestInstrument) instruments[i];
+                            final int maxIter = instrument.numLegs;
+                            TestInstrumentLeg[] legs = instrument.legs;
+                            for ( int ii = 0; ii < maxIter; ii++ ) {
+                                sum+= legs[ii].getLegQty();
+                            }
+                        }
+                    }
+                    System.out.println("sum onheap "+sum);
+                }
+            });
+            System.out.println("duration on heap iteration calcQty inline "+onCalcQty1);
+
             long intAccessOff = test( new Runnable() {
                 public void run() {
                     StructArray<TestInstrument> instruments = offheap[0];
                     int sum = 0;
                     final int siz = instruments.getStructElemSize();
-                    final int count = instruments.getSize();
+                    final int count = instruments.size();
                     for ( int j = 0; j < iterMul; j++ ) {
                         sum = 0;
                         TestInstrument p = instruments.createPointer(0);
@@ -240,7 +285,7 @@ public class BenchStructIter {
                 public void run() {
                     StructArray<TestInstrument> instruments = onheap[0];
                     int sum = 0;
-                    final int count = instruments.getSize();
+                    final int count = instruments.size();
                     for ( int j = 0; j < iterMul; j++ ) {
                         sum = 0;
                         for (int i=0; i < count; i++ ) {
@@ -256,7 +301,7 @@ public class BenchStructIter {
                 public void run() {
                     StructArray<TestInstrument> instruments = offheap[0];
                     final int siz = instruments.getStructElemSize();
-                    final int count = instruments.getSize();
+                    final int count = instruments.size();
                     StructString str = new StructString("I999999");
                     for ( int j = 0; j < iterMul; j++ ) {
                         TestInstrument p = instruments.createPointer(0);
@@ -276,7 +321,7 @@ public class BenchStructIter {
                 public void run() {
                     StructArray<TestInstrument> instruments = offheap[0];
                     final int siz = instruments.getStructElemSize();
-                    final int count = instruments.getSize();
+                    final int count = instruments.size();
                     StructString str = new StructString("I999999");
                     for ( int j = 0; j < iterMul; j++ ) {
                         StructString sp = (StructString) instruments.createPointer(0).getMnemonic().detach();
@@ -294,7 +339,7 @@ public class BenchStructIter {
             long stringSearchAccessOon = test( new Runnable() {
                 public void run() {
                     StructArray<TestInstrument> instruments = onheap[0];
-                    final int count = instruments.getSize();
+                    final int count = instruments.size();
                     StructString str = new StructString("I999999");
                     for ( int j = 0; j < iterMul; j++ ) {
                         for (int i=0; i < count; i++ ) {
@@ -308,7 +353,7 @@ public class BenchStructIter {
             });
             System.out.println("duration onheap string compare iteration "+stringSearchAccessOon);
         }
-//        int size = instruments.getSize();
+//        int size = instruments.size();
 //        for (int i = 0; i < size; i++) {
 //            System.out.println(instruments.get(i));
 //        }

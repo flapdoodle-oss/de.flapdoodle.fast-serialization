@@ -26,6 +26,5 @@ import java.lang.annotation.RetentionPolicy;
  * To change this template use File | Settings | File Templates.
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TemplatedArray {
-    int value();
+public @interface Templated {
 }

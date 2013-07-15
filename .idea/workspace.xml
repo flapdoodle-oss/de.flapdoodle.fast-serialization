@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" readonly="true" id="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" name="Default" comment="">
+    <list default="true" readonly="true" id="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" name="Default" comment="struct stuff">
+      <change type="MOVED" beforePath="C:\work\fst\src\main\java\de\ruedigermoeller\heapoff\structs\TemplatedArray.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/Templated.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java" afterPath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java" afterPath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/impl/FSTByteArrayUnsafeStructGeneration.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/impl/FSTByteArrayUnsafeStructGeneration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTClazzInfo.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTClazzInfo.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStruct.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStruct.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructFactory.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructFactory.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/impl/FSTStructGeneration.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/impl/FSTStructGeneration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructArray.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructArray.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/StructTest.java" afterPath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/StructTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/TestInstrument.java" afterPath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/TestInstrument.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/TestInstrumentLeg.java" afterPath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/TestInstrumentLeg.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="6f7c434a-88bd-4381-a8c3-3c0f931e5f06" name="ignored" comment="" />
     <ignored path="FST.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/fragment.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373320316655" ignored="false" />
+    <file path="/fragment.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373665664635" ignored="false" />
     <file path="/FSTOffheap.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371580019831" ignored="false" />
     <file path="/FSTObjectInput.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371649345184" ignored="false" />
     <file path="/FSTObjectOutput.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371646380330" ignored="false" />
     <file path="/FSTObjectRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371231429521" ignored="false" />
     <file path="/a.dummy" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373327573922" ignored="false" />
-    <file path="/Dummy.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373615539583" ignored="false" />
+    <file path="/Dummy.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373664065074" ignored="false" />
     <file path="/SimpleOrder.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355512004726" ignored="false" />
     <file path="/FSTOffHeapMap.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371579915644" ignored="false" />
     <file path="/BasicOfftest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355536772120" ignored="false" />
@@ -32,7 +42,7 @@
     <file path="/FSTClazzNameRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371310265380" ignored="false" />
     <file path="/FSTEnumSetSerializer.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1356043182627" ignored="false" />
     <file path="/Cross.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1357436152893" ignored="false" />
-    <file path="/FSTClazzInfo.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373613408078" ignored="false" />
+    <file path="/FSTClazzInfo.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373878695765" ignored="false" />
     <file path="/FSTBridgeGen.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1356388014025" ignored="false" />
     <file path="/FSTCHeaderGen.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1356378489960" ignored="false" />
     <file path="/FSTCFileGen.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1356374704126" ignored="false" />
@@ -587,15 +597,18 @@
     <file path="$APPLICATION_HOME_DIR$/plugins/Hibernate/lib/hibernate.jar!/resources/schemas/hibernate-configuration-4.0.xsd" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371494964528" ignored="false" />
     <file path="$APPLICATION_HOME_DIR$/plugins/Hibernate/lib/hibernate.jar!/resources/schemas/hibernate-mapping-4.0.xsd" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371494964528" ignored="false" />
     <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/resources/relaxng.rng" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371494964528" ignored="false" />
-    <file path="/FSTStructFactory.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373613812571" ignored="false" />
+    <file path="/FSTStructFactory.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373897533736" ignored="false" />
     <file path="/TestStructs.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1372292049611" ignored="false" />
     <file path="/FSTStructArray.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1372291248695" ignored="false" />
-    <file path="/FSTStruct.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373320501913" ignored="false" />
+    <file path="/FSTStruct.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373808455697" ignored="false" />
     <file path="/FSTGCMark.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1372885580364" ignored="false" />
-    <file path="/StructArray.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373327672344" ignored="false" />
-    <file path="/BenchStructs.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373635634240" ignored="false" />
-    <file path="/StructTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373327966071" ignored="false" />
-    <file path="/FSTByteArrayUnsafeStructGeneration.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373635262033" ignored="false" />
+    <file path="/StructArray.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373809405266" ignored="false" />
+    <file path="/BenchStructs.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373896913338" ignored="false" />
+    <file path="/StructTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373808706574" ignored="false" />
+    <file path="/FSTByteArrayUnsafeStructGeneration.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373894080650" ignored="false" />
+    <file path="/TestInstrument.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373809095082" ignored="false" />
+    <file path="/BenchStructIter.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373808783035" ignored="false" />
+    <file path="/FSTStructGeneration.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373892801822" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -629,6 +642,7 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -711,52 +725,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructFactory.java" line="230" class="de.ruedigermoeller.heapoff.structs.FSTStructFactory" package="de.ruedigermoeller.heapoff.structs">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java" line="525" class="de.ruedigermoeller.heapofftest.BenchStructs" package="de.ruedigermoeller.heapofftest">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructFactory.java" line="392" class="de.ruedigermoeller.heapoff.structs.FSTStructFactory" package="de.ruedigermoeller.heapoff.structs">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructFactory.java" line="491" class="de.ruedigermoeller.heapoff.structs.FSTStructFactory" package="de.ruedigermoeller.heapoff.structs">
+      <breakpoint url="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java" line="524" class="de.ruedigermoeller.heapofftest.BenchStructs" package="de.ruedigermoeller.heapofftest">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -772,7 +741,6 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </line_breakpoints>
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -785,16 +753,39 @@
       <file leaf-file-name="FSTStructFactory.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructFactory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="498" column="74" selection-start="22846" selection-end="22846" vertical-scroll-proportion="0.0">
+            <state line="222" column="170" selection-start="10748" selection-end="10748" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#11956#11966#0" expanded="true" />
+                <element signature="e#15866#15882#0" expanded="true" />
+                <element signature="e#15936#15951#0" expanded="true" />
+                <element signature="e#17392#17406#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FSTStruct.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStruct.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="36" column="14" selection-start="1332" selection-end="1332" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FSTByteArrayUnsafeStructGeneration.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="FSTStructGeneration.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/impl/FSTStructGeneration.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="36" column="27" selection-start="1710" selection-end="1710" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FSTByteArrayUnsafeStructGeneration.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/impl/FSTByteArrayUnsafeStructGeneration.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="71" column="0" selection-start="3160" selection-end="3160" vertical-scroll-proportion="0.49072164">
+            <state line="191" column="44" selection-start="9542" selection-end="9542" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -803,7 +794,25 @@
       <file leaf-file-name="FSTClazzInfo.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTClazzInfo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="684" column="20" selection-start="24536" selection-end="24536" vertical-scroll-proportion="0.0">
+            <state line="688" column="9" selection-start="24667" selection-end="24667" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="StructArray.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructArray.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="53" column="5" selection-start="1985" selection-end="1985" vertical-scroll-proportion="0.907357">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="StructTest.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/StructTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="45" column="77" selection-start="1879" selection-end="1879" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -812,28 +821,28 @@
       <file leaf-file-name="BenchStructs.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="674" column="52" selection-start="24881" selection-end="24881" vertical-scroll-proportion="0.0">
+            <state line="691" column="80" selection-start="25368" selection-end="25368" vertical-scroll-proportion="0.0">
               <folding>
-                <element signature="e#10564#10592#0" expanded="true" />
-                <element signature="e#10809#10837#0" expanded="true" />
+                <element signature="e#10614#10642#0" expanded="true" />
+                <element signature="e#10859#10887#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="StructTest.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/StructTest.java">
+      <file leaf-file-name="Templated.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/Templated.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="69" column="0" selection-start="2755" selection-end="2755" vertical-scroll-proportion="0.0">
+            <state line="29" column="0" selection-start="1133" selection-end="1133" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="StructArray.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructArray.java">
+      <file leaf-file-name="TestInstrument.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/TestInstrument.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="211" column="0" selection-start="7185" selection-end="7185" vertical-scroll-proportion="0.0">
+            <state line="52" column="37" selection-start="1983" selection-end="1983" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -980,22 +989,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/serialization/testclasses/libtests/FSTTest.java" />
-        <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/serialization/testclasses/TestRunner.java" />
-        <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTObjectOutput.java" />
-        <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/OffHeapTest.java" />
-        <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTObjectInput.java" />
-        <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/FSTStructFactory.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructArray.java" />
         <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/TestStructs.java" />
         <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/FSTGCMark.java" />
-        <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStruct.java" />
+        <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/TestInstrumentLeg.java" />
+        <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/TemplatedArray.java" />
+        <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java" />
         <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/StructTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/Templated.java" />
+        <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/TestInstrument.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructArray.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTClazzInfo.java" />
-        <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructFactory.java" />
-        <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java" />
+        <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/impl/FSTStructGeneration.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/impl/FSTByteArrayUnsafeStructGeneration.java" />
+        <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java" />
+        <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStruct.java" />
+        <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructFactory.java" />
       </list>
     </option>
   </component>
@@ -1051,26 +1060,7 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fst" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fst" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fst" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
+      <pane id="Scope" />
       <pane id="PackagesPane">
         <subPane>
           <PATH>
@@ -1139,7 +1129,318 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ruedigermoeller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ruedigermoeller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="heapofftest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ruedigermoeller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="heapofftest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="BenchStructs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ClassTreeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ruedigermoeller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="heapofftest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="structs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ruedigermoeller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ruedigermoeller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="heapoff" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ruedigermoeller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="heapoff" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="structs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fst" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ruedigermoeller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="heapoff" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="structs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="structtypes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1159,12 +1460,12 @@
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="options.lastSelected" value="editor" />
-    <property name="project.structure.side.proportion" value="0.2" />
     <property name="GenerateAntBuildDialog.forceTargetJdk" value="false" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth1" value="75" />
-    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth0" value="75" />
     <property name="project.structure.last.edited" value="Modules" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth0" value="75" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth3" value="75" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="OverrideImplement.combined" value="true" />
@@ -1178,6 +1479,7 @@
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder4" value="4" />
     <property name="GenerateAntBuildDialog.inclineRuntiemClasspath" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../fast-grid" />
+    <property name="GoToClass.includeJavaFiles" value="false" />
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="fst-with-test" />
     <property name="GenerateAntBuildDialog.enableUiFormCompile" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
@@ -1193,9 +1495,9 @@
     <property name="restartRequiresConfirmation" value="true" />
     <property name="gradle.tool.window.active" value="Tasks" />
     <property name="GenerateAntBuildDialog.backupFiles" value="false" />
-    <property name="options.searchVisible" value="true" />
-    <property name="dynamic.classpath" value="false" />
     <property name="dir.diff.last.used.directory" value="$PROJECT_DIR$/../fst - Kopie - unsafe - cint auf plain umstellung BUGEGD/src/main/java/de/ruedigermoeller/serialization" />
+    <property name="dynamic.classpath" value="false" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -1216,34 +1518,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Application.BenchStructs">
-    <configuration default="false" name="TestRunner" type="Application" factoryName="Application" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="de.ruedigermoeller.serialization.testclasses.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="MAIN_CLASS_NAME" value="de.ruedigermoeller.serialization.testclasses.TestRunner" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="fstlp" />
-      <envs />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
     <configuration default="false" name="OffHeapTest" type="Application" factoryName="Application" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -1335,6 +1609,35 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
+    <configuration default="false" name="BenchStructIter" type="Application" factoryName="Application" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" value="de.ruedigermoeller.heapofftest.structs.BenchStructIter" />
+      <option name="VM_PARAMETERS" value="-Xms4g -Xmx4g" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="fstlp" />
+      <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m" />
+      <option name="PROGRAM_PARAMETERS" />
+      <method />
+    </configuration>
     <configuration default="true" type="GroovyScriptRunConfiguration" factoryName="Groovy">
       <module name="" />
       <setting name="path" value="" />
@@ -1344,18 +1647,25 @@
       <setting name="debug" value="false" />
       <method />
     </configuration>
-    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
-      <module name="" />
-      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m" />
-      <option name="PROGRAM_PARAMETERS" />
-      <method />
-    </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
       <option name="SHMEM_ADDRESS" value="javadebug" />
       <option name="HOST" value="localhost" />
       <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
@@ -1384,19 +1694,6 @@
       <envs />
       <properties />
       <listeners />
-      <method />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -1537,19 +1834,19 @@
       <item index="2" class="java.lang.String" itemvalue="Application.FSTGCMark CMS" />
       <item index="3" class="java.lang.String" itemvalue="Application.FSTGCMark G1" />
       <item index="4" class="java.lang.String" itemvalue="Application.FSTGCMark CMS (1)" />
-      <item index="5" class="java.lang.String" itemvalue="Application.TestRunner" />
-      <item index="6" class="java.lang.String" itemvalue="Application.OffHeapTest" />
-      <item index="7" class="java.lang.String" itemvalue="Application.TestStructs" />
-      <item index="8" class="java.lang.String" itemvalue="Application.BenchStructs" />
-      <item index="9" class="java.lang.String" itemvalue="Application.StructTest" />
+      <item index="5" class="java.lang.String" itemvalue="Application.OffHeapTest" />
+      <item index="6" class="java.lang.String" itemvalue="Application.TestStructs" />
+      <item index="7" class="java.lang.String" itemvalue="Application.BenchStructs" />
+      <item index="8" class="java.lang.String" itemvalue="Application.StructTest" />
+      <item index="9" class="java.lang.String" itemvalue="Application.BenchStructIter" />
     </list>
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Application.BenchStructs" />
-        <item index="1" class="java.lang.String" itemvalue="Application.StructTest" />
-        <item index="2" class="java.lang.String" itemvalue="Application.TestStructs" />
-        <item index="3" class="java.lang.String" itemvalue="Application.OffHeapTest" />
-        <item index="4" class="java.lang.String" itemvalue="Application.TestRunner" />
+        <item index="1" class="java.lang.String" itemvalue="Application.BenchStructIter" />
+        <item index="2" class="java.lang.String" itemvalue="Application.StructTest" />
+        <item index="3" class="java.lang.String" itemvalue="Application.TestStructs" />
+        <item index="4" class="java.lang.String" itemvalue="Application.OffHeapTest" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -1944,40 +2241,48 @@
       <created>1373615552110</created>
       <updated>1373615552110</updated>
     </task>
-    <option name="localTasksCounter" value="85" />
+    <task id="LOCAL-00085" summary="struct stuff">
+      <created>1373635997154</created>
+      <updated>1373635997154</updated>
+    </task>
+    <task id="LOCAL-00086" summary="struct stuff">
+      <created>1373638693110</created>
+      <updated>1373638693110</updated>
+    </task>
+    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1050" extended-state="6" />
+    <frame x="-9" y="-9" width="1938" height="1050" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3385475" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21081081" sideWeight="0.5678449" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4321267" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16715032" sideWeight="0.6960894" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5316742" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.5316742" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32902467" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21931697" sideWeight="0.16968326" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21611527" sideWeight="0.13800906" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20361991" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3020362" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20772947" sideWeight="0.6452703" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965758" sideWeight="0.5217877" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21931697" sideWeight="0.40837103" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4219457" sideWeight="0.9887711" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21611527" sideWeight="0.33031675" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4536199" sideWeight="0.9887711" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20772947" sideWeight="0.7556306" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="SVN Repositories" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32960895" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20772947" sideWeight="0.7556306" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15955175" sideWeight="0.5780543" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4321267" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -2074,105 +2379,125 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/serializers/FSTStringSerializer.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/FSTCompressed.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="0" selection-start="687" selection-end="687" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTObjectOutput.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="959" column="21" selection-start="42022" selection-end="42022" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/OffHeapTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="1" selection-start="3333" selection-end="3333" vertical-scroll-proportion="0.0">
+        <state line="31" column="22" selection-start="1233" selection-end="1233" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTObjectInput.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/FSTCompressor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="393" column="9" selection-start="15104" selection-end="15104" vertical-scroll-proportion="0.0">
+        <state line="26" column="13" selection-start="1046" selection-end="1046" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0_21/src.zip!/java/util/HashMap.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/impl/FSTEmbeddedBinary.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="401" column="13" selection-start="14975" selection-end="14975" vertical-scroll-proportion="0.025073746" />
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0_21/src.zip!/java/nio/Buffer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="482" column="7" selection-start="15205" selection-end="15205" vertical-scroll-proportion="0.025073746" />
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0_21/src.zip!/java/nio/ByteBuffer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1688" column="48" selection-start="43666" selection-end="43666" vertical-scroll-proportion="0.025073746" />
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0_21/src.zip!/java/util/Iterator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="59" column="12" selection-start="1287" selection-end="1287" vertical-scroll-proportion="0.14749263" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/FSTGCMark.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="101" column="9" selection-start="3796" selection-end="3796" vertical-scroll-proportion="0.9308943">
+        <state line="26" column="17" selection-start="1065" selection-end="1065" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTClazzInfo.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/FSTOffheapQueue.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="684" column="20" selection-start="24536" selection-end="24536" vertical-scroll-proportion="0.0">
+        <state line="51" column="13" selection-start="2200" selection-end="2200" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructFactory.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/TestInstrumentLeg.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="498" column="74" selection-start="22846" selection-end="22846" vertical-scroll-proportion="0.0">
+        <state line="30" column="11" selection-start="1197" selection-end="1197" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructArray.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="211" column="0" selection-start="7185" selection-end="7185" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStruct.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="131" column="0" selection-start="3856" selection-end="3856" vertical-scroll-proportion="0.4742268">
-          <folding />
+        <state line="128" column="47" selection-start="5579" selection-end="5579" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3623#3639#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/StructTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="0" selection-start="2755" selection-end="2755" vertical-scroll-proportion="0.0">
+        <state line="45" column="77" selection-start="1879" selection-end="1879" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/Templated.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="0" selection-start="1133" selection-end="1133" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/TestInstrument.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="37" selection-start="1983" selection-end="1983" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/impl/FSTByteArrayUnsafeStructGeneration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="191" column="44" selection-start="9542" selection-end="9542" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="674" column="52" selection-start="24881" selection-end="24881" vertical-scroll-proportion="0.0">
+        <state line="691" column="80" selection-start="25368" selection-end="25368" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#10564#10592#0" expanded="true" />
-            <element signature="e#10809#10837#0" expanded="true" />
+            <element signature="e#10614#10642#0" expanded="true" />
+            <element signature="e#10859#10887#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/impl/FSTByteArrayUnsafeStructGeneration.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/impl/FSTStructGeneration.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="71" column="0" selection-start="3160" selection-end="3160" vertical-scroll-proportion="0.49072164">
+        <state line="36" column="27" selection-start="1710" selection-end="1710" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTClazzInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="688" column="9" selection-start="24667" selection-end="24667" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStruct.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="14" selection-start="1332" selection-end="1332" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="222" column="170" selection-start="10748" selection-end="10748" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#11956#11966#0" expanded="true" />
+            <element signature="e#15866#15882#0" expanded="true" />
+            <element signature="e#15936#15951#0" expanded="true" />
+            <element signature="e#17392#17406#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructArray.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="53" column="5" selection-start="1985" selection-end="1985" vertical-scroll-proportion="0.907357">
           <folding />
         </state>
       </provider>

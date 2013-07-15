@@ -1,8 +1,6 @@
 package de.ruedigermoeller.heapofftest.structs;
 
-import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
-import de.ruedigermoeller.heapoff.structs.structtypes.ReadOnlyStructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 
@@ -37,8 +35,7 @@ public class StructTest {
 
         TestData data = new TestData();
         data.setNested(new TestData());
-        int elemSize = FSTStructFactory.getInstance().calcStructSize(new TestData());
-        data.dataStructArray = new StructArray<TestData>(50, elemSize);
+        data.dataStructArray = new StructArray<TestData>(50, new TestData());
         int siz = fac.calcStructSize(data);
         TestData data1 = fac.toStruct(data);
         System.out.println("Size: "+siz+" "+data1.getByteSize()+" "+data1.getString());
@@ -46,24 +43,24 @@ public class StructTest {
         compareTestData( data, data1 );
         compareTestData( data.getNested(), data1.getNested() );
 
-        StructArray<StructString> sl = new StructArray(10,fac.calcStructSize(new StructString(10)));
+        StructArray<StructString> sl = new StructArray(10,new StructString(10));
 
         sl = fac.toStruct(sl);
-        System.out.println("len "+sl.getByteSize()+" "+sl.getObjectArrayOffset()+" "+sl.___offset);
+        System.out.println("len "+sl.getByteSize());
 
-        System.out.println("size "+sl.getSize());
+        System.out.println("size "+sl.size());
         System.out.println("cont "+sl.get(0));
         sl.set(0, new StructString(10));
         System.out.println("cont " + sl.get(0));
         sl.get(0).setString("Hallo");
         System.out.println("cont " + sl.get(0));
 
-        for ( int i=0; i < sl.getSize(); i++ ) {
+        for ( int i=0; i < sl.size(); i++ ) {
             sl.set(i,new StructString("Hallo"+i));
         }
 
         sl.set(5,null);
-        for ( int i=0; i < sl.getSize(); i++ ) {
+        for ( int i=0; i < sl.size(); i++ ) {
             System.out.println(sl.get(i));
         }
 

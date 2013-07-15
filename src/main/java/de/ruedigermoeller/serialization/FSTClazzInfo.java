@@ -682,8 +682,8 @@ public final class FSTClazzInfo {
             if ( isArray() ) {
                 if ( isIntegral() )
                     return 8; // pointer+length
-                else
-                    return 12; // pointer+length+elemsiz
+                else // object array
+                    return 16; // pointer+length+elemsiz+pointertype
             }
             return 4;
         }

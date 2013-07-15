@@ -34,7 +34,7 @@ public class FSTStruct implements Serializable {
     transient public long ___offset;
     transient public byte[] ___bytes;
     transient public FSTStructFactory ___fac;
-    public transient int ___elementSize;
+    transient public int ___elementSize;
 
     protected Unsafe getUnsafe() {
         return unsafe;
@@ -84,6 +84,8 @@ public class FSTStruct implements Serializable {
     public void baseOn( byte base[], long offset, FSTStructFactory fac) {
         ___bytes = base; ___offset = offset; ___fac = fac;
     }
+
+
 
     public boolean isIdenticTo(FSTStruct other) {
         return other.getBase() == ___bytes && other.getAbsoluteOffset() == ___offset;

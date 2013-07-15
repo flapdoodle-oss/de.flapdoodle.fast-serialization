@@ -1,11 +1,8 @@
 package de.ruedigermoeller.heapofftest.structs;
 
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
-import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
-import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
+import de.ruedigermoeller.heapoff.structs.Templated;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
-
-import java.util.Iterator;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -35,7 +32,7 @@ public class TestInstrument extends FSTStruct {
         // build template
         TestInstrument ti = new TestInstrument();
         // max 4 legs
-        ti.legs = new StructArray<TestInstrumentLeg>(4,FSTStructFactory.getInstance().toStruct(new TestInstrumentLeg()));
+        ti.legs = new TestInstrumentLeg[] { new TestInstrumentLeg() };
         return ti;
     }
 
@@ -43,7 +40,7 @@ public class TestInstrument extends FSTStruct {
         // build template
         TestInstrument ti = new TestInstrument();
         // max 4 legs
-        ti.legs = new StructArray<TestInstrumentLeg>(4,1);
+        ti.legs = new TestInstrumentLeg[4];
         return ti;
     }
 
@@ -51,8 +48,9 @@ public class TestInstrument extends FSTStruct {
     protected StructString mnemonic = new StructString(7);
     protected StructString description = new StructString(50);
     protected TestMarket market = new TestMarket();
-    protected int numLegs;
-    protected StructArray<TestInstrumentLeg> legs;
+    public int numLegs;
+    @Templated()
+    public TestInstrumentLeg[] legs = {null};
 
     public StructString getMnemonic() {
         return mnemonic;
@@ -62,8 +60,8 @@ public class TestInstrument extends FSTStruct {
         return market;
     }
 
-    public StructArray<TestInstrumentLeg> getLegs() {
-        return legs;
+    public TestInstrumentLeg legs(int i) {
+        return legs[i];
     }
 
     public long getInstrId() {
@@ -78,17 +76,40 @@ public class TestInstrument extends FSTStruct {
         return numLegs;
     }
 
+    public void setNumLegs(int numLegs) {
+        this.numLegs = numLegs;
+    }
+
     public void addLeg( TestInstrumentLeg leg ) {
         if ( leg.getInstrument().getNumLegs() > 0 )
             throw new RuntimeException("cannot nest strategy instruments");
-        legs.set(numLegs++, leg);
+        legs(numLegs++, leg);
+    }
+
+    public void legs(int i, TestInstrumentLeg leg) {
+        legs[i] = leg;
     }
 
     public int getAccumulatedQty() {
         int result = 1;
         int maxIter = numLegs;
         for ( int i = 0; i < maxIter; i++ ) {
-            result+=legs.get(i).getLegQty();
+            result+=legs(i).getLegQty();
+        }
+        return result;
+    }
+
+    public int getAccumulatedQtyOff() {
+        int result = 1;
+        final int maxIter = numLegs;
+        if (maxIter==0) {
+            return result;
+        }
+        final TestInstrumentLeg lp = legs(0);
+        final int siz = lp.getByteSize();
+        for ( int i = 0; i < maxIter; i++ ) {
+            result+=lp.getLegQty();
+            lp.next(siz);
         }
         return result;
     }

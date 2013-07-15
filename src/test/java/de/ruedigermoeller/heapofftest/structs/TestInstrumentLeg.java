@@ -28,6 +28,11 @@ public class TestInstrumentLeg extends FSTStruct {
     protected TestInstrument instrument = new TestInstrument();
     protected int legQty = 1;
 
+    public TestInstrumentLeg() {
+        this.instrument = instrument;
+        this.legQty = legQty;
+    }
+
     public TestInstrument getInstrument() {
         return instrument;
     }

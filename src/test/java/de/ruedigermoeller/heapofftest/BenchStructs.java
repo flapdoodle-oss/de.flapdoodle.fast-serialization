@@ -3,7 +3,7 @@ package de.ruedigermoeller.heapofftest;
 import de.ruedigermoeller.heapoff.FSTCompressor;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
-import de.ruedigermoeller.heapoff.structs.TemplatedArray;
+import de.ruedigermoeller.heapoff.structs.Templated;
 import de.ruedigermoeller.heapoff.structs.structtypes.ReadOnlyStructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
@@ -278,7 +278,7 @@ public class BenchStructs {
         fac.registerClz(ReadOnlyStructMap.class);
 
 //        StructArray<TestStruct> arrT = fac.toStructArray(100, new TestStruct());
-//        for (int i = 0; i < arrT.getSize(); i++) {
+//        for (int i = 0; i < arrT.size(); i++) {
 //            arrT.get(i).setIntVar(i);
 //        }
 //        for (Iterator<TestStruct> iterator = arrT.iterator(); iterator.hasNext(); ) {
@@ -484,7 +484,7 @@ public class BenchStructs {
         tim = System.currentTimeMillis();
         int sum = 0;
         for ( int j=0; j < times; j++ ) {
-            final int size = arr.getSize();
+            final int size = arr.size();
             for ( int i = 0; i < size; i++) {
                 sum += arr.get(i).getIntVar();
             }
@@ -513,7 +513,7 @@ public class BenchStructs {
 
         tim = System.currentTimeMillis();
         sum = 0;
-        final int arrsize = arr.getSize();
+        final int arrsize = arr.size();
         for ( int j=0; j < times; j++ ) {
             StructArray<TestStruct>.StructArrIterator<TestStruct> iterator = arr.iterator();
             for (int i=0; i < arrsize; i++) {
@@ -526,9 +526,9 @@ public class BenchStructs {
         sum = 0;
         TestStruct next = arr.createPointer(0);
         final int elemSiz = arr.getElementInArraySize();
-        final int size = arr.getSize();
+        final int size = arr.size();
         for ( int j=0; j < times; j++ ) {
-            next.___offset = arr.getObjectArrayOffset();
+            next.___offset = arr.get(0).___offset;
             for (int i= 0; i < size; i++ ) {
                 sum+=next.getIntVar();
                 next.___offset+=elemSiz;
@@ -540,7 +540,7 @@ public class BenchStructs {
         sum = 0;
         next = arr.createPointer(0);
         for ( int j=0; j < times; j++ ) {
-            next.___offset = arr.getObjectArrayOffset();
+            next.___offset = arr.get(0).___offset;
             for (int i= 0; i < size; i++ ) {
                 sum+=next.getIntVar();
                 next.next();
@@ -590,10 +590,15 @@ public class BenchStructs {
         protected int a = 14;
         protected int intarr[] = {0,1,2,3,4,5};
 
-        @TemplatedArray(4)
-        Object[] objArr = new Object[]{
-            new StructString("uh",50)
+        @Templated
+        StructString[] objArr = new StructString[]{
+            new StructString("uh",50), null, null, null
         };
+
+//        Object[] objArr = new Object[]{
+//                new StructString("uh",50), new StructString("uh",50), new StructString("uh",50), new StructString("uh",50)
+//        };
+
         protected StructString str = new StructString("Oops", 30);
         protected StructString str1 = new StructString("1Oops", 30);
 
@@ -609,12 +614,18 @@ public class BenchStructs {
             a = i;
         }
 
-        public void objArr(int i, Object val) {
+        public void objArr(int i, StructString val) {
             objArr[i] = val;
         }
-        public Object objArr(int i) {
+
+        public StructString objArr(int i) {
             return objArr[i];
         }
+
+        public StructString objArrPointer() {
+            return null;
+        }
+
         public int objArrLen() {
             return objArr.length;
         }
@@ -677,6 +688,8 @@ public class BenchStructs {
 
         structPointer.setStr(null);
         System.out.println("New Struct str set null: " + structPointer.getStr());
+
+        System.out.println("New Array Pointer: " + structPointer.objArrPointer());
 
         StructArray<NewStruct> array = fac.toStructArray(10, new NewStruct());
         array.get(0).setA(10);

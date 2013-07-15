@@ -3,6 +3,7 @@ package de.ruedigermoeller.heapoff.structs.structtypes;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.NoAssist;
+import de.ruedigermoeller.heapoff.structs.Templated;
 import de.ruedigermoeller.heapoff.structs.impl.FSTEmbeddedBinary;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 
@@ -30,22 +31,12 @@ import java.util.Iterator;
  * Time: 01:49
  * To change this template use File | Settings | File Templates.
  */
-public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEmbeddedBinary {
+public class StructArray<E extends FSTStruct> extends FSTStruct {
 
-    protected transient FSTStruct template; // expect to be offheap
-    protected transient FSTStruct[] elems;
-    protected int elemSize;
-    protected int size;
+    @Templated()
+    public Object[] elems = {null};
 
-    /**
-     * initializes an inline-object array filled with null values
-     * @param size
-     * @param elemSize
-     */
-    public StructArray(int size, int elemSize) {
-        this.size = size;
-        this.elemSize = elemSize;
-    }
+    transient int elemSiz;
 
     /**
      * initializes with a template. When off heaped, all elements are filled with a copy of that template.
@@ -57,128 +48,37 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
      */
     @NoAssist
     public StructArray(int size, E template) {
-        if ( ! template.isOffHeap() ) {
-            throw new RuntimeException("template should be offheap. Use constructor including FSTStructFactory");
+        if ( size < 2 ) {
+            throw new RuntimeException("minimum size is 2");
         }
-        this.size = size;
-        this.template = template;
-        this.elemSize = template.getByteSize();
+        this.elems = new Object[size];
+        elems[0] = template;
     }
 
-    @NoAssist
-    public StructArray(int size, E templateOnHeap, FSTStructFactory fac) {
-        if ( templateOnHeap.isOffHeap() )
-            template = templateOnHeap;
-        else
-            template = fac.toStruct((FSTStruct) templateOnHeap);
-        elemSize = template.getByteSize();
-        this.size = size;
+    protected Object elems(int i) {
+        return elems[i];
     }
 
-    public int getStructElemSize() {
-        return elemSize;
+    protected void elems( int i, Object val ) {
+        elems[i] = val;
+    }
+
+    protected int elemsLen() {
+        return elems.length;
     }
 
     @NoAssist
     public E get( int i ) {
-        return (E) getInternal(i); // workaround javassist limit: no generics
-    }
-
-    protected Object getInternal( int i ) {
-        int __siz = size;
-        if ( i < 0 || i >= __siz ) {
-            throw new ArrayIndexOutOfBoundsException("index:"+i+" size: "+__siz);
-        }
-        if ( isOffHeap() ) {
-            return ___fac.getStructPointerByOffset(___bytes, getObjectArrayOffset() + elemSize * i);
-        } else {
-            if ( elems == null )
-                return null;
-            return elems[i];
-        }
+        return (E) elems(i); // workaround javassist limit: no generics
     }
 
     @NoAssist
     public void set(int i, E value ) {
-        setInternal(i,value); // workaround javassist limit: no generics
+        elems(i,value); // workaround javassist limit: no generics
     }
 
-    protected void setInternal(int i, Object myValue0 ) {
-        FSTStruct value = (FSTStruct) myValue0;
-        int __siz = size;
-        if ( i < 0 || i >= __siz ) {
-            throw new ArrayIndexOutOfBoundsException("index:"+i+" size: "+__siz);
-        }
-        if ( isOffHeap() ) {
-            if ( value == null ) {
-                clearEntry(___bytes, getObjectArrayIndex()+elemSize*i);
-                return;
-            }
-            if ( value.isOffHeap() ) {
-                int byteSize = value.getByteSize();
-                if ( byteSize > elemSize )
-                    throw new RuntimeException("element is too large to fit: tried "+byteSize+" size:"+elemSize+" class "+myValue0.getClass().getName());
-                FSTStruct.unsafe.copyMemory(___bytes,getObjectArrayOffset()+elemSize*i, value.getBase(), value.___offset, byteSize);
-            } else {
-                try {
-                    ___fac.toByteArray(value, ___bytes, (int)getObjectArrayOffset()-FSTUtil.bufoff+elemSize*i);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        } else {
-            if ( elems == null ) {
-                elems = new FSTStruct[size];
-            }
-            elems[i] = value;
-        }
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public long getObjectArrayOffset() {
-        return ___offset+getByteSize()-elemSize*size;
-    }
-
-    public long getObjectArrayIndex() {
-        return ___offset+getByteSize()-elemSize*size-FSTUtil.bufoff;
-    }
-
-    @Override
-    public int getEmbeddedSizeAdditon(FSTStructFactory fac) {
-        return elemSize*size;
-    }
-
-    @Override @NoAssist
-    public int insertEmbedded(FSTStructFactory fac, byte[] base, int targetIndex) {
-        if ( isOffHeap() ) {
-            throw new RuntimeException("template must be completely on heap");
-        } else {
-            for (int i = 0; i < size; i++) {
-                Object elem = get(i);
-                if ( elem != null ) {
-                    try {
-                        getFac().toByteArray(elem,base,targetIndex);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                } else {
-                    clearEntry(base, targetIndex);
-                }
-                targetIndex+=elemSize;
-            }
-        }
-        return targetIndex;
-    }
-
-    protected void clearEntry(byte[] base, long targetIndex) {
-        if ( template != null ) {
-            unsafe.copyMemory(template.___bytes, template.___offset, base, targetIndex + FSTUtil.bufoff, template.getByteSize());
-        } else {
-//            unsafe.setMemory(base, targetIndex +FSTUtil.bufoff,(long)elemSize,(byte)0);
-        }
+    public int size() {
+        return elemsLen();
     }
 
     @NoAssist
@@ -189,17 +89,23 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
     public E createPointer(int index) {
         if ( ! isOffHeap() )
             throw new RuntimeException("must be offheap to call this");
-        E res = (E) ___fac.createStructWrapper(___bytes, (int) (getObjectArrayIndex() + index * elemSize));
-        res.___elementSize = elemSize;
+        E res = (E) ((FSTStruct)elems(index)).detach();
+        res.___elementSize = res.getByteSize();
         return res;
     }
 
     @Override
     public String toString() {
         return "StructArray{" +
-                "elemSize=" + elemSize +
-                ", size=" + size +
+                "elemSize=" + get(0).getByteSize() +
+                ", size=" + size() +
                 '}';
+    }
+
+    public int getStructElemSize() {
+        if (elemSiz<=0)
+            elemSiz = get(0).getByteSize();
+        return elemSiz;
     }
 
     public final class StructArrIterator<T extends FSTStruct> implements Iterator<T> {
@@ -212,10 +118,10 @@ public class StructArray<E extends FSTStruct> extends FSTStruct implements FSTEm
 
         StructArrIterator() {
             bytes = ___bytes;
-            this.eSiz = getStructElemSize();
-            current = (T) ___fac.createStructWrapper(bytes, (int) getObjectArrayIndex());
+            this.eSiz = get(0).getByteSize();
+            current = (T) createPointer(0);
             current.___offset-=eSiz;
-            maxPos = getSize()*eSiz + getObjectArrayOffset()-eSiz;
+            maxPos = size()*eSiz + get(0).___offset;
             hasNextElem = current.___offset < maxPos;
         }
 
