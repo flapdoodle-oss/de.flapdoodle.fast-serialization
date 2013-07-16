@@ -309,17 +309,17 @@ public class FSTStructFactory {
                         if ( objectValue == null ) {
                             throw new RuntimeException("arrays in struct templates must not be null !");
                         }
-                        siz += Array.getLength(objectValue) * fi.getComponentStructSize() + fi.getStructSize();
+                        siz += Array.getLength(objectValue) * fi.getComponentStructSize() + fi.getStructSize() + fi.getAlignPad();
                     } else { // object array
                         Object objectValue[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
                         int elemSiz = computeElemSize(objectValue, fi);
-                        siz += Array.getLength(objectValue) * elemSiz + fi.getStructSize();
+                        siz += Array.getLength(objectValue) * elemSiz + fi.getStructSize() + fi.getAlignPad();
                     }
                 } else if ( fi.isIntegral() ) { // && ! array
                     siz += fi.getStructSize();
                 } else { // objectref
                     Object obj = clInfo.getObjectValue(onHeapStruct,fi);
-                    siz += fi.getStructSize()+calcStructSize(obj);
+                    siz += fi.getStructSize()+calcStructSize(obj)+fi.getAlignPad();
                 }
             }
             if ( onHeapStruct instanceof FSTEmbeddedBinary ) {
@@ -367,6 +367,10 @@ public class FSTStructFactory {
         return integer == null ? 0: integer;
     }
 
+    public Class getClazz(int clzId) {
+        return mIntToClz.get(clzId);
+    }
+
     public byte[] toByteArray(Object onHeapStruct) {
         try {
             int sz = calcStructSize(onHeapStruct);
@@ -411,6 +415,7 @@ public class FSTStructFactory {
             FSTClazzInfo.FSTFieldInfo fi = fis[i];
             if ( fi.getField().getDeclaringClass() == FSTStruct.class )
                 continue;
+            index+=fi.getAlignPad();
             if ( fi.getType().isArray() ) {
                 if ( fi.getType().getComponentType().isArray() ) {
                     throw new RuntimeException("nested arrays not supported");

@@ -65,6 +65,10 @@ public class FSTStruct implements Serializable {
         return unsafe.getInt(___bytes,___offset+4);
     }
 
+    public boolean pointsToNull() {
+        return getClzId() <= 0;
+    }
+
     protected void addOffset(long off) {
         ___offset+=off;
     }
@@ -84,8 +88,6 @@ public class FSTStruct implements Serializable {
     public void baseOn( byte base[], long offset, FSTStructFactory fac) {
         ___bytes = base; ___offset = offset; ___fac = fac;
     }
-
-
 
     public boolean isIdenticTo(FSTStruct other) {
         return other.getBase() == ___bytes && other.getAbsoluteOffset() == ___offset;
@@ -141,6 +143,24 @@ public class FSTStruct implements Serializable {
             ___offset -= ___elementSize;
         else
             throw new RuntimeException("not pointing to a struct array");
+    }
+
+    public <T extends FSTStruct> T cast( Class<T> to ) {
+        int clzId = ___fac.getClzId(to);
+        if ( this.getClass().getSuperclass() == to )
+            return (T) this;
+        FSTStruct res = ___fac.createStructPointer(___bytes, (int) (___offset - FSTUtil.bufoff), clzId);
+        res.___elementSize = ___elementSize;
+        return (T) res;
+    }
+
+    public FSTStruct cast() {
+        int clzId = getClzId();
+        if ( ___fac.getClazz(clzId) == getClass().getSuperclass() )
+            return this;
+        FSTStruct res = ___fac.createStructPointer(___bytes, (int) (___offset - FSTUtil.bufoff), clzId);
+        res.___elementSize = ___elementSize;
+        return res;
     }
 
 }

@@ -19,6 +19,7 @@
  */
 package de.ruedigermoeller.serialization;
 
+import de.ruedigermoeller.heapoff.structs.Align;
 import de.ruedigermoeller.serialization.annotations.*;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 
@@ -259,9 +260,17 @@ public final class FSTClazzInfo {
             }
         };
         Arrays.sort(fieldInfo, comp);
-        int off = 8; // clz header: length + clzId
+        int off = 8; // object header: length + clzId
         for (int i = 0; i < fieldInfo.length; i++) {
             FSTFieldInfo fstFieldInfo = fieldInfo[i];
+            Align al = fstFieldInfo.getField().getAnnotation(Align.class);
+            if ( al != null ) {
+                fstFieldInfo.align = al.value();
+                int alignOff = fstFieldInfo.align(off);
+                fstFieldInfo.alignPad = alignOff-off;
+                System.out.println("alignpad "+fstFieldInfo.getAlignPad());
+                off = alignOff;
+            }
             fstFieldInfo.setStructOffset(off);
             off += fstFieldInfo.getStructSize();
         }
@@ -471,6 +480,8 @@ public final class FSTClazzInfo {
         int integralType;
         int memOffset = -1;
         int structOffset = 0;
+        int align = 0;
+        int alignPad = 0;
         Field field;
 
         public FSTFieldInfo(Class[] possibleClasses, Field fi, boolean ignoreAnnotations) {
@@ -515,6 +526,12 @@ public final class FSTClazzInfo {
 
         }
 
+        public int align(int off) {
+            while( (off/align)*align != off )
+                off++;
+            return off;
+        }
+
         public int getStructOffset() {
             return structOffset;
         }
@@ -533,6 +550,14 @@ public final class FSTClazzInfo {
 
         public boolean isCompressed() {
             return isCompressed;
+        }
+
+        public int getAlign() {
+            return align;
+        }
+
+        public int getAlignPad() {
+            return alignPad;
         }
 
         public boolean isConditional() {

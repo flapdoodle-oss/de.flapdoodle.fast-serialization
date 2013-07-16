@@ -36,7 +36,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
     @Templated()
     public Object[] elems = {null};
 
-    transient int elemSiz;
+    transient protected int elemSiz;
 
     /**
      * initializes with a template. When off heaped, all elements are filled with a copy of that template.

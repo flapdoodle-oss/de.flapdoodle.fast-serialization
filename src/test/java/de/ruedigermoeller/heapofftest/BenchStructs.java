@@ -1,6 +1,7 @@
 package de.ruedigermoeller.heapofftest;
 
 import de.ruedigermoeller.heapoff.FSTCompressor;
+import de.ruedigermoeller.heapoff.structs.Align;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.Templated;
@@ -89,8 +90,10 @@ public class BenchStructs {
     }
 
     public static class TestStruct extends FSTStruct {
+        @Align(8)
         int intVar=64;
         boolean boolVar;
+        @Align(8)
         int intarray[] = new int[50];
         SubTestStruct struct = new SubTestStruct();
 
@@ -588,6 +591,7 @@ public class BenchStructs {
 
     public static class NewStruct extends FSTStruct {
         protected int a = 14;
+        @Align(32)
         protected int intarr[] = {0,1,2,3,4,5};
 
         @Templated
@@ -664,6 +668,7 @@ public class BenchStructs {
         fac.registerClz(ReadOnlyStructMap.class);
 
         NewStruct structPointer = fac.toStruct(new NewStruct());
+        System.out.println("New Struct Size " + structPointer.getByteSize());
         System.out.println("New Struct a " + structPointer.getA());
         System.out.println("New Struct aLen " + structPointer.intarrLen());
         for (int i = 0; i < structPointer.intarrLen(); i++) {
@@ -701,7 +706,7 @@ public class BenchStructs {
     }
 
     public static void main(String arg[] ) throws Exception {
-        main1(arg);
+        main0(arg);
         System.out.println("BENCH FINISHED ------------------------------------------------------------------------");
 //        while( true )
             benchFullGC();
