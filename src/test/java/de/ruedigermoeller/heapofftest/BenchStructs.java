@@ -90,10 +90,8 @@ public class BenchStructs {
     }
 
     public static class TestStruct extends FSTStruct {
-        @Align(8)
         int intVar=64;
         boolean boolVar;
-        @Align(8)
         int intarray[] = new int[50];
         SubTestStruct struct = new SubTestStruct();
 
@@ -643,6 +641,9 @@ public class BenchStructs {
         public int intarrLen() {
             return intarr.length;
         }
+        public FSTStruct intarrPointer() {
+            return null; // generated
+        }
 
         @Override
         public String toString() {
@@ -674,6 +675,13 @@ public class BenchStructs {
         for (int i = 0; i < structPointer.intarrLen(); i++) {
             System.out.println(structPointer.intarr(i));
         }
+        FSTStruct intP = structPointer.intarrPointer();
+        for (int i = 0; i < structPointer.intarrLen(); i++) {
+            System.out.println("intPointer:"+intP.getInt());
+            intP.next(4);
+        }
+
+
 
         for (int i = 0; i < structPointer.objArrLen(); i++) {
             System.out.println(structPointer.objArr(i));
@@ -706,7 +714,7 @@ public class BenchStructs {
     }
 
     public static void main(String arg[] ) throws Exception {
-        main0(arg);
+        main1(arg);
         System.out.println("BENCH FINISHED ------------------------------------------------------------------------");
 //        while( true )
             benchFullGC();

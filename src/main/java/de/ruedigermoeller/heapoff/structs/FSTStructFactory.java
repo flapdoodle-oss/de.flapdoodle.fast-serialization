@@ -223,10 +223,18 @@ public class FSTStructFactory {
     public FSTStruct createTypedArrayBasePointer(byte base[], long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
         int arrayElementZeroindex = unsafe.getInt(base,objectBaseOffset+arrayStructIndex);
         int elemSiz = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+8);
-        int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);
+//        int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);
         int clId = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+12);
         FSTStruct structPointer = createStructPointer(base, arrayElementZeroindex, clId);
         structPointer.___elementSize = elemSiz;
+        return structPointer;
+    }
+
+    public FSTStruct createPrimitiveArrayBasePointer(byte base[], long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
+        int arrayElementZeroindex = unsafe.getInt(base,objectBaseOffset+arrayStructIndex);
+//        int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);
+        FSTStruct structPointer = new FSTStruct();
+        structPointer.baseOn(base,FSTUtil.bufoff+arrayElementZeroindex,this);
         return structPointer;
     }
 
@@ -312,8 +320,12 @@ public class FSTStructFactory {
                         siz += Array.getLength(objectValue) * fi.getComponentStructSize() + fi.getStructSize() + fi.getAlignPad();
                     } else { // object array
                         Object objectValue[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
-                        int elemSiz = computeElemSize(objectValue, fi);
-                        siz += Array.getLength(objectValue) * elemSiz + fi.getStructSize() + fi.getAlignPad();
+                        if (objectValue==null) {
+                            siz+=fi.getStructSize()+fi.getAlignPad();
+                        } else {
+                            int elemSiz = computeElemSize(objectValue, fi);
+                            siz += Array.getLength(objectValue) * elemSiz + fi.getStructSize() + fi.getAlignPad();
+                        }
                     }
                 } else if ( fi.isIntegral() ) { // && ! array
                     siz += fi.getStructSize();
@@ -426,28 +438,20 @@ public class FSTStructFactory {
                     index += fi.getStructSize();
                 } else { // object array
                     Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
-                    Templated takeFirst = fi.getField().getAnnotation(Templated.class);
-                    ForwardEntry fe = new ForwardEntry(index, objArr, fi);
-                    if ( takeFirst != null ) {
-                        fe.template = objArr[0];
+                    if ( objArr == null ) {
+                        unsafe.putInt(bytes, FSTUtil.bufoff + index, -1);
+                        index+=fi.getStructSize()+fi.getAlignPad();
+                    } else {
+                        Templated takeFirst = fi.getField().getAnnotation(Templated.class);
+                        ForwardEntry fe = new ForwardEntry(index, objArr, fi);
+                        if ( takeFirst != null ) {
+                            fe.template = objArr[0];
+                        }
+                        positions.add(fe);
+                        index += fi.getStructSize();
+                        int elemSiz = computeElemSize(objArr,fi);
+                        unsafe.putInt(bytes, FSTUtil.bufoff+index-8,elemSiz);
                     }
-                    positions.add(fe);
-                    index += fi.getStructSize();
-                    int elemSiz = computeElemSize(objArr,fi);
-                    unsafe.putInt(bytes, FSTUtil.bufoff+index-8,elemSiz);
-//                    Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
-//                    unsafe.putInt(bytes,FSTUtil.bufoff+index,objArr.length);
-//                    index+=4;
-//                    for (int j = 0; j < objArr.length; j++) {
-//                        Object objectValue = objArr[j];
-//                        if ( objectValue == null ) {
-//                            unsafe.putInt(bytes, FSTUtil.bufoff + index, -1);
-//                            index+=4;
-//                        } else {
-//                            positions.add(new ForwardEntry(index,objectValue,fi));
-//                            index += 4;
-//                        }
-//                    }
                 }
             } else if ( fi.isIntegral() ) { // && ! array
                 Class type = fi.getType();

@@ -259,7 +259,8 @@ public final class FSTClazzInfo {
                 return res;
             }
         };
-        Arrays.sort(fieldInfo, comp);
+        if ( ! reg.isStructMode() )
+            Arrays.sort(fieldInfo, comp);
         int off = 8; // object header: length + clzId
         for (int i = 0; i < fieldInfo.length; i++) {
             FSTFieldInfo fstFieldInfo = fieldInfo[i];
@@ -268,7 +269,6 @@ public final class FSTClazzInfo {
                 fstFieldInfo.align = al.value();
                 int alignOff = fstFieldInfo.align(off);
                 fstFieldInfo.alignPad = alignOff-off;
-                System.out.println("alignpad "+fstFieldInfo.getAlignPad());
                 off = alignOff;
             }
             fstFieldInfo.setStructOffset(off);

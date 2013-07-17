@@ -93,7 +93,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
             int off = fieldInfo.getStructOffset();
             String prefix ="{ int _st_off=___offset + unsafe.getInt(___bytes,"+off+"+___offset);"+ // array base offset in byte arr
                     "int _st_len=unsafe.getInt(___bytes,"+off+"+4+___offset); "+
-                    "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException($1);";
+                    "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException(\"index:\"+$1+\" len:\"+_st_len);";
             if ( method.getReturnType() == CtClass.voidType ) {
                 if ( arrayType == boolean.class ) {
                     method.setBody(prefix+"unsafe.putBoolean(___bytes, _st_off+$1,$2);}");
@@ -188,7 +188,10 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     public void defineArrayPointer(FSTClazzInfo.FSTFieldInfo indexfi, FSTClazzInfo clInfo, CtMethod method) {
         int index = indexfi.getStructOffset();
         try {
-            method.setBody("{ return ("+indexfi.getArrayType().getName()+")___fac.createTypedArrayBasePointer(___bytes, ___offset, "+index+"); }");
+            if (indexfi.isIntegral()) {
+                method.setBody("{ return (de.ruedigermoeller.heapoff.structs.FSTStruct)___fac.createPrimitiveArrayBasePointer(___bytes, ___offset, "+index+"); }");
+            } else
+                method.setBody("{ return ("+indexfi.getArrayType().getName()+")___fac.createTypedArrayBasePointer(___bytes, ___offset, "+index+"); }");
         } catch (CannotCompileException e) {
             throw new RuntimeException(e);
         }

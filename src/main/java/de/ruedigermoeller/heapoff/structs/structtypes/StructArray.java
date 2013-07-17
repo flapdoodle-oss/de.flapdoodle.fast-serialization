@@ -34,9 +34,7 @@ import java.util.Iterator;
 public class StructArray<E extends FSTStruct> extends FSTStruct {
 
     @Templated()
-    public Object[] elems = {null};
-
-    transient protected int elemSiz;
+    protected Object[] elems = {null};
 
     /**
      * initializes with a template. When off heaped, all elements are filled with a copy of that template.
@@ -48,8 +46,8 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
      */
     @NoAssist
     public StructArray(int size, E template) {
-        if ( size < 2 ) {
-            throw new RuntimeException("minimum size is 2");
+        if ( size < 1 ) {
+            throw new RuntimeException("minimum size is 1");
         }
         this.elems = new Object[size];
         elems[0] = template;
@@ -67,6 +65,14 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
         return elems.length;
     }
 
+    protected Object elemsPointer() {
+        return null; // generated
+    }
+
+    protected int elemsIndex() {
+        return -1; // generated
+    }
+
     @NoAssist
     public E get( int i ) {
         return (E) elems(i); // workaround javassist limit: no generics
@@ -77,6 +83,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
         elems(i,value); // workaround javassist limit: no generics
     }
 
+    @NoAssist
     public int size() {
         return elemsLen();
     }
@@ -86,26 +93,30 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
         return new StructArrIterator<E>();
     }
 
+    @NoAssist
     public E createPointer(int index) {
         if ( ! isOffHeap() )
             throw new RuntimeException("must be offheap to call this");
-        E res = (E) ((FSTStruct)elems(index)).detach();
+        E res = (E) elemsPointer();
         res.___elementSize = res.getByteSize();
+        res.___offset+=index*res.___elementSize;
         return res;
     }
 
     @Override
     public String toString() {
         return "StructArray{" +
-                "elemSize=" + get(0).getByteSize() +
+                "elemSize=" + getStructElemSize() +
                 ", size=" + size() +
                 '}';
     }
 
+    @NoAssist
     public int getStructElemSize() {
-        if (elemSiz<=0)
-            elemSiz = get(0).getByteSize();
-        return elemSiz;
+        if (isOffHeap())
+            return unsafe.getInt( ___bytes, FSTUtil.bufoff+elemsIndex()+8 );
+        else
+            return -1;
     }
 
     public final class StructArrIterator<T extends FSTStruct> implements Iterator<T> {
@@ -118,7 +129,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
 
         StructArrIterator() {
             bytes = ___bytes;
-            this.eSiz = get(0).getByteSize();
+            this.eSiz = getStructElemSize();
             current = (T) createPointer(0);
             current.___offset-=eSiz;
             maxPos = size()*eSiz + get(0).___offset;

@@ -32,7 +32,7 @@ public class TestInstrument extends FSTStruct {
         // build template
         TestInstrument ti = new TestInstrument();
         // max 4 legs
-        ti.legs = new TestInstrumentLeg[] { new TestInstrumentLeg() };
+        ti.legs = new TestInstrumentLeg[] { new TestInstrumentLeg(), null, null, null };
         return ti;
     }
 
@@ -50,7 +50,7 @@ public class TestInstrument extends FSTStruct {
     protected TestMarket market = new TestMarket();
     public int numLegs;
     @Templated()
-    public TestInstrumentLeg[] legs = {null};
+    public TestInstrumentLeg[] legs = null;
 
     public StructString getMnemonic() {
         return mnemonic;
@@ -126,7 +126,6 @@ public class TestInstrument extends FSTStruct {
                 ", description=" + description +
                 ", market=" + market +
                 ", numLegs=" + numLegs +
-                ", legs=" + legs +
                 '}';
     }
 }

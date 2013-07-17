@@ -163,4 +163,32 @@ public class FSTStruct implements Serializable {
         return res;
     }
 
+    public byte getByte() {
+        return unsafe.getByte(___bytes,___offset);
+    }
+
+    public char getChar() {
+        return unsafe.getChar(___bytes,___offset);
+    }
+
+    public short getShort() {
+        return unsafe.getShort(___bytes,___offset);
+    }
+
+    public int getInt() {
+        return unsafe.getInt(___bytes,___offset);
+    }
+
+    public long getLong() {
+        return unsafe.getLong(___bytes,___offset);
+    }
+
+    public float getFloat() {
+        return unsafe.getFloat(___bytes,___offset);
+    }
+
+    public double getDouble() {
+        return unsafe.getDouble(___bytes,___offset);
+    }
+
 }

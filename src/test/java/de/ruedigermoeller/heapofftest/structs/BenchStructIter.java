@@ -45,15 +45,21 @@ public class BenchStructIter {
                 testInstrument.setNumLegs(i%4);
             }
             for ( int j=0; j < i%4; j++ ) {
-                if (arr.isOffHeap()) {
-                    TestInstrumentLeg leg = testInstrument.legs(j);
-                    leg.setLegQty(i%4);
-                    leg.getInstrument().getMnemonic().setString("I"+j);
-                } else {
-                    TestInstrumentLeg leg = new TestInstrumentLeg();
-                    leg.setLegQty(i%4);
-                    leg.getInstrument().getMnemonic().setString("I"+j);
-                    testInstrument.addLeg(leg);
+                try {
+                    if (arr.isOffHeap()) {
+                        TestInstrumentLeg leg = testInstrument.legs(j);
+                        leg.setLegQty(i%4);
+                        leg.getInstrument().getMnemonic().setString("I"+j);
+                        testInstrument = arr.get(i);
+                    } else {
+                        TestInstrumentLeg leg = new TestInstrumentLeg();
+                        leg.setLegQty(i%4);
+                        leg.getInstrument().getMnemonic().setString("I"+j);
+                        testInstrument.addLeg(leg);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    throw new RuntimeException(e);
                 }
             }
         }
@@ -94,6 +100,10 @@ public class BenchStructIter {
         long instTime = test( new Runnable() {
             public void run() {
                 StructArray<TestInstrument> instruments = fac.toStructArray(SIZE, TestInstrument.createInstrumentTemplate());
+                for (int i=0; i< 4; i++)
+                {
+                    System.out.println(""+i+" "+instruments.get(2).legs(i));
+                }
                 fillInstruments(instruments);
                 System.out.println("allocated " + instruments.size() + " instruments using " + instruments.getByteSize() / 1000 / 1000 + " MB");
                 offheap[0] = instruments;
@@ -187,14 +197,14 @@ public class BenchStructIter {
                         sum = 0;
                         TestInstrument p = instruments.createPointer(0);
                         for (int i=0; i < count; i++ ) {
-                            sum+=p.getAccumulatedQty();
+                            sum+=p.getAccumulatedQtyOff();
                             p.___offset+=siz;
                         }
                     }
                     System.out.println("sum offheap "+sum);
                 }
             });
-            System.out.println("duration opt DIRECT pointer off heap iteration calcQty "+offCalcQty3);
+            System.out.println("duration opt DIRECT pointer off heap iteration calcQtyOff "+offCalcQty3);
 
             long offCalcQty4 = test( new Runnable() {
                 public void run() {
@@ -222,7 +232,7 @@ public class BenchStructIter {
                     System.out.println("sum offheap "+sum);
                 }
             });
-            System.out.println("duration opt hacked pointer off heap iteration calcQty "+offCalcQty4);
+            System.out.println("duration opt hacked pointer off heap iteration inline calcQty "+offCalcQty4);
 
             long onCalcQty = test( new Runnable() {
                 public void run() {
@@ -239,28 +249,6 @@ public class BenchStructIter {
                 }
             });
             System.out.println("duration on heap iteration calcQty "+onCalcQty);
-
-            long onCalcQty1 = test( new Runnable() {
-                public void run() {
-                    Object[] instruments = onheap[0].elems;
-                    int sum = 0;
-                    for ( int j = 0; j < iterMul; j++ ) {
-                        sum = 0;
-                        final int size = instruments.length;
-                        for ( int i = 0; i < size; i++ ) {
-                            sum++;
-                            final TestInstrument instrument = (TestInstrument) instruments[i];
-                            final int maxIter = instrument.numLegs;
-                            TestInstrumentLeg[] legs = instrument.legs;
-                            for ( int ii = 0; ii < maxIter; ii++ ) {
-                                sum+= legs[ii].getLegQty();
-                            }
-                        }
-                    }
-                    System.out.println("sum onheap "+sum);
-                }
-            });
-            System.out.println("duration on heap iteration calcQty inline "+onCalcQty1);
 
             long intAccessOff = test( new Runnable() {
                 public void run() {
