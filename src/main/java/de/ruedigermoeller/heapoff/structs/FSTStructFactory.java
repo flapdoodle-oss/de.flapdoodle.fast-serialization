@@ -230,6 +230,15 @@ public class FSTStructFactory {
         return structPointer;
     }
 
+    public void fillTypedArrayBasePointer(FSTStruct result, byte base[], long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
+        int arrayElementZeroindex = unsafe.getInt(base,objectBaseOffset+arrayStructIndex);
+        int elemSiz = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+8);
+//        int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);
+        int clId = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+12);
+        result.baseOn(base, FSTUtil.bufoff+arrayElementZeroindex, this);
+        result.___elementSize = elemSiz;
+    }
+
     public FSTStruct createPrimitiveArrayBasePointer(byte base[], long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
         int arrayElementZeroindex = unsafe.getInt(base,objectBaseOffset+arrayStructIndex);
 //        int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);

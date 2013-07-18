@@ -1,5 +1,6 @@
 package de.ruedigermoeller.heapoff.structs.impl;
 
+import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 import javassist.*;
@@ -187,13 +188,31 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     @Override
     public void defineArrayPointer(FSTClazzInfo.FSTFieldInfo indexfi, FSTClazzInfo clInfo, CtMethod method) {
         int index = indexfi.getStructOffset();
+        CtClass[] parameterTypes = new CtClass[0];
         try {
-            if (indexfi.isIntegral()) {
-                method.setBody("{ return (de.ruedigermoeller.heapoff.structs.FSTStruct)___fac.createPrimitiveArrayBasePointer(___bytes, ___offset, "+index+"); }");
-            } else
-                method.setBody("{ return ("+indexfi.getArrayType().getName()+")___fac.createTypedArrayBasePointer(___bytes, ___offset, "+index+"); }");
-        } catch (CannotCompileException e) {
-            throw new RuntimeException(e);
+            parameterTypes = method.getParameterTypes();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
+        if ( parameterTypes != null && parameterTypes.length ==1 ) {
+            try {
+                if (indexfi.isIntegral()) {
+                    method.setBody("{ $1.baseOn(___bytes, ___offset+"+index+", ___fac); }");
+                } else {
+                    method.setBody("{ ___fac.fillTypedArrayBasePointer($1,___bytes, ___offset, "+index+"); }");
+                }
+            } catch (CannotCompileException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                if (indexfi.isIntegral()) {
+                    method.setBody("{ return (de.ruedigermoeller.heapoff.structs.FSTStruct)___fac.createPrimitiveArrayBasePointer(___bytes, ___offset, "+index+"); }");
+                } else
+                    method.setBody("{ return ("+indexfi.getArrayType().getName()+")___fac.createTypedArrayBasePointer(___bytes, ___offset, "+index+"); }");
+            } catch (CannotCompileException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

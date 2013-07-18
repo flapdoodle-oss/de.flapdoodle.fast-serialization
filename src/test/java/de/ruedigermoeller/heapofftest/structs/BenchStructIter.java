@@ -3,6 +3,8 @@ package de.ruedigermoeller.heapofftest.structs;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
+import de.ruedigermoeller.heapofftest.gcbenchmarks.BasicGCBench;
+import de.ruedigermoeller.serialization.testclasses.HtmlCharter;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -77,45 +79,108 @@ public class BenchStructIter {
 
     public static void main( String arg[] ) {
 
-//        HtmlCharter charter = new HtmlCharter("./structiter.html");
-//        charter.openDoc();
-//        charter.text("<i>intel i7 3770K 3,5 ghz, 4 core, 8 threads</i>");
-//        charter.text("<i>" + System.getProperty("java.runtime.version") + "," + System.getProperty("java.vm.name") + "," + System.getProperty("os.name") + "</i>");
-
+        final HtmlCharter charter = new HtmlCharter("./structiter.html");
+        charter.openDoc();
+        charter.text("<i>intel i7 3770K 3,5 ghz, 4 core, 8 threads</i>");
+        charter.text("<i>" + System.getProperty("java.runtime.version") + "," + System.getProperty("java.vm.name") + "," + System.getProperty("os.name") + "</i>");
+//
         final FSTStructFactory fac = FSTStructFactory.getInstance();
         fac.registerClz(TestDate.class,TestInstrument.class,TestInstrumentLeg.class,TestMarket.class,TestTimeZone.class);
 
 
-        long oninstTime = test( new Runnable() {
+        charter.heading("Instantiation Time (CMS Collector)");
+        charter.text("Duration to allocate and initialize an array[" + SIZE + "] of complex Objects (TestInstrument containing a list of embedded TestInstrumentLeg Objects).");
+        charter.text("Note: Instantiation time differs depending on GC-Algorithm, difference in Full GC stays across DefaultGC, CMS and G1. " +
+                "G1 and Default GC are significantly faster in on-heap allocation. <br>");
+        charter.openChart("time(ms) smaller is better");
+
+        Runnable onHeapInst = new Runnable() {
             public void run() {
                 StructArray<TestInstrument> instruments = new StructArray<TestInstrument>(SIZE, new TestInstrument());
                 fillInstruments(instruments);
                 System.out.println("allocated " + instruments.size() + " instruments");
                 onheap[0] = instruments;
             }
-        });
-        System.out.println("duration on heap instantiation "+oninstTime);
-//        BasicGCBench.benchFullGC();
-
-        long instTime = test( new Runnable() {
+        };
+        Runnable offHeapInst = new Runnable() {
             public void run() {
                 StructArray<TestInstrument> instruments = fac.toStructArray(SIZE, TestInstrument.createInstrumentTemplate());
-                for (int i=0; i< 4; i++)
-                {
-                    System.out.println(""+i+" "+instruments.get(2).legs(i));
-                }
                 fillInstruments(instruments);
                 System.out.println("allocated " + instruments.size() + " instruments using " + instruments.getByteSize() / 1000 / 1000 + " MB");
                 offheap[0] = instruments;
             }
-        });
+        };
+        onHeapInst.run();
+        offHeapInst.run();
+        onheap[0] = null; offheap[0] = null;
+        long initialFull = BasicGCBench.benchFullGC();
+
+
+        long oninstTime = test(onHeapInst);
+        System.out.println("duration on heap instantiation "+oninstTime);
+        charter.chartBar("On Heap (excl. GC cost)",(int)oninstTime,20,"#7070a0");
+//        BasicGCBench.benchFullGC();
+
+        long fullGCOn = BasicGCBench.benchFullGC();
+        onheap[0] = null;
+
+        long instTime = test(offHeapInst);
+        charter.chartBar("Off Heap (*)",(int)instTime,20,"#70a070");
         System.out.println("duration off heap instantiation "+instTime);
+
+        long fullGCOff = BasicGCBench.benchFullGC();
+
+        charter.closeChart();
+
+        charter.openChart("Time of Full GC (ms)");
+        charter.chartBar("On heap", (int) (fullGCOn-initialFull), 50, "#7070a0");
+        charter.chartBar("Off heap", (int) Math.max(1,(fullGCOff-initialFull)),50,"#7070a0");
+        charter.closeChart();
+
+        long oninstTime1 = test( onHeapInst );
+        System.out.println("duration on heap instantiation #3 "+oninstTime1);
+
         final int iterMul = 50;
+        final LargeIntArray offIntArr = fac.toStruct(new LargeIntArray());
+        final LargeIntArray onIntArr = new LargeIntArray();
 
 //        BasicGCBench.benchFullGC();
 
         for ( int xx = 0; xx < 5; xx++ ) {
             System.out.println();
+
+            long onInt = test( new Runnable() {
+                public void run() {
+                    int sum = 0;
+                    for ( int j = 0; j < 100; j++ ) {
+                        sum+=onIntArr.calcSumStraight();
+                    }
+                    System.out.println("sum onheap "+sum);
+                }
+            });
+            System.out.println("duration onheap int iter "+onInt);
+
+            long offInt = test( new Runnable() {
+                public void run() {
+                    int sum = 0;
+                    for ( int j = 0; j < 100; j++ ) {
+                        sum+=offIntArr.calcSumStraight();
+                    }
+                    System.out.println("sum ofheap "+sum);
+                }
+            });
+            System.out.println("duration off heap int iter "+offInt);
+
+            long offIntP = test( new Runnable() {
+                public void run() {
+                    int sum = 0;
+                    for ( int j = 0; j < 100; j++ ) {
+                        sum+=offIntArr.calcSumPointered();
+                    }
+                    System.out.println("sum ofheap pointered "+sum);
+                }
+            });
+            System.out.println("duration off heap int pointered "+offIntP);
 
             long offCalcQty = test( new Runnable() {
                 public void run() {
@@ -132,22 +197,21 @@ public class BenchStructIter {
             });
             System.out.println("duration naive off heap iteration calcQty "+offCalcQty);
 
-            long offCalcQty1 = test( new Runnable() {
-                public void run() {
-                    StructArray<TestInstrument> instruments = offheap[0];
-                    int sum = 0;
-                    final int siz = instruments.getStructElemSize();
-                    for ( int j = 0; j < iterMul; j++ ) {
-                        sum = 0;
-                        for (StructArray<TestInstrument>.StructArrIterator<TestInstrument> iterator = instruments.iterator(); iterator.hasNext(); ) {
-                            TestInstrument next = iterator.next(siz);
-                            sum+=next.getAccumulatedQty();
-                        }
-                    }
-                    System.out.println("sum offheap "+sum);
-                }
-            });
-            System.out.println("duration opt iterator off heap iteration calcQty "+offCalcQty1);
+//            long offCalcQty1 = test( new Runnable() {
+//                public void run() {
+//                    StructArray<TestInstrument> instruments = offheap[0];
+//                    int sum = 0;
+//                    for ( int j = 0; j < iterMul; j++ ) {
+//                        sum = 0;
+//                        for (StructArray<TestInstrument>.StructArrIterator<TestInstrument> iterator = instruments.iterator(); iterator.hasNext(); ) {
+//                            TestInstrument next = iterator.next();
+//                            sum+=next.getAccumulatedQty();
+//                        }
+//                    }
+//                    System.out.println("sum offheap "+sum);
+//                }
+//            });
+//            System.out.println("duration iterator off heap iteration calcQty "+offCalcQty1);
 
             long offCalcQty2 = test( new Runnable() {
                 public void run() {
@@ -223,9 +287,9 @@ public class BenchStructIter {
                             sum++;
                             for ( int k = 0; k < legs; k++ ) {
                                 sum+=legp.getLegQty();
-                                legp.___offset += legSiz;
+                                legp.next(legSiz);
                             }
-                            p.___offset+=siz;
+                            p.next(siz);
                             legp.___offset=p.___offset+legoff;
                         }
                     }
@@ -341,6 +405,7 @@ public class BenchStructIter {
             });
             System.out.println("duration onheap string compare iteration "+stringSearchAccessOon);
         }
+        charter.closeDoc();
 //        int size = instruments.size();
 //        for (int i = 0; i < size; i++) {
 //            System.out.println(instruments.get(i));

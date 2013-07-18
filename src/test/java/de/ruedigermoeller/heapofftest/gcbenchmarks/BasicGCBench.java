@@ -36,9 +36,10 @@ public class BasicGCBench {
 
     public static long benchFullGC() {
         long dur = 0;
-        for ( int i = 0; i < 5; i++ ) {
+        long res = 0;
+        for ( int i = 0; i < 7; i++ ) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -46,7 +47,9 @@ public class BasicGCBench {
             System.gc();
             dur = System.currentTimeMillis() - tim;
             System.out.println("FULL GC TIME "+ dur +" mem:"+(Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000/1000+" MB");
+            if ( i >= 3 )
+                res += dur;
         }
-        return dur;
+        return res/4;
     }
 }
