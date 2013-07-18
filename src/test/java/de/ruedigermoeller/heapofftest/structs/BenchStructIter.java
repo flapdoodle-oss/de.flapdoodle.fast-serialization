@@ -149,6 +149,11 @@ public class BenchStructIter {
         for ( int xx = 0; xx < 5; xx++ ) {
             System.out.println();
 
+            if ( xx == 4 ) {
+                charter.heading("Iterate primitive Arrays");
+                charter.text("benchmark performance of calculating the sum of all elements of an embedded int array.<br>");
+                charter.openChart("");
+            }
             long onInt = test( new Runnable() {
                 public void run() {
                     int sum = 0;
@@ -158,7 +163,10 @@ public class BenchStructIter {
                     System.out.println("sum onheap "+sum);
                 }
             });
-            System.out.println("duration onheap int iter "+onInt);
+            System.out.println("duration onheap int iteration "+onInt);
+            if  (xx==4) {
+                charter.chartBar("on heap", (int) onInt,10,"#7070a0");
+            }
 
             long offInt = test( new Runnable() {
                 public void run() {
@@ -170,6 +178,9 @@ public class BenchStructIter {
                 }
             });
             System.out.println("duration off heap int iter "+offInt);
+            if  (xx==4) {
+                charter.chartBar("off heap identical code", (int) offInt,10,"#70a070");
+            }
 
             long offIntP = test( new Runnable() {
                 public void run() {
@@ -181,6 +192,96 @@ public class BenchStructIter {
                 }
             });
             System.out.println("duration off heap int pointered "+offIntP);
+            if  (xx==4) {
+                charter.chartBar("off heap using pointers instead of get(index)", (int) offIntP,10,"#70a070");
+                charter.closeChart();
+            }
+
+            if ( xx == 4 ) {
+                charter.heading("1st level member access");
+                charter.text("iterate structure array and access an integer member variable of each.<br>");
+                charter.openChart("");
+            }
+            long onCalcLegs = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = onheap[0];
+                    int sum = 0;
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        for ( int i = 0; i < instruments.size(); i++ ) {
+                            sum+=instruments.get(i).getNumLegs();
+                        }
+                    }
+                    System.out.println("sum onheap "+sum);
+                }
+            });
+            System.out.println("duration naive on heap iteration int access "+onCalcLegs);
+            if  (xx==4) {
+                charter.chartBar("on heap get(index).getIntVar()", (int) onCalcLegs,20,"#7070a0");
+            }
+
+            long offCalcLegs = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    int sum = 0;
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        for ( int i = 0; i < instruments.size(); i++ ) {
+                            sum+=instruments.get(i).getNumLegs();
+                        }
+                    }
+                    System.out.println("sum offheap "+sum);
+                }
+            });
+            System.out.println("duration naive off heap iteration int access "+offCalcLegs);
+            if  (xx==4) {
+                charter.chartBar("off heap get(index).getIntVar()", (int) offCalcLegs,20,"#70a070");
+            }
+
+            long offCalcLegsP = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    int sum = 0;
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        TestInstrument p = instruments.createPointer(0);
+                        int siz = p.getElementInArraySize();
+                        for ( int i = 0; i < instruments.size(); i++ ) {
+                            sum+=p.getNumLegs();
+                            p.next(siz);
+                        }
+                    }
+                    System.out.println("sum offheap "+sum);
+                }
+            });
+            System.out.println("duration naive off heap iteration int access "+offCalcLegsP);
+            if  (xx==4) {
+                charter.chartBar("off heap pointer.getIntVar()", (int) offCalcLegsP,20,"#70a070");
+                charter.closeChart();
+
+                charter.heading("3rd level embedded substructure access");
+                charter.text("iterate structure array, access each element of an embedded substructure's int array.<br>");
+                charter.openChart("");
+            }
+
+            long onCalcQty = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = onheap[0];
+                    int sum = 0;
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        sum = 0;
+                        final int size = instruments.size();
+                        for ( int i = 0; i < size; i++ ) {
+                            sum+=instruments.get(i).getAccumulatedQty();
+                        }
+                    }
+                    System.out.println("sum onheap "+sum);
+                }
+            });
+            System.out.println("duration on heap iteration calcQty "+onCalcQty);
+            if  (xx==4) {
+                charter.chartBar("on heap version", (int) onCalcQty,100,"#7070a0");
+            }
 
             long offCalcQty = test( new Runnable() {
                 public void run() {
@@ -196,6 +297,9 @@ public class BenchStructIter {
                 }
             });
             System.out.println("duration naive off heap iteration calcQty "+offCalcQty);
+            if  (xx==4) {
+                charter.chartBar("off heap identical code to onheap", (int) offCalcQty,100,"#70a070");
+            }
 
 //            long offCalcQty1 = test( new Runnable() {
 //                public void run() {
@@ -223,7 +327,7 @@ public class BenchStructIter {
                         sum = 0;
                         TestInstrument p = instruments.createPointer(0);
                         for (int i=0; i < count; i++ ) {
-                            sum+=p.getAccumulatedQty();
+                            sum+=p.getAccumulatedQtyOff();
                             p.next(siz);
                         }
                     }
@@ -231,44 +335,9 @@ public class BenchStructIter {
                 }
             });
             System.out.println("duration opt pointer off heap iteration calcQty "+offCalcQty2);
-
-            long offCalcQty21 = test( new Runnable() {
-                public void run() {
-                    StructArray<TestInstrument> instruments = offheap[0];
-                    int sum = 0;
-                    final int siz = instruments.getStructElemSize();
-                    final int count = instruments.size();
-                    for ( int j = 0; j < iterMul; j++ ) {
-                        sum = 0;
-                        TestInstrument p = instruments.createPointer(0);
-                        for (int i=0; i < count; i++ ) {
-                            sum+=p.getAccumulatedQtyOff();
-                            p.next(siz);
-                        }
-                    }
-                    System.out.println("sum offheap "+sum);
-                }
-            });
-            System.out.println("duration opt pointer off heap iteration spevialized calcQty "+offCalcQty21);
-
-            long offCalcQty3 = test( new Runnable() {
-                public void run() {
-                    StructArray<TestInstrument> instruments = offheap[0];
-                    int sum = 0;
-                    final int siz = instruments.getStructElemSize();
-                    final int count = instruments.size();
-                    for ( int j = 0; j < iterMul; j++ ) {
-                        sum = 0;
-                        TestInstrument p = instruments.createPointer(0);
-                        for (int i=0; i < count; i++ ) {
-                            sum+=p.getAccumulatedQtyOff();
-                            p.___offset+=siz;
-                        }
-                    }
-                    System.out.println("sum offheap "+sum);
-                }
-            });
-            System.out.println("duration opt DIRECT pointer off heap iteration calcQtyOff "+offCalcQty3);
+            if  (xx==4) {
+                charter.chartBar("off heap using pointers for iteration", (int) offCalcQty2,100,"#70a070");
+            }
 
             long offCalcQty4 = test( new Runnable() {
                 public void run() {
@@ -297,96 +366,14 @@ public class BenchStructIter {
                 }
             });
             System.out.println("duration opt hacked pointer off heap iteration inline calcQty "+offCalcQty4);
+            if  (xx==4) {
+                charter.chartBar("off heap using pointers for all accesses + inlined method", (int) offCalcQty4,100,"#70a070");
+                charter.closeChart();
 
-            long onCalcQty = test( new Runnable() {
-                public void run() {
-                    StructArray<TestInstrument> instruments = onheap[0];
-                    int sum = 0;
-                    for ( int j = 0; j < iterMul; j++ ) {
-                        sum = 0;
-                        final int size = instruments.size();
-                        for ( int i = 0; i < size; i++ ) {
-                            sum+=instruments.get(i).getAccumulatedQty();
-                        }
-                    }
-                    System.out.println("sum onheap "+sum);
-                }
-            });
-            System.out.println("duration on heap iteration calcQty "+onCalcQty);
-
-            long intAccessOff = test( new Runnable() {
-                public void run() {
-                    StructArray<TestInstrument> instruments = offheap[0];
-                    int sum = 0;
-                    final int siz = instruments.getStructElemSize();
-                    final int count = instruments.size();
-                    for ( int j = 0; j < iterMul; j++ ) {
-                        sum = 0;
-                        TestInstrument p = instruments.createPointer(0);
-                        for (int i=0; i < count; i++ ) {
-                            sum+=p.getInstrId();
-                            p.___offset+=siz;
-                        }
-                    }
-                    System.out.println("sum offheap "+sum);
-                }
-            });
-            System.out.println("duration opt DIRECT pointer int access iteration "+intAccessOff);
-
-            long intAccessOn = test( new Runnable() {
-                public void run() {
-                    StructArray<TestInstrument> instruments = onheap[0];
-                    int sum = 0;
-                    final int count = instruments.size();
-                    for ( int j = 0; j < iterMul; j++ ) {
-                        sum = 0;
-                        for (int i=0; i < count; i++ ) {
-                            sum+=instruments.get(i).getInstrId();
-                        }
-                    }
-                    System.out.println("sum onheap "+sum);
-                }
-            });
-            System.out.println("duration onheap int access iteration "+intAccessOn);
-
-            long stringSearchAccessOff = test( new Runnable() {
-                public void run() {
-                    StructArray<TestInstrument> instruments = offheap[0];
-                    final int siz = instruments.getStructElemSize();
-                    final int count = instruments.size();
-                    StructString str = new StructString("I999999");
-                    for ( int j = 0; j < iterMul; j++ ) {
-                        TestInstrument p = instruments.createPointer(0);
-                        for (int i=0; i < count; i++ ) {
-                            if ( str.equals(p.getMnemonic())) {
-//                                System.out.println("found "+i);
-                                break;
-                            }
-                            p.___offset+=siz;
-                        }
-                    }
-                }
-            });
-            System.out.println("duration opt DIRECT pointer string compare iteration "+stringSearchAccessOff);
-
-            long stringSearchAccessOff1 = test( new Runnable() {
-                public void run() {
-                    StructArray<TestInstrument> instruments = offheap[0];
-                    final int siz = instruments.getStructElemSize();
-                    final int count = instruments.size();
-                    StructString str = new StructString("I999999");
-                    for ( int j = 0; j < iterMul; j++ ) {
-                        StructString sp = (StructString) instruments.createPointer(0).getMnemonic().detach();
-                        for (int i=0; i < count; i++ ) {
-                            if ( str.equals(sp)) {
-                                break;
-                            }
-                            sp.___offset+=siz;
-                        }
-                    }
-                }
-            });
-            System.out.println("duration opt DIRECT String pointer string compare iteration "+stringSearchAccessOff1);
+                charter.heading("Linear search for first instrument in array with name.equals(given string)");
+                charter.text("iterate structure array, access a string enbedded in each element and compare it.<br>");
+                charter.openChart("");
+            }
 
             long stringSearchAccessOon = test( new Runnable() {
                 public void run() {
@@ -403,7 +390,77 @@ public class BenchStructIter {
                     }
                 }
             });
+            if  (xx==4) {
+                charter.chartBar("on heap", (int) stringSearchAccessOon,10,"#7070a0");
+            }
             System.out.println("duration onheap string compare iteration "+stringSearchAccessOon);
+
+            long stringSearchAccessOff0 = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    final int count = instruments.size();
+                    StructString str = new StructString("I999999");
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        for (int i=0; i < count; i++ ) {
+                            if ( str.equals(instruments.get(i).getMnemonic())) {
+//                                System.out.println("found "+i);
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
+            if  (xx==4) {
+                charter.chartBar("off heap identical code", (int) stringSearchAccessOff0,10,"#70a070");
+            }
+            System.out.println("duration onheap string compare iteration "+stringSearchAccessOff0);
+
+            long stringSearchAccessOff = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    final int siz = instruments.getStructElemSize();
+                    final int count = instruments.size();
+                    StructString str = new StructString("I999999");
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        TestInstrument p = instruments.createPointer(0);
+                        for (int i=0; i < count; i++ ) {
+                            if ( str.equals(p.getMnemonic())) {
+//                                System.out.println("found "+i);
+                                break;
+                            }
+                            p.next(siz);
+                        }
+                    }
+                }
+            });
+            if  (xx==4) {
+                charter.chartBar("off heap using pointers ", (int) stringSearchAccessOff,10,"#70a070");
+            }
+            System.out.println("duration opt DIRECT pointer string compare iteration "+stringSearchAccessOff);
+
+            long stringSearchAccessOff1 = test( new Runnable() {
+                public void run() {
+                    StructArray<TestInstrument> instruments = offheap[0];
+                    final int siz = instruments.getStructElemSize();
+                    final int count = instruments.size();
+                    StructString str = new StructString("I999999");
+                    for ( int j = 0; j < iterMul; j++ ) {
+                        StructString sp = (StructString) instruments.createPointer(0).getMnemonic().detach();
+                        for (int i=0; i < count; i++ ) {
+                            if ( str.equals(sp)) {
+                                break;
+                            }
+                            sp.next(siz);
+                        }
+                    }
+                }
+            });
+            if  (xx==4) {
+                charter.chartBar("off heap using direct pointer to embedded string", (int) stringSearchAccessOff1,10,"#70a070");
+                charter.closeChart();
+            }
+            System.out.println("duration opt DIRECT String pointer string compare iteration "+stringSearchAccessOff1);
+
         }
         charter.closeDoc();
 //        int size = instruments.size();
