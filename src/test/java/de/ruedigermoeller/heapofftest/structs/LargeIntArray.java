@@ -10,7 +10,7 @@ import de.ruedigermoeller.heapoff.structs.FSTStruct;
  * To change this template use File | Settings | File Templates.
  */
 public class LargeIntArray extends FSTStruct {
-    int largeArray[];
+    protected int largeArray[];
 
     public LargeIntArray() {
         largeArray = new int[2000000];

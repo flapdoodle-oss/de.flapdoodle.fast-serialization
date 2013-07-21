@@ -48,7 +48,7 @@ public class TestInstrument extends FSTStruct {
     protected StructString mnemonic = new StructString(7);
     protected StructString description = new StructString(50);
     protected TestMarket market = new TestMarket();
-    public int numLegs;
+    protected int numLegs;
     @Templated()
     public TestInstrumentLeg[] legs = null;
 

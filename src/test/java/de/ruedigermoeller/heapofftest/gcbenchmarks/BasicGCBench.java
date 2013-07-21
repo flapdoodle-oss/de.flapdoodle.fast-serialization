@@ -1,7 +1,7 @@
 package de.ruedigermoeller.heapofftest.gcbenchmarks;
 
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
-import de.ruedigermoeller.heapoff.structs.structtypes.ReadOnlyStructMap;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 
 /**
@@ -31,7 +31,7 @@ public class BasicGCBench {
 
     public BasicGCBench() {
         fac.registerClz(StructString.class);
-        fac.registerClz(ReadOnlyStructMap.class);
+        fac.registerClz(StructMap.class);
     }
 
     public static long benchFullGC() {

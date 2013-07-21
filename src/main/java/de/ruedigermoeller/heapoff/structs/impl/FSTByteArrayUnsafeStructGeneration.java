@@ -131,8 +131,8 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                         "if ( !struct.isOffHeap() ) {"+
                         "    struct=___fac.toStruct(struct);"+ // FIMXE: do direct toByte to avoid tmp alloc
                         "}"+
-                        "if ( _elem_len <= struct.getByteSize() )"+
-                        "    throw new RuntimeException(\"Illegal size when rewriting object array value\");"+
+                        "if ( _elem_len < struct.getByteSize() )"+
+                        "    throw new RuntimeException(\"Illegal size when rewriting object array value. elem size:\"+_elem_len+\" new object size:\"+struct.getByteSize()+\"\");"+
                         "unsafe.copyMemory(struct.___bytes,struct.___offset,___bytes,(long)_st_off+$1*_elem_len,(long)struct.getByteSize());"+
                     "}"
                     );
@@ -186,6 +186,17 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     }
 
     @Override
+    public void defineArrayElementSize(FSTClazzInfo.FSTFieldInfo indexfi, FSTClazzInfo clInfo, CtMethod method) {
+        int off = indexfi.getStructOffset();
+        try {
+            method.setBody("{ return unsafe.getInt(___bytes,"+off+"+8+___offset); }");
+        } catch (CannotCompileException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
     public void defineArrayPointer(FSTClazzInfo.FSTFieldInfo indexfi, FSTClazzInfo clInfo, CtMethod method) {
         int index = indexfi.getStructOffset();
         CtClass[] parameterTypes = new CtClass[0];
@@ -221,6 +232,16 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
         int off = fieldInfo.getStructOffset();
         try {
             method.setBody("{ return unsafe.getInt(___bytes,"+off+"+4+___offset); }");
+        } catch (CannotCompileException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void defineFieldStructIndex(FSTClazzInfo.FSTFieldInfo fieldInfo, FSTClazzInfo clInfo, CtMethod method) {
+        int off = fieldInfo.getStructOffset();
+        try {
+            method.setBody("{ return "+off+"; }");
         } catch (CannotCompileException e) {
             throw new RuntimeException(e);
         }

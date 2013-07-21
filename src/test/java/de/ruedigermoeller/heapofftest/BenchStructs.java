@@ -5,7 +5,7 @@ import de.ruedigermoeller.heapoff.structs.Align;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.Templated;
-import de.ruedigermoeller.heapoff.structs.structtypes.ReadOnlyStructMap;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 
@@ -36,9 +36,9 @@ import java.util.*;
 public class BenchStructs {
 
     public static class SimpleTest extends FSTStruct {
-        Object nullObject = null;
-        long id = 12345;
-        Object [] anArray = { null, null, new StructString("NotNull"), null };
+        protected Object nullObject = null;
+        protected long id = 12345;
+        protected Object [] anArray = { null, null, new StructString("NotNull"), null };
 
         public Object getNullObject() {
             return nullObject;
@@ -56,12 +56,12 @@ public class BenchStructs {
     }
 
     public static class SubTestStruct extends FSTStruct {
-        StructString testString = new StructString("HalloTest");
-        long id = 12345;
-        int legs[] = {19,18,17,16};
-        Object [] anArray = { new StructString("Hello"), new StructString("Oha") };
+        protected StructString testString = new StructString("HalloTest");
+        protected long id = 12345;
+        protected int legs[] = {19,18,17,16};
+        protected Object [] anArray = { new StructString("Hello"), new StructString("Oha") };
 
-        Object nullobj = null;
+        protected Object nullobj = null;
 
         public long getId() {
             return id;
@@ -90,10 +90,10 @@ public class BenchStructs {
     }
 
     public static class TestStruct extends FSTStruct {
-        int intVar=64;
-        boolean boolVar;
-        int intarray[] = new int[50];
-        SubTestStruct struct = new SubTestStruct();
+        protected int intVar=64;
+        protected boolean boolVar;
+        protected int intarray[] = new int[50];
+        protected SubTestStruct struct = new SubTestStruct();
 
         public TestStruct() {
             intarray[0] = Integer.MAX_VALUE-1;
@@ -276,7 +276,7 @@ public class BenchStructs {
         fac.registerClz(TestStruct.class);
         fac.registerClz(SubTestStruct.class);
         fac.registerClz(StructString.class);
-        fac.registerClz(ReadOnlyStructMap.class);
+        fac.registerClz(StructMap.class);
 
 //        StructArray<TestStruct> arrT = fac.toStructArray(100, new TestStruct());
 //        for (int i = 0; i < arrT.size(); i++) {
@@ -287,7 +287,7 @@ public class BenchStructs {
 //            System.out.println("next "+next.getIntVar());
 //        }
 
-        ReadOnlyStructMap mp = new ReadOnlyStructMap(11);
+        StructMap mp = new StructMap(11);
         mp.put(new StructString("Emil"),new StructString("Möller-Lienemann"));
         mp.put(new StructString("Felix"),new StructString("Möller-Fricker"));
         mp.put(new StructString("Rüdiger"),new StructString("Möller"));
@@ -303,54 +303,56 @@ public class BenchStructs {
         System.out.println("hm:"+mp.get(new StructString("Rüdiger")));
 
         HashMap<StructString,StructString> testMap = new HashMap<StructString, StructString>();
-        for ( int i = 0; i < 100; i++ ) {
+        for ( int i = 0; i < 10000; i++ ) {
             testMap.put(new StructString("oij"+i), new StructString("val"+i));
         }
-        ReadOnlyStructMap<StructString,StructString> stMap = new ReadOnlyStructMap<StructString, StructString>(testMap);
 
-        StructString toSearch = new StructString("oij"+11);
-        StructString toNotFind = new StructString("notThere");
-        long tim = System.currentTimeMillis();
-        for ( int i = 0; i < 8000000; i++) {
-            if ( testMap.get(toSearch) == null ) {
-                System.out.println("bug");
+        for ( int iii = 0; iii < 5; iii++ ) {
+            StructMap<StructString,StructString> stMap = new StructMap<StructString, StructString>(testMap);
+            StructString toSearch = new StructString("oij"+11);
+            StructString toNotFind = new StructString("notThere");
+            long tim = System.currentTimeMillis();
+            for ( int i = 0; i < 8000000; i++) {
+                if ( testMap.get(toSearch) == null ) {
+                    System.out.println("bug");
+                }
             }
-        }
-        for ( int i = 0; i < 8000000; i++) {
-            if ( testMap.get(toNotFind) != null ) {
-                System.out.println("bug");
+            for ( int i = 0; i < 8000000; i++) {
+                if ( testMap.get(toNotFind) != null ) {
+                    System.out.println("bug");
+                }
             }
-        }
-        System.out.println("lookup hashmap "+(System.currentTimeMillis()-tim));
+            System.out.println("lookup hashmap "+(System.currentTimeMillis()-tim));
 
-        tim = System.currentTimeMillis();
-        for ( int i = 0; i < 8000000; i++) {
-            if ( stMap.get(toSearch) == null ) {
-                System.out.println("bug");
+            tim = System.currentTimeMillis();
+            for ( int i = 0; i < 8000000; i++) {
+                if ( stMap.get(toSearch) == null ) {
+                    System.out.println("bug");
+                }
             }
-        }
-        for ( int i = 0; i < 8000000; i++) {
-            if ( stMap.get(toNotFind) != null ) {
-                System.out.println("bug");
+            for ( int i = 0; i < 8000000; i++) {
+                if ( stMap.get(toNotFind) != null ) {
+                    System.out.println("bug");
+                }
             }
-        }
-        System.out.println("lookup structmap "+(System.currentTimeMillis()-tim));
+            System.out.println("lookup structmap "+(System.currentTimeMillis()-tim));
 
-        stMap = fac.toStruct(stMap);
+            stMap = fac.toStruct(stMap);
 
-        tim = System.currentTimeMillis();
-        for ( int i = 0; i < 8000000; i++) {
-            if ( stMap.get(toSearch) == null ) {
-                System.out.println("bug");
+            tim = System.currentTimeMillis();
+            for ( int i = 0; i < 8000000; i++) {
+                if ( stMap.get(toSearch) == null ) {
+                    System.out.println("bug");
+                }
             }
-        }
-        for ( int i = 0; i < 8000000; i++) {
-            if ( stMap.get(toNotFind) != null ) {
-                System.out.println("bug");
+            for ( int i = 0; i < 8000000; i++) {
+                if ( stMap.get(toNotFind) != null ) {
+                    System.out.println("bug");
+                }
             }
-        }
-        System.out.println("lookup off structmap "+(System.currentTimeMillis()-tim));
+            System.out.println("lookup off structmap "+(System.currentTimeMillis()-tim));
 
+        }
 
         ArrayList<StructString> stringList = new ArrayList<StructString>(11111);
         for (int i = 0; i < 11111; i++) {
@@ -401,7 +403,7 @@ public class BenchStructs {
 
         FSTCompressor compressor = new FSTCompressor();
 
-        tim = System.currentTimeMillis();
+        long tim = System.currentTimeMillis();
         for ( int i = 0; i < 1000000; i++) {
             compressor.compress2Byte(onHeap);
         }
@@ -593,7 +595,7 @@ public class BenchStructs {
         protected int intarr[] = {0,1,2,3,4,5};
 
         @Templated
-        StructString[] objArr = new StructString[]{
+        protected StructString[] objArr = new StructString[]{
             new StructString("uh",50), null, null, null
         };
 
@@ -666,7 +668,7 @@ public class BenchStructs {
         FSTStructFactory fac = new FSTStructFactory();
         fac.registerClz(NewStruct.class);
         fac.registerClz(StructString.class);
-        fac.registerClz(ReadOnlyStructMap.class);
+        fac.registerClz(StructMap.class);
 
         NewStruct structPointer = fac.toStruct(new NewStruct());
         System.out.println("New Struct Size " + structPointer.getByteSize());
@@ -714,7 +716,7 @@ public class BenchStructs {
     }
 
     public static void main(String arg[] ) throws Exception {
-        main1(arg);
+        main0(arg);
         System.out.println("BENCH FINISHED ------------------------------------------------------------------------");
 //        while( true )
             benchFullGC();

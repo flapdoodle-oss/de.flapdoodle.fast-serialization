@@ -33,29 +33,32 @@ import java.util.Map;
  * @param <K>
  * @param <V>
  */
-public class ReadOnlyStructMap<K,V> extends FSTStruct {
+public class StructMap<K,V> extends FSTStruct {
 
-    Object keyVal[];
-    int    size;
+    protected Object keys[];
+    protected Object vals[];
+    protected int    size;
+    protected transient FSTStruct pointer;
 
     /**
      * creates a new Hashtable with 'entrySize' elements allocated
      */
-    public ReadOnlyStructMap(int entrySize)
+    public StructMap(int entrySize)
     {
         entrySize = Math.max(3, entrySize);
-        keyVal    = new Object[entrySize * 2];
+        keys    = new Object[entrySize];
+        vals = new Object[entrySize];
     }
 
     /**
      * creates a new Hashtable with 3 elements allocated
      */
-    public ReadOnlyStructMap()
+    public StructMap()
     {
         this(3);
     }
 
-    public ReadOnlyStructMap(Map<K, V> toCopy)
+    public StructMap(Map<K, V> toCopy)
     {
         this(toCopy.size()*2);
         for (Iterator iterator = toCopy.entrySet().iterator(); iterator.hasNext(); ) {
@@ -64,24 +67,57 @@ public class ReadOnlyStructMap<K,V> extends FSTStruct {
         }
     }
 
+    protected int keysStructIndex() {
+        return -1; // generated
+    }
+
+    protected int valsStructIndex() {
+        return -1; // generated
+    }
+
+
     protected int locateIndex(Object key)
     {
         if (size >= getCapacity()-1)
         {
             throw new RuntimeException("Map is full");
         }
-        int kvlen = keyValLen();
-        int hpos = 2 * ((key.hashCode() & 0x7FFFFFFF) % (kvlen>>1));
-        int pos = hpos;
-        Object o = keyVal(pos);
-        while ( o != null )
-        {
-            if (key.equals(o))
-                break;
-            pos = (pos + 2) % kvlen;
-            o = keyVal(pos);
+        if ( pointer != null || isOffHeap() ) {
+            long arrbase = ___offset+keysStructIndex();
+            int kvlen = unsafe.getInt(___bytes,arrbase+4);
+            int kelemsiz = unsafe.getInt(___bytes,arrbase+8);
+            if ( pointer == null )
+                pointer = ___fac.createStructPointer(___bytes,0,unsafe.getInt(___bytes,arrbase+12) );
+
+            int pos = ((key.hashCode() & 0x7FFFFFFF) % kvlen);
+            pointer.___offset = ___offset+unsafe.getInt(___bytes,arrbase)+pos*kelemsiz;
+            while ( pointer.getInt() > 0 )
+            {
+                if (key.equals(pointer))
+                    break;
+                pos++;
+                pointer.next(kelemsiz);
+                if ( pos >= kvlen ) {
+                    pos = 0;
+                    pointer.___offset = ___offset+unsafe.getInt(___bytes,arrbase);
+                }
+            }
+            return pos;
+        } else {
+            int kvlen = keysLen();
+            int pos = ((key.hashCode() & 0x7FFFFFFF) % kvlen);
+            Object o = keys(pos);
+            while ( o != null )
+            {
+                if (key.equals(o))
+                    break;
+                pos++;
+                if ( pos >= kvlen )
+                    pos = 0;
+                o = keys(pos);
+            }
+            return pos;
         }
-        return pos / 2;
     }
 
     public int size()
@@ -92,7 +128,7 @@ public class ReadOnlyStructMap<K,V> extends FSTStruct {
     public V get(Object key)
     {
         int    pos = locateIndex(key);
-        Object res = keyAt(pos) != null ? valueAt(pos) : null;
+        Object res = keys(pos) != null ? vals(pos) : null;
         return (V) res;
     }
 
@@ -108,55 +144,57 @@ public class ReadOnlyStructMap<K,V> extends FSTStruct {
         if (key != null)
         {
             int     pos    = locateIndex(key);
-            if ( keyAt(pos) == null )
+            if ( keys(pos) == null )
                 size++;
 
-            tmp = valueAt(pos);
+            tmp = vals(pos);
             setKeyValue(pos, key, value);
         }
         return (V) tmp;
     }
 
-    public K keyAt(int i)
+    protected void setKeyValue(int i, K key, V value)
     {
-        return (K) keyVal(i << 1);
-    }
-
-    public V valueAt(int i)
-    {
-        return (V) keyVal((i << 1) + 1);
-    }
-
-    void setKeyValue(int i, K key, V value)
-    {
-        keyVal(i << 1,key);
-        keyVal((i << 1) + 1, value);
+        keys(i, key);
+        vals(i, value);
     }
 
     public int getCapacity()
     {
-        return keyValLen()/2;
+        return keysLen();
     }
 
-    public Object keyVal(int i) {
-        return keyVal[i];
+    public Object keys(int i) {
+        return keys[i];
     }
 
-    public void keyVal(int i, Object v) {
-        keyVal[i] = v;
+    public Object vals(int i) {
+        return vals[i];
+    }
+
+    public void keys(int i, Object v) {
+        keys[i] = v;
+    }
+
+    public void vals(int i, Object v) {
+        vals[i] = v;
     }
 
     public int keyValIndex() {
         return -1; // will be redefined off-heap and deliver startindex of array
     }
 
-    public int keyValLen() {
-        return keyVal.length;
+    public int keysLen() {
+        return keys.length;
+    }
+
+    public int valsLen() {
+        return vals.length;
     }
 
     public static void main(String[] args)
     {
-        ReadOnlyStructMap<Integer,Integer> smt = new ReadOnlyStructMap(8000);
+        StructMap<Integer,Integer> smt = new StructMap(8000);
 
         for (int ii = 0; ii < 4000; ii++)
         {

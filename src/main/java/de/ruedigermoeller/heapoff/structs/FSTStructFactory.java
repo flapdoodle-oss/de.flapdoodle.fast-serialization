@@ -3,7 +3,7 @@ package de.ruedigermoeller.heapoff.structs;
 import de.ruedigermoeller.heapoff.structs.impl.FSTByteArrayUnsafeStructGeneration;
 import de.ruedigermoeller.heapoff.structs.impl.FSTEmbeddedBinary;
 import de.ruedigermoeller.heapoff.structs.impl.FSTStructGeneration;
-import de.ruedigermoeller.heapoff.structs.structtypes.ReadOnlyStructMap;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
@@ -67,7 +67,7 @@ public class FSTStructFactory {
         registerClz(StructString.class);
         registerClz(StructArray.class);
         registerClz(StructArray.StructArrIterator.class);
-        registerClz(ReadOnlyStructMap.class);
+        registerClz(StructMap.class);
     }
 
     <T> Class<T> createStructClz( Class<T> clazz ) throws Exception {
@@ -119,6 +119,10 @@ public class FSTStructFactory {
                 FSTClazzInfo.FSTFieldInfo indexfi = methName.length()>4 ? clInfo.getFieldInfo(methName.substring(0, methName.length() - 5), null) : null;
                 int pointerlen = "Pointer".length();
                 FSTClazzInfo.FSTFieldInfo pointerfi = methName.length()> pointerlen ? clInfo.getFieldInfo(methName.substring(0, methName.length() - pointerlen), null) : null;
+                pointerlen = "ElementSize".length();
+                FSTClazzInfo.FSTFieldInfo elemlen = methName.length()> pointerlen ? clInfo.getFieldInfo(methName.substring(0, methName.length() - pointerlen), null) : null;
+                pointerlen = "StructIndex".length();
+                FSTClazzInfo.FSTFieldInfo structIndex = methName.length()> pointerlen ? clInfo.getFieldInfo(methName.substring(0, methName.length() - pointerlen), null) : null;
                 if ( arrayFi == null || !arrayFi.isArray() || arrayFi.getArrayType().isArray() )
                     arrayFi = null;
                 if ( lenfi == null || !lenfi.isArray() || lenfi.getArrayType().isArray() )
@@ -127,13 +131,23 @@ public class FSTStructFactory {
                     indexfi = null;
                 if ( pointerfi == null || !pointerfi.isArray() || pointerfi.getArrayType().isArray() )
                     pointerfi = null;
+                if ( elemlen == null || !elemlen.isArray() || elemlen.getArrayType().isArray() )
+                    elemlen = null;
 
                 if ( pointerfi != null ) {
                     structGen.defineArrayPointer(pointerfi, clInfo, method);
                     newClz.addMethod(method);
                 } else
+                if ( structIndex != null ) {
+                    structGen.defineFieldStructIndex(structIndex, clInfo, method);
+                    newClz.addMethod(method);
+                } else
                 if ( indexfi != null ) {
                     structGen.defineArrayIndex(indexfi, clInfo, method);
+                    newClz.addMethod(method);
+                } else
+                if ( elemlen != null ) {
+                    structGen.defineArrayElementSize(elemlen, clInfo, method);
                     newClz.addMethod(method);
                 } else
                 if (  arrayFi != null ) {
@@ -234,8 +248,8 @@ public class FSTStructFactory {
         int arrayElementZeroindex = unsafe.getInt(base,objectBaseOffset+arrayStructIndex);
         int elemSiz = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+8);
 //        int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);
-        int clId = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+12);
-        result.baseOn(base, FSTUtil.bufoff+arrayElementZeroindex, this);
+//        int clId = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+12);
+        result.baseOn(base, FSTUtil.bufoff + arrayElementZeroindex, this);
         result.___elementSize = elemSiz;
     }
 
@@ -309,6 +323,9 @@ public class FSTStructFactory {
             if ( onHeapStruct == null ) {
                 return 0;
             }
+            if ( onHeapStruct instanceof FSTStruct == false ) {
+                throw new RuntimeException("objects contained in structs must inherit "+FSTStruct.class.getName());
+            }
             int siz = 8;
             FSTClazzInfo clInfo = conf.getClassInfo(onHeapStruct.getClass());
             FSTClazzInfo.FSTFieldInfo fis[] = clInfo.getFieldInfo();
@@ -316,6 +333,9 @@ public class FSTStructFactory {
                 FSTClazzInfo.FSTFieldInfo fi = fis[i];
                 if ( fi.getField().getDeclaringClass() == FSTStruct.class )
                     continue;
+                int modifiers = fi.getField().getModifiers();
+                if ( ! Modifier.isProtected(modifiers) && ! Modifier.isPublic(modifiers) )
+                    throw new RuntimeException("all fields of a structable class must be public or protected. Field:"+fi.getField().getName()+" in class "+fi.getField().getDeclaringClass().getName() );
                 // FIXME: check for null refs, check for FSTStruct subclasses
                 if ( fi.getType().isArray() ) {
                     if ( fi.getType().getComponentType().isArray() ) {
@@ -543,9 +563,10 @@ public class FSTStructFactory {
                     int tmpIndex = index;
                     byte templatearr[] = null;
                     if (en.template != null) {
-                        templatearr = toByteArray(en.template);
+                        templatearr = toByteArray(en.template); // fixme: unnecessary alloc
                         unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, getClzId( en.template.getClass() ) );
                     }
+                    boolean first = true;
                     for (int j = 0; j < objArr.length; j++) {
                         Object objectValue = objArr[j];
                         if ( templatearr != null ) {
@@ -558,6 +579,10 @@ public class FSTStructFactory {
                             } else {
                                 toByteArray(objectValue, bytes, tmpIndex);
                                 tmpIndex += elemSiz;
+                                if ( first ) {
+                                    unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, getClzId( objectValue.getClass() ) );
+                                    first = false;
+                                }
                             }
                         }
                     }

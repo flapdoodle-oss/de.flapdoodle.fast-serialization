@@ -31,8 +31,8 @@ import de.ruedigermoeller.heapoff.structs.FSTStruct;
  */
 public class StructString extends FSTStruct implements Comparable {
 
-    int len = 0;
-    char chars[];
+    protected int len = 0;
+    protected char chars[];
 
     public StructString(int size) {
         chars = new char[size];
