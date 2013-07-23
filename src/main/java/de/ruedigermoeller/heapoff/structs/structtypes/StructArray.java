@@ -1,10 +1,8 @@
 package de.ruedigermoeller.heapoff.structs.structtypes;
 
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
-import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.NoAssist;
 import de.ruedigermoeller.heapoff.structs.Templated;
-import de.ruedigermoeller.heapoff.structs.impl.FSTEmbeddedBinary;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 
 import java.util.Iterator;

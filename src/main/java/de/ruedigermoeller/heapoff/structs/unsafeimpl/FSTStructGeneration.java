@@ -1,4 +1,4 @@
-package de.ruedigermoeller.heapoff.structs.impl;
+package de.ruedigermoeller.heapoff.structs.unsafeimpl;
 
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import javassist.*;

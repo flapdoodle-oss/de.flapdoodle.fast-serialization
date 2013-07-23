@@ -1,6 +1,6 @@
-package de.ruedigermoeller.heapoff.structs.impl;
+package de.ruedigermoeller.heapoff.structs;
 
-import de.ruedigermoeller.heapoff.structs.FSTStructFactory;
+import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.

@@ -1,8 +1,6 @@
-package de.ruedigermoeller.heapoff.structs.impl;
+package de.ruedigermoeller.heapoff.structs.unsafeimpl;
 
-import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
-import de.ruedigermoeller.serialization.util.FSTUtil;
 import javassist.*;
 import javassist.expr.FieldAccess;
 

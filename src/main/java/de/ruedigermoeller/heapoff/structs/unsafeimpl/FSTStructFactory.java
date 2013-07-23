@@ -1,8 +1,9 @@
-package de.ruedigermoeller.heapoff.structs;
+package de.ruedigermoeller.heapoff.structs.unsafeimpl;
 
-import de.ruedigermoeller.heapoff.structs.impl.FSTByteArrayUnsafeStructGeneration;
-import de.ruedigermoeller.heapoff.structs.impl.FSTEmbeddedBinary;
-import de.ruedigermoeller.heapoff.structs.impl.FSTStructGeneration;
+import de.ruedigermoeller.heapoff.structs.FSTEmbeddedBinary;
+import de.ruedigermoeller.heapoff.structs.FSTStruct;
+import de.ruedigermoeller.heapoff.structs.NoAssist;
+import de.ruedigermoeller.heapoff.structs.Templated;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
@@ -362,7 +363,7 @@ public class FSTStructFactory {
                     siz += fi.getStructSize()+calcStructSize(obj)+fi.getAlignPad();
                 }
             }
-            if ( onHeapStruct instanceof FSTEmbeddedBinary ) {
+            if ( onHeapStruct instanceof FSTEmbeddedBinary) {
                 siz+=((FSTEmbeddedBinary) onHeapStruct).getEmbeddedSizeAdditon(this);
             }
             return siz;
