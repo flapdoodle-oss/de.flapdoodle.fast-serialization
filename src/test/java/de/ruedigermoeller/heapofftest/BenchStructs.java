@@ -307,7 +307,7 @@ public class BenchStructs {
             testMap.put(new StructString("oij"+i), new StructString("val"+i));
         }
 
-        for ( int iii = 0; iii < 5; iii++ ) {
+        for ( int iii = 0; iii < 10; iii++ ) {
             StructMap<StructString,StructString> stMap = new StructMap<StructString, StructString>(testMap);
             StructString toSearch = new StructString("oij"+11);
             StructString toNotFind = new StructString("notThere");
@@ -477,91 +477,93 @@ public class BenchStructs {
         int structLen = bytes.length;
         int max = structs.length;
         structs = null;
-        System.out.println("iterative access on huge array");
-        benchIterAccess(fac,hugeArray, structLen,max);
+//        System.out.println("iterative access on huge array");
+//        for (int i=0; i<5; i++)
+//            benchIterAccess(fac,hugeArray, structLen,max);
 
-        System.out.println("iterate structarray");
-        StructArray<TestStruct> arr = fac.toStructArray(max, new TestStruct());
-        int tmp = arr.getStructElemSize();
+        for ( int iii = 0; iii < 10; iii++ ) {
+            System.out.println("iterate structarray");
+            StructArray<TestStruct> arr = fac.toStructArray(max, new TestStruct());
+            int tmp = arr.getStructElemSize();
 
-        tim = System.currentTimeMillis();
-        int sum = 0;
-        for ( int j=0; j < times; j++ ) {
+            tim = System.currentTimeMillis();
+            int sum = 0;
+            for ( int j=0; j < times; j++ ) {
+                final int size = arr.size();
+                for ( int i = 0; i < size; i++) {
+                    sum += arr.get(i).getIntVar();
+                }
+            }
+            System.out.println("   structarr get int " + (System.currentTimeMillis() - tim));
+
+            tim = System.currentTimeMillis();
+            sum = 0;
+            for ( int j=0; j < times; j++ ) {
+                for (Iterator<TestStruct> iterator = arr.iterator(); iterator.hasNext(); ) {
+                    TestStruct next = iterator.next();
+                    sum += next.getIntVar();
+                }
+            }
+            System.out.println("   structarr iterator get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+
+            tim = System.currentTimeMillis();
+            sum = 0;
+            final int es = arr.getStructElemSize();
+            for ( int j=0; j < times; j++ ) {
+                for (StructArray<TestStruct>.StructArrIterator<TestStruct> iterator = arr.iterator(); iterator.hasNext(); ) {
+                    sum += iterator.next(es).getIntVar();
+                }
+            }
+            System.out.println("   structarr iterator(int) get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+
+            tim = System.currentTimeMillis();
+            sum = 0;
+            final int arrsize = arr.size();
+            for ( int j=0; j < times; j++ ) {
+                StructArray<TestStruct>.StructArrIterator<TestStruct> iterator = arr.iterator();
+                for (iterator = arr.iterator(); iterator.hasNext(); ) {
+                    sum += iterator.next().getIntVar();
+                }
+            }
+            System.out.println("   structarr iterator() get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+
+            tim = System.currentTimeMillis();
+            sum = 0;
+            TestStruct next = arr.createPointer(0);
+            final int elemSiz = arr.getElementInArraySize();
             final int size = arr.size();
-            for ( int i = 0; i < size; i++) {
-                sum += arr.get(i).getIntVar();
+            for ( int j=0; j < times; j++ ) {
+                next.___offset = arr.get(0).___offset;
+                for (int i= 0; i < size; i++ ) {
+                    sum+=next.getIntVar();
+                    next.___offset+=elemSiz;
+                }
             }
-        }
-        System.out.println("   structarr get int " + (System.currentTimeMillis() - tim));
+            System.out.println("   structarr pointer offset direct get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
 
-        tim = System.currentTimeMillis();
-        sum = 0;
-        for ( int j=0; j < times; j++ ) {
-            for (Iterator<TestStruct> iterator = arr.iterator(); iterator.hasNext(); ) {
-                TestStruct next = iterator.next();
-                sum += next.getIntVar();
-            }
-        }
-        System.out.println("   structarr iterator get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
-
-        tim = System.currentTimeMillis();
-        sum = 0;
-        final int es = arr.getStructElemSize();
-        for ( int j=0; j < times; j++ ) {
-            for (StructArray<TestStruct>.StructArrIterator<TestStruct> iterator = arr.iterator(); iterator.hasNext(); ) {
-                sum += iterator.next(es).getIntVar();
-            }
-        }
-        System.out.println("   structarr iterator(int) get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
-
-        tim = System.currentTimeMillis();
-        sum = 0;
-        final int arrsize = arr.size();
-        for ( int j=0; j < times; j++ ) {
-            StructArray<TestStruct>.StructArrIterator<TestStruct> iterator = arr.iterator();
-            for (int i=0; i < arrsize; i++) {
-                sum += iterator.next(es).getIntVar();
-            }
-        }
-        System.out.println("   structarr iterator(int) get int NO hasNext " + (System.currentTimeMillis() - tim) + " sum:"+sum);
-
-        tim = System.currentTimeMillis();
-        sum = 0;
-        TestStruct next = arr.createPointer(0);
-        final int elemSiz = arr.getElementInArraySize();
-        final int size = arr.size();
-        for ( int j=0; j < times; j++ ) {
-            next.___offset = arr.get(0).___offset;
-            for (int i= 0; i < size; i++ ) {
-                sum+=next.getIntVar();
-                next.___offset+=elemSiz;
-            }
-        }
-        System.out.println("   structarr pointer offset direct get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
-
-        tim = System.currentTimeMillis();
-        sum = 0;
-        next = arr.createPointer(0);
-        for ( int j=0; j < times; j++ ) {
-            next.___offset = arr.get(0).___offset;
-            for (int i= 0; i < size; i++ ) {
-                sum+=next.getIntVar();
-                next.next();
-            }
-        }
-        System.out.println("   structarr pointer with next() get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
-
-        tim = System.currentTimeMillis();
-        sum = 0;
-        for ( int j=0; j < times; j++ ) {
+            tim = System.currentTimeMillis();
+            sum = 0;
             next = arr.createPointer(0);
-            for (int i= 0; i < size; i++ ) {
-                sum+=next.getIntVar();
-                next.next(elemSiz);
+            for ( int j=0; j < times; j++ ) {
+                next.___offset = arr.get(0).___offset;
+                for (int i= 0; i < size; i++ ) {
+                    sum+=next.getIntVar();
+                    next.next();
+                }
             }
-        }
-        System.out.println("   structarr pointer with next(int) get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+            System.out.println("   structarr pointer with next() get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
 
+            tim = System.currentTimeMillis();
+            sum = 0;
+            for ( int j=0; j < times; j++ ) {
+                next = arr.createPointer(0);
+                for (int i= 0; i < size; i++ ) {
+                    sum+=next.getIntVar();
+                    next.next(elemSiz);
+                }
+            }
+            System.out.println("   structarr pointer with next(int) get int " + (System.currentTimeMillis() - tim) + " sum:"+sum);
+        }
         benchFullGC();
 
 

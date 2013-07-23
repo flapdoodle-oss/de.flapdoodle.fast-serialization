@@ -478,7 +478,7 @@ public final class FSTClazzInfo {
         boolean integral = false;
         boolean isArr = false;
         int integralType;
-        int memOffset = -1;
+        long memOffset = -1;
         int structOffset = 0;
         int align = 0;
         int alignPad = 0;
@@ -544,7 +544,7 @@ public final class FSTClazzInfo {
             return oneOf;
         }
 
-        public int getMemOffset() {
+        public long getMemOffset() {
             return memOffset;
         }
 

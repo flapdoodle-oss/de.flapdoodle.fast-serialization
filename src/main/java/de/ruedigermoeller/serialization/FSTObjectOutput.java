@@ -46,13 +46,13 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     private static final boolean UNSAFE_WRITE_FLONG = true;
     private static final boolean UNSAFE_WRITE_UTF = true;
 
-    final static int bufoff;
-    final static int choff;
-    final static int intoff;
-    final static int longoff;
-    final static int intscal;
-    final static int longscal;
-    final static int chscal;
+    final static long bufoff;
+    final static long choff;
+    final static long intoff;
+    final static long longoff;
+    final static long intscal;
+    final static long longscal;
+    final static long chscal;
 
     static {
         Unsafe unsafe = FSTUtil.getUnsafe();
@@ -851,9 +851,9 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     public void writeFLongArrayUnsafe(long[] arr) throws IOException {
         final Unsafe unsafe = FSTUtil.unsafe;
         int length = arr.length;
-        buffout.ensureFree( longscal * length);
+        buffout.ensureFree((int) (longscal * length));
         final byte buf[] = buffout.buf;
-        int siz = length * longscal;
+        long siz = length * longscal;
         unsafe.copyMemory(buf, buffout.pos + bufoff, arr, longoff, siz);
         buffout.pos += siz;
         written += siz;
@@ -978,7 +978,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         if ( FSTUtil.unsafe != null && UNSAFE_WRITE_UTF) {
             writeFIntUnsafe(strlen);
             Unsafe unsafe = FSTUtil.unsafe;
-            int added = chscal * strlen;
+            int added = (int) (chscal * strlen);
             buffout.ensureFree(added);
             if (charBuf == null || charBuf.length < strlen) {
                 charBuf = new char[strlen];
@@ -1265,7 +1265,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         int length = v.length;
         buffout.ensureFree(4*length);
         final byte buf[] = buffout.buf;
-        int siz = length * intscal;
+        int siz = (int) (length * intscal);
         unsafe.copyMemory(buf, buffout.pos + bufoff, v, intoff, siz);
         buffout.pos += siz;
         written += siz;

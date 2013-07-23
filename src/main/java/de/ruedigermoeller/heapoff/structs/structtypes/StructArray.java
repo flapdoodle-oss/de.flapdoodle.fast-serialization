@@ -144,13 +144,13 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
         @Override
         public final T next() {
             current.___offset+=eSiz;
-            hasNextElem = current.___offset < maxPos;
+            hasNextElem = current.___offset+eSiz < maxPos;
             return current;
         }
 
         public final T next(final int offset) {
             current.___offset+=offset;
-            hasNextElem = current.___offset < maxPos;
+            hasNextElem = current.___offset+eSiz < maxPos;
             return current;
         }
 

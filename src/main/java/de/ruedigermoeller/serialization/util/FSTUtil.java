@@ -72,17 +72,17 @@ public class FSTUtil {
         }
     }
 
-    public final static int bufoff;
-    public final static int choff;
-    public final static int intoff;
-    public final static int longoff;
-    public final static int doubleoff;
-    public final static int floatoff;
-    public final static int intscal;
-    public final static int longscal;
-    public final static int chscal;
-    public final static int floatscal;
-    public final static int doublescal;
+    public final static long bufoff;
+    public final static long choff;
+    public final static long intoff;
+    public final static long longoff;
+    public final static long doubleoff;
+    public final static long floatoff;
+    public final static long intscal;
+    public final static long longscal;
+    public final static long chscal;
+    public final static long floatscal;
+    public final static long doublescal;
 
     static void clear(int[] arr) {
         int count = 0;

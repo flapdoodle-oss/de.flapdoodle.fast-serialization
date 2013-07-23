@@ -75,7 +75,6 @@ public class StructMap<K,V> extends FSTStruct {
         return -1; // generated
     }
 
-
     protected int locateIndex(Object key)
     {
         if (size >= getCapacity()-1)

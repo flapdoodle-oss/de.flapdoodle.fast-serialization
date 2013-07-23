@@ -318,14 +318,13 @@ public class FSTStructFactory {
         return getStructPointerByOffset(b,FSTUtil.bufoff+index);
     }
 
-    public int calcStructSize(Object onHeapStruct) {
+    public int calcStructSize(FSTStruct onHeapStruct) {
         try {
             if ( onHeapStruct == null ) {
                 return 0;
             }
-            if ( onHeapStruct instanceof FSTStruct == false ) {
-                throw new RuntimeException("objects contained in structs must inherit "+FSTStruct.class.getName());
-            }
+            if (onHeapStruct.isOffHeap())
+                return onHeapStruct.getByteSize();
             int siz = 8;
             FSTClazzInfo clInfo = conf.getClassInfo(onHeapStruct.getClass());
             FSTClazzInfo.FSTFieldInfo fis[] = clInfo.getFieldInfo();
@@ -359,7 +358,7 @@ public class FSTStructFactory {
                 } else if ( fi.isIntegral() ) { // && ! array
                     siz += fi.getStructSize();
                 } else { // objectref
-                    Object obj = clInfo.getObjectValue(onHeapStruct,fi);
+                    FSTStruct obj = (FSTStruct) clInfo.getObjectValue(onHeapStruct,fi);
                     siz += fi.getStructSize()+calcStructSize(obj)+fi.getAlignPad();
                 }
             }
@@ -376,13 +375,13 @@ public class FSTStructFactory {
         Templated annotation = fi.getField().getAnnotation(Templated.class);
         if ( annotation != null ) {
             Object template = objectValue[0];
-            return calcStructSize(template);
+            return calcStructSize((FSTStruct) template);
         }
         int elemSiz = 0;
         for (int j = 0; j < objectValue.length; j++) {
             Object o = objectValue[j];
             if ( o != null )
-                elemSiz=Math.max( elemSiz, calcStructSize(o) );
+                elemSiz=Math.max( elemSiz, calcStructSize((FSTStruct) o) );
         }
         return elemSiz;
     }
@@ -412,7 +411,7 @@ public class FSTStructFactory {
         return mIntToClz.get(clzId);
     }
 
-    public byte[] toByteArray(Object onHeapStruct) {
+    public byte[] toByteArray(FSTStruct onHeapStruct) {
         try {
             int sz = calcStructSize(onHeapStruct);
             byte b[] = new byte[sz];
@@ -437,14 +436,18 @@ public class FSTStructFactory {
         FSTClazzInfo.FSTFieldInfo fi;
         int pointerPos;
         Object forwardObject;
-        Object template;
+        FSTStruct template;
     }
 
 
-    public int toByteArray(Object onHeapStruct, byte bytes[], int index) throws Exception {
+    public int toByteArray(FSTStruct onHeapStruct, byte bytes[], int index) throws Exception {
         ArrayList<ForwardEntry> positions = new ArrayList<ForwardEntry>();
         if ( onHeapStruct == null ) {
             return index;
+        }
+        if (onHeapStruct.isOffHeap()) {
+            unsafe.copyMemory(onHeapStruct.___bytes,onHeapStruct.___offset,bytes,FSTUtil.bufoff+index,onHeapStruct.getByteSize());
+            return onHeapStruct.getByteSize();
         }
         int initialIndex =index;
         int clzId = getClzId(onHeapStruct.getClass());
@@ -474,7 +477,7 @@ public class FSTStructFactory {
                         Templated takeFirst = fi.getField().getAnnotation(Templated.class);
                         ForwardEntry fe = new ForwardEntry(index, objArr, fi);
                         if ( takeFirst != null ) {
-                            fe.template = objArr[0];
+                            fe.template = (FSTStruct) objArr[0];
                         }
                         positions.add(fe);
                         index += fi.getStructSize();
@@ -531,7 +534,7 @@ public class FSTStructFactory {
             }
             Class c = o.getClass();
             if (c.isArray()) {
-                int siz = 0;
+                long siz = 0;
                 if ( c == byte[].class ) {
                     siz = Array.getLength(o);
                     unsafe.copyMemory(o,FSTUtil.bufoff, bytes, FSTUtil.bufoff+index, siz);
@@ -577,7 +580,7 @@ public class FSTStructFactory {
                                 unsafe.putInt(bytes, FSTUtil.bufoff + tmpIndex, -1);
                                 tmpIndex += elemSiz;
                             } else {
-                                toByteArray(objectValue, bytes, tmpIndex);
+                                toByteArray((FSTStruct) objectValue, bytes, tmpIndex);
                                 tmpIndex += elemSiz;
                                 if ( first ) {
                                     unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, getClzId( objectValue.getClass() ) );
@@ -591,7 +594,7 @@ public class FSTStructFactory {
                 unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos+4, Array.getLength(o) );
                 index+=siz;
             } else { // object ref or objarray elem
-                int newoffset = toByteArray(o, bytes, index);
+                int newoffset = toByteArray((FSTStruct) o, bytes, index);
                 unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index-initialIndex );
                 index = newoffset;
             }

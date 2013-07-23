@@ -191,4 +191,12 @@ public class FSTStruct implements Serializable {
         return unsafe.getDouble(___bytes,___offset);
     }
 
+    public FSTStruct createCopy() {
+        if ( ! isOffHeap() ) {
+            throw new RuntimeException("must be offheap to call this");
+        }
+        byte b[] = new byte[getByteSize()];
+        unsafe.copyMemory(___bytes,___offset,b,FSTUtil.bufoff,b.length);
+        return ___fac.createStructWrapper(b,0);
+    }
 }

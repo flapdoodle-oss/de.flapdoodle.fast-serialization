@@ -47,13 +47,13 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     private static final boolean UNSAFE_READ_FLONG = true;
     private static final boolean UNSAFE_READ_UTF = true;
 
-    final static int bufoff;
-    final static int choff;
-    final static int intoff;
-    final static int longoff;
-    final static int intscal;
-    final static int longscal;
-    final static int chscal;
+    final static long bufoff;
+    final static long choff;
+    final static long intoff;
+    final static long longoff;
+    final static long intscal;
+    final static long longscal;
+    final static long chscal;
 
     static {
         Unsafe unsafe = FSTUtil.getUnsafe();
@@ -825,8 +825,8 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             }
             ensureReadAhead(len * 2);
             byte buf[] = input.buf;
-            int count = input.pos+bufoff;
-            int chcount = choff;
+            int count = (int) (input.pos+bufoff);
+            int chcount = (int) choff;
             unsafe.copyMemory(buf,count,charBuf,chcount,len*chscal);
 //            for (int i = 0; i < len; i++) {
 //                char c = unsafe.getChar(buf,count);
@@ -1017,14 +1017,14 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 
     public void readLongArrUnsafe(long[] arr) {
         final byte buf[] = input.buf;
-        int siz = arr.length * longscal;
+        int siz = (int) (arr.length * longscal);
         FSTUtil.unsafe.copyMemory(buf,input.pos+bufoff,arr,longoff,siz);
         input.pos += siz;
     }
 
     public void readPlainIntArrUnsafe(int[] arr) {
         final byte buf[] = input.buf;
-        int siz = arr.length * intscal;
+        int siz = (int) (arr.length * intscal);
         FSTUtil.unsafe.copyMemory(buf,input.pos+bufoff,arr,intoff,siz);
         input.pos += siz;
     }
@@ -1197,7 +1197,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         ensureReadAhead(5 * len);
         final byte buf[] = input.buf;
         long count = input.pos+bufoff;
-        final int max = len * intscal + intoff;
+        final int max = (int) (len * intscal + intoff);
         int cn = input.pos;
         for (long j = intoff; j < max; j+=intscal) {
             final byte head = unsafe.getByte(buf,count++);
