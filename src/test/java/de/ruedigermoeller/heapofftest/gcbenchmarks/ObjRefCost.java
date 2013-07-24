@@ -17,6 +17,14 @@ public class ObjRefCost extends BasicGCBench {
         Object referenced;
     }
 
+    static class GCWrapperLinked {
+        GCWrapperLinked(Object referenced) {
+            this.r1 = referenced;
+        }
+
+        Object r1,r2,r3,r4,r5;
+    }
+
     static class GCWrapperMiddle {
         int a,b,c,d,e,f,g,h,i,j,k,l;
         GCWrapperMiddle(Object referenced) {
@@ -60,10 +68,28 @@ public class ObjRefCost extends BasicGCBench {
         return res;
     }
 
+    static Object allocateWRPManyLinks(int len) {
+        GCWrapperLinked res[] = new GCWrapperLinked[len];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = new GCWrapperLinked(null);
+        }
+        for (int i = 0; i < res.length; i++) {
+            res[i].r1 = res[((int) (Math.random() * len))];
+            res[i].r2 = res[((int) (Math.random() * len))];
+            res[i].r3 = res[((int) (Math.random() * len))];
+            res[i].r4 = res[((int) (Math.random() * len))];
+            res[i].r5 = res[((int) (Math.random() * len))];
+        }
+        return res;
+    }
+
     static Object allocateWRPLinked(int len) {
-        GCWrapper res = new GCWrapper(null);
+        GCWrapper res[] = new GCWrapper[len];
         for ( int i = 0; i < len; i++ ) {
-            res = new GCWrapper(res);
+            res[i] = new GCWrapper(null);
+        }
+        for ( int i = 0; i < len; i++ ) {
+            res[i].referenced = res[((int) (Math.random() * len))];
         }
         return res;
     }
@@ -97,49 +123,67 @@ public class ObjRefCost extends BasicGCBench {
             System.out.println("bla");
     }
 
-    private static void benchBytee(int siz) {
-        System.out.println("bytes size:"+siz);
-        Object res[] = new Object[siz];
-        for (int i = 0; i < res.length; i++) {
-            res[i] = new byte[80];
-        }
-        System.out.println("bytes " + benchFullGC());
+    private static void benchHiLinked(int siz) {
+        System.out.println("complex linked size:"+siz);
+        Object res = allocateWRPManyLinks(siz);
+        System.out.println("res "+benchFullGC());
         if ( res.equals("no") )
             System.out.println("bla");
     }
 
+    private static void benchBytee(int siz) {
+//        System.out.println("bytes size:"+siz);
+//        Object res[] = new Object[siz];
+//        for (int i = 0; i < res.length; i++) {
+//            res[i] = new byte[80];
+//        }
+//        System.out.println("bytes " + benchFullGC());
+//        if ( res.equals("no") )
+//            System.out.println("bla");
+    }
+
     private static void benchArr(int siz) {
-        System.out.println("arr size:"+siz);
-        Object res = allocateWRPArr(siz);
-        System.out.println("small "+benchFullGC());
-        res = allocateWRPArrMiddle(siz);
-        System.out.println("middle " + benchFullGC());
-        res = allocateWRPArrLarge(siz);
-        System.out.println("large " + benchFullGC());
-        if ( res.equals("no") )
-            System.out.println("bla");
+//        System.out.println("arr size:"+siz);
+//        Object res = allocateWRPArr(siz);
+//        System.out.println("small "+benchFullGC());
+//        res = allocateWRPArrMiddle(siz);
+//        System.out.println("middle " + benchFullGC());
+//        res = allocateWRPArrLarge(siz);
+//        System.out.println("large " + benchFullGC());
+//        if ( res.equals("no") )
+//            System.out.println("bla");
     }
 
     public static void main( String a[] ) {
         benchLinked(100000);
-        benchArr(100000);
-        benchBytee(100000);
+        benchHiLinked(100000);
+//        benchArr(100000);
+//        benchBytee(100000);
 
         benchLinked(100000*3);
-        benchArr(100000 * 3);
-        benchBytee(100000 * 3);
+        benchHiLinked(100000*3);
+//        benchArr(100000 * 3);
+//        benchBytee(100000 * 3);
 
         benchLinked(100000*6);
-        benchArr(100000 * 6);
-        benchBytee(100000 * 6);
+        benchHiLinked(100000*6);
+//        benchArr(100000 * 6);
+//        benchBytee(100000 * 6);
 
-        benchLinked(100000*10);
-        benchArr(100000 * 10);
-        benchBytee(100000 * 10);
+        benchLinked(100000 * 10);
+        benchHiLinked(100000*10);
+//        benchArr(100000 * 10);
+//        benchBytee(100000 * 10);
 
-        benchLinked(100000*10*10);
-        benchArr(100000 * 10 * 10);
-        benchBytee(100000 * 10 * 10);
+        benchLinked(100000*30);
+        benchHiLinked(100000*30);
+//        benchArr(100000 * 30);
+//        benchBytee(100000 * 30);
+
+        benchLinked(100000 * 60);
+        benchHiLinked(100000*60);
+//        benchArr(100000 * 60);
+//        benchBytee(100000 * 60);
     }
 
 }

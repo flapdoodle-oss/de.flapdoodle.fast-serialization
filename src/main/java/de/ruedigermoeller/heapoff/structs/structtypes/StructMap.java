@@ -1,7 +1,11 @@
 package de.ruedigermoeller.heapoff.structs.structtypes;
 
+import de.ruedigermoeller.heapoff.structs.FSTArrayElementSizeCalculator;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
+import de.ruedigermoeller.heapoff.structs.Templated;
+import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
 
+import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -33,29 +37,31 @@ import java.util.Map;
  * @param <K>
  * @param <V>
  */
-public class StructMap<K,V> extends FSTStruct {
+public class StructMap<K,V> extends FSTStruct implements FSTArrayElementSizeCalculator {
+
+    transient FSTStruct keyTemplate, valueTemplate;
 
     protected Object keys[];
     protected Object vals[];
     protected int    size;
     protected transient FSTStruct pointer;
 
-    /**
-     * creates a new Hashtable with 'entrySize' elements allocated
-     */
-    public StructMap(int entrySize)
-    {
-        entrySize = Math.max(3, entrySize);
-        keys    = new Object[entrySize];
-        vals = new Object[entrySize];
+    public StructMap( FSTStruct keyTemplate, FSTStruct valueTemplate, int elementSize ) {
+        this(elementSize);
+        this.keyTemplate = keyTemplate;
+        this.valueTemplate = valueTemplate;
     }
 
     /**
-     * creates a new Hashtable with 3 elements allocated
+     * creates a new Hashtable with 'entrySize' elements allocated on heap. Note that off-heaping before filling elements will result
+     * in an element bucket size of zero rendering this map unusable off heap. Use the templated constructore to
+     * create an empty OffHeap Map.
      */
-    public StructMap()
+    public StructMap(int elementSize)
     {
-        this(3);
+        elementSize = Math.max(3, elementSize);
+        keys    = new Object[elementSize];
+        vals = new Object[elementSize];
     }
 
     public StructMap(Map<K, V> toCopy)
@@ -208,4 +214,14 @@ public class StructMap<K,V> extends FSTStruct {
 
     }
 
+    @Override
+    public int getElementSize(Field arrayRef, FSTStructFactory fac) {
+        if ( keyTemplate != null && "keys".equals(arrayRef.getName()) ) {
+            return fac.calcStructSize(keyTemplate);
+        }
+        if ( valueTemplate != null && "vals".equals(arrayRef.getName()) ) {
+            return fac.calcStructSize(valueTemplate);
+        }
+        return -1;
+    }
 }

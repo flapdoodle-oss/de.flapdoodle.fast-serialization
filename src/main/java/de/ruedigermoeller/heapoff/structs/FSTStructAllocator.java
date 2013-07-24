@@ -1,5 +1,7 @@
 package de.ruedigermoeller.heapoff.structs;
 
+import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.serialization.util.FSTUtil;
@@ -29,7 +31,11 @@ public class FSTStructAllocator<T extends FSTStruct> {
     }
 
     public StructArray<T> newArray(int size) {
-        return new StructArray<T>(size,template);
+        return getFactory().toStruct(new StructArray<T>(size,template));
+    }
+
+    public <K extends FSTStruct> StructMap<K,T> newMap(int size, K keyTemplate) {
+        return getFactory().toStruct( new StructMap<K, T>(keyTemplate,template,size) );
     }
 
     public T newStruct() {
@@ -51,4 +57,5 @@ public class FSTStructAllocator<T extends FSTStruct> {
     protected FSTStructFactory getFactory() {
         return FSTStructFactory.getInstance();
     }
+
 }

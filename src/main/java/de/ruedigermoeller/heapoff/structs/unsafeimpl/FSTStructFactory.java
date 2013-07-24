@@ -1,9 +1,6 @@
 package de.ruedigermoeller.heapoff.structs.unsafeimpl;
 
-import de.ruedigermoeller.heapoff.structs.FSTEmbeddedBinary;
-import de.ruedigermoeller.heapoff.structs.FSTStruct;
-import de.ruedigermoeller.heapoff.structs.NoAssist;
-import de.ruedigermoeller.heapoff.structs.Templated;
+import de.ruedigermoeller.heapoff.structs.*;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
@@ -48,6 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FSTStructFactory {
 
     static FSTStructFactory instance;
+
     public static FSTStructFactory getInstance() {
         if (instance==null) {
             instance = new FSTStructFactory();
@@ -62,6 +60,7 @@ public class FSTStructFactory {
 
     ConcurrentHashMap<Class, Class> proxyClzMap = new ConcurrentHashMap<Class, Class>();
     FSTStructGeneration structGen = new FSTByteArrayUnsafeStructGeneration();
+    boolean autoRegister = true;
 
     public FSTStructFactory() {
         registerClz(FSTStruct.class);
@@ -352,7 +351,7 @@ public class FSTStructFactory {
                         if (objectValue==null) {
                             siz+=fi.getStructSize()+fi.getAlignPad();
                         } else {
-                            int elemSiz = computeElemSize(objectValue, fi);
+                            int elemSiz = computeElemSize(onHeapStruct,objectValue, fi);
                             siz += Array.getLength(objectValue) * elemSiz + fi.getStructSize() + fi.getAlignPad();
                         }
                     }
@@ -372,7 +371,12 @@ public class FSTStructFactory {
         }
     }
 
-    protected int computeElemSize(Object[] objectValue, FSTClazzInfo.FSTFieldInfo fi) {
+    protected int computeElemSize(Object container, Object[] objectValue, FSTClazzInfo.FSTFieldInfo fi) {
+        if ( container instanceof FSTArrayElementSizeCalculator ) {
+            int res = ((FSTArrayElementSizeCalculator) container).getElementSize(fi.getField(),this);
+            if ( res >= 0 )
+                return res;
+        }
         Templated annotation = fi.getField().getAnnotation(Templated.class);
         if ( annotation != null ) {
             Object template = objectValue[0];
@@ -451,10 +455,15 @@ public class FSTStructFactory {
             return onHeapStruct.getByteSize();
         }
         int initialIndex =index;
-        int clzId = getClzId(onHeapStruct.getClass());
+        Class<? extends FSTStruct> aClass = onHeapStruct.getClass();
+        int clzId = getClzId(aClass);
+        if ( autoRegister && clzId == 0 ) {
+            registerClz(aClass);
+            clzId = getClzId(aClass);
+        }
         unsafe.putInt(bytes,FSTUtil.bufoff+index+4,clzId);
         index+=8;
-        FSTClazzInfo clInfo = conf.getClassInfo(onHeapStruct.getClass());
+        FSTClazzInfo clInfo = conf.getClassInfo(aClass);
         FSTClazzInfo.FSTFieldInfo fis[] = clInfo.getFieldInfo();
         for (int i = 0; i < fis.length; i++) {
             FSTClazzInfo.FSTFieldInfo fi = fis[i];
@@ -482,7 +491,7 @@ public class FSTStructFactory {
                         }
                         positions.add(fe);
                         index += fi.getStructSize();
-                        int elemSiz = computeElemSize(objArr,fi);
+                        int elemSiz = computeElemSize(onHeapStruct,objArr,fi);
                         unsafe.putInt(bytes, FSTUtil.bufoff+index-8,elemSiz);
                     }
                 }
