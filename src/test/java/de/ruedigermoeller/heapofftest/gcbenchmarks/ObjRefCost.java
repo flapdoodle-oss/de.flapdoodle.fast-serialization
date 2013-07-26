@@ -83,6 +83,17 @@ public class ObjRefCost extends BasicGCBench {
         return res;
     }
 
+    static Object allocateWRPUnLinked(int len) {
+        GCWrapper res[] = new GCWrapper[len];
+        for ( int i = 0; i < len; i++ ) {
+            res[i] = new GCWrapper(null);
+        }
+//        for ( int i = 0; i < len; i++ ) {
+//            res[i].referenced = res[((int) (Math.random() * len))];
+//        }
+        return res;
+    }
+
     static Object allocateWRPLinked(int len) {
         GCWrapper res[] = new GCWrapper[len];
         for ( int i = 0; i < len; i++ ) {

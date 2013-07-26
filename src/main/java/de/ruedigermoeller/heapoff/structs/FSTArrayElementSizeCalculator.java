@@ -13,4 +13,5 @@ import java.lang.reflect.Field;
  */
 public interface FSTArrayElementSizeCalculator {
     public int getElementSize(Field arrayRef, FSTStructFactory fac);
+    public Class<? extends FSTStruct> getElementType(Field arrayRef, FSTStructFactory fac);
 }

@@ -1,5 +1,8 @@
 package de.ruedigermoeller.heapofftest.structs;
 
+import de.ruedigermoeller.heapoff.structs.FSTStructAllocator;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructInt;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
@@ -30,27 +33,36 @@ public class StructTest {
 
     public static void main( String arg[] ) {
 
-        FSTStructFactory fac = FSTStructFactory.getInstance();
-        fac.registerClz(TestData.class);
-
         TestData data = new TestData();
         data.setNested(new TestData());
         data.dataStructArray = new StructArray<TestData>(50, new TestData());
-        int siz = fac.calcStructSize(data);
-        TestData data1 = fac.toStruct(data);
-        System.out.println("Size: "+siz+" "+data1.getByteSize()+" "+data1.getString());
 
-        compareTestData( data, data1 );
-        compareTestData( data.getNested(), data1.getNested() );
+        FSTStructAllocator<TestData> alloc = new FSTStructAllocator<TestData>(data,10);
+        FSTStructAllocator<StructString> strAlloc = new FSTStructAllocator<StructString>( new StructString(10), 10 );
 
-        StructArray<StructString> sl = new StructArray(10,new StructString(10));
 
-        sl = fac.toStruct(sl);
+        StructMap<StructInt,TestData> intMap = alloc.newMap(1000, new StructInt(0));
+
+        for (int i=0; i < 1000; i++ ) {
+            TestData value = new TestData();
+            value.getString().setString("int "+i);
+            intMap.put(new StructInt(i), value);
+        }
+
+        for (int i=0; i < 1000; i++ ) {
+            System.out.println(""+i+" => "+intMap.get(new StructString(i)));
+        }
+
+        compareTestData( data, alloc.newStruct() );
+        compareTestData( data.getNested(), alloc.newStruct().getNested() );
+
+        StructArray<StructString> sl = strAlloc.newArray(25);
+
         System.out.println("len "+sl.getByteSize());
 
         System.out.println("size "+sl.size());
         System.out.println("cont "+sl.get(0));
-        sl.set(0, new StructString(10));
+        sl.set(0, new StructString("0123456789"));
         System.out.println("cont " + sl.get(0));
         sl.get(0).setString("Hallo");
         System.out.println("cont " + sl.get(0));

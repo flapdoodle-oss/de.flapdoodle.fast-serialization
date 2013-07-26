@@ -224,4 +224,15 @@ public class StructMap<K,V> extends FSTStruct implements FSTArrayElementSizeCalc
         }
         return -1;
     }
+
+    @Override
+    public Class<? extends FSTStruct> getElementType(Field arrayRef, FSTStructFactory fac) {
+        if ( keyTemplate != null && "keys".equals(arrayRef.getName()) ) {
+            return keyTemplate.getClass();
+        }
+        if ( valueTemplate != null && "vals".equals(arrayRef.getName()) ) {
+            return valueTemplate.getClass();
+        }
+        return null;
+    }
 }

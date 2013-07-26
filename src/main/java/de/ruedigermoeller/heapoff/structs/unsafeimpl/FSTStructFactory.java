@@ -575,11 +575,23 @@ public class FSTStructFactory {
                     siz = Array.getLength(o) * elemSiz;
                     int tmpIndex = index;
                     byte templatearr[] = null;
+                    if ( onHeapStruct instanceof FSTArrayElementSizeCalculator ) {
+                        Class elemClz = ((FSTArrayElementSizeCalculator)onHeapStruct).getElementType(en.fi.getField(),this);
+                        if ( elemClz != null ) {
+                            int clid = getClzId(elemClz);
+                            if ( clid == 0 ) {
+                                registerClz(elemClz);
+                                clid = getClzId(elemClz);
+                            }
+                            unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, clid );
+                        }
+                    }
+                    boolean hasClzId = unsafe.getInt(bytes,FSTUtil.bufoff+en.pointerPos+12) <= 0;
                     if (en.template != null) {
                         templatearr = toByteArray(en.template); // fixme: unnecessary alloc
-                        unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, getClzId( en.template.getClass() ) );
+                        if ( ! hasClzId )
+                            unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, getClzId( en.template.getClass() ) );
                     }
-                    boolean first = true;
                     for (int j = 0; j < objArr.length; j++) {
                         Object objectValue = objArr[j];
                         if ( templatearr != null ) {
@@ -592,9 +604,9 @@ public class FSTStructFactory {
                             } else {
                                 toByteArray((FSTStruct) objectValue, bytes, tmpIndex);
                                 tmpIndex += elemSiz;
-                                if ( first ) {
+                                if ( hasClzId ) {
                                     unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, getClzId( objectValue.getClass() ) );
-                                    first = false;
+                                    hasClzId = false;
                                 }
                             }
                         }

@@ -28,17 +28,17 @@ import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
  */
 public class TestData extends FSTStruct {
 
-    TestData nested;
-    StructString string = new StructString(50);
-    StructArray dataStructArray;
+    protected TestData nested;
+    protected StructString string = new StructString(50);
+    protected StructArray dataStructArray;
 
-    byte a = 0;
-    short b = 11111;
-    char c = 22222;
-    int d = 333333333;
-    long e = 444444444444l;
-    float f = 5555555555.55f;
-    double g = 66666666666.66;
+    protected byte a = 0;
+    protected short b = 11111;
+    protected char c = 22222;
+    protected int d = 333333333;
+    protected long e = 444444444444l;
+    protected float f = 5555555555.55f;
+    protected double g = 66666666666.66;
 
     public byte getA() {
         return a;
@@ -68,13 +68,13 @@ public class TestData extends FSTStruct {
         return g;
     }
 
-    byte[] arrA = "blablablablabla".getBytes();
-    short[] arrb = { 11111, 22222, 3333 };
-    char[] arrc = { 22221, 22221, 22222, 1 };
-    int[] arrd = { 33333331, 33333332, 33333333, 1, 1 } ;
-    long[] arre = { 444444444441l, 444444444442l, 444444444443l, 1,1 ,1 };
-    float[] arrf = { 5555555555.51f, 5555555555.52f, 5555555555.53f, 1,1,1,1 };
-    double[] arrg = { 66666666666.61, 66666666666.62,66666666666.63,1,1,1,1,1};
+    protected byte[] arrA = "blablablablabla".getBytes();
+    protected short[] arrb = { 11111, 22222, 3333 };
+    protected char[] arrc = { 22221, 22221, 22222, 1 };
+    protected int[] arrd = { 33333331, 33333332, 33333333, 1, 1 } ;
+    protected long[] arre = { 444444444441l, 444444444442l, 444444444443l, 1,1 ,1 };
+    protected float[] arrf = { 5555555555.51f, 5555555555.52f, 5555555555.53f, 1,1,1,1 };
+    protected double[] arrg = { 66666666666.61, 66666666666.62,66666666666.63,1,1,1,1,1};
 
     public byte arrA(int index) { return arrA[index]; }
     public short arrb(int index) { return arrb[index]; }
@@ -106,6 +106,10 @@ public class TestData extends FSTStruct {
 
     public StructString getString() {
         return string;
+    }
+
+    public void setString( StructString s ) {
+        string = s;
     }
 
     public TestData getNested() { // Workaround Bug: referencing self does not work with javaassist
