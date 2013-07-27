@@ -54,7 +54,11 @@ public class StructTest {
         }
 
         for (int i=0; i < 1000; i++ ) {
-            System.out.println(""+i+" => "+intMap.get(new StructInt(i)).getString());
+            StructString string = intMap.get(new StructInt(i)).getString();
+            if ( ! string.toString().equals("int "+i) ) {
+                throw new RuntimeException("error: '"+string+"'");
+            }
+//            System.out.println(""+i+" => "+ string);
         }
 
         compareTestData( data, alloc.newStruct() );

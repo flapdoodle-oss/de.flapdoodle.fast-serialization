@@ -1,6 +1,7 @@
 package de.ruedigermoeller.heapofftest.structs;
 
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
+import de.ruedigermoeller.heapoff.structs.Templated;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 
@@ -39,6 +40,12 @@ public class TestData extends FSTStruct {
     protected long e = 444444444444l;
     protected float f = 5555555555.55f;
     protected double g = 66666666666.66;
+
+    protected Object objArray = new Object[] { new StructString(5), new StructString(10), new StructString(20)};
+    @Templated
+    protected Object templatedObjArray = new Object[] { new StructString(5), null, null, null };
+
+    protected StructString typedArray[] = new StructString[] { null, new StructString("One"), new StructString("Two"), new StructString("3", 10), new StructString("Four") };
 
     public byte getA() {
         return a;
@@ -112,10 +119,9 @@ public class TestData extends FSTStruct {
         string = s;
     }
 
-    public TestData getNested() { // Workaround Bug: referencing self does not work with javaassist
-        return (TestData) _getNested();
+    public TestData getNested() {
+        return nested;
     }
-    public Object _getNested() { return nested; }
 
     public void setNested(TestData nested) {
         this.nested = nested;

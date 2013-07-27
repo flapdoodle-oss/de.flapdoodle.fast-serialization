@@ -114,25 +114,27 @@ public class FSTStructFactory {
                 mp.fix(clazz.getSuperclass().getName());
                 method = new CtMethod(method,newClz,mp);
                 String methName = method.getName();
-                FSTClazzInfo.FSTFieldInfo arrayFi = clInfo.getFieldInfo(methName, null);
-                FSTClazzInfo.FSTFieldInfo lenfi = methName.length() > 2 ? clInfo.getFieldInfo(methName.substring(0, methName.length() - 3), null) : null;
-                FSTClazzInfo.FSTFieldInfo indexfi = methName.length()>4 ? clInfo.getFieldInfo(methName.substring(0, methName.length() - 5), null) : null;
-                int pointerlen = "Pointer".length();
-                FSTClazzInfo.FSTFieldInfo pointerfi = methName.length()> pointerlen ? clInfo.getFieldInfo(methName.substring(0, methName.length() - pointerlen), null) : null;
-                pointerlen = "ElementSize".length();
-                FSTClazzInfo.FSTFieldInfo elemlen = methName.length()> pointerlen ? clInfo.getFieldInfo(methName.substring(0, methName.length() - pointerlen), null) : null;
-                pointerlen = "StructIndex".length();
+                // array access:
+                //      void [name](int, type)
+                //      [type] [name](int)
+                FSTClazzInfo.FSTFieldInfo arrayFi = checkForSpecialArrayMethod(clInfo, method, "", null, null);
+                // array length:
+                //      int [name]Len()
+                FSTClazzInfo.FSTFieldInfo lenfi = checkForSpecialArrayMethod(clInfo, method, "Len", CtClass.intType, new CtClass[0]);
+                // get byte index of array data:
+                //      int [name]Index()
+                FSTClazzInfo.FSTFieldInfo indexfi = checkForSpecialArrayMethod(clInfo, method, "Index", CtClass.intType, new CtClass[0]);
+                // get size of array element:
+                //      int [name]ElementSize()
+                FSTClazzInfo.FSTFieldInfo elemlen = checkForSpecialArrayMethod(clInfo, method, "ElementSize", CtClass.intType, new CtClass[0]);
+                // get pointer to array[0] element:
+                //      type [name]Pointer() OR type [name]Pointer(pointerToSetup) (for reuse)
+                FSTClazzInfo.FSTFieldInfo pointerfi = checkForSpecialArrayMethod(clInfo, method, "Pointer", null, null);
+                int pointerlen = "StructIndex".length();
                 FSTClazzInfo.FSTFieldInfo structIndex = methName.length()> pointerlen ? clInfo.getFieldInfo(methName.substring(0, methName.length() - pointerlen), null) : null;
-                if ( arrayFi == null || !arrayFi.isArray() || arrayFi.getArrayType().isArray() )
-                    arrayFi = null;
-                if ( lenfi == null || !lenfi.isArray() || lenfi.getArrayType().isArray() )
-                    lenfi = null;
-                if ( indexfi == null || !indexfi.isArray() || indexfi.getArrayType().isArray() )
-                    indexfi = null;
+
                 if ( pointerfi == null || !pointerfi.isArray() || pointerfi.getArrayType().isArray() )
                     pointerfi = null;
-                if ( elemlen == null || !elemlen.isArray() || elemlen.getArrayType().isArray() )
-                    elemlen = null;
 
                 if ( pointerfi != null ) {
                     structGen.defineArrayPointer(pointerfi, clInfo, method);
@@ -186,6 +188,22 @@ public class FSTStructFactory {
         }
 
         return (Class<T>) loadProxyClass(clazz, pool, newClz);
+    }
+
+    FSTClazzInfo.FSTFieldInfo checkForSpecialArrayMethod( FSTClazzInfo clzInfo, CtMethod method, String postFix, Object returnType, CtClass requiredArgs[] ) {
+        int len = postFix.length();
+        String methName = method.getName();
+        if ( ! methName.endsWith(postFix) ) {
+            return null;
+        }
+        FSTClazzInfo.FSTFieldInfo res = clzInfo.getFieldInfo(methName.substring(0, methName.length() - len), null);
+        if ( res.isArray() && res.getArrayType().isArray() ) {
+            throw new RuntimeException("nested arrays not supported "+res.getDesc());
+        }
+        if ( res.isArray() ) {
+            return res;
+        }
+        return null;
     }
 
     private <T> Class loadProxyClass(Class<T> clazz, ClassPool pool, CtClass cc) throws ClassNotFoundException {
