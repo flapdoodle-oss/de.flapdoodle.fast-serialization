@@ -1,5 +1,6 @@
 package de.ruedigermoeller.heapofftest.structs;
 
+import de.ruedigermoeller.heapoff.structs.FSTStructAllocator;
 import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
@@ -84,7 +85,7 @@ public class BenchStructIter {
         charter.text("<i>intel i7 3770K 3,5 ghz, 4 core, 8 threads</i>");
         charter.text("<i>" + System.getProperty("java.runtime.version") + "," + System.getProperty("java.vm.name") + "," + System.getProperty("os.name") + "</i>");
 //
-        final FSTStructFactory fac = FSTStructFactory.getInstance();
+        final FSTStructAllocator<TestInstrument> alloc = new FSTStructAllocator<TestInstrument>(TestInstrument.createInstrumentTemplate(),SIZE);
 
 
         charter.heading("Instantiation Time (CMS Collector)");
@@ -103,10 +104,9 @@ public class BenchStructIter {
         };
         Runnable offHeapInst = new Runnable() {
             public void run() {
-                StructArray<TestInstrument> instruments = fac.toStructArray(SIZE, TestInstrument.createInstrumentTemplate());
+                StructArray<TestInstrument> instruments = alloc.newArray(SIZE);
                 fillInstruments(instruments);
                 System.out.println("allocated " + instruments.size() + " instruments using " + instruments.getByteSize() / 1000 / 1000 + " MB clid:" + instruments.getStructElemClassId());
-                TestInstrument pointer = instruments.createPointer(0);
                 offheap[0] = instruments;
             }
         };
@@ -140,8 +140,9 @@ public class BenchStructIter {
         long oninstTime1 = test( onHeapInst );
         System.out.println("duration on heap instantiation #3 "+oninstTime1);
 
+        FSTStructAllocator<LargeIntArray> arrAlloc = new FSTStructAllocator<LargeIntArray>(new LargeIntArray());
         final int iterMul = 50;
-        final LargeIntArray offIntArr = fac.toStruct(new LargeIntArray());
+        final LargeIntArray offIntArr = arrAlloc.newStruct();
         final LargeIntArray onIntArr = new LargeIntArray();
 
 //        BasicGCBench.benchFullGC();

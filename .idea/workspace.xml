@@ -2,19 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/gcbenchmarks/HashMapGC.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java" afterPath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java" afterPath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/unsafeimpl/FSTByteArrayUnsafeStructGeneration.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/unsafeimpl/FSTByteArrayUnsafeStructGeneration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTObjectInput.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTObjectInput.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStruct.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStruct.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/unsafeimpl/FSTStructFactory.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/unsafeimpl/FSTStructFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/LargeIntArray.java" afterPath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/LargeIntArray.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructArray.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructArray.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructMap.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructString.java" afterPath="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructString.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/StructTest.java" afterPath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/StructTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/TestData.java" afterPath="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/TestData.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="6f7c434a-88bd-4381-a8c3-3c0f931e5f06" name="ignored" comment="" />
@@ -26,7 +15,7 @@
     <file path="/FSTObjectOutput.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371646380330" ignored="false" />
     <file path="/FSTObjectRegistry.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371231429521" ignored="false" />
     <file path="/a.dummy" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1374948858465" ignored="false" />
-    <file path="/Dummy.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1374932508842" ignored="false" />
+    <file path="/Dummy.txt" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1374953648896" ignored="false" />
     <file path="/SimpleOrder.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355512004726" ignored="false" />
     <file path="/FSTOffHeapMap.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371579915644" ignored="false" />
     <file path="/BasicOfftest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1355536772120" ignored="false" />
@@ -598,7 +587,7 @@
     <file path="$APPLICATION_HOME_DIR$/plugins/Hibernate/lib/hibernate.jar!/resources/schemas/hibernate-configuration-4.0.xsd" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371494964528" ignored="false" />
     <file path="$APPLICATION_HOME_DIR$/plugins/Hibernate/lib/hibernate.jar!/resources/schemas/hibernate-mapping-4.0.xsd" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371494964528" ignored="false" />
     <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/resources/relaxng.rng" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1371494964528" ignored="false" />
-    <file path="/FSTStructFactory.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1374952162254" ignored="false" />
+    <file path="/FSTStructFactory.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1374953698283" ignored="false" />
     <file path="/TestStructs.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1372292049611" ignored="false" />
     <file path="/FSTStructArray.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1372291248695" ignored="false" />
     <file path="/FSTStruct.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1374946195843" ignored="false" />
@@ -608,7 +597,7 @@
     <file path="/StructTest.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1374946233415" ignored="false" />
     <file path="/FSTByteArrayUnsafeStructGeneration.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1374047602800" ignored="false" />
     <file path="/TestInstrument.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1374000619581" ignored="false" />
-    <file path="/BenchStructIter.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1374940504751" ignored="false" />
+    <file path="/BenchStructIter.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1374953900486" ignored="false" />
     <file path="/FSTStructGeneration.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373892801822" ignored="false" />
     <file path="/Align.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1373963548688" ignored="false" />
     <file path="/TestData.java" changelist="1a27b62d-baba-4a2b-bca2-d653f7b78c7e" time="1374944847695" ignored="false" />
@@ -761,7 +750,22 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/LargeIntArray.java" line="39" class="de.ruedigermoeller.heapofftest.structs.LargeIntArray" package="de.ruedigermoeller.heapofftest.structs">
+      <breakpoint url="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/unsafeimpl/FSTStructFactory.java" line="634" class="de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory" package="de.ruedigermoeller.heapoff.structs.unsafeimpl">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java" line="106" class="de.ruedigermoeller.heapofftest.structs.BenchStructIter$2" package="de.ruedigermoeller.heapofftest.structs">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -789,12 +793,12 @@
       <file leaf-file-name="FSTStructFactory.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/unsafeimpl/FSTStructFactory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="203" column="9" selection-start="10069" selection-end="10069" vertical-scroll-proportion="1.4393163">
+            <state line="519" column="0" selection-start="23465" selection-end="23465" vertical-scroll-proportion="0.08516484">
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#16398#16408#0" expanded="true" />
-                <element signature="e#21305#21321#0" expanded="true" />
-                <element signature="e#22923#22937#0" expanded="true" />
+                <element signature="e#16355#16365#0" expanded="true" />
+                <element signature="e#21262#21278#0" expanded="true" />
+                <element signature="e#22880#22894#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -830,10 +834,35 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="FSTStructAllocator.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructAllocator.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="33" column="0" selection-start="949" selection-end="949" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="BenchStructIter.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="188" column="52" selection-start="8313" selection-end="8313" vertical-scroll-proportion="0.0">
+            <state line="106" column="0" selection-start="4977" selection-end="4977" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#3898#3914#0" expanded="true" />
+                <element signature="e#4928#5356#0" expanded="true" />
+                <element signature="e#5345#5346#0" expanded="true" />
+                <element signature="e#6561#6576#0" expanded="true" />
+                <element signature="e#10721#11408#0" expanded="true" />
+                <element signature="e#11393#11394#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="StructArray.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructArray.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="97" column="0" selection-start="2853" selection-end="2853" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -842,7 +871,7 @@
       <file leaf-file-name="LargeIntArray.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/LargeIntArray.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="0" selection-start="449" selection-end="449" vertical-scroll-proportion="0.0">
+            <state line="41" column="39" selection-start="1128" selection-end="1128" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -854,24 +883,6 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/unsafeimpl/FSTByteArrayUnsafeStructGeneration.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="205" column="68" selection-start="10039" selection-end="10039" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FSTClazzInfo.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTClazzInfo.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="218" column="32" selection-start="7865" selection-end="7865" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FSTObjectInput.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/serialization/FSTObjectInput.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="285" column="18" selection-start="9912" selection-end="9912" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -1039,10 +1050,10 @@
         <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/StructTest.java" />
         <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructMap.java" />
-        <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java" />
         <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/LargeIntArray.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/unsafeimpl/FSTByteArrayUnsafeStructGeneration.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/unsafeimpl/FSTStructFactory.java" />
+        <option value="$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java" />
       </list>
     </option>
   </component>
@@ -2399,7 +2410,11 @@
       <created>1374933434109</created>
       <updated>1374933434109</updated>
     </task>
-    <option name="localTasksCounter" value="90" />
+    <task id="LOCAL-00090" summary="struct stuff">
+      <created>1374953658103</created>
+      <updated>1374953658103</updated>
+    </task>
+    <option name="localTasksCounter" value="91" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -2411,17 +2426,17 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4318182" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16715032" sideWeight="0.6960894" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5181818" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.5181818" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32902467" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2434571" sideWeight="0.2159091" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2434571" sideWeight="0.14204545" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38522726" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30113637" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20772947" sideWeight="0.6452703" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965758" sideWeight="0.5217877" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2434571" sideWeight="0.51704544" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26704547" sideWeight="0.9887711" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2434571" sideWeight="0.33977273" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.52272725" sideWeight="0.9887711" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -2529,13 +2544,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructAllocator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="0" selection-start="703" selection-end="703" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/TestInstrument.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="64" column="5" selection-start="2222" selection-end="2222" vertical-scroll-proportion="0.0">
@@ -2546,13 +2554,6 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructString.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="59" column="0" selection-start="1851" selection-end="1851" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructArray.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="97" column="0" selection-start="2853" selection-end="2853" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -2599,35 +2600,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="301" column="48" selection-start="10831" selection-end="10831" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#10236#10264#0" expanded="true" />
-            <element signature="e#10519#10547#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/StructTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="115" column="24" selection-start="4687" selection-end="4687" vertical-scroll-proportion="2.12">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/LargeIntArray.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="0" selection-start="449" selection-end="449" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="188" column="52" selection-start="8313" selection-end="8313" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -2639,14 +2614,61 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/unsafeimpl/FSTStructFactory.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="203" column="9" selection-start="10069" selection-end="10069" vertical-scroll-proportion="1.4393163">
+        <state line="301" column="48" selection-start="10831" selection-end="10831" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#10236#10264#0" expanded="true" />
+            <element signature="e#10519#10547#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/LargeIntArray.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="41" column="39" selection-start="1128" selection-end="1128" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#16398#16408#0" expanded="true" />
-            <element signature="e#21305#21321#0" expanded="true" />
-            <element signature="e#22923#22937#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/structtypes/StructArray.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="97" column="0" selection-start="2853" selection-end="2853" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="106" column="0" selection-start="4977" selection-end="4977" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#3898#3914#0" expanded="true" />
+            <element signature="e#4928#5356#0" expanded="true" />
+            <element signature="e#5345#5346#0" expanded="true" />
+            <element signature="e#6561#6576#0" expanded="true" />
+            <element signature="e#10721#11408#0" expanded="true" />
+            <element signature="e#11393#11394#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/FSTStructAllocator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="0" selection-start="949" selection-end="949" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/ruedigermoeller/heapoff/structs/unsafeimpl/FSTStructFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="519" column="0" selection-start="23465" selection-end="23465" vertical-scroll-proportion="0.08516484">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#16355#16365#0" expanded="true" />
+            <element signature="e#21262#21278#0" expanded="true" />
+            <element signature="e#22880#22894#0" expanded="true" />
           </folding>
         </state>
       </provider>

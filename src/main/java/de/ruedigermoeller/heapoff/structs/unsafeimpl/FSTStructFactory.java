@@ -130,8 +130,8 @@ public class FSTStructFactory {
                 // get pointer to array[0] element:
                 //      type [name]Pointer() OR type [name]Pointer(pointerToSetup) (for reuse)
                 FSTClazzInfo.FSTFieldInfo pointerfi = checkForSpecialArrayMethod(clInfo, method, "Pointer", null, null);
-                // get pointer to structure or array header element:
-                //      type [name]Pointer() OR type [name]Pointer(pointerToSetup) (for reuse)
+                // get byte index to structure or array header element:
+                //      type [name]StructIndex()
                 FSTClazzInfo.FSTFieldInfo structIndex = checkForSpecialArrayMethod(clInfo, method, "StructIndex", CtClass.intType, new CtClass[0], false);
 
                 if ( pointerfi != null ) {
