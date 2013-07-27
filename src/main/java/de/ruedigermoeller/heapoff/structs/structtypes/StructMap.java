@@ -46,8 +46,8 @@ public class StructMap<K,V> extends FSTStruct implements FSTArrayElementSizeCalc
     protected int    size;
     protected transient FSTStruct pointer;
 
-    public StructMap( FSTStruct keyTemplate, FSTStruct valueTemplate, int elementSize ) {
-        this(elementSize);
+    public StructMap( FSTStruct keyTemplate, FSTStruct valueTemplate, int numelems ) {
+        this(numelems);
         this.keyTemplate = keyTemplate;
         this.valueTemplate = valueTemplate;
     }
@@ -57,11 +57,11 @@ public class StructMap<K,V> extends FSTStruct implements FSTArrayElementSizeCalc
      * in an element bucket size of zero rendering this map unusable off heap. Use the templated constructore to
      * create an empty OffHeap Map.
      */
-    public StructMap(int elementSize)
+    public StructMap(int numElems)
     {
-        elementSize = Math.max(3, elementSize);
-        keys    = new Object[elementSize];
-        vals = new Object[elementSize];
+        numElems = Math.max(3, numElems);
+        keys    = new Object[numElems*2];
+        vals = new Object[numElems*2];
     }
 
     public StructMap(Map<K, V> toCopy)

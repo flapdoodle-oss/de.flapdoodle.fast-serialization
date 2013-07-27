@@ -46,11 +46,15 @@ public class StructTest {
         for (int i=0; i < 1000; i++ ) {
             TestData value = new TestData();
             value.getString().setString("int "+i);
-            intMap.put(new StructInt(i), value);
+            try {
+                intMap.put(new StructInt(i), value);
+            } catch (Exception wx) {
+                System.out.println(i+" "+wx);
+            }
         }
 
         for (int i=0; i < 1000; i++ ) {
-            System.out.println(""+i+" => "+intMap.get(new StructString(i)));
+            System.out.println(""+i+" => "+intMap.get(new StructInt(i)).getString());
         }
 
         compareTestData( data, alloc.newStruct() );
