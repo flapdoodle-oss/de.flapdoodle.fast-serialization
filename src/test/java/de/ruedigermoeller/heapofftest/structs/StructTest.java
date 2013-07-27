@@ -1,5 +1,6 @@
 package de.ruedigermoeller.heapofftest.structs;
 
+import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.FSTStructAllocator;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructInt;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
@@ -64,26 +65,58 @@ public class StructTest {
         compareTestData( data, alloc.newStruct() );
         compareTestData( data.getNested(), alloc.newStruct().getNested() );
 
-        StructArray<StructString> sl = strAlloc.newArray(25);
+        // test untyped polymorphic objectArray
+        TestData objArrayTest = alloc.newStruct();
+        check( ((StructInt)objArrayTest.objArray(3).cast()).get() == 17 );
+        System.out.println("len "+objArrayTest.objArrayElementSize()+" "+((StructString)objArrayTest.objArray(0).cast()).getByteSize());
+        check( objArrayTest.objArrayElementSize() == ((StructString)objArrayTest.objArray(0).cast()).getByteSize() );
+        boolean exThrown = false;
+        try {
+            ((StructString)objArrayTest.objArray(0).cast()).setString("01234567890123456780");
+        } catch (Exception ex) {
+            exThrown = true;
+        }
+        check(exThrown);
+        objArrayTest.objArray(0, new StructString("01234567890123456780"));
+        System.out.println("Struct index " + objArrayTest.objArrayStructIndex());
+        check(objArrayTest.objArrayStructIndex() > 0);
+        check(objArrayTest.objArrayElementSize() > 0);
+        check(objArrayTest.objArrayPointer() != null);
+        check(objArrayTest.objArrayStructIndex()%8 == 0);
 
+        for ( int i = 0; i < objArrayTest.objArrayLen(); i++) {
+            objArrayTest.objArray(i,null);
+            check(objArrayTest.objArray(i) == null);
+        }
+
+        FSTStruct fstStruct = objArrayTest.objArrayPointer();
+        FSTStruct fstStruct1 = objArrayTest.objArray(0);
+        check(fstStruct.isNull());
+
+        for ( int i = 0; i < objArrayTest.objArrayLen(); i++) {
+            objArrayTest.objArray(i,new StructInt(i));
+            check(((StructInt)objArrayTest.objArray(i).cast()).get() == i);
+        }
+
+
+        StructArray <StructString> sl = strAlloc.newArray(25);
         System.out.println("len "+sl.getByteSize());
-
-        System.out.println("size "+sl.size());
-        System.out.println("cont "+sl.get(0));
-        sl.set(0, new StructString("0123456789"));
-        System.out.println("cont " + sl.get(0));
-        sl.get(0).setString("Hallo");
-        System.out.println("cont " + sl.get(0));
 
         for ( int i=0; i < sl.size(); i++ ) {
             sl.set(i,new StructString("Hallo"+i));
         }
 
-        sl.set(5,null);
         for ( int i=0; i < sl.size(); i++ ) {
-            System.out.println(sl.get(i));
+            check(sl.get(i).toString().equals("Hallo"+i));
         }
 
+
+    }
+
+    private static void check(boolean b) {
+        if ( ! b ) {
+            throw new RuntimeException("assertion failed");
+        }
     }
 
     private static void compareTestData(TestData data, TestData data1) {

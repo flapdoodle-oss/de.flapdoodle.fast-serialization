@@ -1,6 +1,8 @@
 package de.ruedigermoeller.heapofftest.structs;
 
+import de.ruedigermoeller.heapoff.structs.Align;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
+import de.ruedigermoeller.heapoff.structs.NoAssist;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,6 +12,7 @@ import de.ruedigermoeller.heapoff.structs.FSTStruct;
  * To change this template use File | Settings | File Templates.
  */
 public class LargeIntArray extends FSTStruct {
+    @Align(8)
     protected int largeArray[];
 
     public LargeIntArray() {
@@ -29,6 +32,7 @@ public class LargeIntArray extends FSTStruct {
     }
 
     transient protected FSTStruct pointer;
+    @NoAssist
     public int calcSumPointered() {
         if ( pointer == null )
             pointer = new FSTStruct();

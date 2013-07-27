@@ -1,8 +1,10 @@
 package de.ruedigermoeller.heapofftest.structs;
 
+import de.ruedigermoeller.heapoff.structs.Align;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.Templated;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
+import de.ruedigermoeller.heapoff.structs.structtypes.StructInt;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 
 /**
@@ -41,12 +43,6 @@ public class TestData extends FSTStruct {
     protected float f = 5555555555.55f;
     protected double g = 66666666666.66;
 
-    protected FSTStruct objArray[] = new FSTStruct[] { new StructString(5), new StructString(10), new StructString(20)};
-    @Templated
-    protected FSTStruct templatedObjArray[] = new FSTStruct[] { new StructString(5), null, null, null };
-
-    protected StructString typedArray[] = new StructString[] { null, new StructString("One"), new StructString("Two"), new StructString("3", 10), new StructString("Four") };
-
     public byte getA() {
         return a;
     }
@@ -82,6 +78,11 @@ public class TestData extends FSTStruct {
     protected long[] arre = { 444444444441l, 444444444442l, 444444444443l, 1,1 ,1 };
     protected float[] arrf = { 5555555555.51f, 5555555555.52f, 5555555555.53f, 1,1,1,1 };
     protected double[] arrg = { 66666666666.61, 66666666666.62,66666666666.63,1,1,1,1,1};
+    @Align(8)
+    protected FSTStruct objArray[] = new FSTStruct[] { new StructString(5), new StructString(10), new StructString(20), new StructInt(17)};
+    @Templated protected FSTStruct templatedObjArray[] = new FSTStruct[] { new StructString(5), null, null, null };
+    protected StructString typedArray[] = new StructString[] { null, new StructString("One"), new StructString("Two"), new StructString("3", 10), new StructString("Four") };
+
 
     public byte arrA(int index) { return arrA[index]; }
     public short arrb(int index) { return arrb[index]; }
@@ -90,6 +91,9 @@ public class TestData extends FSTStruct {
     public long arre(int index) { return arre[index]; }
     public float arrf(int index) { return arrf[index]; }
     public double arrg(int index) { return arrg[index]; }
+    public FSTStruct objArray(int index) { return objArray[index]; }
+    public FSTStruct templatedObjArray(int index) { return templatedObjArray[index]; }
+    public StructString typedArray(int index) { return typedArray[index]; }
 
     public void arrA(int index, byte val) { arrA[index] = val; }
     public void arrb(int index, short val ) { arrb[index] = val; }
@@ -98,6 +102,9 @@ public class TestData extends FSTStruct {
     public void arre(int index, long val) { arre[index] = val; }
     public void arrf(int index, float val) { arrf[index] = val; }
     public void arrg(int index, double val ) { arrg[index] = val; }
+    public void objArray(int index, FSTStruct val) { objArray[index] = val; }
+    public void templatedObjArray(int index, FSTStruct val) { templatedObjArray[index] = val; }
+    public void typedArray(int index, StructString val) { typedArray[index] = val; }
 
     public int arrALen() { return arrA.length; }
     public int arrbLen() { return arrb.length; }
@@ -106,6 +113,24 @@ public class TestData extends FSTStruct {
     public int arreLen() { return arre.length; }
     public int arrfLen() { return arrf.length; }
     public int arrgLen() { return arrg.length; }
+    public int objArrayLen() { return objArray.length; }
+    public int templatedObjArrayLen() { return templatedObjArray.length; }
+    public int typedArrayLen() { return typedArray.length; }
+
+    // special methods
+    public int objArrayElementSize() {
+        return -1;
+    }
+
+    public int objArrayStructIndex() {
+        return -1;
+    }
+
+    public FSTStruct objArrayPointer() {
+        return null;
+    }
+
+
 
     public StructArray getDataStructArray() {
         return dataStructArray;

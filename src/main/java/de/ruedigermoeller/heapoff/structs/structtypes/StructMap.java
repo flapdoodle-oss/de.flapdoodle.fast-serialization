@@ -2,6 +2,7 @@ package de.ruedigermoeller.heapoff.structs.structtypes;
 
 import de.ruedigermoeller.heapoff.structs.FSTArrayElementSizeCalculator;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
+import de.ruedigermoeller.heapoff.structs.NoAssist;
 import de.ruedigermoeller.heapoff.structs.Templated;
 import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
 
@@ -46,28 +47,22 @@ public class StructMap<K,V> extends FSTStruct implements FSTArrayElementSizeCalc
     protected int    size;
     protected transient FSTStruct pointer;
 
-    public StructMap( FSTStruct keyTemplate, FSTStruct valueTemplate, int numelems ) {
-        this(numelems);
+    public StructMap( FSTStruct keyTemplate, FSTStruct valueTemplate, int numElems ) {
+        init(keyTemplate, valueTemplate, numElems);
+    }
+
+    @NoAssist
+    protected void init(FSTStruct keyTemplate, FSTStruct valueTemplate, int numElems) {
+        numElems = Math.max(3, numElems);
+        keys    = new Object[numElems*2];
+        vals = new Object[numElems*2];
         this.keyTemplate = keyTemplate;
         this.valueTemplate = valueTemplate;
     }
 
-    /**
-     * creates a new Hashtable with 'entrySize' elements allocated on heap. Note that off-heaping before filling elements will result
-     * in an element bucket size of zero rendering this map unusable off heap. Use the templated constructore to
-     * create an empty OffHeap Map.
-     */
-    public StructMap(int numElems)
-    {
-        numElems = Math.max(3, numElems);
-        keys    = new Object[numElems*2];
-        vals = new Object[numElems*2];
-    }
-
-    public StructMap(Map<K, V> toCopy)
-    {
-        this(toCopy.size()*2);
-        for (Iterator iterator = toCopy.entrySet().iterator(); iterator.hasNext(); ) {
+    public StructMap( FSTStruct keyTemplate, FSTStruct valueTemplate, Map<K,V> elems ) {
+        this(keyTemplate,valueTemplate,elems.size());
+        for (Iterator iterator = elems.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry next = (Map.Entry) iterator.next();
             put((K)next.getKey(),(V)next.getValue());
         }
@@ -91,8 +86,9 @@ public class StructMap<K,V> extends FSTStruct implements FSTArrayElementSizeCalc
             long arrbase = ___offset+keysStructIndex();
             int kvlen = unsafe.getInt(___bytes,arrbase+4);
             int kelemsiz = unsafe.getInt(___bytes,arrbase+8);
-            if ( pointer == null )
+            if ( pointer == null ) {
                 pointer = ___fac.createStructPointer(___bytes,0,unsafe.getInt(___bytes,arrbase+12) );
+            }
 
             int pos = ((key.hashCode() & 0x7FFFFFFF) % kvlen);
             pointer.___offset = ___offset+unsafe.getInt(___bytes,arrbase)+pos*kelemsiz;
@@ -195,23 +191,6 @@ public class StructMap<K,V> extends FSTStruct implements FSTArrayElementSizeCalc
 
     public int valsLen() {
         return vals.length;
-    }
-
-    public static void main(String[] args)
-    {
-        StructMap<Integer,Integer> smt = new StructMap(8000);
-
-        for (int ii = 0; ii < 4000; ii++)
-        {
-            smt.put(ii,ii);
-        }
-
-        for (int ii = 0; ii < 4000; ii++)
-        {
-            if ( smt.get(ii).intValue() != ii )
-                System.out.println("BUG");
-        }
-
     }
 
     @Override

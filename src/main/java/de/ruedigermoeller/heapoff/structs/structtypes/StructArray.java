@@ -117,6 +117,14 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
             return -1;
     }
 
+    @NoAssist
+    public int getStructElemClassId() {
+        if (isOffHeap())
+            return unsafe.getInt( ___bytes, FSTUtil.bufoff+elemsIndex()+12 );
+        else
+            return -1;
+    }
+
     public final class StructArrIterator<T extends FSTStruct> implements Iterator<T> {
 
         T current;

@@ -206,7 +206,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
         if ( parameterTypes != null && parameterTypes.length ==1 ) {
             try {
                 if (indexfi.isIntegral()) {
-                    method.setBody("{ $1.baseOn(___bytes, ___offset+"+index+", ___fac); }");
+                    method.setBody("{ ___fac.fillPrimitiveArrayBasePointer($1,___bytes, ___offset, "+index+"); }");
                 } else {
                     method.setBody("{ ___fac.fillTypedArrayBasePointer($1,___bytes, ___offset, "+index+"); }");
                 }

@@ -273,21 +273,8 @@ public class BenchStructs {
     public static void main0(String arg[] ) throws Exception {
 
         FSTStructFactory fac = new FSTStructFactory();
-        fac.registerClz(TestStruct.class);
-        fac.registerClz(SubTestStruct.class);
-        fac.registerClz(StructString.class);
-        fac.registerClz(StructMap.class);
 
-//        StructArray<TestStruct> arrT = fac.toStructArray(100, new TestStruct());
-//        for (int i = 0; i < arrT.size(); i++) {
-//            arrT.get(i).setIntVar(i);
-//        }
-//        for (Iterator<TestStruct> iterator = arrT.iterator(); iterator.hasNext(); ) {
-//            TestStruct next = iterator.next();
-//            System.out.println("next "+next.getIntVar());
-//        }
-
-        StructMap mp = new StructMap(11);
+        StructMap mp = new StructMap( new StructString(30), new StructString(30), 11);
         mp.put(new StructString("Emil"),new StructString("Möller-Lienemann"));
         mp.put(new StructString("Felix"),new StructString("Möller-Fricker"));
         mp.put(new StructString("Rüdiger"),new StructString("Möller"));
@@ -308,7 +295,7 @@ public class BenchStructs {
         }
 
         for ( int iii = 0; iii < 10; iii++ ) {
-            StructMap<StructString,StructString> stMap = new StructMap<StructString, StructString>(testMap);
+            StructMap<StructString,StructString> stMap = new StructMap<StructString, StructString>(new StructString(16),new StructString(16), testMap);
             StructString toSearch = new StructString("oij"+11);
             StructString toNotFind = new StructString("notThere");
             long tim = System.currentTimeMillis();

@@ -282,9 +282,15 @@ public class FSTStructFactory {
     public FSTStruct createTypedArrayBasePointer(byte base[], long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
         int arrayElementZeroindex = unsafe.getInt(base,objectBaseOffset+arrayStructIndex);
         int elemSiz = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+8);
-//        int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);
+        int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);
         int clId = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+12);
-        FSTStruct structPointer = createStructPointer(base, arrayElementZeroindex, clId);
+        FSTStruct structPointer = null;
+        if ( clId <= 0 ) { // untyped array
+            structPointer = new FSTStruct();
+            structPointer.baseOn(base,objectBaseOffset+arrayElementZeroindex,this);
+        } else {
+            structPointer = createStructPointer(base, arrayElementZeroindex, clId);
+        }
         structPointer.___elementSize = elemSiz;
         return structPointer;
     }
@@ -294,15 +300,20 @@ public class FSTStructFactory {
         int elemSiz = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+8);
 //        int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);
 //        int clId = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+12);
-        result.baseOn(base, FSTUtil.bufoff + arrayElementZeroindex, this);
+        result.baseOn(base, objectBaseOffset + arrayElementZeroindex, this);
         result.___elementSize = elemSiz;
+    }
+
+    public void fillPrimitiveArrayBasePointer(FSTStruct result, byte base[], long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
+        int arrayElementZeroindex = unsafe.getInt(base,objectBaseOffset+arrayStructIndex);
+        result.baseOn(base,objectBaseOffset+arrayElementZeroindex,this);
     }
 
     public FSTStruct createPrimitiveArrayBasePointer(byte base[], long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
         int arrayElementZeroindex = unsafe.getInt(base,objectBaseOffset+arrayStructIndex);
 //        int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);
         FSTStruct structPointer = new FSTStruct();
-        structPointer.baseOn(base,FSTUtil.bufoff+arrayElementZeroindex,this);
+        structPointer.baseOn(base,objectBaseOffset+arrayElementZeroindex,this);
         return structPointer;
     }
 
@@ -572,7 +583,7 @@ public class FSTStructFactory {
             } else { // objectref
                 Object obj = clInfo.getObjectValue(onHeapStruct, fi);
                 if ( obj == null ) {
-                    unsafe.putInt(bytes, FSTUtil.bufoff + index, -1);
+                    unsafe.putInt(bytes, FSTUtil.bufoff + index+4, -1);
                     index+=fi.getStructSize();
                 } else {
                     Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
@@ -631,7 +642,7 @@ public class FSTStructFactory {
                             unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, clid );
                         }
                     }
-                    boolean hasClzId = unsafe.getInt(bytes,FSTUtil.bufoff+en.pointerPos+12) <= 0;
+                    boolean hasClzId = unsafe.getInt(bytes,FSTUtil.bufoff+en.pointerPos+12) > 0;
                     if (en.template != null) {
                         templatearr = toByteArray(en.template); // fixme: unnecessary alloc
                         if ( ! hasClzId )
@@ -644,10 +655,11 @@ public class FSTStructFactory {
                             tmpIndex+=elemSiz;
                         } else {
                             if ( objectValue == null ) {
-                                unsafe.putInt(bytes, FSTUtil.bufoff + tmpIndex, -1);
+                                unsafe.putInt(bytes, FSTUtil.bufoff + tmpIndex+4, -1);
                                 tmpIndex += elemSiz;
                             } else {
                                 toByteArray((FSTStruct) objectValue, bytes, tmpIndex);
+                                unsafe.putInt( bytes,FSTUtil.bufoff+tmpIndex, elemSiz ); // need to patch size in case of smaller objects in obj array
                                 tmpIndex += elemSiz;
                                 if ( hasClzId ) {
                                     unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, getClzId( objectValue.getClass() ) );

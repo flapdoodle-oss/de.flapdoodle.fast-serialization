@@ -508,7 +508,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 //                if (rep != newObj) {
 //                    handles.setObject(passHandle, obj = rep);
 //                }
-            System.out.println("READ RESSOLVE CALLED REPLACED " + newObj.getClass() + " by " + rep.getClass() + " pos:" + input.pos);
+//            System.out.println("READ RESSOLVE CALLED REPLACED " + newObj.getClass() + " by " + rep.getClass() + " pos:" + input.pos);
             newObj = rep;//FIXME: support this in call
         }
         return newObj;

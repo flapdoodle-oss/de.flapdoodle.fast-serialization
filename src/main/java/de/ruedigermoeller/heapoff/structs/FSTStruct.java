@@ -60,6 +60,16 @@ public class FSTStruct implements Serializable {
         return unsafe.getInt(___bytes,___offset);
     }
 
+    public Class getPointedClass() {
+        if ( ! isOffHeap() )
+            throw new RuntimeException("cannot call on heap");
+        Class clazz = ___fac.getClazz(getClzId());
+        if ( clazz == null ) {
+            return FSTStruct.class;
+        }
+        return clazz;
+    }
+
     public int getClzId() {
         if ( ! isOffHeap() )
             throw new RuntimeException("cannot call on heap");
@@ -104,6 +114,10 @@ public class FSTStruct implements Serializable {
 
     public boolean isStructArrayPointer() {
         return ___elementSize > 0;
+    }
+
+    public boolean isNull() {
+        return getClzId() <= 0;
     }
 
     /**

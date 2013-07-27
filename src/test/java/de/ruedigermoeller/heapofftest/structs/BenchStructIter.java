@@ -85,7 +85,6 @@ public class BenchStructIter {
         charter.text("<i>" + System.getProperty("java.runtime.version") + "," + System.getProperty("java.vm.name") + "," + System.getProperty("os.name") + "</i>");
 //
         final FSTStructFactory fac = FSTStructFactory.getInstance();
-        fac.registerClz(TestDate.class,TestInstrument.class,TestInstrumentLeg.class,TestMarket.class,TestTimeZone.class);
 
 
         charter.heading("Instantiation Time (CMS Collector)");
@@ -106,7 +105,8 @@ public class BenchStructIter {
             public void run() {
                 StructArray<TestInstrument> instruments = fac.toStructArray(SIZE, TestInstrument.createInstrumentTemplate());
                 fillInstruments(instruments);
-                System.out.println("allocated " + instruments.size() + " instruments using " + instruments.getByteSize() / 1000 / 1000 + " MB");
+                System.out.println("allocated " + instruments.size() + " instruments using " + instruments.getByteSize() / 1000 / 1000 + " MB clid:" + instruments.getStructElemClassId());
+                TestInstrument pointer = instruments.createPointer(0);
                 offheap[0] = instruments;
             }
         };
