@@ -41,9 +41,9 @@ public class TestData extends FSTStruct {
     protected float f = 5555555555.55f;
     protected double g = 66666666666.66;
 
-    protected Object objArray = new Object[] { new StructString(5), new StructString(10), new StructString(20)};
+    protected FSTStruct objArray[] = new FSTStruct[] { new StructString(5), new StructString(10), new StructString(20)};
     @Templated
-    protected Object templatedObjArray = new Object[] { new StructString(5), null, null, null };
+    protected FSTStruct templatedObjArray[] = new FSTStruct[] { new StructString(5), null, null, null };
 
     protected StructString typedArray[] = new StructString[] { null, new StructString("One"), new StructString("Two"), new StructString("3", 10), new StructString("Four") };
 

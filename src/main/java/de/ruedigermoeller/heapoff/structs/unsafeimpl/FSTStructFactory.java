@@ -130,11 +130,9 @@ public class FSTStructFactory {
                 // get pointer to array[0] element:
                 //      type [name]Pointer() OR type [name]Pointer(pointerToSetup) (for reuse)
                 FSTClazzInfo.FSTFieldInfo pointerfi = checkForSpecialArrayMethod(clInfo, method, "Pointer", null, null);
-                int pointerlen = "StructIndex".length();
-                FSTClazzInfo.FSTFieldInfo structIndex = methName.length()> pointerlen ? clInfo.getFieldInfo(methName.substring(0, methName.length() - pointerlen), null) : null;
-
-                if ( pointerfi == null || !pointerfi.isArray() || pointerfi.getArrayType().isArray() )
-                    pointerfi = null;
+                // get pointer to structure or array header element:
+                //      type [name]Pointer() OR type [name]Pointer(pointerToSetup) (for reuse)
+                FSTClazzInfo.FSTFieldInfo structIndex = checkForSpecialArrayMethod(clInfo, method, "StructIndex", CtClass.intType, new CtClass[0], false);
 
                 if ( pointerfi != null ) {
                     structGen.defineArrayPointer(pointerfi, clInfo, method);
@@ -191,16 +189,45 @@ public class FSTStructFactory {
     }
 
     FSTClazzInfo.FSTFieldInfo checkForSpecialArrayMethod( FSTClazzInfo clzInfo, CtMethod method, String postFix, Object returnType, CtClass requiredArgs[] ) {
+        return checkForSpecialArrayMethod(clzInfo, method, postFix, returnType, requiredArgs, true);
+    }
+
+    FSTClazzInfo.FSTFieldInfo checkForSpecialArrayMethod( FSTClazzInfo clzInfo, CtMethod method, String postFix, Object returnType, CtClass requiredArgs[], boolean array ) {
         int len = postFix.length();
         String methName = method.getName();
         if ( ! methName.endsWith(postFix) ) {
             return null;
         }
         FSTClazzInfo.FSTFieldInfo res = clzInfo.getFieldInfo(methName.substring(0, methName.length() - len), null);
-        if ( res.isArray() && res.getArrayType().isArray() ) {
+        if ( res == null ) {
+            return null;
+        }
+        if ( array && res.isArray() && res.getArrayType().isArray() ) {
             throw new RuntimeException("nested arrays not supported "+res.getDesc());
         }
-        if ( res.isArray() ) {
+        if ( array && !res.isArray() ) {
+            //throw new RuntimeException("expect array type for field "+res.getDesc()+" special method:"+method);
+            // just ignore
+            return null;
+        }
+        if ( res.isArray() || ! array ) {
+            if ( returnType instanceof Class ) {
+                try {
+                    if ( ! method.getReturnType().getName().equals(((Class) returnType).getName()) ) {
+                        throw new RuntimeException("expected method "+method+" to return "+returnType );
+                    }
+                } catch (NotFoundException e) {
+                    e.printStackTrace();
+                }
+            } else if ( returnType instanceof CtClass ) {
+                try {
+                    if ( ! method.getReturnType().equals(returnType) ) {
+                        throw new RuntimeException("expected method "+method+" to return "+returnType );
+                    }
+                } catch (NotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
             return res;
         }
         return null;
