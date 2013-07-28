@@ -4,6 +4,9 @@ import de.ruedigermoeller.heapoff.structs.Align;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.NoAssist;
 
+import javax.swing.*;
+import java.awt.*;
+
 /**
  * Created with IntelliJ IDEA.
  * User: ruedi
@@ -56,6 +59,34 @@ public class LargeIntArray extends FSTStruct {
 
     public int largeArrayLen() {
         return largeArray.length;
+    }
+
+    public static void main(String arg[] ) {
+        System.gc();
+        byte[][] bytes = new byte[10*512*1024][];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = new byte[1024];
+        }
+        System.gc();
+        System.gc();
+        System.gc();
+        JPanel tmp = null;
+        // trigger gc's
+        while( bytes[0][0] == 0 ) {
+            for (int i = 0; i < 1000; i++) {
+                tmp = new JPanel();
+                bytes[1][10] = (byte) (tmp.isOpaque() ? 1 : i); // mutate
+            }
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+
+        if ( bytes[0][0] == 0 ) { // prevent escape analysis in case
+            System.out.println("yes "+tmp);
+        }
     }
 
 }
