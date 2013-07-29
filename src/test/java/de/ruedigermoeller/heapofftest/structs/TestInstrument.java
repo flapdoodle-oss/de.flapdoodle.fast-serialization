@@ -45,7 +45,7 @@ public class TestInstrument extends FSTStruct {
     }
 
     protected long instrId;
-    protected StructString mnemonic = new StructString(7);
+    protected StructString mnemonic = new StructString(9);
     protected StructString description = new StructString(50);
     protected TestMarket market = new TestMarket();
     protected int numLegs;

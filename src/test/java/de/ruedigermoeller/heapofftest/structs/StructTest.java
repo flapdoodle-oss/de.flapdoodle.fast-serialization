@@ -90,7 +90,6 @@ public class StructTest {
         }
 
         FSTStruct fstStruct = objArrayTest.objArrayPointer();
-        FSTStruct fstStruct1 = objArrayTest.objArray(0);
         check(fstStruct.isNull());
 
         for ( int i = 0; i < objArrayTest.objArrayLen(); i++) {

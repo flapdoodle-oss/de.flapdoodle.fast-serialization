@@ -31,7 +31,7 @@ import de.ruedigermoeller.serialization.testclasses.HtmlCharter;
  */
 public class BenchStructIter {
 
-    public static final int SIZE = 400000;
+    public static final int SIZE = 1000000;
 
     static void fillInstruments(StructArray<TestInstrument> arr) {
         int size = arr.size();
@@ -141,7 +141,7 @@ public class BenchStructIter {
         System.out.println("duration on heap instantiation #3 "+oninstTime1);
 
         FSTStructAllocator<LargeIntArray> arrAlloc = new FSTStructAllocator<LargeIntArray>(new LargeIntArray());
-        final int iterMul = 50;
+        final int iterMul = 20;
         final LargeIntArray offIntArr = arrAlloc.newStruct();
         final LargeIntArray onIntArr = new LargeIntArray();
 

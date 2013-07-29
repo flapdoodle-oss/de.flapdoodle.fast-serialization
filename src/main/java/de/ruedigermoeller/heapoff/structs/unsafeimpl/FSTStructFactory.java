@@ -280,7 +280,7 @@ public class FSTStructFactory {
     }
 
     public FSTStruct createTypedArrayBasePointer(byte base[], long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
-        int arrayElementZeroindex = unsafe.getInt(base,objectBaseOffset+arrayStructIndex);
+        int arrayElementZeroindex = unsafe.getInt(base, objectBaseOffset + arrayStructIndex);
         int elemSiz = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+8);
         int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);
         int clId = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+12);
@@ -289,7 +289,7 @@ public class FSTStructFactory {
             structPointer = new FSTStruct();
             structPointer.baseOn(base,objectBaseOffset+arrayElementZeroindex,this);
         } else {
-            structPointer = createStructPointer(base, arrayElementZeroindex, clId);
+            structPointer = createStructPointer(base, (int) (objectBaseOffset+arrayElementZeroindex- FSTUtil.bufoff), clId);
         }
         structPointer.___elementSize = elemSiz;
         return structPointer;
@@ -465,6 +465,12 @@ public class FSTStructFactory {
 
     public int getClzId(Class c) {
         Integer integer = mClzToInt.get(c);
+        if (autoRegister && integer == null && c != null ) {
+            if ( c.getName().endsWith("_Struct") )
+                return getClzId(c.getSuperclass());
+            registerClz(c);
+            return getClzId(c);
+        }
         return integer == null ? 0: integer;
     }
 
@@ -513,10 +519,6 @@ public class FSTStructFactory {
         int initialIndex =index;
         Class<? extends FSTStruct> aClass = onHeapStruct.getClass();
         int clzId = getClzId(aClass);
-        if ( autoRegister && clzId == 0 ) {
-            registerClz(aClass);
-            clzId = getClzId(aClass);
-        }
         unsafe.putInt(bytes,FSTUtil.bufoff+index+4,clzId);
         index+=8;
         FSTClazzInfo clInfo = conf.getClassInfo(aClass);
@@ -631,22 +633,21 @@ public class FSTStructFactory {
                     siz = Array.getLength(o) * elemSiz;
                     int tmpIndex = index;
                     byte templatearr[] = null;
+                    boolean hasClzId = false;
                     if ( onHeapStruct instanceof FSTArrayElementSizeCalculator ) {
                         Class elemClz = ((FSTArrayElementSizeCalculator)onHeapStruct).getElementType(en.fi.getField(),this);
                         if ( elemClz != null ) {
                             int clid = getClzId(elemClz);
-                            if ( clid == 0 ) {
-                                registerClz(elemClz);
-                                clid = getClzId(elemClz);
-                            }
                             unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, clid );
+                            hasClzId = true;
                         }
                     }
-                    boolean hasClzId = unsafe.getInt(bytes,FSTUtil.bufoff+en.pointerPos+12) > 0;
                     if (en.template != null) {
                         templatearr = toByteArray(en.template); // fixme: unnecessary alloc
-                        if ( ! hasClzId )
+                        if ( ! hasClzId ) {
                             unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, getClzId( en.template.getClass() ) );
+                            hasClzId = true;
+                        }
                     }
                     for (int j = 0; j < objArr.length; j++) {
                         Object objectValue = objArr[j];
@@ -661,9 +662,9 @@ public class FSTStructFactory {
                                 toByteArray((FSTStruct) objectValue, bytes, tmpIndex);
                                 unsafe.putInt( bytes,FSTUtil.bufoff+tmpIndex, elemSiz ); // need to patch size in case of smaller objects in obj array
                                 tmpIndex += elemSiz;
-                                if ( hasClzId ) {
-                                    unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, getClzId( objectValue.getClass() ) );
-                                    hasClzId = false;
+                                if ( !hasClzId ) {
+                                    unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, getClzId( en.fi.getArrayType() ) );
+                                    hasClzId = true;
                                 }
                             }
                         }
