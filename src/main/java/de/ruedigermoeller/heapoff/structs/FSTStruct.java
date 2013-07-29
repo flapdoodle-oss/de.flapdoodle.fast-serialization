@@ -31,6 +31,7 @@ import java.io.Serializable;
 public class FSTStruct implements Serializable {
 
     public static Unsafe unsafe = FSTUtil.getUnsafe();
+    public static long bufoff = FSTUtil.bufoff;
 
     transient public long ___offset;
     transient public byte[] ___bytes;
@@ -173,7 +174,7 @@ public class FSTStruct implements Serializable {
         int clzId = getClzId();
         if ( ___fac.getClazz(clzId) == getClass().getSuperclass() )
             return this;
-        FSTStruct res = ___fac.createStructPointer(___bytes, (int) (___offset - FSTUtil.bufoff), clzId);
+        FSTStruct res = (FSTStruct) ___fac.getStructPointerByOffset(___bytes, ___offset);
         res.___elementSize = ___elementSize;
         return res;
     }

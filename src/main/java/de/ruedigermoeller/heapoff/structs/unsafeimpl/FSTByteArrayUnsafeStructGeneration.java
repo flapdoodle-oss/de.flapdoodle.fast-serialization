@@ -174,16 +174,6 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     }
 
     @Override
-    public void defineArrayIndex(FSTClazzInfo.FSTFieldInfo fieldInfo, FSTClazzInfo clInfo, CtMethod method) {
-        int index = fieldInfo.getStructOffset();
-        try {
-            method.setBody("{ return "+index+"; }");
-        } catch (CannotCompileException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public void defineArrayElementSize(FSTClazzInfo.FSTFieldInfo indexfi, FSTClazzInfo clInfo, CtMethod method) {
         int off = indexfi.getStructOffset();
         try {
@@ -192,6 +182,16 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    public void defineArrayIndex(FSTClazzInfo.FSTFieldInfo fieldInfo, FSTClazzInfo clInfo, CtMethod method) {
+        int index = fieldInfo.getStructOffset();
+        try {
+            method.setBody("{ return (int) (unsafe.getInt(___bytes, ___offset+"+index+")+___offset-bufoff); }");
+        } catch (CannotCompileException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -274,7 +274,8 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 f.replace("$_ = unsafe.getDouble(___bytes,"+off+"+___offset);");
             } else { // object ref
                 String typeString = type.getName();
-                f.replace("{ long __tmpOff = ___offset + unsafe.getInt(___bytes, "+off+" + ___offset); $_ = ("+ typeString +")___fac.getStructPointerByOffset(___bytes,__tmpOff); }");
+                f.replace("{ int tmpIdx = unsafe.getInt(___bytes, "+off+" + ___offset); if (tmpIdx <= 0) return null;" +
+                        "long __tmpOff = ___offset + tmpIdx; $_ = ("+ typeString +")___fac.getStructPointerByOffset(___bytes,__tmpOff); }");
 //                f.replace("{ Object _o = unsafe.toString(); $_ = _o; }");
             }
         } catch (Exception ex) {

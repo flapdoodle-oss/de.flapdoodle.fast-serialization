@@ -67,7 +67,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
         return null; // generated
     }
 
-    protected int elemsIndex() {
+    protected int elemsStructIndex() {
         return -1; // generated
     }
 
@@ -112,7 +112,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
     @NoAssist
     public int getStructElemSize() {
         if (isOffHeap())
-            return unsafe.getInt( ___bytes, FSTUtil.bufoff+elemsIndex()+8 );
+            return unsafe.getInt( ___bytes, FSTUtil.bufoff+elemsStructIndex()+8 );
         else
             return -1;
     }
@@ -120,7 +120,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
     @NoAssist
     public int getStructElemClassId() {
         if (isOffHeap())
-            return unsafe.getInt( ___bytes, FSTUtil.bufoff+elemsIndex()+12 );
+            return unsafe.getInt( ___bytes, FSTUtil.bufoff+elemsStructIndex()+12 );
         else
             return -1;
     }

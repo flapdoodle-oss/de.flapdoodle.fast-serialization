@@ -1,5 +1,6 @@
 package de.ruedigermoeller.heapofftest.structs;
 
+import de.ruedigermoeller.heapoff.structs.Align;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.Templated;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
@@ -44,10 +45,12 @@ public class TestInstrument extends FSTStruct {
         return ti;
     }
 
+    @Align(8)
     protected long instrId;
     protected StructString mnemonic = new StructString(9);
     protected StructString description = new StructString(50);
     protected TestMarket market = new TestMarket();
+    @Templated() @Align(4)
     protected int numLegs;
     @Templated()
     public TestInstrumentLeg[] legs = null;

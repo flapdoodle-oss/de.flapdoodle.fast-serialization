@@ -61,31 +61,36 @@ public class LargeIntArray extends FSTStruct {
         return largeArray.length;
     }
 
-    public static void main(String arg[] ) {
+    public static Object[] oldGenRef = new Object[10];
+
+    public static void main(String arg[] ) throws InterruptedException {
         System.gc();
-        byte[][] bytes = new byte[10*512*1024][];
+        byte[][] bytes = new byte[10*1024*1024][];
+        Object randomStuff[] = new Object[1000];
         for (int i = 0; i < bytes.length; i++) {
             bytes[i] = new byte[1024];
         }
         System.gc();
         System.gc();
         System.gc();
-        JPanel tmp = null;
         // trigger gc's
         while( bytes[0][0] == 0 ) {
-            for (int i = 0; i < 1000; i++) {
-                tmp = new JPanel();
-                bytes[1][10] = (byte) (tmp.isOpaque() ? 1 : i); // mutate
+            for (int i = 0; i < randomStuff.length; i++) {
+                randomStuff[i] = new Rectangle();
+                if ( Math.random() > 0.9999 ) {
+                    Thread.sleep(1);
+                }
+                if ( i < oldGenRef.length ) {
+                    oldGenRef[i] = randomStuff[i];
+                }
             }
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            if ( Math.random() > 0.99999 ) {
+                System.gc();
             }
         }
 
         if ( bytes[0][0] == 0 ) { // prevent escape analysis in case
-            System.out.println("yes "+tmp);
+            System.out.println("yes "+randomStuff);
         }
     }
 

@@ -44,6 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FSTStructFactory {
 
+    public static int SIZE_ALIGN = 2;
     static FSTStructFactory instance;
 
     public static FSTStructFactory getInstance() {
@@ -242,7 +243,8 @@ public class FSTStructFactory {
         proxyLoader.delegateLoadingOf(Serializable.class.getName());
         proxyLoader.delegateLoadingOf(FSTStructFactory.class.getName());
         proxyLoader.delegateLoadingOf(FSTStruct.class.getName());
-        proxyLoader.delegateLoadingOf(StructArray.StructArrIterator.class.getName());
+//        proxyLoader.delegateLoadingOf(StructArray.class.getName());
+//        proxyLoader.delegateLoadingOf(StructArray.StructArrIterator.class.getName());
         ccClz = proxyLoader.loadClass(cc.getName());
         return ccClz;
     }
@@ -356,6 +358,7 @@ public class FSTStructFactory {
             return null;
         }
         int clzId = unsafe.getInt(b, offset+4);
+        int ptr = unsafe.getInt(b, offset);
         if (clzId <= 0) {
             return null;
         }
@@ -372,6 +375,12 @@ public class FSTStructFactory {
 
     public Object getStructPointer(byte b[], int index) {
         return getStructPointerByOffset(b,FSTUtil.bufoff+index);
+    }
+
+    public static int align(int val, int align) {
+        while( val%align != 0 )
+            val++;
+        return val;
     }
 
     public int calcStructSize(FSTStruct onHeapStruct) {
@@ -396,19 +405,21 @@ public class FSTStructFactory {
                     if ( fi.getType().getComponentType().isArray() ) {
                         throw new RuntimeException("nested arrays not supported");
                     }
+                    // if array is @aligned, add align-1 to size (overestimation), because I don't know the exact position of the array data here
+                    // embedded object data, is currently not aligned, only the header position respects the @align
                     if ( fi.isIntegral() ) { // prim array
                         Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
                         if ( objectValue == null ) {
                             throw new RuntimeException("arrays in struct templates must not be null !");
                         }
-                        siz += Array.getLength(objectValue) * fi.getComponentStructSize() + fi.getStructSize() + fi.getAlignPad();
+                        siz += Array.getLength(objectValue) * fi.getComponentStructSize() + fi.getStructSize() + fi.getAlignPad()+(fi.getAlign()>0?fi.getAlign()-1:0);
                     } else { // object array
                         Object objectValue[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
                         if (objectValue==null) {
-                            siz+=fi.getStructSize()+fi.getAlignPad();
+                            siz+=fi.getStructSize()+fi.getAlignPad()+(fi.getAlign()>0?fi.getAlign()-1:0);
                         } else {
                             int elemSiz = computeElemSize(onHeapStruct,objectValue, fi);
-                            siz += Array.getLength(objectValue) * elemSiz + fi.getStructSize() + fi.getAlignPad();
+                            siz += Array.getLength(objectValue) * elemSiz + fi.getStructSize() + fi.getAlignPad()+(fi.getAlign()>0?fi.getAlign()-1:0);
                         }
                     }
                 } else if ( fi.isIntegral() ) { // && ! array
@@ -436,7 +447,7 @@ public class FSTStructFactory {
         Templated annotation = fi.getField().getAnnotation(Templated.class);
         if ( annotation != null ) {
             Object template = objectValue[0];
-            return calcStructSize((FSTStruct) template);
+            return align(calcStructSize((FSTStruct) template),SIZE_ALIGN);
         }
         int elemSiz = 0;
         for (int j = 0; j < objectValue.length; j++) {
@@ -444,7 +455,7 @@ public class FSTStructFactory {
             if ( o != null )
                 elemSiz=Math.max( elemSiz, calcStructSize((FSTStruct) o) );
         }
-        return elemSiz;
+        return align(elemSiz,SIZE_ALIGN);
     }
 
     HashMap<Integer,Class> mIntToClz = new HashMap<Integer, Class>();
@@ -480,7 +491,7 @@ public class FSTStructFactory {
 
     public byte[] toByteArray(FSTStruct onHeapStruct) {
         try {
-            int sz = calcStructSize(onHeapStruct);
+            int sz = align(calcStructSize(onHeapStruct),SIZE_ALIGN);
             byte b[] = new byte[sz];
             toByteArray(onHeapStruct,b,0);
             return b;
@@ -540,7 +551,7 @@ public class FSTStructFactory {
                     Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
                     if ( objArr == null ) {
                         unsafe.putInt(bytes, FSTUtil.bufoff + index, -1);
-                        index+=fi.getStructSize()+fi.getAlignPad();
+                        index+=fi.getStructSize();
                     } else {
                         Templated takeFirst = fi.getField().getAnnotation(Templated.class);
                         ForwardEntry fe = new ForwardEntry(index, objArr, fi);
@@ -585,6 +596,7 @@ public class FSTStructFactory {
             } else { // objectref
                 Object obj = clInfo.getObjectValue(onHeapStruct, fi);
                 if ( obj == null ) {
+                    unsafe.putInt(bytes, FSTUtil.bufoff + index, -1);
                     unsafe.putInt(bytes, FSTUtil.bufoff + index+4, -1);
                     index+=fi.getStructSize();
                 } else {
@@ -602,6 +614,11 @@ public class FSTStructFactory {
             }
             Class c = o.getClass();
             if (c.isArray()) {
+                if ( en.fi.getAlign() > 0 ) {
+                    while( (index%en.fi.getAlign()) != 0 ) {
+                        index++;
+                    }
+                }
                 long siz = 0;
                 if ( c == byte[].class ) {
                     siz = Array.getLength(o);

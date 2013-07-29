@@ -41,6 +41,10 @@ public class StructTest {
         FSTStructAllocator<TestData> alloc = new FSTStructAllocator<TestData>(data,10);
         FSTStructAllocator<StructString> strAlloc = new FSTStructAllocator<StructString>( new StructString(10), 10 );
 
+        System.out.println("size td:"+alloc.getTemplateSize()+" str:"+strAlloc.getTemplateSize());
+
+        check(alloc.newStruct(new TestData()).getDataStructArray() == null);
+        check(alloc.newStruct(new TestData()).getNested() == null);
 
         StructMap<StructInt,TestData> intMap = alloc.newMap(1000, new StructInt(0));
 
@@ -64,29 +68,33 @@ public class StructTest {
 
         compareTestData( data, alloc.newStruct() );
         compareTestData( data.getNested(), alloc.newStruct().getNested() );
+        compareTestData(data.getNested(), alloc.newStruct().getDataStructArray().get(13));
+        check(alloc.newStruct().getNested().getDataStructArray()==null);
 
+        ////////////////////////////////////////////////////////////////
         // test untyped polymorphic objectArray
+        ////////////////////////////////////////////////////////////////
+
         TestData objArrayTest = alloc.newStruct();
-        check( ((StructInt)objArrayTest.objArray(3).cast()).get() == 17 );
-        System.out.println("len "+objArrayTest.objArrayElementSize()+" "+((StructString)objArrayTest.objArray(0).cast()).getByteSize());
-        check( objArrayTest.objArrayElementSize() == ((StructString)objArrayTest.objArray(0).cast()).getByteSize() );
+        check( ((StructInt)objArrayTest.objArray(4).cast()).get() == 17 );
+        System.out.println("len "+objArrayTest.objArrayElementSize()+" "+((StructString)objArrayTest.objArray(1).cast()).getByteSize());
+        check( objArrayTest.objArrayElementSize() == ((StructString)objArrayTest.objArray(1).cast()).getByteSize() );
         boolean exThrown = false;
         try {
-            ((StructString)objArrayTest.objArray(0).cast()).setString("01234567890123456780");
+            ((StructString)objArrayTest.objArray(1).cast()).setString("01234567890123456780");
         } catch (Exception ex) {
             exThrown = true;
         }
         check(exThrown);
-        objArrayTest.objArray(0, new StructString("01234567890123456780"));
-        System.out.println("Struct index " + objArrayTest.objArrayStructIndex());
-        check(objArrayTest.objArrayStructIndex() > 0);
-        check(objArrayTest.objArrayElementSize() > 0);
-        check(objArrayTest.objArrayPointer() != null);
-        check(objArrayTest.objArrayStructIndex()%8 == 0);
-
-        for ( int i = 0; i < objArrayTest.objArrayLen(); i++) {
-            objArrayTest.objArray(i,null);
-            check(objArrayTest.objArray(i) == null);
+        FSTStruct iterPointer = objArrayTest.objArrayPointer();
+        for ( int i= 0; i < objArrayTest.objArrayLen(); i++ ) {
+            if ( iterPointer.isNull() ) {
+                check( i==2 || i == 0 || i == 5 );
+                System.out.println(i+" null");
+            } else {
+                System.out.println(i+" "+iterPointer.cast().getPointedClass());
+            }
+            iterPointer.next();
         }
 
         FSTStruct fstStruct = objArrayTest.objArrayPointer();
@@ -97,7 +105,83 @@ public class StructTest {
             check(((StructInt)objArrayTest.objArray(i).cast()).get() == i);
         }
 
+        objArrayTest.objArray(0, new StructString("01234567890123456780"));
+        System.out.println("Struct index " + objArrayTest.objArrayStructIndex());
+        System.out.println("objarr index "+objArrayTest.objArrayIndex());
+        System.out.println("objarr pointer offset "+objArrayTest.objArrayPointer().___offset);
+        check(objArrayTest.objArrayStructIndex() > 0);
+        check(objArrayTest.objArrayElementSize() > 0);
+        check(objArrayTest.objArrayPointer() != null);
+        check(objArrayTest.objArrayStructIndex()%8 == 0);
+        check(objArrayTest.objArrayIndex()%8 == 0);
 
+        ////////////////////////////////////////////////////////////////
+        // test templated array
+        ////////////////////////////////////////////////////////////////
+
+        TestData tpl = alloc.newStruct();
+        for ( int i = 0; i < tpl.templatedObjArrayLen(); i++ ) {
+            check( tpl.templatedObjArray(i).cast().toString().equals("Oh") );
+        }
+
+        for ( int i = 0; i < objArrayTest.objArrayLen(); i++) {
+            objArrayTest.objArray(i,null);
+            check(objArrayTest.objArray(i) == null);
+        }
+
+        ////////////////////////////////////////////////////////////////
+        // test typed array
+        ////////////////////////////////////////////////////////////////
+        TestData typed = alloc.newStruct();
+        check(typed.typedArray(0) == null);
+        for ( int i = 0; i < typed.typedArrayLen(); i++ ) {
+            System.out.println("typed " + i + ":" + tpl.typedArray(i));
+        }
+
+        ////////////////////////////////////////////////////////////////
+        // test object set/get
+        ////////////////////////////////////////////////////////////////
+        TestData objTest = alloc.newStruct();
+        check(objTest.getString().charsLen() == 50);
+
+        objTest.setString(null);
+        check( objTest.getString() == null );
+
+        objTest.setString(new StructString("bla"));
+        check(objTest.getString().toString().equals("bla"));
+        objTest.setString(new StructString(50));
+        exThrown = false;
+        try {
+            objTest.setString(new StructString(51));
+        } catch (Exception e) {
+            exThrown = true;
+        }
+        check(exThrown);
+
+        ////////////////////////////////////////////////////////////////
+        // test structarr + detach
+        ////////////////////////////////////////////////////////////////
+        TestData structArrTest = alloc.newStruct();
+        StructArray<TestData> dataStructArray = structArrTest.getDataStructArray();
+        dataStructArray.detach();
+
+        TestData toMod = dataStructArray.get(dataStructArray.size() - 1);
+        toMod.detach();
+        toMod.getString().setString("modified");
+        structArrTest.getDataStructArray().set(dataStructArray.size() - 2, toMod);
+        check(dataStructArray.___offset != structArrTest.getDataStructArray().get(dataStructArray.size() - 2).___offset);
+        check(dataStructArray.get(dataStructArray.size() - 1).getString().toString().equals("modified"));
+        check(dataStructArray.get(dataStructArray.size() - 2).getString().toString().equals("modified"));
+        toMod = (TestData) toMod.createCopy();
+        toMod.getString().setString("---");
+        check(dataStructArray.get(dataStructArray.size() - 1).getString().toString().equals("modified"));
+        check(dataStructArray.get(dataStructArray.size() - 2).getString().toString().equals("modified"));
+        structArrTest.getDataStructArray().set(dataStructArray.size() - 2, toMod);
+        structArrTest.getDataStructArray().set(dataStructArray.size() - 1, toMod);
+        check(dataStructArray.get(dataStructArray.size() - 1).getString().toString().equals("---"));
+        check(dataStructArray.get(dataStructArray.size() - 2).getString().toString().equals("---"));
+
+        // random string fumbling
         StructArray <StructString> sl = strAlloc.newArray(25);
         System.out.println("len "+sl.getByteSize());
 

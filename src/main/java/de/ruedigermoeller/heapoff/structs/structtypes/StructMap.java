@@ -82,7 +82,7 @@ public class StructMap<K,V> extends FSTStruct implements FSTArrayElementSizeCalc
         {
             throw new RuntimeException("Map is full");
         }
-        if ( pointer != null || isOffHeap() ) {
+        if ( pointer != null /*?? special for instantiation ?*/ || isOffHeap() ) {
             long arrbase = ___offset+keysStructIndex();
             int kvlen = unsafe.getInt(___bytes,arrbase+4);
             int kelemsiz = unsafe.getInt(___bytes,arrbase+8);
@@ -181,10 +181,6 @@ public class StructMap<K,V> extends FSTStruct implements FSTArrayElementSizeCalc
         vals[i] = v;
     }
 
-    public int keyValIndex() {
-        return -1; // will be redefined off-heap and deliver startindex of array
-    }
-
     public int keysLen() {
         return keys.length;
     }
@@ -196,10 +192,10 @@ public class StructMap<K,V> extends FSTStruct implements FSTArrayElementSizeCalc
     @Override
     public int getElementSize(Field arrayRef, FSTStructFactory fac) {
         if ( keyTemplate != null && "keys".equals(arrayRef.getName()) ) {
-            return fac.calcStructSize(keyTemplate);
+            return fac.align(fac.calcStructSize(keyTemplate),fac.SIZE_ALIGN);
         }
         if ( valueTemplate != null && "vals".equals(arrayRef.getName()) ) {
-            return fac.calcStructSize(valueTemplate);
+            return fac.align(fac.calcStructSize(valueTemplate),fac.SIZE_ALIGN);
         }
         return -1;
     }

@@ -33,7 +33,7 @@ public class TestData extends FSTStruct {
 
     protected TestData nested;
     protected StructString string = new StructString(50);
-    protected StructArray dataStructArray;
+    protected StructArray<TestData> dataStructArray;
 
     protected byte a = 0;
     protected short b = 11111;
@@ -79,8 +79,8 @@ public class TestData extends FSTStruct {
     protected float[] arrf = { 5555555555.51f, 5555555555.52f, 5555555555.53f, 1,1,1,1 };
     protected double[] arrg = { 66666666666.61, 66666666666.62,66666666666.63,1,1,1,1,1};
     @Align(8)
-    protected FSTStruct objArray[] = new FSTStruct[] { new StructString(5), new StructString(10), new StructString(20), new StructInt(17)};
-    @Templated protected FSTStruct templatedObjArray[] = new FSTStruct[] { new StructString(5), null, null, null };
+    protected FSTStruct objArray[] = new FSTStruct[] { null, new StructString(5), null, new StructString(20), new StructInt(17), null };
+    @Templated protected FSTStruct templatedObjArray[] = new FSTStruct[] { new StructString("Oh",5), null, null, null };
     protected StructString typedArray[] = new StructString[] { null, new StructString("One"), new StructString("Two"), new StructString("3", 10), new StructString("Four") };
 
 
@@ -126,13 +126,17 @@ public class TestData extends FSTStruct {
         return -1;
     }
 
+    public int objArrayIndex() {
+        return -1;
+    }
+
     public FSTStruct objArrayPointer() {
         return null;
     }
 
 
 
-    public StructArray getDataStructArray() {
+    public StructArray<TestData> getDataStructArray() {
         return dataStructArray;
     }
 
