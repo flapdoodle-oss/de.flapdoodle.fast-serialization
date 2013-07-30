@@ -13,20 +13,20 @@ import java.util.ArrayList;
 public class BlobTest {
 
     static ArrayList blobs = new ArrayList();
-    static ArrayList normal = new ArrayList();
-    static Object randomStuff[] = new Object[100000];
+    static Object randomStuff[] = new Object[300000];
 
     public static void main( String arg[] ) {
-        int blobGB = 5;
-        for (int i = 0; i < blobGB; i++) {
-//            blobs.add(new byte[1024*1024*1024]);
+        if ( Runtime.getRuntime().maxMemory() > 2*1024*1024*1024l) { // 'autodetect' testcase with blobs from mem settings
+            int blobGB = (int) (Runtime.getRuntime().maxMemory()/(1024*1024*1024l));
+            System.out.println("Allocating "+blobGB*32+" 32Mb blobs ... (="+blobGB+"Gb) ");
+            for (int i = 0; i < blobGB*32; i++) {
+                blobs.add(new byte[32*1024*1024]);
+            }
+            System.gc(); // force VM to adapt ..
         }
-        int numNorm = 1000*1000*50;
-        for (int i = 0; i < numNorm; i++) {
-            normal.add(new Rectangle());
-        }
+        // create eden collected tmps with a medium promotion rate (promotion rate can be adjusted by size of randomStuff[])
         while( true ) {
-            randomStuff[((int) (Math.random()*Math.random() * randomStuff.length))] = new Rectangle();
+            randomStuff[((int) (Math.random() * randomStuff.length))] = new Rectangle();
         }
 
     }
