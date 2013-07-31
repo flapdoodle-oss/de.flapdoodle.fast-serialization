@@ -261,12 +261,12 @@ public class FSTStructFactory {
     public <T extends FSTStruct> T createWrapper(Class<T> onHeap, byte bytes[], int index) throws Exception {
         Class proxy = getProxyClass(onHeap);
         T res = (T) unsafe.allocateInstance(proxy);
-        res.baseOn(bytes, FSTUtil.bufoff+index, this);
+        res.baseOn(bytes, FSTStruct.bufoff+index, this);
         return res;
     }
 
     public FSTStruct createStructWrapper(byte b[], int index) {
-        int clzId = unsafe.getInt(b, FSTUtil.bufoff + index + 4);
+        int clzId = unsafe.getInt(b, FSTStruct.bufoff + index + 4);
         return createStructPointer(b, index, clzId);
     }
 
@@ -291,7 +291,7 @@ public class FSTStructFactory {
             structPointer = new FSTStruct();
             structPointer.baseOn(base,objectBaseOffset+arrayElementZeroindex,this);
         } else {
-            structPointer = createStructPointer(base, (int) (objectBaseOffset+arrayElementZeroindex- FSTUtil.bufoff), clId);
+            structPointer = createStructPointer(base, (int) (objectBaseOffset+arrayElementZeroindex- FSTStruct.bufoff), clId);
         }
         structPointer.___elementSize = elemSiz;
         return structPointer;
@@ -354,7 +354,7 @@ public class FSTStructFactory {
     }
 
     public Object getStructPointerByOffset(byte b[], long offset) {
-        if ( offset < FSTUtil.bufoff ) {
+        if ( offset < FSTStruct.bufoff ) {
             return null;
         }
         int clzId = unsafe.getInt(b, offset+4);
@@ -368,13 +368,13 @@ public class FSTStructFactory {
             ((FSTStruct)res).baseOn(b, offset, this);
             return res;
         }
-        res = createStructPointer(b, (int) (offset - FSTUtil.bufoff), clzId);
+        res = createStructPointer(b, (int) (offset - FSTStruct.bufoff), clzId);
         wrapperMap[clzId] = res;
         return res;
     }
 
     public Object getStructPointer(byte b[], int index) {
-        return getStructPointerByOffset(b,FSTUtil.bufoff+index);
+        return getStructPointerByOffset(b,FSTStruct.bufoff+index);
     }
 
     public static int align(int val, int align) {
@@ -524,13 +524,13 @@ public class FSTStructFactory {
             return index;
         }
         if (onHeapStruct.isOffHeap()) {
-            unsafe.copyMemory(onHeapStruct.___bytes,onHeapStruct.___offset,bytes,FSTUtil.bufoff+index,onHeapStruct.getByteSize());
+            unsafe.copyMemory(onHeapStruct.___bytes,onHeapStruct.___offset,bytes,FSTStruct.bufoff+index,onHeapStruct.getByteSize());
             return onHeapStruct.getByteSize();
         }
         int initialIndex =index;
         Class<? extends FSTStruct> aClass = onHeapStruct.getClass();
         int clzId = getClzId(aClass);
-        unsafe.putInt(bytes,FSTUtil.bufoff+index+4,clzId);
+        unsafe.putInt(bytes,FSTStruct.bufoff+index+4,clzId);
         index+=8;
         FSTClazzInfo clInfo = conf.getClassInfo(aClass);
         FSTClazzInfo.FSTFieldInfo fis[] = clInfo.getFieldInfo();
@@ -550,7 +550,7 @@ public class FSTStructFactory {
                 } else { // object array
                     Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
                     if ( objArr == null ) {
-                        unsafe.putInt(bytes, FSTUtil.bufoff + index, -1);
+                        unsafe.putInt(bytes, FSTStruct.bufoff + index, -1);
                         index+=fi.getStructSize();
                     } else {
                         Templated takeFirst = fi.getField().getAnnotation(Templated.class);
@@ -561,34 +561,34 @@ public class FSTStructFactory {
                         positions.add(fe);
                         index += fi.getStructSize();
                         int elemSiz = computeElemSize(onHeapStruct,objArr,fi);
-                        unsafe.putInt(bytes, FSTUtil.bufoff+index-8,elemSiz);
+                        unsafe.putInt(bytes, FSTStruct.bufoff+index-8,elemSiz);
                     }
                 }
             } else if ( fi.isIntegral() ) { // && ! array
                 Class type = fi.getType();
                 if ( type == boolean.class ) {
-                    unsafe.putBoolean(bytes, FSTUtil.bufoff + index, clInfo.getBooleanValue(onHeapStruct, fi));
+                    unsafe.putBoolean(bytes, FSTStruct.bufoff + index, clInfo.getBooleanValue(onHeapStruct, fi));
                 } else
                 if ( type == byte.class ) {
-                    unsafe.putByte(bytes, FSTUtil.bufoff + index, (byte) clInfo.getByteValue(onHeapStruct, fi));
+                    unsafe.putByte(bytes, FSTStruct.bufoff + index, (byte) clInfo.getByteValue(onHeapStruct, fi));
                 } else
                 if ( type == char.class ) {
-                    unsafe.putChar(bytes, FSTUtil.bufoff + index, (char) clInfo.getCharValue(onHeapStruct,fi));
+                    unsafe.putChar(bytes, FSTStruct.bufoff + index, (char) clInfo.getCharValue(onHeapStruct,fi));
                 } else
                 if ( type == short.class ) {
-                    unsafe.putShort(bytes, FSTUtil.bufoff + index, (short) clInfo.getShortValue(onHeapStruct, fi));
+                    unsafe.putShort(bytes, FSTStruct.bufoff + index, (short) clInfo.getShortValue(onHeapStruct, fi));
                 } else
                 if ( type == int.class ) {
-                    unsafe.putInt( bytes, FSTUtil.bufoff+index, clInfo.getIntValue(onHeapStruct,fi) );
+                    unsafe.putInt( bytes, FSTStruct.bufoff+index, clInfo.getIntValue(onHeapStruct,fi) );
                 } else
                 if ( type == long.class ) {
-                    unsafe.putLong( bytes, FSTUtil.bufoff+index, clInfo.getLongValue(onHeapStruct,fi) );
+                    unsafe.putLong( bytes, FSTStruct.bufoff+index, clInfo.getLongValue(onHeapStruct,fi) );
                 } else
                 if ( type == float.class ) {
-                    unsafe.putFloat(bytes, FSTUtil.bufoff + index, clInfo.getFloatValue(onHeapStruct, fi));
+                    unsafe.putFloat(bytes, FSTStruct.bufoff + index, clInfo.getFloatValue(onHeapStruct, fi));
                 } else
                 if ( type == double.class ) {
-                    unsafe.putDouble(bytes, FSTUtil.bufoff + index, clInfo.getDoubleValue(onHeapStruct, fi));
+                    unsafe.putDouble(bytes, FSTStruct.bufoff + index, clInfo.getDoubleValue(onHeapStruct, fi));
                 } else {
                     throw new RuntimeException("this is an error");
                 }
@@ -596,8 +596,8 @@ public class FSTStructFactory {
             } else { // objectref
                 Object obj = clInfo.getObjectValue(onHeapStruct, fi);
                 if ( obj == null ) {
-                    unsafe.putInt(bytes, FSTUtil.bufoff + index, -1);
-                    unsafe.putInt(bytes, FSTUtil.bufoff + index+4, -1);
+                    unsafe.putInt(bytes, FSTStruct.bufoff + index, -1);
+                    unsafe.putInt(bytes, FSTStruct.bufoff + index+4, -1);
                     index+=fi.getStructSize();
                 } else {
                     Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
@@ -622,31 +622,31 @@ public class FSTStructFactory {
                 long siz = 0;
                 if ( c == byte[].class ) {
                     siz = Array.getLength(o);
-                    unsafe.copyMemory(o,FSTUtil.bufoff, bytes, FSTUtil.bufoff+index, siz);
+                    unsafe.copyMemory(o,FSTStruct.bufoff, bytes, FSTStruct.bufoff+index, siz);
                 } else if ( c == boolean[].class ) {
                     siz = Array.getLength(o);
-                    unsafe.copyMemory(o,FSTUtil.bufoff, bytes, FSTUtil.bufoff+index, siz);
+                    unsafe.copyMemory(o,FSTStruct.bufoff, bytes, FSTStruct.bufoff+index, siz);
                 } else if ( c == char[].class ) {
                     siz = Array.getLength(o) * FSTUtil.chscal;
-                    unsafe.copyMemory(o,FSTUtil.choff, bytes, FSTUtil.bufoff+index, siz);
+                    unsafe.copyMemory(o,FSTUtil.choff, bytes, FSTStruct.bufoff+index, siz);
                 } else if ( c == short[].class ) {
                     siz = Array.getLength(o) * FSTUtil.chscal;
-                    unsafe.copyMemory(o,FSTUtil.choff, bytes, FSTUtil.bufoff+index, siz);
+                    unsafe.copyMemory(o,FSTUtil.choff, bytes, FSTStruct.bufoff+index, siz);
                 } else if ( c == int[].class ) {
                     siz = Array.getLength(o) * FSTUtil.intscal;
-                    unsafe.copyMemory(o,FSTUtil.intoff, bytes, FSTUtil.bufoff+index, siz);
+                    unsafe.copyMemory(o,FSTUtil.intoff, bytes, FSTStruct.bufoff+index, siz);
                 } else if ( c == long[].class ) {
                     siz = Array.getLength(o) * FSTUtil.longscal;
-                    unsafe.copyMemory(o,FSTUtil.longoff, bytes, FSTUtil.bufoff+index, siz);
+                    unsafe.copyMemory(o,FSTUtil.longoff, bytes, FSTStruct.bufoff+index, siz);
                 } else if ( c == float[].class ) {
                     siz = Array.getLength(o) * FSTUtil.floatscal;
-                    unsafe.copyMemory(o,FSTUtil.floatoff, bytes, FSTUtil.bufoff+index, siz);
+                    unsafe.copyMemory(o,FSTUtil.floatoff, bytes, FSTStruct.bufoff+index, siz);
                 } else if ( c == double[].class ) {
                     siz = Array.getLength(o) * FSTUtil.doublescal;
-                    unsafe.copyMemory(o,FSTUtil.doubleoff, bytes, FSTUtil.bufoff+index, siz);
+                    unsafe.copyMemory(o,FSTUtil.doubleoff, bytes, FSTStruct.bufoff+index, siz);
                 } else {
                     Object[] objArr = (Object[]) o;
-                    int elemSiz = unsafe.getInt(bytes, FSTUtil.bufoff+en.pointerPos+8);
+                    int elemSiz = unsafe.getInt(bytes, FSTStruct.bufoff+en.pointerPos+8);
                     siz = Array.getLength(o) * elemSiz;
                     int tmpIndex = index;
                     byte templatearr[] = null;
@@ -655,44 +655,44 @@ public class FSTStructFactory {
                         Class elemClz = ((FSTArrayElementSizeCalculator)onHeapStruct).getElementType(en.fi.getField(),this);
                         if ( elemClz != null ) {
                             int clid = getClzId(elemClz);
-                            unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, clid );
+                            unsafe.putInt(bytes,FSTStruct.bufoff+en.pointerPos+12, clid );
                             hasClzId = true;
                         }
                     }
                     if (en.template != null) {
                         templatearr = toByteArray(en.template); // fixme: unnecessary alloc
                         if ( ! hasClzId ) {
-                            unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, getClzId( en.template.getClass() ) );
+                            unsafe.putInt(bytes,FSTStruct.bufoff+en.pointerPos+12, getClzId( en.template.getClass() ) );
                             hasClzId = true;
                         }
                     }
                     for (int j = 0; j < objArr.length; j++) {
                         Object objectValue = objArr[j];
                         if ( templatearr != null ) {
-                            unsafe.copyMemory(templatearr,FSTUtil.bufoff,bytes,FSTUtil.bufoff+tmpIndex,templatearr.length);
+                            unsafe.copyMemory(templatearr,FSTStruct.bufoff,bytes,FSTStruct.bufoff+tmpIndex,templatearr.length);
                             tmpIndex+=elemSiz;
                         } else {
                             if ( objectValue == null ) {
-                                unsafe.putInt(bytes, FSTUtil.bufoff + tmpIndex+4, -1);
+                                unsafe.putInt(bytes, FSTStruct.bufoff + tmpIndex+4, -1);
                                 tmpIndex += elemSiz;
                             } else {
                                 toByteArray((FSTStruct) objectValue, bytes, tmpIndex);
-                                unsafe.putInt( bytes,FSTUtil.bufoff+tmpIndex, elemSiz ); // need to patch size in case of smaller objects in obj array
+                                unsafe.putInt( bytes,FSTStruct.bufoff+tmpIndex, elemSiz ); // need to patch size in case of smaller objects in obj array
                                 tmpIndex += elemSiz;
                                 if ( !hasClzId ) {
-                                    unsafe.putInt(bytes,FSTUtil.bufoff+en.pointerPos+12, getClzId( en.fi.getArrayType() ) );
+                                    unsafe.putInt(bytes,FSTStruct.bufoff+en.pointerPos+12, getClzId( en.fi.getArrayType() ) );
                                     hasClzId = true;
                                 }
                             }
                         }
                     }
                 }
-                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index-initialIndex );
-                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos+4, Array.getLength(o) );
+                unsafe.putInt(bytes, FSTStruct.bufoff+en.pointerPos, index-initialIndex );
+                unsafe.putInt(bytes, FSTStruct.bufoff+en.pointerPos+4, Array.getLength(o) );
                 index+=siz;
             } else { // object ref or objarray elem
                 int newoffset = toByteArray((FSTStruct) o, bytes, index);
-                unsafe.putInt(bytes, FSTUtil.bufoff+en.pointerPos, index-initialIndex );
+                unsafe.putInt(bytes, FSTStruct.bufoff+en.pointerPos, index-initialIndex );
                 index = newoffset;
             }
         }
@@ -700,7 +700,7 @@ public class FSTStructFactory {
             FSTEmbeddedBinary embeddedBinary = (FSTEmbeddedBinary) onHeapStruct;
             index = embeddedBinary.insertEmbedded(this, bytes, index);
         }
-        unsafe.putInt(bytes,FSTUtil.bufoff+initialIndex,index-initialIndex); // set object size
+        unsafe.putInt(bytes,FSTStruct.bufoff+initialIndex,index-initialIndex); // set object size
         return index;
     }
 

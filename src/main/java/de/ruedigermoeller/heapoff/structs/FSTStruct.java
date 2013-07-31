@@ -54,6 +54,10 @@ public class FSTStruct implements Serializable {
         return ___offset;
     }
 
+    public int getIndexInBase() {
+        return (int) (___offset - bufoff);
+    }
+
     public int getByteSize() {
         if ( !isOffHeap() ) {
             return 0;
@@ -165,7 +169,7 @@ public class FSTStruct implements Serializable {
         int clzId = ___fac.getClzId(to);
         if ( this.getClass().getSuperclass() == to )
             return (T) this;
-        FSTStruct res = ___fac.createStructPointer(___bytes, (int) (___offset - FSTUtil.bufoff), clzId);
+        FSTStruct res = ___fac.createStructPointer(___bytes, (int) (___offset - bufoff), clzId);
         res.___elementSize = ___elementSize;
         return (T) res;
     }
@@ -212,7 +216,7 @@ public class FSTStruct implements Serializable {
             throw new RuntimeException("must be offheap to call this");
         }
         byte b[] = new byte[getByteSize()];
-        unsafe.copyMemory(___bytes,___offset,b,FSTUtil.bufoff,b.length);
+        unsafe.copyMemory(___bytes,___offset,b,bufoff,b.length);
         return ___fac.createStructWrapper(b,0);
     }
 }

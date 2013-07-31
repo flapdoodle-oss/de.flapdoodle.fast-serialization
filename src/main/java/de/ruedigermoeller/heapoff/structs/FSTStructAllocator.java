@@ -112,7 +112,7 @@ public class FSTStructAllocator<T extends FSTStruct> {
                 chunk = new byte[chunkSize];
                 chunkIndex = 0;
             }
-            FSTStruct.unsafe.copyMemory(aTemplate.___bytes, aTemplate.___offset, chunk, FSTUtil.bufoff + chunkIndex, byteSize);
+            FSTStruct.unsafe.copyMemory(aTemplate.___bytes, aTemplate.___offset, chunk, FSTStruct.bufoff + chunkIndex, byteSize);
             S res = (S) getFactory().createStructWrapper(chunk, chunkIndex );
             chunkIndex+=byteSize;
             return res;
