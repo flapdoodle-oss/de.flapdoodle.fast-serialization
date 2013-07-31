@@ -32,7 +32,6 @@ import de.ruedigermoeller.heapoff.structs.FSTStruct;
  */
 public class StructString extends FSTStruct implements Comparable {
 
-    @Align(4)
     protected int len = 0;
     protected char chars[];
 
