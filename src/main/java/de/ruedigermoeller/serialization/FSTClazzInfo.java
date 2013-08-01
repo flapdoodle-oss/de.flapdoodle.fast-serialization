@@ -292,7 +292,7 @@ public final class FSTClazzInfo {
     }
 
     public boolean useCompatibleMode() {
-        return requiresCompatibleMode; // || writeReplaceMethod != null || readResolveMethod != null;
+        return requiresCompatibleMode || writeReplaceMethod != null || readResolveMethod != null;
     }
 
 
