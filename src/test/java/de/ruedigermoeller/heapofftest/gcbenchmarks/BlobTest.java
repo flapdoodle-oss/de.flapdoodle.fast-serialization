@@ -1,7 +1,5 @@
 package de.ruedigermoeller.heapofftest.gcbenchmarks;
 
-import sun.plugin.dom.css.Rect;
-
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;

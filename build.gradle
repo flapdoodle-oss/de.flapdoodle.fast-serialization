@@ -1,3 +1,5 @@
+import java.util.zip.ZipFile
+
 apply plugin: 'java'
 apply plugin: 'maven'
 version="1.15"
@@ -15,6 +17,25 @@ task sourcesJar(type: Jar, dependsOn:classes) {
 task testJar(type: Jar, dependsOn:classes) {
     classifier = 'bench_and_tests'
     from 'src/test'
+}
+
+task allJar(type: Jar, dependsOn:jar) {
+    archiveName = 'fst-'+version+"-fat.jar"
+    from zipTree('lib/javassist.jar').matching { true }
+    from zipTree('build/libs/fst-'+version+'.jar').matching { true }
+}
+
+task release(type: Jar, dependsOn:allJar) {
+    archiveName = 'fst-'+version+".zip"
+
+    into('src/main/java') {
+        from 'src/main/java'
+    }
+    into ('lib') {
+        from 'lib/javassist.jar'
+        from 'build/libs/fst-'+version+'.jar'
+        from 'build/libs/fst-'+version+'-fat.jar'
+    }
 }
 
 compileJava {
