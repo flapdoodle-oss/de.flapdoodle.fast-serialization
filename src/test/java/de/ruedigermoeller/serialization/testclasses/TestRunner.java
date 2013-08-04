@@ -107,6 +107,12 @@ public class TestRunner {
     public static void main( String[] arg ) {
         System.setProperty("fst.unsafe","true");
 
+        try {
+            SpecialsTest.main(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         TestRunner runner = new TestRunner();
 
 

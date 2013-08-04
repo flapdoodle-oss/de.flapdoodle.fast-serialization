@@ -38,14 +38,14 @@ import java.util.Map;
  * @param <K>
  * @param <V>
  */
-public class StructMap<K,V> extends FSTStruct implements FSTArrayElementSizeCalculator {
+public class StructMap<K extends FSTStruct,V  extends FSTStruct> extends FSTStruct implements FSTArrayElementSizeCalculator {
 
     transient FSTStruct keyTemplate, valueTemplate;
-
-    protected Object keys[];
-    protected Object vals[];
-    protected int    size;
     protected transient FSTStruct pointer;
+
+    protected FSTStruct keys[];
+    protected FSTStruct vals[];
+    protected int    size;
 
     public StructMap( FSTStruct keyTemplate, FSTStruct valueTemplate, int numElems ) {
         init(keyTemplate, valueTemplate, numElems);
@@ -54,8 +54,8 @@ public class StructMap<K,V> extends FSTStruct implements FSTArrayElementSizeCalc
     @NoAssist
     protected void init(FSTStruct keyTemplate, FSTStruct valueTemplate, int numElems) {
         numElems = Math.max(3, numElems);
-        keys    = new Object[numElems*2];
-        vals = new Object[numElems*2];
+        keys    = new FSTStruct[numElems*2];
+        vals = new FSTStruct[numElems*2];
         this.keyTemplate = keyTemplate;
         this.valueTemplate = valueTemplate;
     }
@@ -173,11 +173,11 @@ public class StructMap<K,V> extends FSTStruct implements FSTArrayElementSizeCalc
         return vals[i];
     }
 
-    public void keys(int i, Object v) {
+    public void keys(int i, FSTStruct v) {
         keys[i] = v;
     }
 
-    public void vals(int i, Object v) {
+    public void vals(int i, FSTStruct v) {
         vals[i] = v;
     }
 

@@ -72,6 +72,29 @@ public class StructTest {
         check(alloc.newStruct().getNested().getDataStructArray()==null);
 
         ////////////////////////////////////////////////////////////////
+        // test structMap
+        ////////////////////////////////////////////////////////////////
+
+        TestData smapTest = alloc.newStruct();
+        StructMap<StructInt, StructString> structMap = smapTest.getStructMap();
+        for ( int i = 0; i<20; i++) {
+            StructString value = new StructString("Hallo" + i);
+            StructInt key = new StructInt(i);
+            check(structMap.get(key) == null);
+            structMap.put(key, value);
+            check(structMap.get(key).equals(value));
+        }
+        structMap.put(new StructInt(99), new StructString("test",50));
+        boolean exThrown = false;
+        try {
+            structMap.put(new StructInt(98), new StructString("test",51));
+        } catch (Exception ex) {
+            exThrown = true;
+        }
+        check(exThrown);
+
+
+        ////////////////////////////////////////////////////////////////
         // test untyped polymorphic objectArray
         ////////////////////////////////////////////////////////////////
 
@@ -79,7 +102,7 @@ public class StructTest {
         check( ((StructInt)objArrayTest.objArray(4).cast()).get() == 17 );
         System.out.println("len "+objArrayTest.objArrayElementSize()+" "+((StructString)objArrayTest.objArray(1).cast()).getByteSize());
         check( objArrayTest.objArrayElementSize() == ((StructString)objArrayTest.objArray(1).cast()).getByteSize() );
-        boolean exThrown = false;
+        exThrown = false;
         try {
             ((StructString)objArrayTest.objArray(1).cast()).setString("01234567890123456780");
         } catch (Exception ex) {
