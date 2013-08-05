@@ -2,7 +2,9 @@ import java.util.zip.ZipFile
 
 apply plugin: 'java'
 apply plugin: 'maven'
-version="1.15"
+version="1.16"
+
+jar.baseName='fst'
 
 dependencies {
     compile fileTree("src/test/lib")
@@ -20,7 +22,7 @@ task testJar(type: Jar, dependsOn:classes) {
 }
 
 task allJar(type: Jar, dependsOn:jar) {
-    archiveName = 'fst-'+version+"-fat.jar"
+    archiveName = 'fst-'+version+"-onejar.jar"
     from zipTree('lib/javassist.jar').matching { true }
     from zipTree('build/libs/fst-'+version+'.jar').matching { true }
 }
@@ -34,7 +36,7 @@ task release(type: Jar, dependsOn:allJar) {
     into ('lib') {
         from 'lib/javassist.jar'
         from 'build/libs/fst-'+version+'.jar'
-        from 'build/libs/fst-'+version+'-fat.jar'
+        from 'build/libs/fst-'+version+'-onejar.jar'
     }
 }
 
