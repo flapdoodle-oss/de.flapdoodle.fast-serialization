@@ -29,6 +29,15 @@ import java.lang.ref.WeakReference;
  * Time: 19:50
  * To change this template use File | Settings | File Templates.
  */
+
+/**
+ * allows to temporary compress a serializable Object to reduce instance count on the heap.
+ * When the compressed object is accessed it is deserialized and a WeakReference holds the
+ * deserialized objects to avoid multiple deserialization in a loop.
+ *
+ * Currently only implementation is FST2ByteCompressed, real offheap (direct buffer) should be easy to do.
+ * @param <T>
+ */
 public abstract class FSTCompressed<T> {
 
     WeakReference<T> cached = null;
