@@ -4,6 +4,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 version="1.16"
 
+
 jar.baseName='fst'
 
 dependencies {
@@ -41,10 +42,14 @@ task release(type: Jar, dependsOn:allJar) {
 }
 
 compileJava {
+    targetCompatibility = 1.6
+    sourceCompatibility = 1.6
     options.compilerArgs << '-XDignore.symbol.file'
     options.compilerArgs << '-nowarn'
     options.fork = true
     options.forkOptions.executable = 'javac'
+    print options.compilerArgs
+
 }
 
 artifacts {

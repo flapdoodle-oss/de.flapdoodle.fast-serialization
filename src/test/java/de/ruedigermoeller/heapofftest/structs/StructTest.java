@@ -36,9 +36,9 @@ public class StructTest {
 
         TestData data = new TestData();
         data.setNested(new TestData());
-        data.dataStructArray = new StructArray<TestData>(50, new TestData());
+        data.dataStructArray = new StructArray<TestData>(10, new TestData());
 
-        FSTStructAllocator<TestData> alloc = new FSTStructAllocator<TestData>(data,10);
+        FSTStructAllocator<TestData> alloc = new FSTStructAllocator<TestData>(data,50);
         FSTStructAllocator<StructString> strAlloc = new FSTStructAllocator<StructString>( new StructString(10), 10 );
 
         System.out.println("size td:"+alloc.getTemplateSize()+" str:"+strAlloc.getTemplateSize());
@@ -68,7 +68,7 @@ public class StructTest {
 
         compareTestData( data, alloc.newStruct() );
         compareTestData( data.getNested(), alloc.newStruct().getNested() );
-        compareTestData(data.getNested(), alloc.newStruct().getDataStructArray().get(13));
+        compareTestData(data.getNested(), alloc.newStruct().getDataStructArray().get(3));
         check(alloc.newStruct().getNested().getDataStructArray()==null);
 
         ////////////////////////////////////////////////////////////////
@@ -77,17 +77,17 @@ public class StructTest {
 
         TestData smapTest = alloc.newStruct();
         StructMap<StructInt, StructString> structMap = smapTest.getStructMap();
-        for ( int i = 0; i<20; i++) {
+        for ( int i = 0; i<6; i++) {
             StructString value = new StructString("Hallo" + i);
             StructInt key = new StructInt(i);
             check(structMap.get(key) == null);
             structMap.put(key, value);
             check(structMap.get(key).equals(value));
         }
-        structMap.put(new StructInt(99), new StructString("test",50));
+        structMap.put(new StructInt(99), new StructString("test",10));
         boolean exThrown = false;
         try {
-            structMap.put(new StructInt(98), new StructString("test",51));
+            structMap.put(new StructInt(98), new StructString("test",11));
         } catch (Exception ex) {
             exThrown = true;
         }

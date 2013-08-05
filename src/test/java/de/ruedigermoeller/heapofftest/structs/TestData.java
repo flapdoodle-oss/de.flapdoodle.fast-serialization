@@ -35,7 +35,7 @@ public class TestData extends FSTStruct {
     protected TestData nested;
     protected StructString string = new StructString(50);
     protected StructArray<TestData> dataStructArray;
-    protected StructMap<StructInt,StructString> structMap = new StructMap<StructInt, StructString>(new StructInt(0),new StructString(50),20);
+    protected StructMap<StructInt,StructString> structMap = new StructMap<StructInt, StructString>(new StructInt(0),new StructString(10),10);
 
     protected byte a = 0;
     protected short b = 11111;

@@ -31,7 +31,7 @@ import de.ruedigermoeller.serialization.testclasses.HtmlCharter;
  */
 public class BenchStructIter {
 
-    public static final int SIZE = 1000000;
+    public static final int SIZE = 500000;
 
     static void fillInstruments(StructArray<TestInstrument> arr) {
         int size = arr.size();
@@ -125,8 +125,8 @@ public class BenchStructIter {
         onheap[0] = null;
 
         long instTime = test(offHeapInst);
-        charter.chartBar("Off Heap (*)",(int)instTime,20,"#70a070");
-        System.out.println("duration off heap instantiation "+instTime);
+        charter.chartBar("Structs (*)",(int)instTime,20,"#70a070");
+        System.out.println("duration Structs instantiation "+instTime);
 
         long fullGCOff = BasicGCBench.benchFullGC();
 
@@ -134,7 +134,7 @@ public class BenchStructIter {
 
         charter.openChart("Time of Full GC (ms)");
         charter.chartBar("On heap", (int) (fullGCOn-initialFull), 50, "#7070a0");
-        charter.chartBar("Off heap", (int) Math.max(1,(fullGCOff-initialFull)),50,"#7070a0");
+        charter.chartBar("Structs", (int) Math.max(1,(fullGCOff-initialFull)),50,"#7070a0");
         charter.closeChart();
 
         long oninstTime1 = test( onHeapInst );
@@ -178,9 +178,9 @@ public class BenchStructIter {
                     System.out.println("sum ofheap "+sum);
                 }
             });
-            System.out.println("duration off heap int iter "+offInt);
+            System.out.println("duration structs int iter "+offInt);
             if  (xx==4) {
-                charter.chartBar("off heap identical code", (int) offInt,10,"#70a070");
+                charter.chartBar("structs identical code", (int) offInt,10,"#70a070");
             }
 
             long offIntP = test( new Runnable() {
@@ -192,9 +192,9 @@ public class BenchStructIter {
                     System.out.println("sum ofheap pointered "+sum);
                 }
             });
-            System.out.println("duration off heap int pointered "+offIntP);
+            System.out.println("duration structs int pointered "+offIntP);
             if  (xx==4) {
-                charter.chartBar("off heap using pointers instead of get(index)", (int) offIntP,10,"#70a070");
+                charter.chartBar("structs using pointers instead of get(index)", (int) offIntP,10,"#70a070");
                 charter.closeChart();
             }
 
@@ -234,9 +234,9 @@ public class BenchStructIter {
                     System.out.println("sum offheap "+sum);
                 }
             });
-            System.out.println("duration naive off heap iteration int access "+offCalcLegs);
+            System.out.println("duration naive structs iteration int access "+offCalcLegs);
             if  (xx==4) {
-                charter.chartBar("off heap get(index).getIntVar()", (int) offCalcLegs,20,"#70a070");
+                charter.chartBar("structs get(index).getIntVar()", (int) offCalcLegs,20,"#70a070");
             }
 
             long offCalcLegsP = test( new Runnable() {
@@ -255,9 +255,9 @@ public class BenchStructIter {
                     System.out.println("sum offheap "+sum);
                 }
             });
-            System.out.println("duration naive off heap iteration int access "+offCalcLegsP);
+            System.out.println("duration naive structs iteration int access "+offCalcLegsP);
             if  (xx==4) {
-                charter.chartBar("off heap pointer.getIntVar()", (int) offCalcLegsP,20,"#70a070");
+                charter.chartBar("structs pointer.getIntVar()", (int) offCalcLegsP,20,"#70a070");
                 charter.closeChart();
 
                 charter.heading("3rd level embedded substructure access");
@@ -297,9 +297,9 @@ public class BenchStructIter {
                     System.out.println("sum offheap "+sum);
                 }
             });
-            System.out.println("duration naive off heap iteration calcQty "+offCalcQty);
+            System.out.println("duration naive structs iteration calcQty "+offCalcQty);
             if  (xx==4) {
-                charter.chartBar("off heap identical code to onheap", (int) offCalcQty,100,"#70a070");
+                charter.chartBar("structs identical code to onheap", (int) offCalcQty,100,"#70a070");
             }
 
 //            long offCalcQty1 = test( new Runnable() {
@@ -335,9 +335,9 @@ public class BenchStructIter {
                     System.out.println("sum offheap "+sum);
                 }
             });
-            System.out.println("duration opt pointer off heap iteration calcQty "+offCalcQty2);
+            System.out.println("duration opt pointer structs iteration calcQty "+offCalcQty2);
             if  (xx==4) {
-                charter.chartBar("off heap using pointers for iteration", (int) offCalcQty2,100,"#70a070");
+                charter.chartBar("structs using pointers for iteration", (int) offCalcQty2,100,"#70a070");
             }
 
             long offCalcQty4 = test( new Runnable() {
@@ -366,9 +366,9 @@ public class BenchStructIter {
                     System.out.println("sum offheap "+sum);
                 }
             });
-            System.out.println("duration opt hacked pointer off heap iteration inline calcQty "+offCalcQty4);
+            System.out.println("duration opt hacked pointer structs iteration inline calcQty "+offCalcQty4);
             if  (xx==4) {
-                charter.chartBar("off heap using pointers for all accesses + inlined method", (int) offCalcQty4,100,"#70a070");
+                charter.chartBar("structs using pointers for all accesses + inlined method", (int) offCalcQty4,100,"#70a070");
                 charter.closeChart();
 
                 charter.heading("Linear search for first instrument in array with name.equals(given string)");
@@ -412,7 +412,7 @@ public class BenchStructIter {
                 }
             });
             if  (xx==4) {
-                charter.chartBar("off heap identical code", (int) stringSearchAccessOff0,10,"#70a070");
+                charter.chartBar("structs identical code", (int) stringSearchAccessOff0,10,"#70a070");
             }
             System.out.println("duration onheap string compare iteration "+stringSearchAccessOff0);
 
@@ -435,7 +435,7 @@ public class BenchStructIter {
                 }
             });
             if  (xx==4) {
-                charter.chartBar("off heap using pointers ", (int) stringSearchAccessOff,10,"#70a070");
+                charter.chartBar("structs using pointers ", (int) stringSearchAccessOff,10,"#70a070");
             }
             System.out.println("duration opt DIRECT pointer string compare iteration "+stringSearchAccessOff);
 
@@ -457,7 +457,7 @@ public class BenchStructIter {
                 }
             });
             if  (xx==4) {
-                charter.chartBar("off heap using direct pointer to embedded string", (int) stringSearchAccessOff1,10,"#70a070");
+                charter.chartBar("structs using direct pointer to embedded string", (int) stringSearchAccessOff1,10,"#70a070");
                 charter.closeChart();
             }
             System.out.println("duration opt DIRECT String pointer string compare iteration "+stringSearchAccessOff1);
