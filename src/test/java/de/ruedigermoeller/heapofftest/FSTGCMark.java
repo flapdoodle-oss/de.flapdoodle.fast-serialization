@@ -28,6 +28,8 @@ import java.util.Random;
  */
 public class FSTGCMark {
 
+    final SimpleHistogram simpleHistogram = new SimpleHistogram();
+
     static class UseLessWrapper {
         Object wrapped;
 
@@ -41,10 +43,6 @@ public class FSTGCMark {
     static int mutatingRange = 2000000; //
     static int operationStep = 1000;
 
-    int operCount;
-    int milliDelayCount[] = new int[100];
-    int hundredMilliDelayCount[] = new int[100];
-    int secondDelayCount[] = new int[100];
     Random rand = new Random(1000);
 
     int stepCount = 0;
@@ -129,41 +127,21 @@ public class FSTGCMark {
         System.out.println("static alloc " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000 + "mb");
         long time = System.currentTimeMillis();
         int count = 0;
+        Runnable toRun = new Runnable() {
+            @Override
+            public void run() {
+                operateStep();
+            }
+        };
         while ( (System.currentTimeMillis()-time) < runtime) {
             count++;
-            long tim = System.currentTimeMillis();
-            operateStep();
-            int dur = (int) (System.currentTimeMillis()-tim);
-            if ( dur < 100 )
-                milliDelayCount[dur]++;
-            else if ( dur < 10*100 )
-                hundredMilliDelayCount[dur/100]++;
-            else {
-                secondDelayCount[dur/1000]++;
-            }
+            simpleHistogram.runRequest(toRun);
         }
         System.out.println("Iterations "+count);
     }
 
     public void dumpResult() {
-        for (int i = 0; i < milliDelayCount.length; i++) {
-            int i1 = milliDelayCount[i];
-            if ( i1 > 0 ) {
-                System.out.println("["+i+"]\t"+i1);
-            }
-        }
-        for (int i = 0; i < hundredMilliDelayCount.length; i++) {
-            int i1 = hundredMilliDelayCount[i];
-            if ( i1 > 0 ) {
-                System.out.println("["+i*100+"]\t"+i1);
-            }
-        }
-        for (int i = 0; i < secondDelayCount.length; i++) {
-            int i1 = secondDelayCount[i];
-            if ( i1 > 0 ) {
-                System.out.println("["+i*1000+"]\t"+i1);
-            }
-        }
+        simpleHistogram.dump();
     }
 
     int runtime = 60000 * 5;
