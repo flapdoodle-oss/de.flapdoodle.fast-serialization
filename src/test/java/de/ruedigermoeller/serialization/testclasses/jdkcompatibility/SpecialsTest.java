@@ -71,12 +71,9 @@ public class SpecialsTest {
         in.resetForReuseUseArray(b,0,b.length);
         Object res = in.readObject();
 
-        if ( res.equals("bla") ) {
-            throw new RuntimeException("fail");
+        if ( !res.equals("bla") ) {
+            throw new RuntimeException("fail "+res);
         }
-
-
-
 
     }
 

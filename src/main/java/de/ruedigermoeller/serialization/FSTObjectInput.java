@@ -427,10 +427,9 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                 ensureReadAhead(readExternalReadAHead);
                 ((Externalizable)newObj).readExternal(this);
             } else if (clzSerInfo.useCompatibleMode()) {
-                int pos = input.pos;
                 Object replaced = readObjectCompatible(referencee, clzSerInfo, newObj);
                 if (replaced != null && replaced != newObj) {
-                    objects.replace(newObj, replaced, pos);
+                    objects.replace(newObj, replaced, readPos);
                     newObj = replaced;
                 }
             } else {

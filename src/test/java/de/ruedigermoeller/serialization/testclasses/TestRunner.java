@@ -104,10 +104,11 @@ public class TestRunner {
     HtmlCharter charter = new HtmlCharter("./result.html");
 
 
-    public static void main( String[] arg ) {
+    public static void main( String[] arg ) throws Exception {
         System.setProperty("fst.unsafe","true");
 
         try {
+            ReadResolve.main(null);
             SpecialsTest.main(null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,7 +121,7 @@ public class TestRunner {
         runner.charter.text("<i>intel i7 3770K 3,5 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
-        SerTest.WarmUP = 50000; SerTest.Run = SerTest.WarmUP+1;
+        SerTest.WarmUP = 2000; SerTest.Run = SerTest.WarmUP+1;
         runner.runAll(FrequentPrimitives.getArray(200));
         runner.runAll(new StringPerformance());
         runner.runAll(new FrequentCollections());
