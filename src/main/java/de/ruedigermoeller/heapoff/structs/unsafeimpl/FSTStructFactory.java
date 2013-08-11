@@ -167,7 +167,7 @@ public class FSTStructFactory {
                                 if ( ! f.isStatic() ) {
                                     CtClass type = null;
                                     type = f.getField().getType();
-                                    FSTClazzInfo.FSTFieldInfo fieldInfo = clInfo.getFieldInfo(f.getFieldName(), curClz);
+                                    FSTClazzInfo.FSTFieldInfo fieldInfo = clInfo.getFieldInfo(f.getFieldName(), null);
                                     if ( fieldInfo == null ) {
                                         return;
                                     }

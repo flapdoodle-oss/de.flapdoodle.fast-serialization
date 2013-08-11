@@ -33,6 +33,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
 
     @Templated()
     protected Object[] elems = {null};
+    transient protected E template;
 
     /**
      * initializes with a template. When off heaped, all elements are filled with a copy of that template.
@@ -49,6 +50,16 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
         }
         this.elems = new Object[size];
         elems[0] = template;
+    }
+
+    /**
+     * this will be avaiable for top level struct arrays only, embedded structarrays
+     * will return null;
+     * @return
+     */
+    @NoAssist
+    public E getTemplate() {
+        return template;
     }
 
     protected Object elems(int i) {
@@ -123,6 +134,21 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
             return unsafe.getInt( ___bytes, bufoff+elemsStructIndex()+12 );
         else
             return -1;
+    }
+
+    /**
+     * only avaiable at top level
+     * @param currentIndex
+     */
+    public void clear(int currentIndex) {
+        if ( template == null ) {
+            throw new RuntimeException("not avaiable in embedded struct arrays. Use set(i,template) instead.");
+        }
+        set(currentIndex,template);
+    }
+
+    public void ___setTemplate(E template) {
+        this.template = template;
     }
 
     public final class StructArrIterator<T extends FSTStruct> implements Iterator<T> {

@@ -42,21 +42,21 @@ public class FSTStructAllocator<T extends FSTStruct> {
     /**
      * Create a Structallocator for the given template. Chunksize will be set to the size of one template struct,
      * so with each strutc allocation an individual byte array is created behind the scenes
-     * @param template
+     * @param ontpl
      */
-    public FSTStructAllocator(T template) {
-        this.template = getFactory().toStruct(template);
+    public FSTStructAllocator(T ontpl) {
+        this.template = getFactory().toStruct(ontpl);
         chunkSize = template.getByteSize();
     }
 
     /**
      * Create a Structallocator for the given template. Chunksize will be set to contain 'objectsPerChunk' instances
      * of the given struct template.
-     * @param template
+     * @param ontpl
      * @param objectsPerChunk
      */
-    public FSTStructAllocator(T template, int objectsPerChunk) {
-        this(template);
+    public FSTStructAllocator(T ontpl, int objectsPerChunk) {
+        this(ontpl);
         chunkSize = objectsPerChunk * template.getByteSize();
     }
 
@@ -71,14 +71,25 @@ public class FSTStructAllocator<T extends FSTStruct> {
     }
 
     /**
-     * create a new struct array.
+     * create a new struct array of same type as template
      * @param size
      * @return
      */
     public StructArray<T> newArray(int size) {
         if ( template == null )
             throw new RuntimeException("need to specify a template in constructore in order to use this.");
-        return newStruct(new StructArray<T>(size,template));
+        StructArray<T> res = newStruct(new StructArray<T>(size, template));
+        res.___setTemplate(template);
+        return res;
+    }
+
+    /**
+     * create a new struct array of same type as template
+     * @param size
+     * @return
+     */
+    public <X extends FSTStruct> StructArray<X> newArray(int size, X templ) {
+        return newStruct(new StructArray<X>(size,templ));
     }
 
     /**

@@ -187,20 +187,36 @@ public class FSTStruct implements Serializable {
         return unsafe.getByte(___bytes,___offset);
     }
 
+    public void setByte(byte i) {
+        unsafe.putByte(___bytes,___offset,i);
+    }
+
     public char getChar() {
-        return unsafe.getChar(___bytes,___offset);
+        return unsafe.getChar(___bytes, ___offset);
     }
 
     public short getShort() {
-        return unsafe.getShort(___bytes,___offset);
+        return unsafe.getShort(___bytes, ___offset);
+    }
+
+    public void setShort(short i) {
+        unsafe.putShort(___bytes, ___offset,i);
     }
 
     public int getInt() {
         return unsafe.getInt(___bytes,___offset);
     }
 
+    public void setInt(int i) {
+        unsafe.putInt(___bytes,___offset,i);
+    }
+
     public long getLong() {
         return unsafe.getLong(___bytes,___offset);
+    }
+
+    public void setLong(long i) {
+        unsafe.putLong(___bytes, ___offset, i);
     }
 
     public float getFloat() {
@@ -211,15 +227,6 @@ public class FSTStruct implements Serializable {
         return unsafe.getDouble(___bytes,___offset);
     }
 
-    public FSTStruct createCopy() {
-        if ( ! isOffHeap() ) {
-            throw new RuntimeException("must be offheap to call this");
-        }
-        byte b[] = new byte[getByteSize()];
-        getBytes(b,0);
-        return ___fac.createStructWrapper(b,0);
-    }
-
     public void getBytes(byte[] target, int startIndex) {
         if ( ! isOffHeap() ) {
             throw new RuntimeException("must be offheap to call this");
@@ -228,6 +235,22 @@ public class FSTStruct implements Serializable {
             throw new RuntimeException("ArrayIndexOutofBounds byte len:"+target.length+" start+size:"+(startIndex+getByteSize()));
         }
         unsafe.copyMemory(___bytes,___offset, target,bufoff, target.length);
+    }
+
+    public void setBytes(byte[] source, int sourceIndex, int len ) {
+        if ( ! isOffHeap() ) {
+            throw new RuntimeException("must be offheap to call this");
+        }
+        unsafe.copyMemory(source,bufoff+sourceIndex, ___bytes, ___offset, len);
+    }
+
+    public FSTStruct createCopy() {
+        if ( ! isOffHeap() ) {
+            throw new RuntimeException("must be offheap to call this");
+        }
+        byte b[] = new byte[getByteSize()];
+        getBytes(b,0);
+        return ___fac.createStructWrapper(b,0);
     }
 
 
