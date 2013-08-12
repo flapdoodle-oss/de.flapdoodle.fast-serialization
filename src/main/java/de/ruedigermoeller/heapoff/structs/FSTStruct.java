@@ -244,6 +244,10 @@ public class FSTStruct implements Serializable {
         unsafe.copyMemory(source, bufoff+sourceIndex, ___bytes, ___offset, len);
     }
 
+    /**
+     * returns a complet copy of this object allocating a new byte[] capable of holding the data.
+     * @return
+     */
     public FSTStruct createCopy() {
         if ( ! isOffHeap() ) {
             throw new RuntimeException("must be offheap to call this");
