@@ -174,6 +174,9 @@ public class FSTStruct implements Serializable {
         return (T) res;
     }
 
+    /**
+     * @return a volatile pointer of the exact type this points to
+     */
     public FSTStruct cast() {
         int clzId = getClzId();
         if ( ___fac.getClazz(clzId) == getClass().getSuperclass() )

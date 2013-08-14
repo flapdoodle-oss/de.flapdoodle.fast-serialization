@@ -271,13 +271,15 @@ public class FSTStructFactory {
     }
 
     public FSTStruct createStructPointer(byte[] b, int index, int clzId) {
-        Class clazz = mIntToClz.get(clzId);
-        if (clazz==null)
-            throw new RuntimeException("unregistered class "+clzId);
-        try {
-            return (FSTStruct) createWrapper(clazz, b, index);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        synchronized (this) {
+            Class clazz = mIntToClz.get(clzId);
+            if (clazz==null)
+                throw new RuntimeException("unregistered class "+clzId);
+            try {
+                return (FSTStruct) createWrapper(clazz, b, index);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
