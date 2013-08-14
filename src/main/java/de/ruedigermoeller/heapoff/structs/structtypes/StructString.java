@@ -25,6 +25,7 @@ package de.ruedigermoeller.heapoff.structs.structtypes;
 
 import de.ruedigermoeller.heapoff.structs.Align;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
+import de.ruedigermoeller.heapoff.structs.NoAssist;
 
 /**
  * this class can be used to represent strings in structs. the content is rewritable, but cannot grow.
@@ -123,6 +124,7 @@ public class StructString extends FSTStruct implements Comparable {
         return 97979797;
     }
 
+    @NoAssist
     public boolean equals( Object o ) {
         if ( o instanceof StructString) {
             StructString ss = (StructString) o;
@@ -130,7 +132,7 @@ public class StructString extends FSTStruct implements Comparable {
                 return false;
             }
             for ( int i = 0; i < ss.getLen(); i++ ) {
-                if ( ss.chars(i) != ss.chars(i) ) {
+                if ( ss.chars(i) != chars(i) ) {
                     return false;
                 }
             }

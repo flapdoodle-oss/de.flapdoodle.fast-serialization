@@ -250,12 +250,14 @@ public class FSTStructFactory {
     }
 
     public Class getProxyClass(Class clz) throws Exception {
-        Class res = proxyClzMap.get(clz);
-        if ( res == null ) {
-            res = createStructClz(clz);
-            proxyClzMap.put(clz,res);
+        synchronized (this) {
+            Class res = proxyClzMap.get(clz);
+            if ( res == null ) {
+                res = createStructClz(clz);
+                proxyClzMap.put(clz,res);
+            }
+            return res;
         }
-        return res;
     }
 
     public <T extends FSTStruct> T createWrapper(Class<T> onHeap, byte bytes[], int index) throws Exception {
