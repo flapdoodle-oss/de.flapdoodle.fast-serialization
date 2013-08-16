@@ -48,6 +48,12 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
             if ( vola ) {
                 insert = "Volatile";
             }
+            if ( cas && type == CtPrimitiveType.intType) {
+                f.replace("unsafe.putInt"+insert+"(___bytes,"+off+"+___offset,$1);");
+            } else
+            if ( cas && type == CtPrimitiveType.longType) {
+                f.replace("unsafe.putLong"+insert+"(___bytes,"+off+"+___offset,$1);");
+            } else
             if ( type == CtPrimitiveType.booleanType ) {
                 f.replace("unsafe.putBoolean"+insert+"(___bytes,"+off+"+___offset,$1);");
             } else
@@ -103,6 +109,10 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
             }
             if ( ! fieldInfo.isIntegral() )
                 throw new RuntimeException("@Volatile only applicable to primitive types");
+        } else if ( cas ) {
+            if ( fieldInfo.getType() != int.class && fieldInfo.getType() != long.class ) {
+                throw new RuntimeException("@CAS only applicable to int and long");
+            }
         }
     }
 
