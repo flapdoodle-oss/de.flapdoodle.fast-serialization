@@ -1,8 +1,5 @@
 package de.ruedigermoeller.heapoff.structs.unsafeimpl;
 
-import de.ruedigermoeller.heapoff.structs.CAS;
-import de.ruedigermoeller.heapoff.structs.Ordered;
-import de.ruedigermoeller.heapoff.structs.Volatile;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import javassist.*;
 import javassist.expr.FieldAccess;
@@ -40,20 +37,12 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     public void defineStructWriteAccess(FieldAccess f, CtClass type, FSTClazzInfo.FSTFieldInfo fieldInfo) {
         int off = fieldInfo.getStructOffset();
         try {
-            boolean cas = fieldInfo.getField().getAnnotation(CAS.class) != null;
-            boolean ordered = fieldInfo.getField().getAnnotation(Ordered.class) != null;
-            boolean vola = fieldInfo.getField().getAnnotation(Volatile.class) != null;
-            validateAnnotations(fieldInfo,cas,ordered,vola);
+            boolean vola = fieldInfo.isVolatile();
+            validateAnnotations(fieldInfo,vola);
             String insert = "";
             if ( vola ) {
                 insert = "Volatile";
             }
-            if ( cas && type == CtPrimitiveType.intType) {
-                f.replace("unsafe.putInt"+insert+"(___bytes,"+off+"+___offset,$1);");
-            } else
-            if ( cas && type == CtPrimitiveType.longType) {
-                f.replace("unsafe.putLong"+insert+"(___bytes,"+off+"+___offset,$1);");
-            } else
             if ( type == CtPrimitiveType.booleanType ) {
                 f.replace("unsafe.putBoolean"+insert+"(___bytes,"+off+"+___offset,$1);");
             } else
@@ -102,26 +91,17 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
         }
     }
 
-    void validateAnnotations(FSTClazzInfo.FSTFieldInfo fieldInfo, boolean cas, boolean ordered, boolean vola) {
+    void validateAnnotations(FSTClazzInfo.FSTFieldInfo fieldInfo, boolean vola) {
         if ( vola ) {
-            if ( cas || ordered ) {
-                throw new RuntimeException("only one of @CAS, @Volatile, @Ordered applicable");
-            }
             if ( ! fieldInfo.isIntegral() )
                 throw new RuntimeException("@Volatile only applicable to primitive types");
-        } else if ( cas ) {
-            if ( fieldInfo.getType() != int.class && fieldInfo.getType() != long.class ) {
-                throw new RuntimeException("@CAS only applicable to int and long");
-            }
         }
     }
 
     @Override
     public void defineArrayAccessor(FSTClazzInfo.FSTFieldInfo fieldInfo, FSTClazzInfo clInfo, CtMethod method) {
-        boolean cas = fieldInfo.getField().getAnnotation(CAS.class) != null;
-        boolean ordered = fieldInfo.getField().getAnnotation(Ordered.class) != null;
-        boolean vola = fieldInfo.getField().getAnnotation(Volatile.class) != null;
-        validateAnnotations(fieldInfo,cas,ordered,vola);
+        boolean vola = fieldInfo.isVolatile();
+        validateAnnotations(fieldInfo,vola);
         String insert = "";
         if ( vola ) {
             insert = "Volatile";
@@ -212,6 +192,30 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
         }
     }
 
+    public void defineStructSetCAS(FSTClazzInfo.FSTFieldInfo casAcc, FSTClazzInfo clInfo, CtMethod method) {
+        int off = casAcc.getStructOffset();
+        try {
+            if ( method.getParameterTypes().length != 2 ) {
+                throw new RuntimeException("CAS setter requires expected and newValue args");
+            }
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            if ( casAcc.getType() == int.class ) {
+                method.setBody("return unsafe.compareAndSwapInt(___bytes,"+off+"+___offset,$1,$2);");
+            } else
+            if ( casAcc.getType() == int.class ) {
+                method.setBody("return unsafe.compareAndSwapLong(___bytes,"+off+"+___offset,$1,$2);");
+            } else {
+                throw new RuntimeException("CAS access only applicable to int and long.");
+            }
+        } catch (CannotCompileException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     @Override
     public void defineArrayElementSize(FSTClazzInfo.FSTFieldInfo indexfi, FSTClazzInfo clInfo, CtMethod method) {
         int off = indexfi.getStructOffset();
@@ -286,10 +290,8 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
 
     @Override
     public void defineStructReadAccess(FieldAccess f, CtClass type, FSTClazzInfo.FSTFieldInfo fieldInfo) {
-        boolean cas = fieldInfo.getField().getAnnotation(CAS.class) != null;
-        boolean ordered = fieldInfo.getField().getAnnotation(Ordered.class) != null;
-        boolean vola = fieldInfo.getField().getAnnotation(Volatile.class) != null;
-        validateAnnotations(fieldInfo,cas,ordered,vola);
+        boolean vola = fieldInfo.isVolatile();
+        validateAnnotations(fieldInfo,vola);
         String insert = "";
         if ( vola ) {
             insert = "Volatile";

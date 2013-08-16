@@ -133,8 +133,15 @@ public class FSTStructFactory {
                 FSTClazzInfo.FSTFieldInfo pointerfi = checkForSpecialArrayMethod(clInfo, method, "Pointer", null, null);
                 // get byte index to structure or array header element:
                 //      type [name]StructIndex()
-                FSTClazzInfo.FSTFieldInfo structIndex = checkForSpecialArrayMethod(clInfo, method, "StructIndex", CtClass.intType, new CtClass[0], false);
+                FSTClazzInfo.FSTFieldInfo structIndex = checkForSpecialMethod(clInfo, method, "StructIndex", CtClass.intType, new CtClass[0], false);
+                // set with CAS
+                //      boolean [name]CAS(expectedValue,value)
+                FSTClazzInfo.FSTFieldInfo casAcc = checkForSpecialMethod(clInfo, method, "CAS", CtClass.booleanType, null, false);
 
+                if ( casAcc != null ) {
+                    structGen.defineStructSetCAS(casAcc, clInfo, method);
+                    newClz.addMethod(method);
+                } else
                 if ( pointerfi != null ) {
                     structGen.defineArrayPointer(pointerfi, clInfo, method);
                     newClz.addMethod(method);
@@ -190,10 +197,10 @@ public class FSTStructFactory {
     }
 
     FSTClazzInfo.FSTFieldInfo checkForSpecialArrayMethod( FSTClazzInfo clzInfo, CtMethod method, String postFix, Object returnType, CtClass requiredArgs[] ) {
-        return checkForSpecialArrayMethod(clzInfo, method, postFix, returnType, requiredArgs, true);
+        return checkForSpecialMethod(clzInfo, method, postFix, returnType, requiredArgs, true);
     }
 
-    FSTClazzInfo.FSTFieldInfo checkForSpecialArrayMethod( FSTClazzInfo clzInfo, CtMethod method, String postFix, Object returnType, CtClass requiredArgs[], boolean array ) {
+    FSTClazzInfo.FSTFieldInfo checkForSpecialMethod(FSTClazzInfo clzInfo, CtMethod method, String postFix, Object returnType, CtClass requiredArgs[], boolean array) {
         int len = postFix.length();
         String methName = method.getName();
         if ( ! methName.endsWith(postFix) ) {

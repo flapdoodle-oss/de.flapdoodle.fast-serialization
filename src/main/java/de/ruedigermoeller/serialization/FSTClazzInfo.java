@@ -579,6 +579,10 @@ public final class FSTClazzInfo {
             return c;
         }
 
+        public boolean isVolatile() {
+            return Modifier.isVolatile(getField().getModifiers());
+        }
+
         public final Class getType() {
             return type;
         }
