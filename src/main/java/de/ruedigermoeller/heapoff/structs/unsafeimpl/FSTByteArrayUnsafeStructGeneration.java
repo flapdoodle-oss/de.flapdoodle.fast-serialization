@@ -1,5 +1,8 @@
 package de.ruedigermoeller.heapoff.structs.unsafeimpl;
 
+import de.ruedigermoeller.heapoff.structs.CAS;
+import de.ruedigermoeller.heapoff.structs.Ordered;
+import de.ruedigermoeller.heapoff.structs.Volatile;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import javassist.*;
 import javassist.expr.FieldAccess;
@@ -37,29 +40,37 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     public void defineStructWriteAccess(FieldAccess f, CtClass type, FSTClazzInfo.FSTFieldInfo fieldInfo) {
         int off = fieldInfo.getStructOffset();
         try {
+            boolean cas = fieldInfo.getField().getAnnotation(CAS.class) != null;
+            boolean ordered = fieldInfo.getField().getAnnotation(Ordered.class) != null;
+            boolean vola = fieldInfo.getField().getAnnotation(Volatile.class) != null;
+            validateAnnotations(fieldInfo,cas,ordered,vola);
+            String insert = "";
+            if ( vola ) {
+                insert = "Volatile";
+            }
             if ( type == CtPrimitiveType.booleanType ) {
-                f.replace("unsafe.putBoolean(___bytes,"+off+"+___offset,$1);");
+                f.replace("unsafe.putBoolean"+insert+"(___bytes,"+off+"+___offset,$1);");
             } else
             if ( type == CtPrimitiveType.byteType ) {
-                f.replace("unsafe.putByte(___bytes,"+off+"+___offset,$1);");
+                f.replace("unsafe.putByte"+insert+"(___bytes,"+off+"+___offset,$1);");
             } else
             if ( type == CtPrimitiveType.charType ) {
-                f.replace("unsafe.putChar(___bytes,"+off+"+___offset,$1);");
+                f.replace("unsafe.putChar"+insert+"(___bytes,"+off+"+___offset,$1);");
             } else
             if ( type == CtPrimitiveType.shortType ) {
-                f.replace("unsafe.putShort(___bytes,"+off+"+___offset,$1);");
+                f.replace("unsafe.putShort"+insert+"(___bytes,"+off+"+___offset,$1);");
             } else
             if ( type == CtPrimitiveType.intType ) {
-                f.replace("unsafe.putInt(___bytes,"+off+"+___offset,$1);");
+                f.replace("unsafe.putInt"+insert+"(___bytes,"+off+"+___offset,$1);");
             } else
             if ( type == CtPrimitiveType.longType ) {
-                f.replace("unsafe.putLong(___bytes,"+off+"+___offset,$1);");
+                f.replace("unsafe.putLong"+insert+"(___bytes,"+off+"+___offset,$1);");
             } else
             if ( type == CtPrimitiveType.floatType ) {
-                f.replace("unsafe.putFloat(___bytes,"+off+"+___offset,$1);");
+                f.replace("unsafe.putFloat"+insert+"(___bytes,"+off+"+___offset,$1);");
             } else
             if ( type == CtPrimitiveType.doubleType ) {
-                f.replace("unsafe.putDouble(___bytes,"+off+"+___offset,$1);");
+                f.replace("unsafe.putDouble"+insert+"(___bytes,"+off+"+___offset,$1);");
             } else
             {
                 String code =
@@ -85,8 +96,26 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
         }
     }
 
+    void validateAnnotations(FSTClazzInfo.FSTFieldInfo fieldInfo, boolean cas, boolean ordered, boolean vola) {
+        if ( vola ) {
+            if ( cas || ordered ) {
+                throw new RuntimeException("only one of @CAS, @Volatile, @Ordered applicable");
+            }
+            if ( ! fieldInfo.isIntegral() )
+                throw new RuntimeException("@Volatile only applicable to primitive types");
+        }
+    }
+
     @Override
     public void defineArrayAccessor(FSTClazzInfo.FSTFieldInfo fieldInfo, FSTClazzInfo clInfo, CtMethod method) {
+        boolean cas = fieldInfo.getField().getAnnotation(CAS.class) != null;
+        boolean ordered = fieldInfo.getField().getAnnotation(Ordered.class) != null;
+        boolean vola = fieldInfo.getField().getAnnotation(Volatile.class) != null;
+        validateAnnotations(fieldInfo,cas,ordered,vola);
+        String insert = "";
+        if ( vola ) {
+            insert = "Volatile";
+        }
         try {
             Class arrayType = fieldInfo.getArrayType();
             int off = fieldInfo.getStructOffset();
@@ -95,28 +124,28 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                     "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException(\"index:\"+$1+\" len:\"+_st_len);";
             if ( method.getReturnType() == CtClass.voidType ) {
                 if ( arrayType == boolean.class ) {
-                    method.setBody(prefix+"unsafe.putBoolean(___bytes, _st_off+$1,$2);}");
+                    method.setBody(prefix+"unsafe.putBoolean"+insert+"(___bytes, _st_off+$1,$2);}");
                 } else
                 if ( arrayType == byte.class ) {
-                    method.setBody(prefix+"unsafe.putByte(___bytes, _st_off+$1,$2);}");
+                    method.setBody(prefix+"unsafe.putByte"+insert+"(___bytes, _st_off+$1,$2);}");
                 } else
                 if ( arrayType == char.class ) {
-                    method.setBody(prefix+"unsafe.putChar(___bytes, _st_off+$1*2,$2);}");
+                    method.setBody(prefix+"unsafe.putChar"+insert+"(___bytes, _st_off+$1*2,$2);}");
                 } else
                 if ( arrayType == short.class ) {
-                    method.setBody(prefix+" unsafe.putShort(___bytes, _st_off+$1*2,$2);}");
+                    method.setBody(prefix+" unsafe.putShort"+insert+"(___bytes, _st_off+$1*2,$2);}");
                 } else
                 if ( arrayType == int.class ) {
-                    method.setBody(prefix+" unsafe.putInt(___bytes, _st_off+$1*4,$2);}");
+                    method.setBody(prefix+" unsafe.putInt"+insert+"(___bytes, _st_off+$1*4,$2);}");
                 } else
                 if ( arrayType == long.class ) {
-                    method.setBody(prefix+"unsafe.putLong(___bytes, _st_off+$1*8,$2);}");
+                    method.setBody(prefix+"unsafe.putLong"+insert+"(___bytes, _st_off+$1*8,$2);}");
                 } else
                 if ( arrayType == double.class ) {
-                    method.setBody(prefix+"unsafe.putDouble(___bytes, _st_off+$1*8,$2);}");
+                    method.setBody(prefix+"unsafe.putDouble"+insert+"(___bytes, _st_off+$1*8,$2);}");
                 } else
                 if ( arrayType == float.class ) {
-                    method.setBody(prefix+"unsafe.putFloat(___bytes, _st_off+$1*4,$2);}");
+                    method.setBody(prefix+"unsafe.putFloat"+insert+"(___bytes, _st_off+$1*4,$2);}");
                 } else {
                     method.setBody(
                     prefix+
@@ -137,28 +166,28 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 }
             } else {
                 if ( arrayType == boolean.class ) {
-                    method.setBody(prefix+"return unsafe.getBoolean(___bytes, _st_off+$1);}");
+                    method.setBody(prefix+"return unsafe.getBoolean"+insert+"(___bytes, _st_off+$1);}");
                 } else
                 if ( arrayType == byte.class ) {
-                    method.setBody(prefix+"return unsafe.getByte(___bytes, _st_off+$1);}");
+                    method.setBody(prefix+"return unsafe.getByte"+insert+"(___bytes, _st_off+$1);}");
                 } else
                 if ( arrayType == char.class ) {
-                    method.setBody(prefix+"return unsafe.getChar(___bytes, _st_off+$1*2); }");
+                    method.setBody(prefix+"return unsafe.getChar"+insert+"(___bytes, _st_off+$1*2); }");
                 } else
                 if ( arrayType == short.class ) {
-                    method.setBody(prefix+"return unsafe.getShort(___bytes, _st_off+$1*2);}");
+                    method.setBody(prefix+"return unsafe.getShort"+insert+"(___bytes, _st_off+$1*2);}");
                 } else
                 if ( arrayType == int.class ) {
-                    method.setBody(prefix+"return unsafe.getInt(___bytes, _st_off+$1*4);}");
+                    method.setBody(prefix+"return unsafe.getInt"+insert+"(___bytes, _st_off+$1*4);}");
                 } else
                 if ( arrayType == long.class ) {
-                    method.setBody(prefix+"return unsafe.getLong(___bytes, _st_off+$1*8);}");
+                    method.setBody(prefix+"return unsafe.getLong"+insert+"(___bytes, _st_off+$1*8);}");
                 } else
                 if ( arrayType == double.class ) {
-                    method.setBody(prefix+"return unsafe.getDouble(___bytes, _st_off+$1*8);}");
+                    method.setBody(prefix+"return unsafe.getDouble"+insert+"(___bytes, _st_off+$1*8);}");
                 } else
                 if ( arrayType == float.class ) {
-                    method.setBody(prefix+"return unsafe.getFloat(___bytes, _st_off+$1*4);}");
+                    method.setBody(prefix+"return unsafe.getFloat"+insert+"(___bytes, _st_off+$1*4);}");
                 } else { // object array
                     String meth =
                     prefix+
@@ -247,31 +276,39 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
 
     @Override
     public void defineStructReadAccess(FieldAccess f, CtClass type, FSTClazzInfo.FSTFieldInfo fieldInfo) {
+        boolean cas = fieldInfo.getField().getAnnotation(CAS.class) != null;
+        boolean ordered = fieldInfo.getField().getAnnotation(Ordered.class) != null;
+        boolean vola = fieldInfo.getField().getAnnotation(Volatile.class) != null;
+        validateAnnotations(fieldInfo,cas,ordered,vola);
+        String insert = "";
+        if ( vola ) {
+            insert = "Volatile";
+        }
         int off = fieldInfo.getStructOffset();
         try {
             if ( type == CtPrimitiveType.booleanType ) {
-                f.replace("$_ = unsafe.getBoolean(___bytes,"+off+"+___offset);");
+                f.replace("$_ = unsafe.getBoolean"+insert+"(___bytes,"+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.byteType ) {
-                f.replace("$_ = unsafe.getByte(___bytes,"+off+"+___offset);");
+                f.replace("$_ = unsafe.getByte"+insert+"(___bytes,"+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.charType ) {
-                f.replace("$_ = unsafe.getChar(___bytes,"+off+"+___offset);");
+                f.replace("$_ = unsafe.getChar"+insert+"(___bytes,"+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.shortType ) {
-                f.replace("$_ = unsafe.getShort(___bytes,"+off+"+___offset);");
+                f.replace("$_ = unsafe.getShort"+insert+"(___bytes,"+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.intType ) {
-                f.replace("$_ = unsafe.getInt(___bytes,"+off+"+___offset);");
+                f.replace("$_ = unsafe.getInt"+insert+"(___bytes,"+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.longType ) {
-                f.replace("$_ = unsafe.getLong(___bytes,"+off+"+___offset);");
+                f.replace("$_ = unsafe.getLong"+insert+"(___bytes,"+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.floatType ) {
-                f.replace("$_ = unsafe.getFloat(___bytes,"+off+"+___offset);");
+                f.replace("$_ = unsafe.getFloat"+insert+"(___bytes,"+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.doubleType ) {
-                f.replace("$_ = unsafe.getDouble(___bytes,"+off+"+___offset);");
+                f.replace("$_ = unsafe.getDouble"+insert+"(___bytes,"+off+"+___offset);");
             } else { // object ref
                 String typeString = type.getName();
                 f.replace("{ int tmpIdx = unsafe.getInt(___bytes, "+off+" + ___offset); if (tmpIdx <= 0) return null;" +
