@@ -1118,8 +1118,9 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         }
         input.reset();
         objects.clearForRead(); clnames.clear();
-        input.count = len;
+        input.count = len+off;
         input.buf = bytes;
+        input.pos = off;
     }
 
     public final int readFIntUnsafe() throws IOException {
