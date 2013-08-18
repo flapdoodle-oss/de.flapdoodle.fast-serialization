@@ -130,7 +130,12 @@ public final class FSTClazzInfo {
         if (c == null) {
             return res;
         }
-        res.addAll(Arrays.asList(c.getDeclaredFields()));
+        List<Field> c1 = Arrays.asList(c.getDeclaredFields());
+        Collections.reverse(c1);
+        for (int i = 0; i < c1.size(); i++) {
+            Field field = c1.get(i);
+            res.add(0,field);
+        }
         for (int i = 0; i < res.size(); i++) {
             Field field = res.get(i);
             if ( Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers()) )
@@ -193,41 +198,44 @@ public final class FSTClazzInfo {
                 return res;
             }
         };
-        Class curCl = c;
-        fields.clear();
 
-        while (curCl != Object.class) {
-            ObjectStreamClass os = null;
-            try {
-                os = ObjectStreamClass.lookup(curCl);
-            } catch (Exception e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-            if (os != null) {
-                final ObjectStreamField[] fi = os.getFields();
-                List<FSTFieldInfo> curClzFields = new ArrayList<FSTFieldInfo>();
-                if (fi != null) {
-                    for (int i = 0; i < fi.length; i++) {
-                        ObjectStreamField objectStreamField = fi[i];
-                        String ff = objectStreamField.getName();
-                        final FSTFieldInfo fstFieldInfo = fieldMap.get(curCl.getName() + "#" + ff);
-                        if (fstFieldInfo != null && fstFieldInfo.getField() != null) {
-                            curClzFields.add(fstFieldInfo);
-                            fields.add(fstFieldInfo.getField());
-                        } else {
-                            if (FSTObjectOutput.DUMP)
-                                System.out.println("Class:" + c.getName() + " no field found " + ff);
+
+        if ( ! reg.isStructMode() ) {
+            Class curCl = c;
+            fields.clear();
+            while (curCl != Object.class) {
+                ObjectStreamClass os = null;
+                try {
+                    os = ObjectStreamClass.lookup(curCl);
+                } catch (Exception e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+                if (os != null) {
+                    final ObjectStreamField[] fi = os.getFields();
+                    List<FSTFieldInfo> curClzFields = new ArrayList<FSTFieldInfo>();
+                    if (fi != null) {
+                        for (int i = 0; i < fi.length; i++) {
+                            ObjectStreamField objectStreamField = fi[i];
+                            String ff = objectStreamField.getName();
+                            final FSTFieldInfo fstFieldInfo = fieldMap.get(curCl.getName() + "#" + ff);
+                            if (fstFieldInfo != null && fstFieldInfo.getField() != null) {
+                                curClzFields.add(fstFieldInfo);
+                                fields.add(fstFieldInfo.getField());
+                            } else {
+                                if (FSTObjectOutput.DUMP)
+                                    System.out.println("Class:" + c.getName() + " no field found " + ff);
+                            }
                         }
                     }
+                    Collections.sort(curClzFields, infocomp);
+                    FSTCompatibilityInfo info = new FSTCompatibilityInfo(curClzFields, curCl);
+                    compInfo.put(curCl, info);
+                    if (info.needsCompatibleMode()) {
+                        requiresCompatibleMode = true;
+                    }
                 }
-                Collections.sort(curClzFields, infocomp);
-                FSTCompatibilityInfo info = new FSTCompatibilityInfo(curClzFields, curCl);
-                compInfo.put(curCl, info);
-                if (info.needsCompatibleMode()) {
-                    requiresCompatibleMode = true;
-                }
+                curCl = curCl.getSuperclass();
             }
-            curCl = curCl.getSuperclass();
         }
 
         // default sort order

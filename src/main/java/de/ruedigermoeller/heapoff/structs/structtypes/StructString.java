@@ -58,6 +58,10 @@ public class StructString extends FSTStruct implements Comparable {
      * @param s
      */
     public void setString(String s) {
+        if ( s == null ) {
+            setLen(0);
+            return;
+        }
         if ( s.length() > charsLen() ) {
             throw new RuntimeException("String length exceeds buffer size. String len "+s.length()+" charsLen:"+charsLen());
         }

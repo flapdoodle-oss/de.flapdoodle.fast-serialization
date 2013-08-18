@@ -37,6 +37,7 @@ public class TestData extends FSTStruct {
     protected StructArray<TestData> dataStructArray;
     protected StructMap<StructInt,StructString> structMap = new StructMap<StructInt, StructString>(new StructInt(0),new StructString(10),10);
 
+    protected boolean bool;
     protected byte a = 0;
     protected short b = 11111;
     protected char c = 22222;
@@ -47,6 +48,14 @@ public class TestData extends FSTStruct {
 
     public byte getA() {
         return a;
+    }
+
+    public boolean isBool() {
+        return bool;
+    }
+
+    public void setBool(boolean bool) {
+        this.bool = bool;
     }
 
     public short getB() {
@@ -73,6 +82,7 @@ public class TestData extends FSTStruct {
         return g;
     }
 
+    protected boolean[] arrBool = {true,false,true,false};
     protected byte[] arrA = "blablablablabla".getBytes();
     protected short[] arrb = { 11111, 22222, 3333 };
     protected char[] arrc = { 22221, 22221, 22222, 1 };
@@ -86,6 +96,7 @@ public class TestData extends FSTStruct {
     protected StructString typedArray[] = new StructString[] { null, new StructString("One"), new StructString("Two"), new StructString("3", 10), new StructString("Four") };
 
 
+    public boolean arrBool(int index) { return arrBool[index]; }
     public byte arrA(int index) { return arrA[index]; }
     public short arrb(int index) { return arrb[index]; }
     public char arrc(int index) { return arrc[index]; }
@@ -97,6 +108,7 @@ public class TestData extends FSTStruct {
     public FSTStruct templatedObjArray(int index) { return templatedObjArray[index]; }
     public StructString typedArray(int index) { return typedArray[index]; }
 
+    public void arrBool(int index, boolean val) { arrBool[index] = val; }
     public void arrA(int index, byte val) { arrA[index] = val; }
     public void arrb(int index, short val ) { arrb[index] = val; }
     public void arrc(int index, char val ) { arrc[index] = val; }
@@ -159,6 +171,10 @@ public class TestData extends FSTStruct {
 
     public void setNested(TestData nested) {
         this.nested = nested;
+    }
+
+    public int arrBoolLen() {
+        return arrBool.length;
     }
 }
 

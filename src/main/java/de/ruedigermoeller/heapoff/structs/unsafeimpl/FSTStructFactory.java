@@ -6,6 +6,7 @@ import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTConfiguration;
+import de.ruedigermoeller.serialization.util.FSTInt2ObjectMap;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 import javassist.*;
 import javassist.bytecode.*;
@@ -56,7 +57,7 @@ public class FSTStructFactory {
 
     public static final int MAX_CLASSES = 1000;
     static Unsafe unsafe = FSTUtil.unFlaggedUnsafe;
-    static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
+    static FSTConfiguration conf = FSTConfiguration.createStructConfiguration();
     static Loader proxyLoader = new Loader(FSTStructFactory.class.getClassLoader(), ClassPool.getDefault());
 
     ConcurrentHashMap<Class, Class> proxyClzMap = new ConcurrentHashMap<Class, Class>();
@@ -128,7 +129,7 @@ public class FSTStructFactory {
                 // get size of array element:
                 //      int [name]ElementSize()
                 FSTClazzInfo.FSTFieldInfo elemlen = checkForSpecialArrayMethod(clInfo, method, "ElementSize", CtClass.intType, new CtClass[0]);
-                // get pointer to array[0] element:
+                // CREATE non volatile pointer to array[0] element:
                 //      type [name]Pointer() OR type [name]Pointer(pointerToSetup) (for reuse)
                 FSTClazzInfo.FSTFieldInfo pointerfi = checkForSpecialArrayMethod(clInfo, method, "Pointer", null, null);
                 // get byte index to structure or array header element:
@@ -469,7 +470,7 @@ public class FSTStructFactory {
         return align(elemSiz,SIZE_ALIGN);
     }
 
-    HashMap<Integer,Class> mIntToClz = new HashMap<Integer, Class>();
+    FSTInt2ObjectMap<Class> mIntToClz = new FSTInt2ObjectMap<Class>(97);
     HashMap<Class,Integer> mClzToInt = new HashMap<Class,Integer>();
 
     int idCount = 1;
@@ -577,8 +578,12 @@ public class FSTStructFactory {
                 }
             } else if ( fi.isIntegral() ) { // && ! array
                 Class type = fi.getType();
+                int structIndex = fi.getStructOffset();
+                if ( index != structIndex+initialIndex ) {
+                    throw new RuntimeException("internal error. please file an issue");
+                }
                 if ( type == boolean.class ) {
-                    unsafe.putBoolean(bytes, FSTStruct.bufoff + index, clInfo.getBooleanValue(onHeapStruct, fi));
+                    unsafe.putByte(bytes, FSTStruct.bufoff + index, (byte) (clInfo.getBooleanValue(onHeapStruct, fi)?1:0));
                 } else
                 if ( type == byte.class ) {
                     unsafe.putByte(bytes, FSTStruct.bufoff + index, (byte) clInfo.getByteValue(onHeapStruct, fi));
@@ -606,6 +611,10 @@ public class FSTStructFactory {
                 index += fi.getStructSize();
             } else { // objectref
                 Object obj = clInfo.getObjectValue(onHeapStruct, fi);
+                int structIndex = fi.getStructOffset();
+                if ( index != structIndex+initialIndex ) {
+                    throw new RuntimeException("internal error. please file an issue");
+                }
                 if ( obj == null ) {
                     unsafe.putInt(bytes, FSTStruct.bufoff + index, -1);
                     unsafe.putInt(bytes, FSTStruct.bufoff + index+4, -1);

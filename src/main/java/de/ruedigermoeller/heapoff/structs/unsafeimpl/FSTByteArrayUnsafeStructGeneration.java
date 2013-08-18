@@ -44,7 +44,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 insert = "Volatile";
             }
             if ( type == CtPrimitiveType.booleanType ) {
-                f.replace("unsafe.putBoolean"+insert+"(___bytes,"+off+"+___offset,$1);");
+                f.replace("unsafe.putByte"+insert+"(___bytes,"+off+"+___offset,$1?(byte)1:(byte)0);");
             } else
             if ( type == CtPrimitiveType.byteType ) {
                 f.replace("unsafe.putByte"+insert+"(___bytes,"+off+"+___offset,$1);");
@@ -114,7 +114,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                     "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException(\"index:\"+$1+\" len:\"+_st_len);";
             if ( method.getReturnType() == CtClass.voidType ) {
                 if ( arrayType == boolean.class ) {
-                    method.setBody(prefix+"unsafe.putBoolean"+insert+"(___bytes, _st_off+$1,$2);}");
+                    method.setBody(prefix+"unsafe.putByte"+insert+"(___bytes, _st_off+$1,$2?(byte)1:(byte)0);}");
                 } else
                 if ( arrayType == byte.class ) {
                     method.setBody(prefix+"unsafe.putByte"+insert+"(___bytes, _st_off+$1,$2);}");
@@ -156,7 +156,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 }
             } else {
                 if ( arrayType == boolean.class ) {
-                    method.setBody(prefix+"return unsafe.getBoolean"+insert+"(___bytes, _st_off+$1);}");
+                    method.setBody(prefix+"return unsafe.getByte"+insert+"(___bytes, _st_off+$1)!=0;}");
                 } else
                 if ( arrayType == byte.class ) {
                     method.setBody(prefix+"return unsafe.getByte"+insert+"(___bytes, _st_off+$1);}");
@@ -299,7 +299,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
         int off = fieldInfo.getStructOffset();
         try {
             if ( type == CtPrimitiveType.booleanType ) {
-                f.replace("$_ = unsafe.getBoolean"+insert+"(___bytes,"+off+"+___offset);");
+                f.replace("$_ = unsafe.getBoolean"+insert+"(___bytes,"+off+"+___offset) != 0;");
             } else
             if ( type == CtPrimitiveType.byteType ) {
                 f.replace("$_ = unsafe.getByte"+insert+"(___bytes,"+off+"+___offset);");

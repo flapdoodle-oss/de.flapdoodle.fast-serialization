@@ -101,8 +101,24 @@ public class FSTStruct implements Serializable {
         return ___fac;
     }
 
+    /**
+     * set this struct pointer to base array at given offset (=bufoff+index)
+     * @param base
+     * @param offset direct offset to byte array element (=FSTStruct.bufoff+array index)
+     */
     public void baseOn( byte base[], long offset, FSTStructFactory fac) {
         ___bytes = base; ___offset = offset; ___fac = fac;
+    }
+
+    /**
+     * set this struct pointer to base array at given index
+     * @param base
+     * @param index
+     */
+    public void baseOn( byte base[], int index ) {
+        ___bytes = base; ___offset = bufoff+index;
+        if ( ___fac == null )
+            ___fac = FSTStructFactory.getInstance();
     }
 
     public boolean isIdenticTo(FSTStruct other) {

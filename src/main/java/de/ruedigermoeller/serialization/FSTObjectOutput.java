@@ -1468,8 +1468,6 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     /**
      * if out == null => automatically create/reuse a bytebuffer
      *
-     * do not use, for whatever VM/CPU cache magic, this may degrade performance if underlying bytearrays are shared amongst streams ..
-     * does not happen when passing null ...
      * @param out
      */
     public void resetForReUse( OutputStream out ) {

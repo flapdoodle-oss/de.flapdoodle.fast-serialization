@@ -229,9 +229,10 @@ public class StructTest {
         if ( !data.getString().equals(data1.getString()) )
             throw new RuntimeException();
 
+        if ( data.isBool() !=data1.isBool() )
+            throw new RuntimeException();
         if ( data.getA() !=data1.getA() )
             throw new RuntimeException();
-
         if ( data.getB() !=data1.getB() )
             throw new RuntimeException();
         if ( data.getC() !=data1.getC() )
@@ -245,6 +246,11 @@ public class StructTest {
         if ( data.getG() !=data1.getG() )
             throw new RuntimeException();
 
+        for ( int i = 0; i < data.arrBoolLen(); i++ ) {
+            if ( data1.arrBool(i) != data.arrBool(i) ) {
+                throw new RuntimeException();
+            }
+        }
         for ( int i = 0; i < data.arrALen(); i++ ) {
             if ( data1.arrA(i) != data.arrA(i) ) {
                 throw new RuntimeException();
