@@ -168,6 +168,8 @@ public class FSTInt2ObjectMap<V>
     }
 
     public void clear() {
+        if ( size() == 0 )
+            return;
         FSTUtil.clear(mKeys);
         FSTUtil.clear(mValues);
         mNumberOfElements = 0;

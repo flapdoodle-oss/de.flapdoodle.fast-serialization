@@ -64,7 +64,8 @@ public class FSTClazzNameRegistry {
         clzToId.clear();
         idToClz.clear();
         classIdCount = 3;
-        visitedClasses.clear();
+        if ( visitedClasses.size() > 0 )
+            visitedClasses.clear();
         stringSnippets.clear();
         stringSnippetsReverse.clear();
         snippetCount = 3;

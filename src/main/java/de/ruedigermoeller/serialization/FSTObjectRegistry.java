@@ -63,7 +63,9 @@ public final class FSTObjectRegistry {
     }
 
     public void clearForWrite() {
-        objects.clear();
+        if ( objects.size() > 0 ) {
+            objects.clear();
+        }
         equalsMap.clear();
         disabled = !conf.isShareReferences();
     }

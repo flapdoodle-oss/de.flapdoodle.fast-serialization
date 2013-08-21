@@ -232,6 +232,9 @@ public class FSTObject2IntMap<K>
     }
 
     public void clear() {
+        if ( size() == 0 ) {
+            return;
+        }
         FSTUtil.clear(mKeys);
 //        FSTUtil.clear(mValues); unneeded ?
         mNumberOfElements = 0;
