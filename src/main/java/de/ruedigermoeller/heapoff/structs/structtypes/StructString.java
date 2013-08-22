@@ -103,6 +103,22 @@ public class StructString extends FSTStruct implements Comparable {
         return l1 - l2;
     }
 
+    public int compareToString(String str) {
+        int l1 = len;
+        int l2 = str.length();
+        int max = Math.min(l1, l2);
+        int i = 0;
+        while (i < max) {
+            char c1 = chars(i);
+            char c2 = str.charAt(i);
+            if (c1 != c2) {
+                return c1 - c2;
+            }
+            i++;
+        }
+        return l1 - l2;
+    }
+
     public int charsLen() {
         return chars.length;
     }
