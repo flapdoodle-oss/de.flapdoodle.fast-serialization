@@ -884,6 +884,83 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         return new String(charBuf, 0, (int) ((chcount-choff)/chscal));
     }
 
+    /**
+     * expects len elements. 'F' always means fast (uncompressed) 'C' means compressed (maybe). Util method, does not register
+     * read object. for compatibility + symmetry chars are read compressed.
+     * FIXME, compressed, fast read, and byteorder is mixed up a lot (though works)
+     * @param componentType
+     * @return
+     */
+    public Object readFPrimitiveArray( Class componentType, int len ) {
+        try {
+        Object array = Array.newInstance(componentType, len);
+        if (componentType == byte.class) {
+            byte[] arr = (byte[]) array;
+            ensureReadAhead(arr.length); // fixme: move this stuff to the stream !
+            read(arr);
+            return arr;
+        } else if (componentType == char.class) {
+            char[] arr = (char[]) array;
+            for (int j = 0; j < len; j++) {
+                arr[j] = readCChar();
+            }
+            return arr;
+        } else if (componentType == short.class) {
+            short[] arr = (short[]) array;
+            ensureReadAhead(arr.length*2);
+            for (int j = 0; j < len; j++) {
+                arr[j] = readFShort();
+            }
+            return arr;
+        } else if (componentType == int.class) {
+            final int[] arr = (int[]) array;
+            if ( FSTUtil.unsafe != null && UNSAFE_COPY_ARRAY_INT) {
+                readPlainIntArrUnsafe(arr);
+            } else {
+                readFIntArr(len, arr);
+            }
+            return arr;
+        } else if (componentType == float.class) {
+            float[] arr = (float[]) array;
+            ensureReadAhead(arr.length*4);
+            for (int j = 0; j < len; j++) {
+                arr[j] = readFFloat();
+            }
+            return arr;
+        } else if (componentType == double.class) {
+            double[] arr = (double[]) array;
+            ensureReadAhead(arr.length*8);
+            for (int j = 0; j < len; j++) {
+                arr[j] = readFDouble();
+            }
+            return arr;
+        } else if (componentType == long.class) {
+            long[] arr = (long[]) array;
+            ensureReadAhead(arr.length*8);
+            if ( FSTUtil.unsafe != null && UNSAFE_COPY_ARRAY_LONG) {
+                readLongArrUnsafe(arr);
+            } else {
+                for (int j = 0; j < len; j++) {
+                    arr[j] = readFLong();
+                }
+            }
+            return arr;
+        } else if (componentType == boolean.class) {
+            boolean[] arr = (boolean[]) array;
+            ensureReadAhead(arr.length);
+            for (int j = 0; j < len; j++) {
+                arr[j] = readBoolean();
+            }
+            return arr;
+        } else {
+            throw new RuntimeException("unexpected primitive type " + componentType);
+        }
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return null;
+    }
+
     protected Object readArray(FSTClazzInfo.FSTFieldInfo referencee) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         Class arrCl = readClass().getClazz();
         final int len = readCInt();
@@ -908,7 +985,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                     short[] arr = (short[]) array;
                     ensureReadAhead(arr.length*2);
                     for (int j = 0; j < len; j++) {
-                        arr[j] = readShort();
+                        arr[j] = readFShort();
                     }
                 } else if (arrType == int.class) {
                     final int[] arr = (int[]) array;
@@ -920,14 +997,14 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                         if ( FSTUtil.unsafe != null && UNSAFE_COPY_ARRAY_INT) {
                             readPlainIntArrUnsafe(arr);
                         } else {
-                            readPlainIntArr(len, arr);
+                            readFIntArr(len, arr);
                         }
                 }
                 } else if (arrType == float.class) {
                     float[] arr = (float[]) array;
                     ensureReadAhead(arr.length*4);
                     for (int j = 0; j < len; j++) {
-                        arr[j] = readFloat();
+                        arr[j] = readFFloat();
                     }
                 } else if (arrType == double.class) {
                     double[] arr = (double[]) array;
@@ -1147,7 +1224,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
     }
 
-    private void readPlainIntArr(int len, int[] arr) throws IOException {
+    public void readFIntArr(int len, int[] arr) throws IOException {
         ensureReadAhead(4 * len);
         final byte buf[] = input.buf;
         int count = input.pos;

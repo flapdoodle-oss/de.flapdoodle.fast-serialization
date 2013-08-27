@@ -748,18 +748,13 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         Class<?> componentType = array.getClass().getComponentType();
         if ( ! componentType.isArray() ) {
             if ( componentType == byte.class ) {
-                byte[] arr = (byte[])array;
-                write(arr);
+                writeFByteArr((byte[]) array);
             } else
             if ( componentType == char.class ) {
-                char[] arr = (char[])array;
-                for ( int i = 0; i < len; i++ )
-                    writeCChar(arr[i]);
+                writeCCharArr((char[]) array);
             } else
             if ( componentType == short.class ) {
-                short[] arr = (short[])array;
-                for ( int i = 0; i < len; i++ )
-                    writeFShort(arr[i]);
+                writeFShortArr((short[]) array);
             } else
             if ( componentType == int.class ) {
                 if ( referencee.isThin() ) {
@@ -769,32 +764,20 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                     writeIntArrCompressed((int[]) array);
                 } else
                 {
-                    writePlainIntArr((int[]) array);
+                    writeFIntArr((int[]) array);
                 }
             } else
             if ( componentType == double.class ) {
-                double[] arr = (double[])array;
-                for ( int i = 0; i < len; i++ )
-                    writeFDouble(arr[i]);
+                writeFDoubleArr((double[]) array);
             } else
             if ( componentType == float.class ) {
-                float[] arr = (float[])array;
-                for ( int i = 0; i < len; i++ )
-                    writeCFloat(arr[i]);
+                writeFFloatArr((float[]) array);
             } else
             if ( componentType == long.class ) {
-                long[] arr = (long[])array;
-                if ( FSTUtil.unsafe != null && UNSAFE_MEMCOPY_ARRAY_LONG) {
-                    writeFLongArrayUnsafe(arr);
-                } else {
-                for ( int i = 0; i < len; i++ )
-                    writeFLong(arr[i]);
-                }
+                writeFLongArr((long[]) array);
             } else
             if ( componentType == boolean.class ) {
-                boolean[] arr = (boolean[])array;
-                for ( int i = 0; i < len; i++ )
-                    writeBoolean(arr[i]);
+                writeFBooleanArr((boolean[]) array);
             } else {
                 Object arr[] = (Object[])array;
                 if ( referencee.isThin() ) {
@@ -848,13 +831,62 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         }
     }
 
+    public void writeFBooleanArr(boolean[] array) throws IOException {
+        boolean[] arr = (boolean[])array;
+        for ( int i = 0; i < arr.length; i++ )
+            writeBoolean(arr[i]);
+    }
+
+    public void writeFLongArr(long[] array) throws IOException {
+        long[] arr = (long[])array;
+        if ( FSTUtil.unsafe != null && UNSAFE_MEMCOPY_ARRAY_LONG) {
+            writeFLongArrayUnsafe(arr);
+        } else {
+        for ( int i = 0; i < arr.length; i++ )
+            writeFLong(arr[i]);
+        }
+    }
+
+    public void writeFFloatArr(float[] array) throws IOException {
+        float[] arr = (float[])array;
+        for ( int i = 0; i < array.length; i++ )
+            writeFFloat(arr[i]);
+    }
+
+    public void writeFDoubleArr(double[] array) throws IOException {
+        double[] arr = array;
+        for ( int i = 0; i < arr.length; i++ )
+            writeFDouble(arr[i]);
+    }
+
+    public void writeFShortArr(short[] array) throws IOException {
+        short[] arr = array;
+        for ( int i = 0; i < array.length; i++ )
+            writeFShort(arr[i]);
+    }
+
+    public void writeFCharArr(char[] array) throws IOException {
+        writeCCharArr(array);
+    }
+
+    public void writeCCharArr(char[] array) throws IOException {
+        char[] arr = (char[])array;
+        for ( int i = 0; i < arr.length; i++ )
+            writeCChar(arr[i]);
+    }
+
+    public void writeFByteArr(byte[] array) throws IOException {
+        byte[] arr = (byte[])array;
+        write(arr);
+    }
+
     public void writeFLongArrayUnsafe(long[] arr) throws IOException {
         final Unsafe unsafe = FSTUtil.unsafe;
         int length = arr.length;
         buffout.ensureFree((int) (longscal * length));
         final byte buf[] = buffout.buf;
         long siz = length * longscal;
-        unsafe.copyMemory(buf, buffout.pos + bufoff, arr, longoff, siz);
+        unsafe.copyMemory(arr, longoff, buf, buffout.pos + bufoff, siz);
         buffout.pos += siz;
         written += siz;
     }
@@ -1266,12 +1298,12 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         buffout.ensureFree(4*length);
         final byte buf[] = buffout.buf;
         int siz = (int) (length * intscal);
-        unsafe.copyMemory(buf, buffout.pos + bufoff, v, intoff, siz);
+        unsafe.copyMemory(v, intoff, buf, buffout.pos + bufoff, siz);
         buffout.pos += siz;
         written += siz;
     }
 
-    public void writePlainIntArr(int v[]) throws IOException {
+    public void writeFIntArr(int v[]) throws IOException {
         if ( FSTUtil.unsafe != null && UNSAFE_MEMCOPY_ARRAY_INT) {
             writePlainIntArrUnsafe(v);
             return;
