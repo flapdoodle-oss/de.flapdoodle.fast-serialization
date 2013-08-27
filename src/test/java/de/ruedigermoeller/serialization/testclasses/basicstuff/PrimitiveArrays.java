@@ -35,6 +35,15 @@ public class PrimitiveArrays implements Serializable, HasDescription {
     @Flat int iii[][][] = new int[][][] { { {1,2,3}, {4,5,6} }, { {7,8,9}, {10,11,12} } };
     @Flat Object oiii = new int[][][] { { {1,2,3}, {4,5,6} }, { {7,8,9}, {10,11,12} } };
 
+    boolean boolA[] = new boolean[] { true, false, true, true, false };
+    byte byteA[] = new byte[] {2,3,4,5,6,7,-1,-2,-3 };
+    char charA[] = new char[] {2,3,4,5,6,7 };
+    short shortA[] = new short[] {2,3,4,5,6,7, -1, -2, -3 };
+    int intA[] = new int[] {2,3,4,5,6,7, -1, -2, -3 };
+    long longA[] = new long[] {2,3,4,5,6,7, -1, -2, -3 };
+    float floatA[] = new float[] {2,3,4,5,6,7, -1, -2, -3 };
+    double doubleA[] = new double[] {2,3,4,5,6,7, -1, -2, -3 };
+
     Dim dim[][][] = new Dim[][][] {{{new Dim(11,10)},{new Dim(9,10),new Dim(1666661,11)}}};
     Object dimo[][][] = new Object[][][] {{{new Dim(11,10)},{new Dim(10,8),new Dim(6,11)}}};
     Object dimonotype0 = new Object[][][] {{{new Date(),new Dim(10,777)},{new Dim(1666661,11),new Dim(6,11)}}};
