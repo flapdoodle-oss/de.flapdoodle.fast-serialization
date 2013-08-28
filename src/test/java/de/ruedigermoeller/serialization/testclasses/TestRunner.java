@@ -118,20 +118,20 @@ public class TestRunner {
 
 
         runner.charter.openDoc();
-        runner.charter.text("<i>intel i7 3770K 3,5 ghz, 4 core, 8 threads</i>");
+        runner.charter.text("<i>intel i7 3770K 3,4 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
-        SerTest.WarmUP = 2000; SerTest.Run = SerTest.WarmUP+1;
-//        runner.runAll(FrequentPrimitives.getArray(200));
-//        runner.runAll(new StringPerformance());
-//        runner.runAll(new FrequentCollections());
-//        runner.runAll(new LargeNativeArrays());
-//        runner.runAll(new Primitives(0).createPrimArray());
+        SerTest.WarmUP = 50000; SerTest.Run = SerTest.WarmUP+1;
+        runner.runAll(FrequentPrimitives.getArray(200));
+        runner.runAll(new StringPerformance());
+        runner.runAll(new FrequentCollections());
+        runner.runAll(new LargeNativeArrays());
+        runner.runAll(new Primitives(0).createPrimArray());
         runner.runAll(new PrimitiveArrays().createPrimArray());
-//        runner.runAll(new CommonCollections());
-//        runner.runAll(Trader.generateTrader(101, true));
-//        runner.runAll(ManyClasses.getArray() );
-//        runner.runAll(new ExternalizableTest());
+        runner.runAll(new CommonCollections());
+        runner.runAll(Trader.generateTrader(101, true));
+        runner.runAll(ManyClasses.getArray() );
+        runner.runAll(new ExternalizableTest());
         runner.charter.closeDoc();
     }
 }
