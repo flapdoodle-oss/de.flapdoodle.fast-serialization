@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FST.iml" filepath="$PROJECT_DIR$/FST.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../FastCast/trunk/FastCast.iml" filepath="$PROJECT_DIR$/../FastCast/trunk/FastCast.iml" />
-      <module fileurl="file://$PROJECT_DIR$/fstlapproj/fstlp.iml" filepath="$PROJECT_DIR$/fstlapproj/fstlp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../fastcast/trunk/fastcast.iml" filepath="$PROJECT_DIR$/../fastcast/trunk/fastcast.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../zguide/zguide.iml" filepath="$PROJECT_DIR$/../zguide/zguide.iml" />
     </modules>
   </component>
 </project>
