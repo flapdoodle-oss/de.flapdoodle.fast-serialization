@@ -252,7 +252,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     public Object readObjectWithHeader(FSTClazzInfo.FSTFieldInfo referencee) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
-        final int readPos = input.pos;
+        final int readPos = input.pos-input.off; // incase of pointing to larger array => general issue in both in and output stream when start is !=0 !
         byte code = readFByte();
         FSTClazzInfo clzSerInfo = null;
         Class c = null;
@@ -970,7 +970,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         Class arrType = arrCl.getComponentType();
         if (!arrCl.getComponentType().isArray()) {
             Object array = Array.newInstance(arrType, len);
-            objects.registerObjectForRead(array, input.pos);
+            objects.registerObjectForRead(array, input.pos - input.off );
             if (arrCl.getComponentType().isPrimitive()) {
                 if (arrType == byte.class) {
                     byte[] arr = (byte[]) array;
@@ -1069,7 +1069,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         } else {
             Object array[] = (Object[]) Array.newInstance(arrType, len);
             if (!FSTUtil.isPrimitiveArray(arrType) && ! referencee.isFlat() ) {
-                objects.registerObjectForRead(array, input.pos);
+                objects.registerObjectForRead(array, input.pos - input.off);
             }
 //            if ( false && referencee.isThin() ) {
 //                for (int i = 0; i < len; i++) {
@@ -1198,6 +1198,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         input.count = len+off;
         input.buf = bytes;
         input.pos = off;
+        input.off = off;
     }
 
     public final int readFIntUnsafe() throws IOException {

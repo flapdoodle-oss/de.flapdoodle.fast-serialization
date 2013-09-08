@@ -31,9 +31,11 @@ import java.io.InputStream;
  */
 public final class FSTInputStream extends InputStream {
 
+    // fixme: useless speed opt =>
     public int chunk_size = 64000;
     public byte buf[];
     public  int pos;
+    public  int off;
     public  int count;
     InputStream in;
 
@@ -82,12 +84,14 @@ public final class FSTInputStream extends InputStream {
     byte streamStack[][] = new byte[30][];
     int countStack[] = new int[30];
     int posStack[] = new int[30];
+    int offStack[] = new int[30];
     int sp = 0;
 
     public void push(byte[] inb, int newpos, int newCount) {
         streamStack[sp] = buf;
         countStack[sp] = count;
         posStack[sp] = pos;
+        offStack[sp] = off;
         sp++;
         buf = inb; pos = newpos;
         count = newCount;
@@ -98,6 +102,7 @@ public final class FSTInputStream extends InputStream {
         buf = streamStack[sp];
         count = countStack[sp];
         pos = posStack[sp];
+        off = posStack[sp];
     }
 
     public int read() {
@@ -146,6 +151,7 @@ public final class FSTInputStream extends InputStream {
     public void reset() {
         count = 0;
         pos = 0;
+        off = 0;
     }
 
     public void close() throws IOException {
