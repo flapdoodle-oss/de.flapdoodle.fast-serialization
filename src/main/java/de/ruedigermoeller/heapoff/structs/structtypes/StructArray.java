@@ -29,6 +29,16 @@ import java.util.Iterator;
  * Time: 01:49
  * To change this template use File | Settings | File Templates.
  */
+
+/**
+ * An array which elements are stored 'off heap'. Note that in current version (and documentation below) 'off-heap' means
+ * that objects are stored in flat byte arrays. Those byte arrays are actually allocated on the regular java heap. This
+ * is not exactly the definition of "off-heap" as this term usually means that raw 'Unsafe' memory is allocated.
+ * However using some tweaks it might be possible to back FSTStructs by real off-heap in a furture version if the
+ * need arises.
+ *
+ * @param <E>
+ */
 public class StructArray<E extends FSTStruct> extends FSTStruct {
 
     @Templated()
@@ -62,18 +72,36 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
         return template;
     }
 
+    /**
+     * accessor to the elements
+     * @param i
+     * @return
+     */
     protected Object elems(int i) {
         return elems[i];
     }
 
+    /**
+     * accessor to elements
+     * @param i
+     * @param val
+     */
     protected void elems( int i, Object val ) {
         elems[i] = val;
     }
 
+    /**
+     * length of this struct array
+     * @return
+     */
     protected int elemsLen() {
         return elems.length;
     }
 
+    /**
+     * @return a volatile warpper object to the '0' element of the structs array. Need to call detach() to get a permanent
+     * reference
+     */
     protected Object elemsPointer() {
         return null; // generated
     }
