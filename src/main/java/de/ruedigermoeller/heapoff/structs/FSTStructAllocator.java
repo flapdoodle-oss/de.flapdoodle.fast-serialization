@@ -78,9 +78,7 @@ public class FSTStructAllocator<T extends FSTStruct> {
     public StructArray<T> newArray(int size) {
         if ( template == null )
             throw new RuntimeException("need to specify a template in constructore in order to use this.");
-        StructArray<T> res = newStruct(new StructArray<T>(size, template));
-        res.___setTemplate(template);
-        return res;
+        return newArray(size,template);
     }
 
     /**
@@ -89,7 +87,18 @@ public class FSTStructAllocator<T extends FSTStruct> {
      * @return
      */
     public <X extends FSTStruct> StructArray<X> newArray(int size, X templ) {
-        return newStruct(new StructArray<X>(size,templ));
+        StructArray<X> aTemplate = new StructArray<X>(size, templ);
+        int siz = getFactory().calcStructSize(aTemplate);
+        try {
+            if ( siz < chunkSize )
+                return newStruct(aTemplate);
+            else {
+                return getFactory().toStruct(aTemplate);
+            }
+        } catch (Throwable e) {
+            System.out.println("tried to allocate "+siz+" bytes. StructArray of "+size+" "+templ.getClass().getName());
+            throw new RuntimeException(e);
+        }
     }
 
     /**
