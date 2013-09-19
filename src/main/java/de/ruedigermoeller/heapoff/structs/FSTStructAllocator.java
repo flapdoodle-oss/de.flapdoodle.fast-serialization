@@ -153,9 +153,9 @@ public class FSTStructAllocator<T extends FSTStruct> {
         return template.getByteSize();
     }
 
-    public T newPointer(Class<T> dataPacketClass) {
+    public <C extends FSTStruct> C newPointer(Class<C> clazz) {
         try {
-            return (T)getFactory().getProxyClass(dataPacketClass).newInstance();
+            return (C)getFactory().getProxyClass(clazz).newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
