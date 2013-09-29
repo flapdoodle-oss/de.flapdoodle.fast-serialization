@@ -275,11 +275,26 @@ public class FSTStructFactory {
         return res;
     }
 
+    /**
+     * allocates a StructAccessor ("pointer") matching the struct data expected in the byte
+     * array at given position. The resulting pointer object is not "volatile" (not a cached instance)
+     * @param b
+     * @param index
+     * @return
+     */
     public FSTStruct createStructWrapper(byte b[], int index) {
         int clzId = unsafe.getInt(b, FSTStruct.bufoff + index + 4);
         return createStructPointer(b, index, clzId);
     }
 
+    /**
+     * allocates a StructAccessor ("pointer") matching the struct data expected in the byte
+     * array at given position with given classId. The resulting pointer object is not "volatile" (not a cached instance).
+     * The class id should match the Struct stored in the byte array. (classId must be the correct struct or a superclass of it)
+     * @param b
+     * @param index
+     * @return
+     */
     public FSTStruct createStructPointer(byte[] b, int index, int clzId) {
         synchronized (this) {
             Class clazz = mIntToClz.get(clzId);
