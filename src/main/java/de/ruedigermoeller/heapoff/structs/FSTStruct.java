@@ -50,14 +50,31 @@ public class FSTStruct implements Serializable {
         ___offset = off;
     }
 
+    /**
+     * @return internal offset, use getIndexInBase to get the start index of the struct within the base byte array
+     */
     protected long getAbsoluteOffset() {
         return ___offset;
     }
 
+    /**
+     * @return the start index of this struct within the underlying byte array. getByteSize returns len
+     */
+    public int getOffset() {
+        return (int) (___offset - bufoff);
+    }
+
+    /**
+     * @deprecated use getOffset
+     * see getOffset
+     */
     public int getIndexInBase() {
         return (int) (___offset - bufoff);
     }
 
+    /**
+     * @return the number of bytes used by the struct pointed to
+     */
     public int getByteSize() {
         if ( !isOffHeap() ) {
             return 0;
@@ -93,6 +110,9 @@ public class FSTStruct implements Serializable {
         ___bytes = base;
     }
 
+    /**
+     * @return the underlying byte array.
+     */
     public byte[] getBase() {
         return ___bytes;
     }
@@ -264,7 +284,7 @@ public class FSTStruct implements Serializable {
     }
 
     /**
-     * returns a complet copy of this object allocating a new byte[] capable of holding the data.
+     * returns a complete copy of this object allocating a new byte[] capable of holding the data.
      * @return
      */
     public FSTStruct createCopy() {

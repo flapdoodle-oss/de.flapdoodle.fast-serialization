@@ -400,6 +400,12 @@ public class FSTStructFactory {
         return res;
     }
 
+    /**
+     * returns a struct wrapper for given structured object from the thread local wrapper cache.
+     * @param b
+     * @param index
+     * @return
+     */
     public Object getStructPointer(byte b[], int index) {
         return getStructPointerByOffset(b,FSTStruct.bufoff+index);
     }
