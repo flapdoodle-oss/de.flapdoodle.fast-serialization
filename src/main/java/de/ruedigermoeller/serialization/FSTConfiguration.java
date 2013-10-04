@@ -46,49 +46,23 @@ public final class FSTConfiguration {
     FSTClazzInfoRegistry serializationInfoRegistry = new FSTClazzInfoRegistry();
     HashMap<Class,List<SoftReference>> cachedObjects = new HashMap<Class, List<SoftReference>>(97);
     FSTClazzNameRegistry classRegistry = new FSTClazzNameRegistry(null, this);
-    boolean isCrossLanguage = false;
     boolean preferSpeed = false;
+
+    public static Integer getInt(int i) {
+        if ( i >= 0 && i < intObjects.length ) {
+            return intObjects[i];
+        }
+        return new Integer(i);
+    }
 
     public static Integer intObjects[];
     {
         if ( intObjects == null ) {
-            intObjects = new Integer[2000];
+            intObjects = new Integer[30000];
             for (int i = 0; i < intObjects.length; i++) {
                 intObjects[i] = new Integer(i);
             }
         }
-    }
-
-    public static FSTConfiguration createCrossLanguageConfiguration() {
-        FSTConfiguration conf = new FSTConfiguration();
-        conf.setCrossLanguage(true);
-        conf.serializationInfoRegistry.setIgnoreAnnotations(true);
-        conf.addDefaultClazzes();
-        FSTSerializerRegistry reg = conf.serializationInfoRegistry.serializerRegistry;
-
-        // serializers
-        reg.putSerializer(Class.class, new FSTClassSerializer(), false);
-        reg.putSerializer(String.class, new FSTStringSerializer(), false);
-        reg.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
-        reg.putSerializer(Character.class, new FSTBigNumberSerializers.FSTCharSerializer(), false);
-        reg.putSerializer(Short.class, new FSTBigNumberSerializers.FSTShortSerializer(), false);
-        reg.putSerializer(Float.class, new FSTBigNumberSerializers.FSTFloatSerializer(), false);
-        reg.putSerializer(Double.class, new FSTBigNumberSerializers.FSTDoubleSerializer(), false);
-
-        reg.putSerializer(Date.class, new FSTDateSerializer(), false);
-        reg.putSerializer(StringBuffer.class, new FSTStringBufferSerializer(), true);
-        reg.putSerializer(StringBuilder.class, new FSTStringBuilderSerializer(), true);
-        reg.putSerializer(EnumSet.class, new FSTEnumSetSerializer(), true);
-
-        reg.putSerializer(AbstractCollection.class, new FSTCrossLanguageCollectionSerializer(), true);
-        reg.putSerializer(AbstractMap.class, new FSTCrossLanguageMapSerializer(), true);
-        reg.putSerializer(Dictionary.class, new FSTCrossLanguageMapSerializer(), true);
-
-        // not cross platform capable (comparator)
-        reg.putSerializer(TreeMap.class, FSTSerializerRegistry.NULL, true);
-        reg.putSerializer(TreeSet.class, FSTSerializerRegistry.NULL, true);
-
-        return conf;
     }
 
     public static FSTConfiguration createDefaultConfiguration() {
@@ -189,14 +163,6 @@ public final class FSTConfiguration {
 
     private FSTConfiguration() {
 
-    }
-
-    public boolean isCrossLanguage() {
-        return isCrossLanguage;
-    }
-
-    public void setCrossLanguage(boolean crossLanguage) {
-        isCrossLanguage = crossLanguage;
     }
 
     /**

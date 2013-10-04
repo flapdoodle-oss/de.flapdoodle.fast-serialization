@@ -17,7 +17,7 @@ import java.io.IOException;
  */
 public class FSTBigNumberSerializers {
 
-    public static class FSTByteSerializer extends FSTBasicObjectSerializer implements FSTCrossLanguageSerializer {
+    public static class FSTByteSerializer extends FSTBasicObjectSerializer {
         @Override
         public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
             out.writeFByte(((Byte)toWrite).byteValue());
@@ -27,11 +27,6 @@ public class FSTBigNumberSerializers {
         public Object instantiate(Class objectClass, FSTObjectInput in, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo referencee, int streamPositioin) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
             Object res = new Byte(in.readByte());
             return res;
-        }
-
-        @Override
-        public Class getCrossLangLayout() {
-            return Byte.class;
         }
 
         /**
@@ -45,7 +40,7 @@ public class FSTBigNumberSerializers {
         }
     }
 
-    static public class FSTCharSerializer extends FSTBasicObjectSerializer implements FSTCrossLanguageSerializer {
+    static public class FSTCharSerializer extends FSTBasicObjectSerializer {
         @Override
         public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
             out.writeCChar(((Character)toWrite).charValue());
@@ -58,16 +53,12 @@ public class FSTBigNumberSerializers {
         }
 
         @Override
-        public Class getCrossLangLayout() {
-            return Character.class;
-        }
-        @Override
         public boolean alwaysCopy() {
             return true;
         }
     }
 
-    static public class FSTShortSerializer extends FSTBasicObjectSerializer implements FSTCrossLanguageSerializer {
+    static public class FSTShortSerializer extends FSTBasicObjectSerializer {
         @Override
         public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
             out.writeCShort(((Short)toWrite).shortValue());
@@ -80,16 +71,12 @@ public class FSTBigNumberSerializers {
         }
 
         @Override
-        public Class getCrossLangLayout() {
-            return Short.class;
-        }
-        @Override
         public boolean alwaysCopy() {
             return true;
         }
     }
 
-    static public class FSTFloatSerializer extends FSTBasicObjectSerializer implements FSTCrossLanguageSerializer {
+    static public class FSTFloatSerializer extends FSTBasicObjectSerializer {
         @Override
         public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
             out.writeCFloat(((Float) toWrite).floatValue());
@@ -102,16 +89,12 @@ public class FSTBigNumberSerializers {
         }
 
         @Override
-        public Class getCrossLangLayout() {
-            return Float.class;
-        }
-        @Override
         public boolean alwaysCopy() {
             return true;
         }
     }
 
-    static public class FSTDoubleSerializer extends FSTBasicObjectSerializer implements FSTCrossLanguageSerializer {
+    static public class FSTDoubleSerializer extends FSTBasicObjectSerializer {
         @Override
         public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
             out.writeFDouble(((Double) toWrite).doubleValue());
@@ -123,10 +106,6 @@ public class FSTBigNumberSerializers {
             return res;
         }
 
-        @Override
-        public Class getCrossLangLayout() {
-            return Double.class;
-        }
         @Override
         public boolean alwaysCopy() {
             return true;

@@ -8,6 +8,7 @@ import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTObjectInput;
 import de.ruedigermoeller.serialization.FSTObjectOutput;
 import de.ruedigermoeller.serialization.testclasses.basicstuff.*;
+import de.ruedigermoeller.serialization.testclasses.docusample.FSTTestApp;
 import de.ruedigermoeller.serialization.testclasses.enterprise.*;
 import de.ruedigermoeller.serialization.testclasses.jdkcompatibility.*;
 import de.ruedigermoeller.serialization.testclasses.libtests.*;
@@ -40,7 +41,7 @@ public class TestRunner {
 //    SerTest gridgain = new GridGainTest("GridGain 4.5"); cannot redistribute ..
 
     Class testClass;
-    public SerTest[] runAll( Object toSer ) {
+    public SerTest[] runAll( Object toSer ) throws IOException, InterruptedException {
         testClass = toSer.getClass();
         if ( toSer instanceof Swing) {
             ((Swing) toSer).showInFrame("Original");
@@ -55,8 +56,10 @@ public class TestRunner {
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
 //        SerTest tests[] = { defFST, defFSTNoUns, kryotest, defser, gridgain };
-//        SerTest tests[] = { speedFST, defFST, defFSTNoUns, kryotest, kryoUnsTest, defser };
-        SerTest tests[] = { speedFST, kryotest, kryoUnsTest };
+        SerTest tests[] = { speedFST, defFST, defFSTNoUns, kryotest, kryoUnsTest, defser };
+//        SerTest tests[] = { speedFST, kryotest, kryoUnsTest };
+//        SerTest tests[] = { speedFST,kryoUnsTest };
+//        SerTest tests[] = { speedFST };
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
             test.run(toSer);
@@ -81,23 +84,49 @@ public class TestRunner {
         }
 
         charter.openChart("Read Time (micros)");
+        int fac = 3;
+        boolean cont = true;
+        while( cont ) {
+            cont = false;
+            for (int i = 0; i < tests.length; i++) {
+                SerTest test = tests[i];
+                int val = (int)(test.timRead*1000/SerTest.Run);
+                if ( val/fac > 130 ) {
+                    fac++;
+                    cont = true;
+                }
+            }
+        }
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
-            charter.chartBar(test.title, (int)(test.timRead*1000/SerTest.Run), 3, test.getColor());
+            charter.chartBar(test.title, (int)(test.timRead*1000/SerTest.Run), fac, test.getColor());
         }
         charter.closeChart();
 
         charter.openChart("Write Time (micros)");
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
-            charter.chartBar(test.title, (int)(test.timWrite*1000/SerTest.Run), 3, test.getColor());
+            charter.chartBar(test.title, (int)(test.timWrite*1000/SerTest.Run), fac, test.getColor());
         }
         charter.closeChart();
 
         charter.openChart("Size (byte)");
+        fac = 500;
+        cont = true;
+        while( cont ) {
+            cont = false;
+            for (int i = 0; i < tests.length; i++) {
+                SerTest test = tests[i];
+                int val = test.bout.size();
+                if ( val/fac > 130 ) {
+                    fac++;
+                    cont = true;
+                }
+            }
+        }
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
-            charter.chartBar(test.title, test.bout.size(), 500, test.getColor());
+            charter.chartBar(test.title, test.bout.size(), fac, test.getColor());
         }
         charter.closeChart();
 
@@ -123,17 +152,20 @@ public class TestRunner {
         runner.charter.text("<i>intel i7 3770K 3,4 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
-        SerTest.WarmUP = 50000; SerTest.Run = SerTest.WarmUP+1;
-        runner.runAll(FrequentPrimitives.getArray(200));
-        runner.runAll(new StringPerformance());
-        runner.runAll(new FrequentCollections());
-        runner.runAll(new LargeNativeArrays());
-        runner.runAll(new Primitives(0).createPrimArray());
-        runner.runAll(new PrimitiveArrays().createPrimArray());
-        runner.runAll(new CommonCollections());
-        runner.runAll(Trader.generateTrader(101, true));
-        runner.runAll(ManyClasses.getArray() );
-        runner.runAll(new ExternalizableTest());
+//        SerTest.WarmUP = 40000; SerTest.Run = SerTest.WarmUP*1+1;
+        SerTest.WarmUP = 10000; SerTest.Run = 10000;
+//        runner.runAll(FrequentPrimitives.getArray(200));
+//        runner.runAll(new StringPerformance());
+//        runner.runAll(new FrequentCollections());
+//        runner.runAll(new LargeNativeArrays());
+//        runner.runAll(new Primitives(0).createPrimArray());
+//        runner.runAll(new PrimitiveArrays().createPrimArray());
+//        runner.runAll(new CommonCollections());
+//        runner.runAll(Trader.generateTrader(101, true));
+//        runner.runAll(ManyClasses.getArray() );
+//        runner.runAll(new ExternalizableTest());
+        runner.runAll(new BigObject());
         runner.charter.closeDoc();
+        FSTTestApp.main(new String[0]);
     }
 }

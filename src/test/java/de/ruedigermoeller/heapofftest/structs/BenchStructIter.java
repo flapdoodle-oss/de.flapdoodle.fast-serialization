@@ -1,7 +1,6 @@
 package de.ruedigermoeller.heapofftest.structs;
 
-import de.ruedigermoeller.heapoff.structs.FSTStructAllocator;
-import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
+import de.ruedigermoeller.heapoff.structs.FSTTypedStructAllocator;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 import de.ruedigermoeller.heapofftest.gcbenchmarks.BasicGCBench;
@@ -85,7 +84,7 @@ public class BenchStructIter {
         charter.text("<i>intel i7 3770K 3,5 ghz, 4 core, 8 threads</i>");
         charter.text("<i>" + System.getProperty("java.runtime.version") + "," + System.getProperty("java.vm.name") + "," + System.getProperty("os.name") + "</i>");
 //
-        final FSTStructAllocator<TestInstrument> alloc = new FSTStructAllocator<TestInstrument>(TestInstrument.createInstrumentTemplate(),SIZE);
+        final FSTTypedStructAllocator<TestInstrument> alloc = new FSTTypedStructAllocator<TestInstrument>(TestInstrument.createInstrumentTemplate(),SIZE);
 
 
         charter.heading("Instantiation Time (CMS Collector)");
@@ -140,7 +139,7 @@ public class BenchStructIter {
         long oninstTime1 = test( onHeapInst );
         System.out.println("duration on heap instantiation #3 "+oninstTime1);
 
-        FSTStructAllocator<LargeIntArray> arrAlloc = new FSTStructAllocator<LargeIntArray>(new LargeIntArray());
+        FSTTypedStructAllocator<LargeIntArray> arrAlloc = new FSTTypedStructAllocator<LargeIntArray>(new LargeIntArray());
         final int iterMul = 20;
         final LargeIntArray offIntArr = arrAlloc.newStruct();
         final LargeIntArray onIntArr = new LargeIntArray();

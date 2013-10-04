@@ -33,7 +33,7 @@ import java.util.IdentityHashMap;
 public final class FSTObjectRegistry {
 
     boolean disabled = false;
-    IdentityHashMap<Object,Integer> objects = new IdentityHashMap<Object,Integer>(97); // sysid => id
+    IdentityHashMap<Object,Integer> objects = new IdentityHashMap<Object,Integer>(97); // object => id
     FSTInt2ObjectMap idToObject = new FSTInt2ObjectMap(97);
     FSTObject2IntMap equalsMap = new FSTObject2IntMap(97,true); // object => handle
 
@@ -123,7 +123,7 @@ public final class FSTObjectRegistry {
                 }
             }
         }
-        objects.put(o, streamPosition);
+        objects.put(o, FSTConfiguration.getInt(streamPosition));
         //idToObject.add(streamPosition, o); only required for equalsness, moved to (*)
         if ( DUMP )
             System.out.println("REGISTER "+o.getClass()+" pos:"+streamPosition+" handle:"+streamPosition+" id:"+System.identityHashCode(o));
@@ -145,7 +145,7 @@ public final class FSTObjectRegistry {
         if (disabled) {
             return null;
         }
-        return idToObject.get(handle);
+        return idToObject.get(FSTConfiguration.getInt(handle));
     }
 
     public int getObjectSize() {

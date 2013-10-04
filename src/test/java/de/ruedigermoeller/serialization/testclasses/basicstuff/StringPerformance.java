@@ -1,5 +1,7 @@
 package de.ruedigermoeller.serialization.testclasses.basicstuff;
 
+import de.ruedigermoeller.serialization.testclasses.HasDescription;
+
 import java.io.Serializable;
 
 /**
@@ -24,14 +26,14 @@ import java.io.Serializable;
  * Time: 20:29
  * To change this template use File | Settings | File Templates.
  */
-public class StringPerformance implements Serializable {
+public class StringPerformance implements Serializable, HasDescription {
     String str[] =
             {
                     " License along with this library; if not, write to the Free Software\n" +
                             " * Foundation, Inc., 51 Fradddddnklin Street, Fifth Floor, Boston,\n" +
                             " * MA 02110-1301  USA\n" +
                             " * <p/>",
-                    " License along wi§§§§§§th this library; if not, write to the Free Software\n" +
+                    " License along wi§§§§§§th this library; if not, writertzrtz to the Free Software\n" +
                             " * Foundatdfgâûôion, Inc., 51 Frankäüölin Street, Fifth Flooäöüßßßßßßßßßßr, Boston,\n" +
                             " * MA 02110-1301  USA\n" +
                             " * <p/>",
@@ -39,7 +41,7 @@ public class StringPerformance implements Serializable {
                             " * Foundation, Inc., 51 Franklin Streeöt, Fifth Floor, Boston,\n" +
                             " * MA 02110-1301  USA\n" +
                             " * <p/>",
-                    " Licqweense along wi§§§§§§th this library; if not, write to the Free Software\n" +
+                    " Licqweense along wi§§§§§§th this library; if not, wrirtzte to the Free Software\n" +
                             " * Foundatöâqweqweûôion, Incqwe., 51 Franklin qweStreet, Fifth Flooäöüßßßßßßßßßßr, Boston,\n" +
                             " * MA 02110-1301  USA\n" +
                             " * <p/>",
@@ -47,7 +49,27 @@ public class StringPerformance implements Serializable {
                             " * Foundation, Inc., 51 öFranklin Street, Fifth Floor, Boston,\n" +
                             " * MA 02110-1301  USA\n" +
                             " * <p/>",
-                    " License along wi§§§§§§th this library; if not, write to the Free Software\n" +
+                    " License along wi§§§§§§rtzrtzrtztzuith this library; if not, write to the Free Software\n" +
+                            " * Foundatâûô4eeöion, Inc., 51 Franklin Street, qweFifth Flooäöüßßßßßßßßßßr, Boston,\n" +
+                            " * MA 02110-1qwe301  USA\n" +
+                            " * <p/>",
+                    " License along wi§§§§rtzrtz§§th this library; if not, write to the Free Software\n" +
+                            " * Foundatâûô4eeöion, Inc., 51 Franklin Street, qweFifth Flooäöüßßßßßßßßßßr, Boston,\n" +
+                            " * MA 02110-1qwe301  USA\n" +
+                            " * <p/>",
+                    " License along wi§§§rtzrtz§§§th this library; if not, write to the Free Software\n" +
+                            " * Foundatâûô4eeöion, Inc., 51 Franklin Street, qweFifth Flooäöüßßßßßßßßßßr, Boston,\n" +
+                            " * MA 02110-1qwe301  USA\n" +
+                            " * <p/>",
+                    " License along wi§§§§§rtz§th this library; if not, write to the Free Software\n" +
+                            " * Foundatâûô4eeöion, Inc., 51 Franklin Street, qweFifth Flooäöüßßßßßßßßßßr, Boston,\n" +
+                            " * MA 02110-1qwe301  USA\n" +
+                            " * <p/>",
+                    " License along wi§§§§§§trtzh this library; if not, write to the Free Software\n" +
+                            " * Foundatâûô4eeöion, Inc., 51 Franklin Street, qweFifth Flooäöüßßßßßßßßßßr, Boston,\n" +
+                            " * MA 02110-1qwe301  USA\n" +
+                            " * <p/>",
+                    " License along wi§§§§§§werth this library; if not, write to the Free Software\n" +
                             " * Foundatâûô4eeöion, Inc., 51 Franklin Street, qweFifth Flooäöüßßßßßßßßßßr, Boston,\n" +
                             " * MA 02110-1qwe301  USA\n" +
                             " * <p/>",
@@ -74,7 +96,7 @@ public class StringPerformance implements Serializable {
                     "sche Börse in einem Schreiben an die Finanzmarktakteure mitteilte, sollen „Handelsteilnehmer Aktien zwischen dem Xetra-System und den Spezialisten auf dem Parkett im Kreis gehandelt haben, um die Börsenumsätze mit bestimmten Aktien künstlich in die Höhe zu treiben“, berichtet die Wirtschaftswoche.\n" +
                             "Den Angaben der Börse zufolge handele es sich hierbei um regelmäßige Vorgänge, „ohne das Aufträge Dritter zur Ausführung“ gekommen seien. Die Staatsanwaltschaft hat bereits die Ermittlungen aufgenommen. Zudem dürften „zahlreiche weitere Aktien“ von der Kursmanipulation betroffen seien.\n" +
                             "Ein Manager eines MDax Unternehmens gestand der Wirtschaftswoche:\n" +
-                            "„Wir standen vor dem Aufstieg in den MDax, da macht man sich als Unternehmen schon Gedanken, wie man mehr Umsatz in die Aktie bringen kann“, sagt er. Er habe also „den Auftrag vergeben, für ein paar Wochen Umsatz zu generieren. Es gibt da draußen Unternehmen, die für ein paar Tausend Euro Umsatz in die Aktie bringen – das sind Aktienhändler, etwa kleine Handelshäuser. Die hübschen den Umsatz auf“.\n" +
+                            "„Wir standen vor dem Aufstieg in den MDax, da machrtzt man sich als Unternehmen schon Gedanken, wie man mehr Umsatz in die Aktie bringen kann“, sagt er. Er habe also „den Auftrag vergeben, für ein paar Wochen Umsatz zu generieren. Es gibt da draußen Unternehmen, die für ein paar Tausend Euro Umsatz in die Aktie bringen – das sind Aktienhändler, etwa kleine Handelshäuser. Die hübschen den Umsatz auf“.\n" +
                             "Höhere Aktienkurse helfen Unternehmen dabei, lukrative Geschäfte mit Investoren abschließen zu können.\n" +
                             "Anfang Mai ist der Kurs des DAX kontinuierlich gestiegen und hat ein Allzeithoch von 8.130 Punkten erreicht (mehr hier) und hat später sogar die 8.500 Punkte-Marke überschritten (siehe Grafik). Durch die Ankündigung der EZB, den Leitzins erneut zu senken, wurde der Kursanstieg begünstigt. Am vergangenen Freitag waren die Kurse weltweit wieder auf Talfahrt, da das Bundesverfassungsgericht keine klare Entscheidung über die Rechtmäßigkeit des ESM geben konnte  und ein drohendes Ende der US-Geldsc",
                     " In the Northern Hemisphere, the summer solstice has a history of stirring libidos, and it's no wonder. The longest day of the year tends to kick off the start of the summer season and with it, the harvest. So it should come as no surprise that the solstice is linked to fertility -- both of the vegetal and human variety.\n" +
@@ -222,4 +244,8 @@ public class StringPerformance implements Serializable {
 
             };
 
+    @Override
+    public String getDescription() {
+        return "measures serialization of mid size to very long Strings";
+    }
 }

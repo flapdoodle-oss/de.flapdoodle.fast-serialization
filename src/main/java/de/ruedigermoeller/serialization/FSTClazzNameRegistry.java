@@ -25,6 +25,7 @@ import de.ruedigermoeller.serialization.util.FSTObject2IntMap;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,7 +36,7 @@ import java.util.*;
  */
 public class FSTClazzNameRegistry {
 
-    static boolean ENABLE_SNIPPETS = true;
+    static final boolean ENABLE_SNIPPETS = false;
     private static final boolean DEBUG_CLNAMES = false;
 
     FSTObject2IntMap<Class> clzToId = new FSTObject2IntMap<Class>(13,false);
@@ -66,8 +67,10 @@ public class FSTClazzNameRegistry {
         classIdCount = 3;
         if ( visitedClasses.size() > 0 )
             visitedClasses.clear();
-        stringSnippets.clear();
-        stringSnippetsReverse.clear();
+        if ( ENABLE_SNIPPETS ) {
+            stringSnippets.clear();
+            stringSnippetsReverse.clear();
+        }
         snippetCount = 3;
         if ( parent != null ) {
             classIdCount = parent.classIdCount+1;
@@ -132,8 +135,10 @@ public class FSTClazzNameRegistry {
             if ( snippet == 0 ) {
                 out.writeCShort((short) 0); // no direct cl id
                 out.writeStringUTF(c.getName());
-                addCLNameSnippets(c);
-                addCLNameSnippets( Array.newInstance(c,0).getClass() );
+                if ( ENABLE_SNIPPETS ) {
+                    addCLNameSnippets(c);
+                    addCLNameSnippets( Array.newInstance(c,0).getClass() );
+                }
                 if ( DEBUG_CLNAMES )
                     System.out.println("netto write:'" + c.getName() + "'");
             } else {
@@ -186,9 +191,9 @@ public class FSTClazzNameRegistry {
                 try {
                     cl = classForName(clName);
                     if ( parent != null ) {
-                        synchronized (parent.classCache) {
-                            parent.classCache.put(oldTry,cl);
-                        }
+                        while( !parent.classCacheLock.compareAndSet(false,true) );
+                        parent.classCache.put(oldTry,cl);
+                        parent.classCacheLock.set(false);
                     }
                     classCache.put(oldTry,cl);
                 } catch ( ClassNotFoundException ex1 ) {
@@ -210,20 +215,21 @@ public class FSTClazzNameRegistry {
     }
 
     HashMap<String,Class> classCache = new HashMap<String, Class>(200);
+    AtomicBoolean classCacheLock = new AtomicBoolean(false);
     private Class classForName(String clName) throws ClassNotFoundException {
         if ( parent != null ) {
             return parent.classForName(clName);
         }
-        synchronized (classCache) {
-            Class res = classCache.get(clName);
-            if ( res == null ) {
-                res = Class.forName(clName, false, conf.getClassLoader() );
-                if ( res != null ) {
-                    classCache.put(clName, res);
-                }
+        while( ! classCacheLock.compareAndSet(false,true) );
+        Class res = classCache.get(clName);
+        if ( res == null ) {
+            res = Class.forName(clName, false, conf.getClassLoader() );
+            if ( res != null ) {
+                classCache.put(clName, res);
             }
-            return res;
         }
+        classCacheLock.set(false);
+        return res;
     }
 
     private String getSnippetFromId(int snippetId) {

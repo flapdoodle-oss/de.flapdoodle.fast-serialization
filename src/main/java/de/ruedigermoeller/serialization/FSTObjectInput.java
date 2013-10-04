@@ -301,48 +301,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                 return copy;
             }
             case FSTObjectOutput.ARRAY: {
-                if ( conf.isCrossLanguage() ) {
-                    Class reftype = referencee.getType();
-                    if ( reftype != null ) {
-                        if ( ! reftype.isInterface() )
-                        {
-                            FSTClazzInfo classInfo = conf.getClassInfo(reftype);
-                            if ( classInfo.getSer() instanceof FSTCrossLanguageSerializer ) {
-                                int tmpClzId = readCShort(); // ignored
-                                clzSerInfo = classInfo;
-                                c = classInfo.getClazz();
-                                break;
-                            }
-                        } else {
-                            // support following collection types
-                            if ( reftype == Map.class ) {
-                                int tmpClzId = readCShort(); // ignored
-                                clzSerInfo = conf.getClassInfo(HashMap.class);
-                                c = clzSerInfo.getClazz();
-                                break;
-                            } else
-                            if ( reftype == Dictionary.class ) {
-                                int tmpClzId = readCShort(); // ignored
-                                clzSerInfo = conf.getClassInfo(Hashtable.class);
-                                c = clzSerInfo.getClazz();
-                                break;
-                            } else
-                            if ( reftype == List.class ) {
-                                int tmpClzId = readCShort(); // ignored
-                                clzSerInfo = conf.getClassInfo(ArrayList.class);
-                                c = clzSerInfo.getClazz();
-                                break;
-                            } else
-                            if ( reftype == Collection.class ) {
-                                int tmpClzId = readCShort(); // ignored
-                                clzSerInfo = conf.getClassInfo(ArrayList.class);
-                                c = clzSerInfo.getClazz();
-                                break;
-                            } else
-                                throw new RuntimeException("cannot map cross platform type "+referencee);
-                        }
-                    }
-                }
                 Object res = readArray(referencee);
                 if ( ! referencee.isFlat() ) {
                     objects.registerObjectForRead(res, readPos);
@@ -356,33 +314,17 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             case FSTObjectOutput.ENUM: {
                 clzSerInfo = readClass();
                 c = clzSerInfo.getClazz();
-                if ( conf.isCrossLanguage() ) {
-                    String val = readStringUTF();
-                    Object res = Enum.valueOf(c,val);
-                    if ( ! referencee.isFlat() ) {
-                        objects.registerObjectForRead(res, readPos);
-                    }
-                    return res;
-                } else {
-                    int ordinal = readCInt();
-                    Object res = c.getEnumConstants()[ordinal];
-                    if ( ! referencee.isFlat() ) {
-                        objects.registerObjectForRead(res, readPos);
-                    }
-                    return res;
+                int ordinal = readCInt();
+                Object res = c.getEnumConstants()[ordinal];
+                if ( ! referencee.isFlat() ) {
+                    objects.registerObjectForRead(res, readPos);
                 }
+                return res;
             }
             case FSTObjectOutput.OBJECT: {
                 // class name
                 clzSerInfo = readClass();
                 c = clzSerInfo.getClazz();
-                if ( conf.isCrossLanguage() && referencee.getType() != null ) {
-                    FSTClazzInfo classInfo = conf.getClassInfo(referencee.getType());
-                    if ( classInfo.getSer() instanceof FSTCrossLanguageSerializer ) {
-                        clzSerInfo = classInfo;
-                        c = classInfo.getClazz();
-                    }
-                }
                 break;
             }
             default:
@@ -668,10 +610,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                     }
                     // object
                     Object subObject = readObjectWithHeader(subInfo);
-                    if ( conf.isCrossLanguage() && subObject instanceof String && Enum.class.isAssignableFrom( subInfo.getType() ) )
-                    {
-                        subObject = Enum.valueOf(subInfo.getType(), (String) subObject);
-                    }
                     if ( isUnsafe )
                         serializationInfo.setObjectValueUnsafe(newObj, subInfo, subObject);
                     else
@@ -787,7 +725,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 
     char[] charBuf;
     public String readStringUTF() throws IOException {
-        if ( conf.isPreferSpeed() ) {
+        if ( conf.isPreferSpeed()) {
             return readStringUTFSpeed();
         }
         if ( FSTUtil.unsafe != null && UNSAFE_READ_UTF ) {
@@ -1082,8 +1020,9 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 //                }
 //            } else
             {
+                FSTClazzInfo.FSTFieldInfo ref1 = new FSTClazzInfo.FSTFieldInfo(referencee.getPossibleClasses(), null, conf.getCLInfoRegistry().isIgnoreAnnotations());
                 for (int i = 0; i < len; i++) {
-                    Object subArray = readArray(new FSTClazzInfo.FSTFieldInfo(referencee.getPossibleClasses(), null, conf.getCLInfoRegistry().isIgnoreAnnotations()));
+                    Object subArray = readArray(ref1);
                     array[i] = subArray;
                 }
             }

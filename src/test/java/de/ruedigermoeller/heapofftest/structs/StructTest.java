@@ -1,10 +1,9 @@
 package de.ruedigermoeller.heapofftest.structs;
 
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
-import de.ruedigermoeller.heapoff.structs.FSTStructAllocator;
+import de.ruedigermoeller.heapoff.structs.FSTTypedStructAllocator;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructInt;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
-import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 
@@ -38,8 +37,8 @@ public class StructTest {
         data.setNested(new TestData());
         data.dataStructArray = new StructArray<TestData>(10, new TestData());
 
-        FSTStructAllocator<TestData> alloc = new FSTStructAllocator<TestData>(data,50);
-        FSTStructAllocator<StructString> strAlloc = new FSTStructAllocator<StructString>( new StructString(10), 10 );
+        FSTTypedStructAllocator<TestData> alloc = new FSTTypedStructAllocator<TestData>(data,50);
+        FSTTypedStructAllocator<StructString> strAlloc = new FSTTypedStructAllocator<StructString>( new StructString(10), 10 );
 
         System.out.println("size td:"+alloc.getTemplateSize()+" str:"+strAlloc.getTemplateSize());
 

@@ -20,6 +20,7 @@
 package de.ruedigermoeller.serialization;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -32,31 +33,26 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class FSTClazzInfoRegistry {
 
     HashMap mInfos = new HashMap(97);
-//    HashMap mInfos = new HashMap(97);
     FSTSerializerRegistry serializerRegistry = new FSTSerializerRegistry();
     boolean ignoreAnnotations = false;
-    final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
+    final AtomicBoolean rwLock = new AtomicBoolean(false);
     private boolean structMode = false;
 
     public FSTClazzInfoRegistry() {
     }
 
     public FSTClazzInfo getCLInfo(Class c) {
-        rwLock.readLock().lock();
+        while(!rwLock.compareAndSet(false,true));
         FSTClazzInfo res = (FSTClazzInfo) mInfos.get(c);
         if ( res == null ) {
             if ( c == null ) {
-                rwLock.readLock().unlock();
+                rwLock.set(false);
                 throw new NullPointerException("Class is null");
             }
             res = new FSTClazzInfo(c, this, ignoreAnnotations);
-            rwLock.readLock().unlock();
-            rwLock.writeLock().lock();
             mInfos.put( c, res );
-            rwLock.writeLock().unlock();
-        } else {
-            rwLock.readLock().unlock();
         }
+        rwLock.set(false);
         return res;
     }
 

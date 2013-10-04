@@ -11,7 +11,7 @@ import java.io.IOException;
  * Time: 01:26
  * To change this template use File | Settings | File Templates.
  */
-public class FSTStringSerializer extends FSTBasicObjectSerializer implements FSTCrossLanguageSerializer {
+public class FSTStringSerializer extends FSTBasicObjectSerializer {
     @Override
     public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
         if ( referencedBy.isCompressed() ) {
@@ -34,8 +34,4 @@ public class FSTStringSerializer extends FSTBasicObjectSerializer implements FST
         }
     }
 
-    @Override
-    public Class getCrossLangLayout() {
-        return char[].class;
-    }
 }

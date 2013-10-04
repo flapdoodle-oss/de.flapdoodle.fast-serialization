@@ -32,22 +32,32 @@ public class FrequentPrimitives implements Serializable, HasDescription {
     final static String finalStaticString = "Should not serialize this. Should not serialize this. Should not serialize this. Should not serialize this. Should not serialize this.";
 
     public static FrequentPrimitives[] getArray(int siz) {
-        FrequentPrimitives[] res = new FrequentPrimitives[siz];
-        for (int i = 0; i < res.length; i++) {
-            res[i] = new FrequentPrimitives();
+        FrequentPrimitives[] instance = new FrequentPrimitives[siz];
+        for (int i = 0; i < instance.length; i++) {
+            instance[i] = new FrequentPrimitives(i);
         }
-        return res;
+        return instance;
     }
 
-    String str = "R.Moeller";
-    String str1 = "R.Moeller1";
+    public FrequentPrimitives()
+    {
+    }
+
+    public FrequentPrimitives(int index) {
+        // avoid benchmarking identity references instead of StringPerf
+        str = "R.Moeller"+index;
+        str1 = "R.Moeller1"+index;
+    }
+
+    String str;
+    String str1;
     boolean b0 = true;
     boolean b1 = false;
     boolean b2 = true;
     int test1 = 123456;
-    int test2 = 123456;
-    int test3 = 123456;
-    int test4 = 123456;
+    int test2 = 234234;
+    int test3 = 456456;
+    int test4 = -234234344;
     int test5 = -1;
     int test6 = 0;
     long l1 = -38457359987788345l;

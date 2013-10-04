@@ -28,7 +28,7 @@ import java.util.Map;
  * Time: 16:51
  * To change this template use File | Settings | File Templates.
  */
-public class FSTClassSerializer extends FSTBasicObjectSerializer implements FSTCrossLanguageSerializer {
+public class FSTClassSerializer extends FSTBasicObjectSerializer {
 
     // addition of m.weindel: handling of primitive classes, thx
     private final Map<String, Class> primitiveMap;
@@ -56,11 +56,6 @@ public class FSTClassSerializer extends FSTBasicObjectSerializer implements FSTC
         Class cls = isPrimitive ? primitiveMap.get(name) : Class.forName(name);
         in.registerObject(cls, streamPositioin, serializationInfo, referencee);
         return cls;
-    }
-
-    @Override
-    public Class getCrossLangLayout() {
-        return char[].class;
     }
 
     /**

@@ -10,9 +10,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="kryo-2.21-all" level="project" />
     <orderEntry type="library" name="javassist" level="project" />
     <orderEntry type="library" name="javassist" level="project" />
+    <orderEntry type="library" name="kryo-2.22-all" level="project" />
   </component>
 </module>
 

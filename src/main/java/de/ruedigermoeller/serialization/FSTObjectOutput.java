@@ -340,11 +340,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         } else if ( toWrite instanceof Enum ) {
             writeFByte(ENUM);
             writeClass(toWrite);
-            if ( conf.isCrossLanguage() ) {
-                writeStringUTF(((Enum) toWrite).name());
-            } else {
-                writeCInt(((Enum) toWrite).ordinal());
-            }
+            writeCInt(((Enum) toWrite).ordinal());
         } else {
             if ( ser == null && serializationInfo.getWriteReplaceMethod() != null ) {
                 Object replaced = null;
@@ -712,11 +708,11 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         if ( toWrite instanceof Serializable == false && ! conf.isIgnoreSerialInterfaces() ) {
             throw new RuntimeException(toWrite.getClass().getName()+" is not serializable. referenced by "+referencee.getDesc());
         }
-        if ( toWrite.getClass() == referencee.getType() && ! clsInfo.useCompatibleMode() && ! conf.isCrossLanguage() ) {
+        if ( toWrite.getClass() == referencee.getType() && ! clsInfo.useCompatibleMode() ) {
             writeFByte(TYPED);
         } else {
             final Class[] possibleClasses = referencee.getPossibleClasses();
-            if ( possibleClasses == null || conf.isCrossLanguage() ) {
+            if ( possibleClasses == null ) {
                 writeFByte(OBJECT);
                 //writeClass(toWrite); inline
                 clnames.encodeClass(this,toWrite.getClass());
@@ -819,6 +815,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             }
         } else {
             Object[] arr = (Object[])array;
+            FSTClazzInfo.FSTFieldInfo ref1 = new FSTClazzInfo.FSTFieldInfo(referencee.getPossibleClasses(), null, conf.getCLInfoRegistry().isIgnoreAnnotations());
             for ( int i = 0; i < len; i++ ) {
                 Object subArr = arr[i];
                 if ( subArr != null ) {
@@ -826,7 +823,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                         objects.registerObject(subArr, true, written, null, tmp); // fixme: shared refs
                     }
                 }
-                writeArray(new FSTClazzInfo.FSTFieldInfo(referencee.getPossibleClasses(), null, conf.getCLInfoRegistry().isIgnoreAnnotations()), subArr);
+                writeArray(ref1, subArr);
             }
         }
     }

@@ -33,7 +33,7 @@ public abstract class SerTest {
     public static int Run = WarmUP+1;
 
     public String title;
-    public ByteArrayOutputStream bout;
+    public ByteArrayOutputStream bout = new ByteArrayOutputStream(100000);
     ByteArrayInputStream bin;
     public long timWrite;
     public long timRead;
@@ -111,7 +111,7 @@ public abstract class SerTest {
     }
 
     public void runWriteTest( Object toWrite ) {
-        bout = new ByteArrayOutputStream(10000);
+        bout.reset();
         writeTest(toWrite, bout, toWrite.getClass());
     }
 

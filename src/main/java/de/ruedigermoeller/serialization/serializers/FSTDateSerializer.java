@@ -32,14 +32,10 @@ import java.util.*;
  * Time: 14:16
  * To change this template use File | Settings | File Templates.
  */
-public class FSTDateSerializer extends FSTBasicObjectSerializer implements FSTCrossLanguageSerializer {
+public class FSTDateSerializer extends FSTBasicObjectSerializer {
     @Override
     public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
-        if ( out.getConf().isCrossLanguage() ) {
-            out.writeCLong(((Date)toWrite).getTime());
-        } else {
-            out.writeFLong(((Date)toWrite).getTime());
-        }
+        out.writeFLong(((Date)toWrite).getTime());
     }
 
     /**
@@ -54,19 +50,10 @@ public class FSTDateSerializer extends FSTBasicObjectSerializer implements FSTCr
 
     @Override
     public Object instantiate(Class objectClass, FSTObjectInput in, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo referencee, int streamPositioin) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        long l;
-        if ( in.getConf().isCrossLanguage() ) {
-            l = in.readCLong();
-        } else {
-            l = in.readFLong();
-        }
+        long l = in.readFLong();
         Object res = new Date(l);
         in.registerObject(res,streamPositioin,serializationInfo, referencee);
         return res;
     }
 
-    @Override
-    public Class getCrossLangLayout() {
-        return Long.class;
-    }
 }

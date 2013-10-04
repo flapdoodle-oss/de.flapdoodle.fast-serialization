@@ -11,6 +11,7 @@ import de.ruedigermoeller.serialization.testclasses.basicstuff.Primitives;
 import de.ruedigermoeller.serialization.testclasses.enterprise.Trader;
 
 import java.io.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,26 +43,28 @@ import java.util.concurrent.Executors;
  */
 public class FSTTestApp {
 
-    static FSTConfiguration singletonConf = FSTConfiguration.createDefaultConfiguration();
-    public static FSTConfiguration getInstance() {
-        return singletonConf;
+    static FSTConfiguration singletonConf;
+    static {
+        singletonConf = FSTConfiguration.createDefaultConfiguration();
+        singletonConf.getCLInfoRegistry().setIgnoreAnnotations(true);
     }
 
     public void test(int i) throws IOException {
         FileOutputStream fout = null;
         FileInputStream in = null;
         try {
-            fout = new FileOutputStream("/test"+i+".tmp");
+            fout = new FileOutputStream("/test-"+i+".tmp");
             Object[] toWrite = {
                     PrimitiveArrays.createPrimArray(),
-                    Trader.generateTrader(13, true),
+                    Trader.generateTrader(i, true),
                     new FrequentCollections(),
                     new LargeNativeArrays(),
                     Primitives.createPrimArray()
             };
+
             mywriteMethod(fout, toWrite);
 
-            in = new FileInputStream("/test"+i+".tmp");
+            in = new FileInputStream("/test-"+i+".tmp");
             Object read = myreadMethod(in);
             in.close();
             System.out.println(i+" SUCCESS:" + DeepEquals.deepEquals(read, toWrite));
@@ -85,15 +88,16 @@ public class FSTTestApp {
 
     public void mywriteMethod( OutputStream stream, Object toWrite ) throws IOException {
         FSTObjectOutput out = singletonConf.getObjectOutput(stream);
-        out.writeObject( toWrite, Object.class );
+        out.writeObject( toWrite );
         // DON'T out.close();
         out.flush();
         stream.close();
     }
 
-    public static void main(String arg[]) throws IOException {
-        System.setProperty("fts.unsafe","true");
-        ExecutorService executorService = Executors.newFixedThreadPool(1000);
+    public static void main(String arg[]) throws IOException, InterruptedException {
+        System.setProperty("fst.unsafe","true");
+        ExecutorService executorService = Executors.newFixedThreadPool(501);
+        final CountDownLatch latch = new CountDownLatch(200);
         for ( int i = 0; i < 500;  i++) {
             final int finalI = i;
             executorService.execute(new Runnable() {
@@ -101,12 +105,14 @@ public class FSTTestApp {
                 public void run() {
                     try {
                         new FSTTestApp().test(finalI);
+                        latch.countDown();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             });
         }
+        latch.await();
         executorService.shutdown();
     }
 
