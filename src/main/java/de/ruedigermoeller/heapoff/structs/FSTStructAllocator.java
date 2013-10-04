@@ -9,8 +9,16 @@ import de.ruedigermoeller.serialization.util.FSTUtil;
 /**
  * This class is the main entry point to create structs, arrays of structs and maps of structs.
  *
- * One needs to provide a (on heap allocated) Template instance, which then determines the structure and
+ * One may to provide a (on heap allocated) Template instance, which then determines the structure and
  * initial values of structs created when calling newStruct() methods.
+ *
+ * If no template is specified (byte constructor), this class acts as a generic struct allocator, you specify the template
+ * with each newStruct call then, so any struct class can be instantiated.
+ * Warning: In order to avoid computational overhead, call template = FSTStructAllocator.toStruct(template) if the
+ * template is used for more than opne allocation. This will reduce the cost of a struct allocation to a memcpy.
+ *
+ * Note this class is kind of a hybrid depending on wether a template is provided in constructor or not. Bit of a bad idea
+ * will be splitted into a generic and a tempalte bound allocator.
  *
  * By default a new byte array is created on the heap for each struct instance created.
  * Since GC effort scales with the number of objects, one can advise the Allocator to use larger chunks of
@@ -29,6 +37,46 @@ public class FSTStructAllocator<T extends FSTStruct> {
     int chunkSize;
     byte chunk[];
     int chunkIndex;
+
+    /**
+     * @param b
+     * @param index
+     * @return a new allocated pointer matching struct type stored in b[]
+     */
+    public static FSTStruct createStructPointer(byte b[], int index) {
+        return FSTStructFactory.getInstance().getStructPointerByOffset(b,FSTStruct.bufoff+index).detach();
+    }
+
+    /**
+     * @param onHeapTemplate
+     * @param <T>
+     * @return return a byte array based struct instance for given on-heap template. Allocates a new byte[] with each call
+     */
+    public static <T extends FSTStruct> T toStruct(T onHeapTemplate) {
+        return FSTStructFactory.getInstance().toStruct(onHeapTemplate);
+    }
+
+    /**
+     * @param b
+     * @param index
+     * @return a pointer matching struct type stored in b[] from the thread local cache
+     */
+    public static FSTStruct getVolatileStructPointer(byte b[], int index) {
+        return (FSTStruct) FSTStructFactory.getInstance().getStructPointerByOffset(b, FSTStruct.bufoff + index);
+    }
+
+    /**
+     * @param clazz
+     * @param <C>
+     * @return a newly allocated pointer matching. use baseOn to point it to a meaningful location
+     */
+    public static <C extends FSTStruct> C newPointer(Class<C> clazz) {
+        try {
+            return (C)FSTStructFactory.getInstance().getProxyClass(clazz).newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Create a Structallocator with given chunk size in bytes. If allocated structs are larger than the given size, a new bytearray is
@@ -104,6 +152,20 @@ public class FSTStructAllocator<T extends FSTStruct> {
     /**
      * create a fixed size struct hashmap. Note it should be of fixed types for keys and values, as
      * the space for those is allocated directly. Additionally keys and values are stored 'in-place' without references.
+     * (for allocation if templateless cosntructore has been used)
+     *
+     * @param size
+     * @param keyTemplate
+     * @param <K>
+     * @return
+     */
+    public <K extends FSTStruct, V extends FSTStruct> StructMap<K,V> newMap(int size, K keyTemplate, V valueTemplate) {
+        return newStruct( new StructMap<K, V>(keyTemplate,valueTemplate,size) );
+    }
+
+    /**
+     * create a fixed size struct hashmap. Note it should be of fixed types for keys and values, as
+     * the space for those is allocated directly. Additionally keys and values are stored 'in-place' without references.
      * @param size
      * @param keyTemplate
      * @param <K>
@@ -153,11 +215,4 @@ public class FSTStructAllocator<T extends FSTStruct> {
         return template.getByteSize();
     }
 
-    public <C extends FSTStruct> C newPointer(Class<C> clazz) {
-        try {
-            return (C)getFactory().getProxyClass(clazz).newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

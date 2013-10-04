@@ -20,8 +20,10 @@
 
 package de.ruedigermoeller.serialization.annotations;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /*
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -50,5 +52,6 @@ import java.lang.annotation.RetentionPolicy;
  * are found often, write speed may also be faster.
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 public @interface EqualnessIsIdentity {
 }

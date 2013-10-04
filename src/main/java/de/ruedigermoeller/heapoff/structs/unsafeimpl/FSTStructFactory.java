@@ -380,7 +380,7 @@ public class FSTStructFactory {
             cachedWrapperMap.get()[id] = null;
     }
 
-    public Object getStructPointerByOffset(byte b[], long offset) {
+    public FSTStruct getStructPointerByOffset(byte b[], long offset) {
         if ( offset < FSTStruct.bufoff ) {
             return null;
         }
@@ -393,11 +393,11 @@ public class FSTStructFactory {
         Object res = wrapperMap[clzId];
         if ( res != null ) {
             ((FSTStruct)res).baseOn(b, offset, this);
-            return res;
+            return (FSTStruct) res;
         }
         res = createStructPointer(b, (int) (offset - FSTStruct.bufoff), clzId);
         wrapperMap[clzId] = res;
-        return res;
+        return (FSTStruct) res;
     }
 
     /**
@@ -406,7 +406,7 @@ public class FSTStructFactory {
      * @param index
      * @return
      */
-    public Object getStructPointer(byte b[], int index) {
+    public FSTStruct getStructPointer(byte b[], int index) {
         return getStructPointerByOffset(b,FSTStruct.bufoff+index);
     }
 
@@ -502,6 +502,19 @@ public class FSTStructFactory {
                 continue;
             }
             int id = idCount++;
+            mIntToClz.put(id,c);
+            mClzToInt.put(c,id);
+        }
+    }
+
+    // register from top to bottom to avoid inference with application interferences (fastcast)
+    public void registerSystemClz(byte startVal, Class ... classes) {
+        for (int i = 0; i < classes.length; i++) {
+            Class c = classes[i];
+            if ( mClzToInt.containsKey(c) ) {
+                continue;
+            }
+            int id = startVal--;
             mIntToClz.put(id,c);
             mClzToInt.put(c,id);
         }

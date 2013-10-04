@@ -20,8 +20,10 @@
 
 package de.ruedigermoeller.serialization.annotations;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /*
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -44,6 +46,8 @@ import java.lang.annotation.RetentionPolicy;
  */
 
 @Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD,ElementType.TYPE})
+
 /**
  * defines the reference should not be looked up for identical objects in the object graph. May speed up
  * encoding, however in case there is another link to this object, performance and size are worse then

@@ -40,8 +40,10 @@ package de.ruedigermoeller.serialization.annotations;
  */
 
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * applicable to classes. Defines for equal instances of this class only one copy must be transmitted.
@@ -56,5 +58,7 @@ import java.lang.annotation.RetentionPolicy;
  * To enable this for system-classes, register this at the FSTConfiguration Object.
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+
 public @interface EqualnessIsBinary {
 }
