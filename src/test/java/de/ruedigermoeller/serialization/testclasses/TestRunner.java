@@ -31,7 +31,8 @@ public class TestRunner {
         System.setProperty("fst.unsafe","true");
     }
 
-    SerTest kryotest = new KryoTest("Kryo 2.2.1");
+    SerTest kryotest = new KryoTest("Kryo 2.2.2");
+    SerTest kryoUnsTest = new KryoUnsafeTest("Kryo Unsafe 2.2.2");
     SerTest speedFST = new FSTTest("FST (with Unsafe, preferSpeed=true)",true,true);
     SerTest defFST = new FSTTest("FST (with Unsafe)",true,false);
     SerTest defFSTNoUns = new FSTTest("FST (no Unsafe)",false,false);
@@ -54,7 +55,8 @@ public class TestRunner {
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
 //        SerTest tests[] = { defFST, defFSTNoUns, kryotest, defser, gridgain };
-        SerTest tests[] = { speedFST, defFST, defFSTNoUns, kryotest, defser };
+//        SerTest tests[] = { speedFST, defFST, defFSTNoUns, kryotest, kryoUnsTest, defser };
+        SerTest tests[] = { speedFST, kryotest, kryoUnsTest };
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
             test.run(toSer);
