@@ -1301,7 +1301,13 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     public double readFDoubleUnsafe() throws IOException {
-        return Double.longBitsToDouble(readFLongUnsafe());
+        ensureReadAhead(8);
+        final Unsafe unsafe = FSTUtil.unsafe;
+        final byte buf[] = input.buf;
+        double res = unsafe.getDouble(buf,input.pos+bufoff);
+        input.pos += 8;
+        return res;
+//        return Double.longBitsToDouble(readFLongUnsafe());
     }
 
     public final byte readFByte() throws IOException {

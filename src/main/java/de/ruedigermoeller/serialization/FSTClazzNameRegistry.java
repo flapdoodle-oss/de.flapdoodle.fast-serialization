@@ -42,6 +42,8 @@ public class FSTClazzNameRegistry {
     FSTObject2IntMap<Class> clzToId = new FSTObject2IntMap<Class>(13,false);
     FSTInt2ObjectMap idToClz = new FSTInt2ObjectMap(13);
     int classIdCount = 3;
+    int lastCatch;
+    Class lastClazz;
     FSTClazzNameRegistry parent;
 
     // snippet stuff
@@ -62,6 +64,7 @@ public class FSTClazzNameRegistry {
     }
 
     public void clear() {
+        lastCatch = 0;
         clzToId.clear();
         idToClz.clear();
         classIdCount = 3;
@@ -122,9 +125,14 @@ public class FSTClazzNameRegistry {
     }
 
     public void encodeClass(FSTObjectOutput out, Class c) throws IOException {
-        int i = getIdFromClazz(c);
-        if ( i != Integer.MIN_VALUE ) {
-            out.writeCShort((short) i); // > 2 !!
+//        if ( lastCatch != 0 && lastClazz == c ) {
+//            out.writeCShort((short) lastCatch);
+//            return;
+//        }
+        int clid = getIdFromClazz(c);
+        if ( clid != Integer.MIN_VALUE ) {
+//            lastCatch = clid; lastClazz = c;
+            out.writeCShort((short) clid); // > 2 !!
         } else {
             if ( DEBUG_CLNAMES )
                 System.out.println("write class name class:"+c.getName());

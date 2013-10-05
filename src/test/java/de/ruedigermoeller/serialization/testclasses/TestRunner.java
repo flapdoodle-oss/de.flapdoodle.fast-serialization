@@ -56,9 +56,9 @@ public class TestRunner {
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
 //        SerTest tests[] = { defFST, defFSTNoUns, kryotest, defser, gridgain };
-        SerTest tests[] = { speedFST, defFST, defFSTNoUns, kryotest, kryoUnsTest, defser };
+//        SerTest tests[] = { speedFST, defFST, defFSTNoUns, kryotest, kryoUnsTest, defser };
 //        SerTest tests[] = { speedFST, kryotest, kryoUnsTest };
-//        SerTest tests[] = { speedFST,kryoUnsTest };
+        SerTest tests[] = { speedFST,kryoUnsTest };
 //        SerTest tests[] = { speedFST };
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
@@ -153,7 +153,7 @@ public class TestRunner {
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
 //        SerTest.WarmUP = 40000; SerTest.Run = SerTest.WarmUP*1+1;
-        SerTest.WarmUP = 50000; SerTest.Run = 50000;
+        SerTest.WarmUP = 50000; SerTest.Run = 30000;
         runner.runAll(FrequentPrimitives.getArray(200));
         runner.runAll(new StringPerformance());
         runner.runAll(new FrequentCollections());
