@@ -53,7 +53,8 @@ public class FSTTestApp {
         FileOutputStream fout = null;
         FileInputStream in = null;
         try {
-            fout = new FileOutputStream("/test-"+i+".tmp");
+            String finam = "/tmp/test" + i + ".tmp";
+            fout = new FileOutputStream(finam);
             Object[] toWrite = {
                     PrimitiveArrays.createPrimArray(),
                     Trader.generateTrader(i, true),
@@ -61,10 +62,9 @@ public class FSTTestApp {
                     new LargeNativeArrays(),
                     Primitives.createPrimArray()
             };
-
             mywriteMethod(fout, toWrite);
 
-            in = new FileInputStream("/test-"+i+".tmp");
+            in = new FileInputStream(finam);
             Object read = myreadMethod(in);
             in.close();
             System.out.println(i+" SUCCESS:" + DeepEquals.deepEquals(read, toWrite));
@@ -88,7 +88,7 @@ public class FSTTestApp {
 
     public void mywriteMethod( OutputStream stream, Object toWrite ) throws IOException {
         FSTObjectOutput out = singletonConf.getObjectOutput(stream);
-        out.writeObject( toWrite );
+        out.writeObject( toWrite, Object.class );
         // DON'T out.close();
         out.flush();
         stream.close();
