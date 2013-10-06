@@ -19,8 +19,6 @@
  */
 package de.ruedigermoeller.serialization.util;
 
-import java.util.HashMap;
-
 /**
  * Created with IntelliJ IDEA.
  * User: ruedi
@@ -42,7 +40,7 @@ public class FSTInt2IntMap {
             initialSize = 2;
         }
 
-        initialSize = FSTObject2IntMap.adjustSize(initialSize*2);
+        initialSize = FSTObject2IntMap.adjustSize(initialSize * 2);
 
         mKeys = new int[initialSize];
         mValues = new int[initialSize];

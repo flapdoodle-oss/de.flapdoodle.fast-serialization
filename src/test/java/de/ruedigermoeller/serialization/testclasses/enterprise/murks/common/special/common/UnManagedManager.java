@@ -10,7 +10,6 @@ import de.ruedigermoeller.serialization.testclasses.enterprise.ObjectOrientedDat
  * Time: 15:05
  * To change this template use File | Settings | File Templates.
  */
-@EqualnessIsIdentity
 public class UnManagedManager extends ObjectOrientedDataType {
     public UnManagedManager() {
     }

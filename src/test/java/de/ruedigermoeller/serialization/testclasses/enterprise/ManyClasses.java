@@ -1,6 +1,5 @@
 package de.ruedigermoeller.serialization.testclasses.enterprise;
 
-import de.ruedigermoeller.serialization.annotations.Predict;
 import de.ruedigermoeller.serialization.testclasses.HasDescription;
 import de.ruedigermoeller.serialization.testclasses.enterprise.murks.common.ManagingManager;
 import de.ruedigermoeller.serialization.testclasses.enterprise.murks.common.special.common.UnManagedManager;
@@ -20,13 +19,6 @@ import java.util.Date;
  * Time: 15:11
  * To change this template use File | Settings | File Templates.
  */
-@Predict({
-        ObjectOrientedDataType.class, ObjectOrientedInt.class,
-        SimpleOrder.class, Trader.class,
-        NoniteratingObjectIteratorWrapperVisitor.class, UtilManager.class,
-        UnmanagedManagingManager.class,UnManagedManager.class,ManagingManager.class,
-        ManagingCoordinatorDispatcher.class,ManagingDispatcherCoordinator.class
-})
 public class ManyClasses implements Serializable, HasDescription {
 
     ObjectOrientedDataType var;

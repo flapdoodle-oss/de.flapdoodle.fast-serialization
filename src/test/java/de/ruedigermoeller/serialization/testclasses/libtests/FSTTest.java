@@ -83,7 +83,7 @@ public class FSTTest extends SerTest {
     protected void writeTest(Object toWrite, OutputStream bout, Class aClass) {
         FSTObjectOutput out = defconf.getObjectOutput(bout);
         try {
-            out.writeObject(toWrite);
+            out.writeObject(toWrite, aClass);
             out.flush();
             bout.close();
         } catch (Throwable e) {

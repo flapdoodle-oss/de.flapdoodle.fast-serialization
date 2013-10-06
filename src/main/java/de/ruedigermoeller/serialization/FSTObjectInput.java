@@ -87,7 +87,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     FSTConfiguration conf;
     FSTInputStream input;
     ConditionalCallback conditionalCallback;
-    int readExternalReadAHead = 5000;
+    int readExternalReadAHead = 16000;
 
     static ByteArrayInputStream empty = new ByteArrayInputStream(new byte[0]);
 
@@ -160,7 +160,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 
     /**
      * since the stock readXX methods on InputStream are final, i can't ensure sufficient readAhead on the inputStream
-     * before calling readExternal. Default value is 5000 bytes. If you make use of the externalizable interfac
+     * before calling readExternal. Default value is 16000 bytes. If you make use of the externalizable interfac
      * and write larger Objects a) cast the ObjectInput in readExternal to FSTObjectInput and call ensureReadAhead on this
      * in your readExternal method b) statically set a sufficient maximum using this method.
      * @param readExternalReadAHead
@@ -284,7 +284,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             case FSTObjectOutput.HANDLE: {
                 int handle = readCInt();
 //                System.out.println("READ HANDLE "+handle+" "+referencee.getDesc());
-                Object res = objects.getRegisteredObject(handle);
+                Object res = objects.getReadRegisteredObject(handle);
                 if (res == null) {
                     throw new IOException("unable to ressolve handle " + handle + " " + referencee.getDesc() + " " + input.pos);
                 }
@@ -292,12 +292,12 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             }
             case FSTObjectOutput.COPYHANDLE: {
                 int handle = readCInt(); // = streamposition
-                Object res = objects.getRegisteredObject(handle);
+                Object res = objects.getReadRegisteredObject(handle);
                 if (res == null) {
                     throw new IOException("unable to ressolve handle " + handle);
                 }
                 Object copy = copy(res, handle);
-                //objects.registerObject(copy,true, readPos, null); //fixme:no need
+                //objects.registerObjectForWrite(copy,true, readPos, null); //fixme:no need
                 return copy;
             }
             case FSTObjectOutput.ARRAY: {
@@ -491,15 +491,25 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     void readObjectFields(FSTClazzInfo.FSTFieldInfo referencee, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo, Object newObj) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        final boolean preferSpeed = conf.isPreferSpeed();
+        if ( FSTUtil.unsafe != null ) {
+            if (preferSpeed)
+                readObjectFieldsUnsafeSpeed(referencee,serializationInfo,fieldInfo,newObj);
+            else
+                readObjectFieldsUnsafeCompact(referencee,serializationInfo,fieldInfo,newObj);
+        } else {
+            readObjectFieldsSafe(referencee,serializationInfo,fieldInfo,newObj);
+        }
+    }
+
+    void readObjectFieldsUnsafeCompact(FSTClazzInfo.FSTFieldInfo referencee, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo, Object newObj) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         int booleanMask = 0;
         int boolcount = 8;
         final int length = fieldInfo.length;
         int conditional = 0;
-        final boolean isUnsafe = FSTUtil.unsafe != null;
-        final boolean preferSpeed = conf.isPreferSpeed();
         final Unsafe unsafe = FSTUtil.unsafe;
-        for (int i = 0; i < length; i++) {
-            try {
+        try {
+            for (int i = 0; i < length; i++) {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
                 if (DEBUGSTACK) {
                     debugStack.push(subInfo.getDesc() + " " + newObj.getClass().getSimpleName());
@@ -507,7 +517,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                 if (FSTObjectOutput.DUMP) {
                     System.out.println("READFIELD " + fieldInfo[i].getField().getName());
                 }
-                if (subInfo.isIntegral() && !subInfo.isArray()) {
+                if (subInfo.isPrimitive()) {
                     final Class subInfTzpe = subInfo.getType();
                     if (subInfTzpe == boolean.class) {
                         if (boolcount == 8) {
@@ -517,84 +527,180 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                         boolean val = (booleanMask & 128) != 0;
                         booleanMask = booleanMask << 1;
                         boolcount++;
-                        serializationInfo.setBooleanValue(newObj, subInfo, val);
+                        subInfo.setBooleanValue(newObj, val);
                     } else {
-                        if ( isUnsafe ) {
-                            if (preferSpeed) {
-                                // speed unsafe
-                                if (subInfTzpe == int.class) {
-                                    // inline serializationInfo.setIntValueUnsafe(newObj, subInfo, readFIntUnsafe());
-                                    ensureReadAhead(4);
-                                    int res = unsafe.getInt(input.buf,input.pos+bufoff);
-                                    input.pos += 4;
-                                    FSTUtil.unsafe.putInt(newObj,subInfo.memOffset,res);
-                                } else if (subInfTzpe == long.class) {
-                                    // inline serializationInfo.setLongValueUnsafe(newObj, subInfo, readFLongUnsafe());
-                                    ensureReadAhead(8);
-                                    long res = unsafe.getLong(input.buf, input.pos + bufoff);
-                                    input.pos += 8;
-                                    FSTUtil.unsafe.putLong(newObj, subInfo.memOffset, res);
-                                } else if (subInfTzpe == byte.class) {
-                                    serializationInfo.setByteValue(newObj, subInfo, readFByte());
-                                } else if (subInfTzpe == char.class) {
-                                    serializationInfo.setCharValue(newObj, subInfo, readFChar());
-                                } else if (subInfTzpe == short.class) {
-                                    serializationInfo.setShortValue(newObj, subInfo, readFShort());
-                                } else if (subInfTzpe == double.class) {
-                                    serializationInfo.setDoubleValueUnsafe(newObj, subInfo, readFDoubleUnsafe());
-                                } else if (subInfTzpe == float.class) {
-                                    serializationInfo.setFloatValue(newObj, subInfo, readFFloat());
-                                }
-                            } else {
-                                if (subInfTzpe == int.class) {
-                                    serializationInfo.setIntValueUnsafe(newObj, subInfo, readCIntUnsafe());
-                                } else if (subInfTzpe == long.class) {
-                                    serializationInfo.setLongValueUnsafe(newObj, subInfo, readCLong());
-                                } else if (subInfTzpe == byte.class) {
-                                    serializationInfo.setByteValue(newObj, subInfo, readFByte());
-                                } else if (subInfTzpe == char.class) {
-                                    serializationInfo.setCharValue(newObj, subInfo, readCChar());
-                                } else if (subInfTzpe == short.class) {
-                                    serializationInfo.setShortValue(newObj, subInfo, readCShort());
-                                } else if (subInfTzpe == double.class) {
-                                    serializationInfo.setDoubleValueUnsafe(newObj, subInfo, readCDouble());
-                                } else if (subInfTzpe == float.class) {
-                                    serializationInfo.setFloatValue(newObj, subInfo, readCFloat());
-                                }
+                        if (subInfTzpe == int.class) {
+                            subInfo.setIntValueUnsafe(newObj, readCIntUnsafe());
+                        } else if (subInfTzpe == long.class) {
+                            subInfo.setLongValueUnsafe(newObj, readCLong());
+                        } else if (subInfTzpe == byte.class) {
+                            subInfo.setByteValue(newObj, readFByte());
+                        } else if (subInfTzpe == char.class) {
+                            subInfo.setCharValue(newObj, readCChar());
+                        } else if (subInfTzpe == short.class) {
+                            subInfo.setShortValue(newObj,  readCShort());
+                        } else if (subInfTzpe == double.class) {
+                            subInfo.setDoubleValueUnsafe(newObj, readCDouble());
+                        } else if (subInfTzpe == float.class) {
+                            subInfo.setFloatValue(newObj, readCFloat());
+                        }
+                    }
+                } else {
+                    if ( subInfo.isConditional() ) {
+                        if ( conditional == 0 ) {
+                            conditional = readFIntUnsafe();
+                            if ( skipConditional(newObj, conditional, subInfo) ) {
+                                input.pos = conditional;
+                                continue;
+                            }
+                        }
+                    }
+                    // object
+                    Object subObject = readObjectWithHeader(subInfo);
+                    subInfo.setObjectValueUnsafe(newObj, subObject);
+                }
+                if (DEBUGSTACK) {
+                    debugStack.pop();
+                }
+            }
+        } catch (IllegalAccessException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    void readObjectFieldsUnsafeSpeed(FSTClazzInfo.FSTFieldInfo referencee, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo, Object newObj) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        int booleanMask = 0;
+        int boolcount = 8;
+        final int length = fieldInfo.length;
+        int conditional = 0;
+        final Unsafe unsafe = FSTUtil.unsafe;
+        try {
+            for (int i = 0; i < length; i++) {
+                FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
+                if (DEBUGSTACK) {
+                    debugStack.push(subInfo.getDesc() + " " + newObj.getClass().getSimpleName());
+                }
+                if (FSTObjectOutput.DUMP) {
+                    System.out.println("READFIELD " + fieldInfo[i].getField().getName());
+                }
+                if (subInfo.isPrimitive()) {
+                    final Class subInfTzpe = subInfo.getType();
+                    if (subInfTzpe == boolean.class) {
+                        if (boolcount == 8) {
+                            booleanMask = ((int) readFByte() + 256) &0xff;
+                            boolcount = 0;
+                        }
+                        boolean val = (booleanMask & 128) != 0;
+                        booleanMask = booleanMask << 1;
+                        boolcount++;
+                        subInfo.setBooleanValue(newObj, val);
+                    } else {
+                        // speed unsafe
+                        if (subInfTzpe == int.class) {
+                            // inline serializationInfo.setIntValueUnsafe(newObj, subInfo, readFIntUnsafe());
+                            ensureReadAhead(4);
+                            int res = unsafe.getInt(input.buf,input.pos+bufoff);
+                            input.pos += 4;
+                            FSTUtil.unsafe.putInt(newObj,subInfo.memOffset,res);
+                        } else if (subInfTzpe == long.class) {
+                            // inline serializationInfo.setLongValueUnsafe(newObj, subInfo, readFLongUnsafe());
+                            ensureReadAhead(8);
+                            long res = unsafe.getLong(input.buf, input.pos + bufoff);
+                            input.pos += 8;
+                            FSTUtil.unsafe.putLong(newObj, subInfo.memOffset, res);
+                        } else if (subInfTzpe == byte.class) {
+                            subInfo.setByteValue(newObj, readFByte());
+                        } else if (subInfTzpe == char.class) {
+                            subInfo.setCharValue(newObj, readFChar());
+                        } else if (subInfTzpe == short.class) {
+                            subInfo.setShortValue(newObj, readFShort());
+                        } else if (subInfTzpe == double.class) {
+                            subInfo.setDoubleValueUnsafe(newObj, readFDoubleUnsafe());
+                        } else if (subInfTzpe == float.class) {
+                            subInfo.setFloatValue(newObj, readFFloat());
+                        }
+                    }
+                } else {
+                    if ( subInfo.isConditional() ) {
+                        if ( conditional == 0 ) {
+                            conditional = readFIntUnsafe();
+                            if ( skipConditional(newObj, conditional, subInfo) ) {
+                                input.pos = conditional;
+                                continue;
+                            }
+                        }
+                    }
+                    // object
+                    Object subObject = readObjectWithHeader(subInfo);
+                    subInfo.setObjectValueUnsafe(newObj, subObject);
+                }
+                if (DEBUGSTACK) {
+                    debugStack.pop();
+                }
+            }
+        } catch (IllegalAccessException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    void readObjectFieldsSafe(FSTClazzInfo.FSTFieldInfo referencee, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo, Object newObj) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        int booleanMask = 0;
+        int boolcount = 8;
+        final int length = fieldInfo.length;
+        int conditional = 0;
+        final boolean preferSpeed = conf.isPreferSpeed();
+        for (int i = 0; i < length; i++) {
+            try {
+                FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
+                if (DEBUGSTACK) {
+                    debugStack.push(subInfo.getDesc() + " " + newObj.getClass().getSimpleName());
+                }
+                if (FSTObjectOutput.DUMP) {
+                    System.out.println("READFIELD " + fieldInfo[i].getField().getName());
+                }
+                if (subInfo.isPrimitive()) {
+                    final Class subInfTzpe = subInfo.getType();
+                    if (subInfTzpe == boolean.class) {
+                        if (boolcount == 8) {
+                            booleanMask = ((int) readFByte() + 256) &0xff;
+                            boolcount = 0;
+                        }
+                        boolean val = (booleanMask & 128) != 0;
+                        booleanMask = booleanMask << 1;
+                        boolcount++;
+                        subInfo.setBooleanValue(newObj, val);
+                    } else {
+                        if (preferSpeed) {
+                            if (subInfTzpe == int.class) {
+                                subInfo.setIntValue(newObj, readFInt());
+                            } else if (subInfTzpe == long.class) {
+                                subInfo.setLongValue(newObj, readFLong());
+                            } else if (subInfTzpe == byte.class) {
+                                subInfo.setByteValue(newObj, readFByte());
+                            } else if (subInfTzpe == char.class) {
+                                subInfo.setCharValue(newObj, readFChar());
+                            } else if (subInfTzpe == short.class) {
+                                subInfo.setShortValue(newObj, readFShort());
+                            } else if (subInfTzpe == double.class) {
+                                subInfo.setDoubleValue(newObj, readFDouble());
+                            } else if (subInfTzpe == float.class) {
+                                subInfo.setFloatValue(newObj, readFFloat());
                             }
                         } else {
-                            if (preferSpeed) {
-                                if (subInfTzpe == int.class) {
-                                    serializationInfo.setIntValue(newObj, subInfo, readFInt());
-                                } else if (subInfTzpe == long.class) {
-                                    serializationInfo.setLongValue(newObj, subInfo, readFLong());
-                                } else if (subInfTzpe == byte.class) {
-                                    serializationInfo.setByteValue(newObj, subInfo, readFByte());
-                                } else if (subInfTzpe == char.class) {
-                                    serializationInfo.setCharValue(newObj, subInfo, readFChar());
-                                } else if (subInfTzpe == short.class) {
-                                    serializationInfo.setShortValue(newObj, subInfo, readFShort());
-                                } else if (subInfTzpe == double.class) {
-                                    serializationInfo.setDoubleValue(newObj, subInfo, readFDouble());
-                                } else if (subInfTzpe == float.class) {
-                                    serializationInfo.setFloatValue(newObj, subInfo, readFFloat());
-                                }
-                            } else {
-                                if (subInfTzpe == int.class) {
-                                    serializationInfo.setIntValue(newObj, subInfo, readCInt());
-                                } else if (subInfTzpe == long.class) {
-                                    serializationInfo.setLongValue(newObj, subInfo, readCLong());
-                                } else if (subInfTzpe == byte.class) {
-                                    serializationInfo.setByteValue(newObj, subInfo, readFByte());
-                                } else if (subInfTzpe == char.class) {
-                                    serializationInfo.setCharValue(newObj, subInfo, readCChar());
-                                } else if (subInfTzpe == short.class) {
-                                    serializationInfo.setShortValue(newObj, subInfo, readCShort());
-                                } else if (subInfTzpe == double.class) {
-                                    serializationInfo.setDoubleValue(newObj, subInfo, readCDouble());
-                                } else if (subInfTzpe == float.class) {
-                                    serializationInfo.setFloatValue(newObj, subInfo, readCFloat());
-                                }
+                            if (subInfTzpe == int.class) {
+                                subInfo.setIntValue(newObj, readCInt());
+                            } else if (subInfTzpe == long.class) {
+                                subInfo.setLongValue(newObj, readCLong());
+                            } else if (subInfTzpe == byte.class) {
+                                subInfo.setByteValue(newObj, readFByte());
+                            } else if (subInfTzpe == char.class) {
+                                subInfo.setCharValue(newObj, readCChar());
+                            } else if (subInfTzpe == short.class) {
+                                subInfo.setShortValue(newObj, readCShort());
+                            } else if (subInfTzpe == double.class) {
+                                subInfo.setDoubleValue(newObj, readCDouble());
+                            } else if (subInfTzpe == float.class) {
+                                subInfo.setFloatValue(newObj, readCFloat());
                             }
                         }
                     }
@@ -610,10 +716,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                     }
                     // object
                     Object subObject = readObjectWithHeader(subInfo);
-                    if ( isUnsafe )
-                        serializationInfo.setObjectValueUnsafe(newObj, subInfo, subObject);
-                    else
-                        serializationInfo.setObjectValue(newObj, subInfo, subObject);
+                    subInfo.setObjectValue(newObj, subObject);
                 }
                 if (DEBUGSTACK) {
                     debugStack.pop();

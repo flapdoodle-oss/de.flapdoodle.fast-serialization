@@ -182,14 +182,6 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         conf.returnObject(buffout,objects,clnames);
     }
 
-    /**
-     * enable block/streaming mode by setting the size when written data should get flushed to
-     * the stream automatically. Default is Int.Max
-     * @param bytes
-     */
-    public void setChunkSize(int bytes) {
-        buffout.setChunkSize(bytes);
-    }
 
 //    private void reUse(OutputStream out) {
 //        buffout.reset();
@@ -317,10 +309,10 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         int handle = Integer.MIN_VALUE;
         if ( ! referencee.isFlat() && ! serializationInfo.isFlat() && (ser == null || !ser.alwaysCopy() ) ) {
             boolean needsEqualMap = serializationInfo.isEqualIsBinary() || serializationInfo.isEqualIsIdentity();
-            handle = objects.registerObject(toWrite, !needsEqualMap, written,serializationInfo,tmp);
+            handle = objects.registerObjectForWrite(toWrite, !needsEqualMap, written, serializationInfo, tmp);
             // determine class header
             if ( handle >= 0 ) {
-                final boolean isIdentical = tmp[0] == 0; //objects.getRegisteredObject(handle) == toWrite;
+                final boolean isIdentical = tmp[0] == 0; //objects.getReadRegisteredObject(handle) == toWrite;
                 if ( isIdentical || serializationInfo.isEqualIsIdentity()) {
                     writeFByte(HANDLE);
                     writeCInt(handle);
@@ -328,7 +320,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 } else if ( serializationInfo.isEqualIsBinary() ) {
                     writeFByte(COPYHANDLE);
                     writeCInt(handle);
-                    // unneccessary objects.registerObject(toWrite, true, written,serializationInfo); // enforce new id, in case another reference to toWrite exists
+                    // unneccessary objects.registerObjectForWrite(toWrite, true, written,serializationInfo); // enforce new id, in case another reference to toWrite exists
                     return;
                 }
             }
@@ -419,315 +411,195 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
     private void writeObjectFields(Object toWrite, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo) throws IOException {
         if ( unsafe != null ) {
-            if ( conf.preferSpeed )
-                writeObjectFieldsUnsafeSpeed(toWrite,serializationInfo,fieldInfo);
-            else
-                writeObjectFieldsUnsafeCompact(toWrite,serializationInfo,fieldInfo);
+            writeObjectFieldsUnsafe(toWrite, serializationInfo, fieldInfo, !conf.preferSpeed);
         } else {
-            writeObjectFieldsSafe(toWrite,serializationInfo,fieldInfo);
+            writeObjectFieldsSafe(toWrite, serializationInfo, fieldInfo, !conf.preferSpeed);
         }
     }
 
-    private void writeObjectFieldsSafe(Object toWrite, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo) throws IOException {
-        int booleanMask = 0;
-        int boolcount = 0;
-        final int length = fieldInfo.length;
-        int conditional = 0;
-        final boolean preferSpeed = conf.isPreferSpeed();
-        for (int i = 0; i < length; i++) {
-            try {
-                final FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                if ( DUMP ) System.out.println("WRITE FIELD:"+subInfo.getField().getName());
-                final Class<?> fieldType = subInfo.getType();
-                if ( fieldType != boolean.class ) {
+    private void writeObjectFieldsSafe(Object toWrite, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo, final boolean compact) throws IOException {
+        try {
+            int booleanMask = 0;
+            int boolcount = 0;
+            final int length = fieldInfo.length;
+            int j = 0;
+            for (; j < length; j++) {
+                final FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[j];
+                if ( subInfo.getType() != boolean.class ) {
                     if ( boolcount > 0 ) {
+                        writeFByte(booleanMask<<(8-boolcount));
+                    }
+                    break;
+                } else {
+                    if ( boolcount == 8 ) {
                         writeFByte(booleanMask<<(8-boolcount));
                         boolcount = 0; booleanMask = 0;
                     }
+                    boolean booleanValue = subInfo.getBooleanValue( toWrite);
+                    booleanMask = booleanMask<<1;
+                    booleanMask = (booleanMask|(booleanValue?1:0));
+                    boolcount++;
                 }
-                if ( subInfo.isIntegral() && ! subInfo.isArray() ) {
-                    if (preferSpeed) {
-                        // speed safe
-                        switch (subInfo.getIntegralType()) {
-                            case FSTClazzInfo.FSTFieldInfo.BOOL: {
-                                if ( boolcount == 8 ) {
-                                    writeFByte(booleanMask<<(8-boolcount));
-                                    boolcount = 0; booleanMask = 0;
-                                }
-                                boolean booleanValue = serializationInfo.getBooleanValue(toWrite, subInfo);
-                                booleanMask = booleanMask<<1;
-                                booleanMask = (booleanMask|(booleanValue?1:0));
-                                boolcount++;
-                            }
-                            break;
-                            case FSTClazzInfo.FSTFieldInfo.BYTE:
-                                writeFByte(serializationInfo.getByteValue(toWrite, subInfo));
-                                break;
-                            case FSTClazzInfo.FSTFieldInfo.CHAR:
-                                writeFChar((char) serializationInfo.getCharValue(toWrite, subInfo));
-                                break;
-                            case FSTClazzInfo.FSTFieldInfo.SHORT:
-                                writeFShort((short) serializationInfo.getShortValue(toWrite, subInfo));
-                                break;
-                            case FSTClazzInfo.FSTFieldInfo.INT:
-                                writeFInt(serializationInfo.getIntValue(toWrite, subInfo));
-                                break;
-                            case FSTClazzInfo.FSTFieldInfo.LONG:
-                                writeFLong(serializationInfo.getLongValue(toWrite, subInfo));
-                                break;
-                            case FSTClazzInfo.FSTFieldInfo.FLOAT:
-                                writeFFloat(serializationInfo.getFloatValue(toWrite, subInfo));
-                                break;
-                            case FSTClazzInfo.FSTFieldInfo.DOUBLE:
-                                writeFDouble(serializationInfo.getDoubleValue(toWrite,subInfo));
-                                break;
+            }
+            for (int i = j; i < length; i++)
+            {
+                final FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
+                if ( subInfo.isPrimitive() ) {
+                    // speed safe
+                    int integralType = subInfo.getIntegralType();
+                    if ( compact ) {
+                        switch (integralType) {
+                            case FSTClazzInfo.FSTFieldInfo.BYTE:   writeFByte(subInfo.getByteValue(toWrite)); break;
+                            case FSTClazzInfo.FSTFieldInfo.CHAR:   writeCChar((char) subInfo.getCharValue(toWrite)); break;
+                            case FSTClazzInfo.FSTFieldInfo.SHORT:  writeCShort((short) subInfo.getShortValue(toWrite)); break;
+                            case FSTClazzInfo.FSTFieldInfo.INT:    writeCInt(subInfo.getIntValue(toWrite)); break;
+                            case FSTClazzInfo.FSTFieldInfo.LONG:   writeCLong(subInfo.getLongValue(toWrite)); break;
+                            case FSTClazzInfo.FSTFieldInfo.FLOAT:  writeCFloat(subInfo.getFloatValue(toWrite)); break;
+                            case FSTClazzInfo.FSTFieldInfo.DOUBLE: writeCDouble(subInfo.getDoubleValue(toWrite)); break;
                         }
                     } else {
-                        // compact safe
-                        switch (subInfo.getIntegralType()) {
-                            case FSTClazzInfo.FSTFieldInfo.BOOL: {
-                                if ( boolcount == 8 ) {
-                                    writeFByte(booleanMask<<(8-boolcount));
-                                    boolcount = 0; booleanMask = 0;
-                                }
-                                boolean booleanValue = serializationInfo.getBooleanValue(toWrite, subInfo);
-                                booleanMask = booleanMask<<1;
-                                booleanMask = (booleanMask|(booleanValue?1:0));
-                                boolcount++;
-                            }
-                            break;
-                            case FSTClazzInfo.FSTFieldInfo.BYTE:
-                                writeFByte(serializationInfo.getByteValue(toWrite, subInfo));
-                                break;
-                            case FSTClazzInfo.FSTFieldInfo.CHAR:
-                                writeCChar((char) serializationInfo.getCharValue(toWrite, subInfo));
-                                break;
-                            case FSTClazzInfo.FSTFieldInfo.SHORT:
-                                writeCShort((short) serializationInfo.getShortValue(toWrite, subInfo));
-                                break;
-                            case FSTClazzInfo.FSTFieldInfo.INT:
-                                writeCInt(serializationInfo.getIntValue(toWrite, subInfo));
-                                break;
-                            case FSTClazzInfo.FSTFieldInfo.LONG:
-                                writeCLong(serializationInfo.getLongValue(toWrite, subInfo));
-                                break;
-                            case FSTClazzInfo.FSTFieldInfo.FLOAT:
-                                writeCFloat(serializationInfo.getFloatValue(toWrite, subInfo));
-                                break;
-                            case FSTClazzInfo.FSTFieldInfo.DOUBLE:
-                                writeCDouble(serializationInfo.getDoubleValue(toWrite,subInfo));
-                                break;
+                        switch (integralType) {
+                            case FSTClazzInfo.FSTFieldInfo.BYTE:   writeFByte(subInfo.getByteValue(toWrite)); break;
+                            case FSTClazzInfo.FSTFieldInfo.CHAR:   writeFChar((char) subInfo.getCharValue(toWrite)); break;
+                            case FSTClazzInfo.FSTFieldInfo.SHORT:  writeFShort((short) subInfo.getShortValue(toWrite)); break;
+                            case FSTClazzInfo.FSTFieldInfo.INT:    writeFInt(subInfo.getIntValue(toWrite)); break;
+                            case FSTClazzInfo.FSTFieldInfo.LONG:   writeFLong(subInfo.getLongValue(toWrite)); break;
+                            case FSTClazzInfo.FSTFieldInfo.FLOAT:  writeFFloat(subInfo.getFloatValue(toWrite)); break;
+                            case FSTClazzInfo.FSTFieldInfo.DOUBLE: writeFDouble(subInfo.getDoubleValue(toWrite)); break;
                         }
                     }
-                } else {
-                    if (subInfo.isConditional()) {
-                        conditional = buffout.pos;
-                        buffout.pos +=4;
-                        written+=4;
-                    }
+                } else if (subInfo.isConditional())
+                {
+                    final int conditional = buffout.pos;
+                    buffout.pos +=4;
+                    written+=4;
                     // object
-                    Object subObject = serializationInfo.getObjectValue(toWrite,subInfo);
+                    Object subObject = subInfo.getObjectValue(toWrite);
                     if ( subObject == null ) {
                         writeFByte(NULL);
                     } else {
                         writeObjectWithContext(subInfo, subObject);
                     }
-                    if ( conditional != 0 ) {
-                        int v = buffout.pos;
-                        buffout.buf[conditional] = (byte) ((v >>> 24) & 0xFF);
-                        buffout.buf[conditional+1] = (byte) ((v >>> 16) & 0xFF);
-                        buffout.buf[conditional+2] = (byte) ((v >>>  8) & 0xFF);
-                        buffout.buf[conditional+3] = (byte) ((v >>> 0) & 0xFF);
-                        conditional = 0;
+                    int v = buffout.pos;
+                    buffout.buf[conditional] = (byte) ((v >>> 24) & 0xFF);
+                    buffout.buf[conditional+1] = (byte) ((v >>> 16) & 0xFF);
+                    buffout.buf[conditional+2] = (byte) ((v >>>  8) & 0xFF);
+                    buffout.buf[conditional+3] = (byte) ((v >>> 0) & 0xFF);
+                } else {
+                    // object
+                    Object subObject = subInfo.getObjectValue(toWrite);
+                    if ( subObject == null ) {
+                        writeFByte(NULL);
+                    } else {
+                        writeObjectWithContext(subInfo, subObject);
                     }
                 }
-            } catch (IllegalAccessException ex) {
-                throw new IOException(ex);
             }
-        }
-        if ( boolcount > 0 ) {
-            writeFByte(booleanMask<<(8-boolcount));
-            boolcount = 0; booleanMask = 0;
+        } catch (IllegalAccessException ex) {
+            throw new IOException(ex);
         }
     }
 
-    private void writeObjectFieldsUnsafeSpeed(Object toWrite, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo) throws IOException {
-        int booleanMask = 0;
-        int boolcount = 0;
-        final int length = fieldInfo.length;
-        int conditional = 0;
-        for (int i = 0; i < length; i++) {
-            try {
-                final FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                if ( DUMP ) System.out.println("WRITE FIELD:"+subInfo.getField().getName());
-                final Class<?> fieldType = subInfo.getType();
-                if ( fieldType != boolean.class ) {
+    private void writeObjectFieldsUnsafe(Object toWrite, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo, final boolean compact) throws IOException {
+        try {
+            int booleanMask = 0;
+            int boolcount = 0;
+            final int length = fieldInfo.length;
+            int j = 0;
+            for (; j < length; j++) {
+                final FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[j];
+                if ( subInfo.getType() != boolean.class ) {
                     if ( boolcount > 0 ) {
-                        writeFByte(booleanMask<<(8-boolcount));
+                        writeFByteUnsafe(booleanMask<<(8-boolcount));
+                    }
+                    break;
+                } else {
+                    if ( boolcount == 8 ) {
+                        writeFByteUnsafe(booleanMask<<(8-boolcount));
                         boolcount = 0; booleanMask = 0;
                     }
+                    boolean booleanValue = unsafe.getBoolean(toWrite,subInfo.memOffset);
+                    booleanMask = booleanMask<<1;
+                    booleanMask = (booleanMask|(booleanValue?1:0));
+                    boolcount++;
                 }
-                if ( subInfo.isIntegral() && ! subInfo.isArray() ) {
+            }
+            for (int i = j; i < length; i++)
+            {
+                final FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
+                if ( subInfo.isPrimitive() ) {
                     // speed unsafe
-                    switch (subInfo.getIntegralType()) {
-                        case FSTClazzInfo.FSTFieldInfo.BOOL: {
-                            if ( boolcount == 8 ) {
-                                writeFByte(booleanMask<<(8-boolcount));
-                                boolcount = 0; booleanMask = 0;
-                            }
-                            boolean booleanValue = serializationInfo.getBooleanValue(toWrite, subInfo);
-                            booleanMask = booleanMask<<1;
-                            booleanMask = (booleanMask|(booleanValue?1:0));
-                            boolcount++;
-                        }
-                        break;
-                        case FSTClazzInfo.FSTFieldInfo.BYTE:
-                            writeFByte(serializationInfo.getByteValue(toWrite, subInfo));
-                            break;
-                        case FSTClazzInfo.FSTFieldInfo.CHAR:
-                            writeFChar((char) serializationInfo.getCharValue(toWrite, subInfo));
-                            break;
-                        case FSTClazzInfo.FSTFieldInfo.SHORT:
-                            writeFShort((short) serializationInfo.getShortValue(toWrite, subInfo));
-                            break;
-                        case FSTClazzInfo.FSTFieldInfo.INT:
-                            // inline
-//                                    writeFIntUnsafe(serializationInfo.getIntValueUnsafe(toWrite, subInfo));
+                    int integralType = subInfo.getIntegralType();
+                    if (integralType == FSTClazzInfo.FSTFieldInfo.INT ) {
+                        // inline
+                        if ( compact ) {
+                            writeCIntUnsafe(unsafe.getInt(toWrite,subInfo.memOffset));
+                        } else {
                             int val = unsafe.getInt(toWrite,subInfo.memOffset);
                             buffout.ensureFree(4);
                             unsafe.putInt(buffout.buf,buffout.pos+bufoff,val);
                             buffout.pos += 4;
                             written += 4;
-                            break;
-                        case FSTClazzInfo.FSTFieldInfo.LONG:
-                            // inline
-//                                    writeFLongUnsafe(serializationInfo.getLongValueUnsafe(toWrite, subInfo));
+                        }
+                    } else if ( integralType == FSTClazzInfo.FSTFieldInfo.LONG ) {
+                        // inline
+                        if ( compact ) {
+                            writeCLong(unsafe.getLong(toWrite,subInfo.memOffset));
+                        } else {
                             long lval = unsafe.getLong(toWrite,subInfo.memOffset);
                             buffout.ensureFree(8);
                             unsafe.putLong(buffout.buf,buffout.pos+bufoff,lval);
                             buffout.pos += 8;
                             written += 8;
-                            break;
-                        case FSTClazzInfo.FSTFieldInfo.FLOAT:
-                            writeFFloat(serializationInfo.getFloatValue(toWrite, subInfo));
-                            break;
-                        case FSTClazzInfo.FSTFieldInfo.DOUBLE:
-                            writeFDoubleUnsafe(serializationInfo.getDoubleValueUnsafe(toWrite,subInfo));
-                            break;
-                    }
-                } else {
-                    if (subInfo.isConditional()) {
-                        conditional = buffout.pos;
-                        buffout.pos +=4;
-                        written+=4;
-                    }
-                    // object
-                    Object subObject = serializationInfo.getObjectValueUnsafe(toWrite,subInfo);
-                    if ( subObject == null ) {
-                        writeFByte(NULL);
-                    } else {
-                        writeObjectWithContext(subInfo, subObject);
-                    }
-                    if ( conditional != 0 ) {
-                        int v = buffout.pos;
-                        buffout.buf[conditional] = (byte) ((v >>> 24) & 0xFF);
-                        buffout.buf[conditional+1] = (byte) ((v >>> 16) & 0xFF);
-                        buffout.buf[conditional+2] = (byte) ((v >>>  8) & 0xFF);
-                        buffout.buf[conditional+3] = (byte) ((v >>> 0) & 0xFF);
-                        conditional = 0;
-                    }
-                }
-            } catch (IllegalAccessException ex) {
-                throw new IOException(ex);
-            }
-        }
-        if ( boolcount > 0 ) {
-            writeFByte(booleanMask<<(8-boolcount));
-            boolcount = 0; booleanMask = 0;
-        }
-    }
-
-    private void writeObjectFieldsUnsafeCompact(Object toWrite, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo) throws IOException {
-        int booleanMask = 0;
-        int boolcount = 0;
-        final int length = fieldInfo.length;
-        int conditional = 0;
-        for (int i = 0; i < length; i++) {
-            try {
-                final FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                if ( DUMP ) System.out.println("WRITE FIELD:"+subInfo.getField().getName());
-                final Class<?> fieldType = subInfo.getType();
-                if ( fieldType != boolean.class ) {
-                    if ( boolcount > 0 ) {
-                        writeFByte(booleanMask<<(8-boolcount));
-                        boolcount = 0; booleanMask = 0;
-                    }
-                }
-                if ( subInfo.isIntegral() && ! subInfo.isArray() ) {
-                        // compact unsafe
-                    switch (subInfo.getIntegralType()) {
-                        case FSTClazzInfo.FSTFieldInfo.BOOL: {
-                            if ( boolcount == 8 ) {
-                                writeFByte(booleanMask<<(8-boolcount));
-                                boolcount = 0; booleanMask = 0;
-                            }
-                            boolean booleanValue = serializationInfo.getBooleanValue(toWrite, subInfo);
-                            booleanMask = booleanMask<<1;
-                            booleanMask = (booleanMask|(booleanValue?1:0));
-                            boolcount++;
                         }
-                        break;
-                        case FSTClazzInfo.FSTFieldInfo.BYTE:
-                            writeFByte(serializationInfo.getByteValue(toWrite, subInfo));
-                            break;
-                        case FSTClazzInfo.FSTFieldInfo.CHAR:
-                            writeCChar((char) serializationInfo.getCharValue(toWrite, subInfo));
-                            break;
-                        case FSTClazzInfo.FSTFieldInfo.SHORT:
-                            writeCShort((short) serializationInfo.getShortValue(toWrite, subInfo));
-                            break;
-                        case FSTClazzInfo.FSTFieldInfo.INT:
-                                writeCIntUnsafe(serializationInfo.getIntValueUnsafe(toWrite, subInfo));
-                            break;
-                        case FSTClazzInfo.FSTFieldInfo.LONG:
-                            writeCLong(serializationInfo.getLongValueUnsafe(toWrite, subInfo));
-                            break;
-                        case FSTClazzInfo.FSTFieldInfo.FLOAT:
-                            writeCFloat(serializationInfo.getFloatValue(toWrite, subInfo));
-                            break;
-                        case FSTClazzInfo.FSTFieldInfo.DOUBLE:
-                            writeCDouble(serializationInfo.getDoubleValueUnsafe(toWrite,subInfo));
-                            break;
+                    } else {
+                        if ( compact ) {
+                            switch (integralType) {
+                                case FSTClazzInfo.FSTFieldInfo.BYTE:  writeFByteUnsafe(unsafe.getByte(toWrite,subInfo.memOffset)); break;
+                                case FSTClazzInfo.FSTFieldInfo.CHAR:  writeCChar(unsafe.getChar(toWrite,subInfo.memOffset)); break;
+                                case FSTClazzInfo.FSTFieldInfo.SHORT: writeCShort(unsafe.getShort(toWrite,subInfo.memOffset)); break;
+                                case FSTClazzInfo.FSTFieldInfo.FLOAT: writeCFloat(unsafe.getFloat(toWrite,subInfo.memOffset)); break;
+                                case FSTClazzInfo.FSTFieldInfo.DOUBLE: writeCDouble(unsafe.getDouble(toWrite,subInfo.memOffset)); break;
+                            }
+                        } else {
+                            switch (integralType) {
+                                case FSTClazzInfo.FSTFieldInfo.BYTE:  writeFByteUnsafe(unsafe.getByte(toWrite,subInfo.memOffset)); break;
+                                case FSTClazzInfo.FSTFieldInfo.CHAR:  writeFChar(unsafe.getChar(toWrite,subInfo.memOffset)); break;
+                                case FSTClazzInfo.FSTFieldInfo.SHORT: writeFShort(unsafe.getShort(toWrite,subInfo.memOffset)); break;
+                                case FSTClazzInfo.FSTFieldInfo.FLOAT: writeFFloat(unsafe.getFloat(toWrite,subInfo.memOffset)); break;
+                                case FSTClazzInfo.FSTFieldInfo.DOUBLE: writeFDouble(unsafe.getDouble(toWrite,subInfo.memOffset)); break;
+                            }
+                        }
                     }
-                } else {
-                    if (subInfo.isConditional()) {
-                        conditional = buffout.pos;
-                        buffout.pos +=4;
-                        written+=4;
-                    }
+                } else if (subInfo.isConditional())
+                {
+                    final int conditional = buffout.pos;
+                    buffout.pos +=4;
+                    written+=4;
                     // object
-                    Object subObject = serializationInfo.getObjectValueUnsafe(toWrite,subInfo);
+                    Object subObject = subInfo.getObjectValueUnsafe(toWrite);
                     if ( subObject == null ) {
-                        writeFByte(NULL);
+                        writeFByteUnsafe(NULL);
                     } else {
                         writeObjectWithContext(subInfo, subObject);
                     }
-                    if ( conditional != 0 ) {
-                        int v = buffout.pos;
-                        buffout.buf[conditional] = (byte) ((v >>> 24) & 0xFF);
-                        buffout.buf[conditional+1] = (byte) ((v >>> 16) & 0xFF);
-                        buffout.buf[conditional+2] = (byte) ((v >>>  8) & 0xFF);
-                        buffout.buf[conditional+3] = (byte) ((v >>> 0) & 0xFF);
-                        conditional = 0;
+                    int v = buffout.pos;
+                    buffout.buf[conditional] = (byte) ((v >>> 24) & 0xFF);
+                    buffout.buf[conditional+1] = (byte) ((v >>> 16) & 0xFF);
+                    buffout.buf[conditional+2] = (byte) ((v >>>  8) & 0xFF);
+                    buffout.buf[conditional+3] = (byte) ((v >>> 0) & 0xFF);
+                } else {
+                    // object
+                    Object subObject = subInfo.getObjectValueUnsafe(toWrite);
+                    if ( subObject == null ) {
+                        writeFByteUnsafe(NULL);
+                    } else {
+                        writeObjectWithContext(subInfo, subObject);
                     }
                 }
-            } catch (IllegalAccessException ex) {
-                throw new IOException(ex);
             }
-        }
-        if ( boolcount > 0 ) {
-            writeFByte(booleanMask<<(8-boolcount));
-            boolcount = 0; booleanMask = 0;
+        } catch (IllegalAccessException ex) {
+            throw new IOException(ex);
         }
     }
 
@@ -923,7 +795,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 Object subArr = arr[i];
                 if ( subArr != null ) {
                     if ( ! FSTUtil.isPrimitiveArray(subArr.getClass()) ) {
-                        objects.registerObject(subArr, true, written, null, tmp); // fixme: shared refs
+                        objects.registerObjectForWrite(subArr, true, written, null, tmp); // fixme: shared refs
                     }
                 }
                 writeArray(ref1, subArr);
@@ -1246,7 +1118,15 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         written++;
     }
 
-    public void writeFIntUnsafe( int v ) throws IOException {
+    public final void writeFByteUnsafe( int v ) throws IOException {
+        buffout.ensureFree(1);
+        final byte buf[] = buffout.buf;
+        unsafe.putByte(buf,buffout.pos+bufoff,(byte)v);
+        buffout.pos++;
+        written++;
+    }
+
+    public final void writeFIntUnsafe( int v ) throws IOException {
         buffout.ensureFree(4);
         final byte buf[] = buffout.buf;
         unsafe.putInt(buf,buffout.pos+bufoff,v);
@@ -1601,6 +1481,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
      * @param out
      */
     public void resetForReUse( OutputStream out ) {
+        unsafe = FSTUtil.unsafe;
         if ( closed )
             throw new RuntimeException("Can't reuse closed stream");
         reset();

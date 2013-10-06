@@ -32,11 +32,11 @@ public class TestRunner {
         System.setProperty("fst.unsafe","true");
     }
 
-    SerTest kryotest = new KryoTest("Kryo 2.2.2");
-    SerTest kryoUnsTest = new KryoUnsafeTest("Kryo Unsafe 2.2.2");
-    SerTest speedFST = new FSTTest("FST (with Unsafe, preferSpeed=true)",true,true);
-    SerTest defFST = new FSTTest("FST (with Unsafe)",true,false);
-    SerTest defFSTNoUns = new FSTTest("FST (no Unsafe)",false,false);
+    SerTest kryotest = new KryoTest("Kryo 2.2.2 NO Unsafe");
+    SerTest kryoUnsTest = new KryoUnsafeTest("Kryo 2.2.2 Unsafe");
+    SerTest speedFST = new FSTTest("FST (Unsafe, preferSpeed=true)",true,true);
+    SerTest defFST = new FSTTest("FST (Unsafe)",true,false);
+    SerTest defFSTNoUns = new FSTTest("FST (NO Unsafe)",false,false);
     SerTest defser = new JavaSerTest("Java built in");
 //    SerTest gridgain = new GridGainTest("GridGain 4.5"); cannot redistribute ..
 
@@ -55,11 +55,15 @@ public class TestRunner {
         System.out.println();
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
-//        SerTest tests[] = { defFST, defFSTNoUns, kryotest, defser, gridgain };
-//        SerTest tests[] = { speedFST, defFST, defFSTNoUns, kryotest, kryoUnsTest, defser };
+//        SerTest tests[] = { speedFST, defFST, kryoUnsTest, defFSTNoUns, kryotest, defser };
 //        SerTest tests[] = { speedFST, kryotest, kryoUnsTest };
-        SerTest tests[] = { speedFST,kryoUnsTest };
+//        SerTest tests[] = { speedFST,kryoUnsTest };
 //        SerTest tests[] = { speedFST };
+        SerTest tests[] = { defFSTNoUns,kryotest };
+        if ( toSer instanceof BigObject ) {
+            SerTest.Run/=100;
+            SerTest.WarmUP/=100;
+        }
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
             test.run(toSer);
@@ -67,6 +71,10 @@ public class TestRunner {
         for (int i = 0; i < tests.length; i++) {
             SerTest test = tests[i];
             test.dumpRes();
+        }
+        if ( toSer instanceof BigObject ) {
+            SerTest.Run*=100;
+            SerTest.WarmUP*=100;
         }
 
         charter.heading("Test Class: "+testClass.getSimpleName());
@@ -153,11 +161,11 @@ public class TestRunner {
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
 //        SerTest.WarmUP = 40000; SerTest.Run = SerTest.WarmUP*1+1;
-        SerTest.WarmUP = 50000; SerTest.Run = 30000;
-        runner.runAll(FrequentPrimitives.getArray(200));
-        runner.runAll(new StringPerformance());
+        SerTest.WarmUP = 50000; SerTest.Run = 50000;
+        runner.runAll(FrequentPrimitives.getArray(100));
         runner.runAll(new FrequentCollections());
         runner.runAll(new LargeNativeArrays());
+        runner.runAll(new StringPerformance());
         runner.runAll(new Primitives(0).createPrimArray());
         runner.runAll(new PrimitiveArrays().createPrimArray());
         runner.runAll(new CommonCollections());

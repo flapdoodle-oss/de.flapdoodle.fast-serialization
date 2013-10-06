@@ -20,8 +20,6 @@
 
 package de.ruedigermoeller.serialization.util;
 
-import sun.misc.Unsafe;
-
 import java.util.HashMap;
 
 /**
@@ -45,7 +43,7 @@ public class FSTObject2IntMap<K>
     static int adjustSize(int size) {
         for (int i = 0; i < prim.length-1; i++) {
             if ( size < prim[i] ) {
-                return prim[i+1];
+                return prim[i];
             }
         }
         return size;
@@ -236,7 +234,7 @@ public class FSTObject2IntMap<K>
             return;
         }
         FSTUtil.clear(mKeys);
-//        FSTUtil.clear(mValues); unneeded ?
+        FSTUtil.clear(mValues);
         mNumberOfElements = 0;
         if ( next != null ) {
             next.clear();

@@ -19,6 +19,7 @@
  */
 package de.ruedigermoeller.serialization;
 
+import de.ruedigermoeller.serialization.util.FSTIdentity2IdMap;
 import de.ruedigermoeller.serialization.util.FSTInt2ObjectMap;
 import de.ruedigermoeller.serialization.util.FSTObject2IntMap;
 
@@ -174,7 +175,7 @@ public class FSTClazzNameRegistry {
         if ( c == 0 ) {
             // full class name
             String clName = in.readStringUTF();
-            Class cl = Class.forName(clName);
+            Class cl = classForName(clName);
             registerClass(cl, true);
             addCLNameSnippets(cl);
             addCLNameSnippets(Array.newInstance(cl, 0).getClass());

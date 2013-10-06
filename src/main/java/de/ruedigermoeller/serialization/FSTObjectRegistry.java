@@ -32,16 +32,19 @@ import java.util.IdentityHashMap;
  */
 public final class FSTObjectRegistry {
 
+    public static final int OBJ_DIVISOR = 16;
     boolean disabled = false;
-    IdentityHashMap<Object,Integer> objects = new IdentityHashMap<Object,Integer>(97); // object => id
-    FSTInt2ObjectMap idToObject = new FSTInt2ObjectMap(97);
-    FSTObject2IntMap equalsMap = new FSTObject2IntMap(97,true); // object => handle
+    FSTIdentity2IdMap objects = new FSTIdentity2IdMap(97); // object => id
+    FSTInt2ObjectMap idToObject = new FSTInt2ObjectMap(17);
+    FSTObject2IntMap equalsMap = new FSTObject2IntMap(17,true); // object => handle
 
     FSTConfiguration conf;
     FSTClazzInfoRegistry reg;
 
     private static final boolean DUMP = false;
-    private int lastRegisteredReadPos; // last registered streampos wg. double register
+
+    Object reuseMap[] = new Object[4000];
+    private int highestPos;
 
     public FSTObjectRegistry(FSTConfiguration conf) {
         this.conf = conf;
@@ -49,29 +52,64 @@ public final class FSTObjectRegistry {
         reg = conf.getCLInfoRegistry();
     }
 
-    public void clear() {
+    public void clearFully() {
         objects.clear();
         idToObject.clear();
         equalsMap.clear();
         disabled = !conf.isShareReferences();
+        FSTUtil.clear(reuseMap);
     }
 
     public void clearForRead() {
-        lastRegisteredReadPos = 0;
         idToObject.clear();
         disabled = !conf.isShareReferences();
+        FSTUtil.clear(reuseMap,highestPos);
+        highestPos = 0;
     }
 
     public void clearForWrite() {
-        if ( objects.size() > 0 ) {
-            objects.clear();
-        }
+        objects.clear();
         equalsMap.clear();
         disabled = !conf.isShareReferences();
     }
 
+    public Object getReadRegisteredObject(int handle) {
+        if (disabled) {
+            return null;
+        }
+        int pos = handle / OBJ_DIVISOR;
+        if ( pos < reuseMap.length ) {
+            if ( reuseMap[pos] == null ) {
+                return null;
+            } else {
+                Object candidate = idToObject.get(handle);
+                if ( candidate == null )
+                    return reuseMap[pos];
+                return candidate;
+            }
+        } else {
+            idToObject.get(handle);
+        }
+        return idToObject.get(FSTConfiguration.getInt(handle));
+    }
+
     public void replace(Object old, Object replaced, int streamPos) {
-        idToObject.put(streamPos, replaced);
+        int pos = streamPos / OBJ_DIVISOR;
+        final Object[] reuseMap = this.reuseMap;
+        if ( pos < reuseMap.length ) {
+            if ( this.reuseMap[pos] == old ) {
+                this.reuseMap[pos] = replaced;
+            } else {
+                if ( this.reuseMap[pos] == null ) // BUG !!
+                {
+                    this.reuseMap[pos] = replaced;
+                } else {
+                    idToObject.put(streamPos,replaced);
+                }
+            }
+        } else {
+            idToObject.put(streamPos, replaced);
+        }
         if ( DUMP  )
             System.out.println("REPLACE "+streamPos+" old "+old.getClass().getName()+" new:"+replaced.getClass().getName());
     }
@@ -83,18 +121,28 @@ public final class FSTObjectRegistry {
         if ( DUMP ) {
             System.out.println("for read "+o.getClass()+" "+streamPosition);
         }
-        lastRegisteredReadPos = streamPosition;
-        idToObject.put(streamPosition,o);
+        int pos = streamPosition / OBJ_DIVISOR;
+        Object[] reuseMap = this.reuseMap;
+        if ( pos < reuseMap.length ) {
+            highestPos = pos > highestPos ? pos : highestPos;
+            if ( this.reuseMap[pos] == null ) {
+                this.reuseMap[pos] = o;
+            } else {
+                idToObject.put(streamPosition,o);
+            }
+        } else {
+            idToObject.put(streamPosition,o);
+        }
     }
 
     /**
-    * add an object to the register, return handle if already present
-    *
-    * @param o
-    * @param streamPosition
-    * @return 0 if added, handle if already present
-    */
-    public int registerObject(Object o, boolean dontCheckEqual, int streamPosition, FSTClazzInfo clzInfo, int reUseType[]) {
+     * add an object to the register, return handle if already present. Called during write only
+     *
+     * @param o
+     * @param streamPosition
+     * @return 0 if added, handle if already present
+     */
+    public int registerObjectForWrite(Object o, boolean dontCheckEqual, int streamPosition, FSTClazzInfo clzInfo, int reUseType[]) {
         if (disabled) {
             return Integer.MIN_VALUE;
         }
@@ -104,8 +152,9 @@ public final class FSTObjectRegistry {
         } else if ( clzInfo.isFlat() ) {
             return Integer.MIN_VALUE;
         }
-        Integer handle = objects.get(o);
-        if ( handle != null ) {
+        int handle = // objects.get(o);
+                objects.putOrGet(o,streamPosition);
+        if ( handle > 0 ) {
 //            if ( idToObject.get(handle) == null ) { // (*) (can get improved)
 //                idToObject.add(handle, o);
 //            }
@@ -123,8 +172,7 @@ public final class FSTObjectRegistry {
                 }
             }
         }
-        objects.put(o, FSTConfiguration.getInt(streamPosition));
-        //idToObject.add(streamPosition, o); only required for equalsness, moved to (*)
+//        objects.put(o, streamPosition); // done with putorget above
         if ( DUMP )
             System.out.println("REGISTER "+o.getClass()+" pos:"+streamPosition+" handle:"+streamPosition+" id:"+System.identityHashCode(o));
         if ( reUseEquals ) {
@@ -139,13 +187,6 @@ public final class FSTObjectRegistry {
 
     boolean isReuseByCopy(Class aClass, FSTClazzInfo serializationInfo) {
         return serializationInfo.isEqualIsBinary();
-    }
-
-    public Object getRegisteredObject(int handle) {
-        if (disabled) {
-            return null;
-        }
-        return idToObject.get(FSTConfiguration.getInt(handle));
     }
 
     public int getObjectSize() {

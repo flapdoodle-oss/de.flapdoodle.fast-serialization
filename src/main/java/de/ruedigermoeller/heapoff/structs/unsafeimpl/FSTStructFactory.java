@@ -441,13 +441,13 @@ public class FSTStructFactory {
                     // if array is @aligned, add align-1 to size (overestimation), because I don't know the exact position of the array data here
                     // embedded object data, is currently not aligned, only the header position respects the @align
                     if ( fi.isIntegral() ) { // prim array
-                        Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
+                        Object objectValue = fi.getObjectValue(onHeapStruct);
                         if ( objectValue == null ) {
                             throw new RuntimeException("arrays in struct templates must not be null !");
                         }
                         siz += Array.getLength(objectValue) * fi.getComponentStructSize() + fi.getStructSize() + fi.getAlignPad()+(fi.getAlign()>0?fi.getAlign()-1:0);
                     } else { // object array
-                        Object objectValue[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
+                        Object objectValue[] = (Object[]) fi.getObjectValue(onHeapStruct);
                         if (objectValue==null) {
                             siz+=fi.getStructSize()+fi.getAlignPad()+(fi.getAlign()>0?fi.getAlign()-1:0);
                         } else {
@@ -458,7 +458,7 @@ public class FSTStructFactory {
                 } else if ( fi.isIntegral() ) { // && ! array
                     siz += fi.getStructSize();
                 } else { // objectref
-                    FSTStruct obj = (FSTStruct) clInfo.getObjectValue(onHeapStruct,fi);
+                    FSTStruct obj = (FSTStruct) fi.getObjectValue(onHeapStruct);
                     siz += fi.getStructSize()+calcStructSize(obj)+fi.getAlignPad();
                 }
             }
@@ -590,11 +590,11 @@ public class FSTStructFactory {
                     throw new RuntimeException("nested arrays not supported");
                 }
                 if ( fi.isIntegral() ) { // prim array
-                    Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
+                    Object objectValue = fi.getObjectValue(onHeapStruct);
                     positions.add(new ForwardEntry(index,objectValue,fi));
                     index += fi.getStructSize();
                 } else { // object array
-                    Object objArr[] = (Object[]) clInfo.getObjectValue(onHeapStruct, fi);
+                    Object objArr[] = (Object[]) fi.getObjectValue(onHeapStruct);
                     if ( objArr == null ) {
                         unsafe.putInt(bytes, FSTStruct.bufoff + index, -1);
                         index+=fi.getStructSize();
@@ -617,34 +617,34 @@ public class FSTStructFactory {
                     throw new RuntimeException("internal error. please file an issue");
                 }
                 if ( type == boolean.class ) {
-                    unsafe.putByte(bytes, FSTStruct.bufoff + index, (byte) (clInfo.getBooleanValue(onHeapStruct, fi)?1:0));
+                    unsafe.putByte(bytes, FSTStruct.bufoff + index, (byte) (fi.getBooleanValue(onHeapStruct)?1:0));
                 } else
                 if ( type == byte.class ) {
-                    unsafe.putByte(bytes, FSTStruct.bufoff + index, (byte) clInfo.getByteValue(onHeapStruct, fi));
+                    unsafe.putByte(bytes, FSTStruct.bufoff + index, (byte) fi.getByteValue(onHeapStruct));
                 } else
                 if ( type == char.class ) {
-                    unsafe.putChar(bytes, FSTStruct.bufoff + index, (char) clInfo.getCharValue(onHeapStruct,fi));
+                    unsafe.putChar(bytes, FSTStruct.bufoff + index, (char) fi.getCharValue(onHeapStruct));
                 } else
                 if ( type == short.class ) {
-                    unsafe.putShort(bytes, FSTStruct.bufoff + index, (short) clInfo.getShortValue(onHeapStruct, fi));
+                    unsafe.putShort(bytes, FSTStruct.bufoff + index, (short) fi.getShortValue(onHeapStruct));
                 } else
                 if ( type == int.class ) {
-                    unsafe.putInt( bytes, FSTStruct.bufoff+index, clInfo.getIntValue(onHeapStruct,fi) );
+                    unsafe.putInt( bytes, FSTStruct.bufoff+index, fi.getIntValue(onHeapStruct) );
                 } else
                 if ( type == long.class ) {
-                    unsafe.putLong( bytes, FSTStruct.bufoff+index, clInfo.getLongValue(onHeapStruct,fi) );
+                    unsafe.putLong( bytes, FSTStruct.bufoff+index, fi.getLongValue(onHeapStruct) );
                 } else
                 if ( type == float.class ) {
-                    unsafe.putFloat(bytes, FSTStruct.bufoff + index, clInfo.getFloatValue(onHeapStruct, fi));
+                    unsafe.putFloat(bytes, FSTStruct.bufoff + index, fi.getFloatValue(onHeapStruct));
                 } else
                 if ( type == double.class ) {
-                    unsafe.putDouble(bytes, FSTStruct.bufoff + index, clInfo.getDoubleValue(onHeapStruct, fi));
+                    unsafe.putDouble(bytes, FSTStruct.bufoff + index, fi.getDoubleValue(onHeapStruct));
                 } else {
                     throw new RuntimeException("this is an error");
                 }
                 index += fi.getStructSize();
             } else { // objectref
-                Object obj = clInfo.getObjectValue(onHeapStruct, fi);
+                Object obj = fi.getObjectValue(onHeapStruct);
                 int structIndex = fi.getStructOffset();
                 if ( index != structIndex+initialIndex ) {
                     throw new RuntimeException("internal error. please file an issue");
@@ -654,7 +654,7 @@ public class FSTStructFactory {
                     unsafe.putInt(bytes, FSTStruct.bufoff + index+4, -1);
                     index+=fi.getStructSize();
                 } else {
-                    Object objectValue = clInfo.getObjectValue(onHeapStruct, fi);
+                    Object objectValue = fi.getObjectValue(onHeapStruct);
                     positions.add(new ForwardEntry(index,objectValue,fi));
                     index += fi.getStructSize();
                 }

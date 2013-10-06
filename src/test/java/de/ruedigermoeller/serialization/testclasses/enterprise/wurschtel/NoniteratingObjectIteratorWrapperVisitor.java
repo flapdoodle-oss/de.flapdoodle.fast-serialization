@@ -13,7 +13,6 @@ import java.util.Date;
  * Time: 15:09
  * To change this template use File | Settings | File Templates.
  */
-//@EqualnessIsBinary does not pay off
 public class NoniteratingObjectIteratorWrapperVisitor extends SimpleOrder {
     public NoniteratingObjectIteratorWrapperVisitor() {
     }

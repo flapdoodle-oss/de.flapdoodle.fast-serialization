@@ -37,9 +37,6 @@ public final class FSTOutputStream extends OutputStream {
      * The buffer where data is stored.
      */
     public byte buf[];
-
-    int chunkSize = Integer.MAX_VALUE;
-
     /**
      * The number of valid bytes in the buffer.
      */
@@ -47,7 +44,7 @@ public final class FSTOutputStream extends OutputStream {
     OutputStream outstream;
 
     public FSTOutputStream(OutputStream out) {
-        this(32,out);
+        this(32000,out);
     }
 
     public FSTOutputStream(int size, OutputStream out) {
@@ -61,18 +58,6 @@ public final class FSTOutputStream extends OutputStream {
 
     public void setOutstream(OutputStream outstream) {
         this.outstream = outstream;
-    }
-
-    public int getChunkSize() {
-        return chunkSize;
-    }
-
-    /**
-     * define the size a flush (write) is triggered from the buffer to the real output stream. Default is Int.MAX
-     * @param chunkSize
-     */
-    public void setChunkSize(int chunkSize) {
-        this.chunkSize = chunkSize;
     }
 
     public byte[] getBuf() {
@@ -92,18 +77,12 @@ public final class FSTOutputStream extends OutputStream {
     }
 
     public final void ensureFree(int free) throws IOException {
-        if ( pos > chunkSize ) {
-            flush();
-        }
         // inline ..
         if (pos+free - buf.length > 0)
             grow(pos+free);
     }
 
     public final void ensureCapacity(int minCapacity) throws IOException {
-        if ( pos > chunkSize ) {
-            flush();
-        }
         if (minCapacity - buf.length > 0)
             grow(minCapacity);
     }

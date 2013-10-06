@@ -18,7 +18,6 @@ import java.util.*;
  * Time: 03:13
  * To change this template use File | Settings | File Templates.
  */
-@Predict({Primitives.SampleEnum.class,PrivatePrimitive.class})
 public class Primitives extends PrivatePrimitive implements Serializable, HasDescription {
 
     @Override
@@ -87,9 +86,8 @@ public class Primitives extends PrivatePrimitive implements Serializable, HasDes
 
     String st1;
     String st2;
-    @OneOf({"Visible","Hidden"}) String hidden;
-    @Compress String st3;
-    @Compress String st4;
+    String st3;
+    String st4;
     String st5;
     String st6;
     String st7;
@@ -133,7 +131,6 @@ public class Primitives extends PrivatePrimitive implements Serializable, HasDes
 }
 
 class PrivatePrimitive {
-    @OneOf({"Hidden"})
     String hidden = "Hidden";
 }
 

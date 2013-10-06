@@ -11,8 +11,6 @@ import java.io.*;
  * Time: 19:04
  * To change this template use File | Settings | File Templates.
  */
-//@EqualnessIsIdentity <= does not pay off
-@Flat
 public class ObjectOrientedInt implements Serializable {
 
     int value;

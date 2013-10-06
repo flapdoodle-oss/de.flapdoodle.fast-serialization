@@ -10,7 +10,6 @@ import de.ruedigermoeller.serialization.testclasses.enterprise.ObjectOrientedDat
  * Time: 15:07
  * To change this template use File | Settings | File Templates.
  */
-@EqualnessIsIdentity
 public class ManagingCoordinatorDispatcher extends ObjectOrientedDataType {
     public ManagingCoordinatorDispatcher() {
     }

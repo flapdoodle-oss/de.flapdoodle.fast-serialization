@@ -39,7 +39,7 @@ public class FSTInt2ObjectMap<V>
             initialSize = 2;
         }
 
-        initialSize = FSTObject2IntMap.adjustSize(initialSize*2);
+        initialSize = FSTObject2IntMap.adjustSize(initialSize * 2);
 
         mKeys = new int[initialSize];
         mValues = new Object[initialSize];

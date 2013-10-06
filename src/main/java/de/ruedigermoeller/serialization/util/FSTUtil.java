@@ -35,8 +35,8 @@ import java.lang.reflect.*;
  */
 public class FSTUtil {
 
-    static int[] EmptyIntArray = new int[1000];
-    static Object[] EmptyObjArray = new Object[1000];
+    static int[] EmptyIntArray = new int[10000];
+    static Object[] EmptyObjArray = new Object[10000];
     static ObjectStreamField[] NO_FIELDS = new ObjectStreamField[0];
     public static Unsafe unsafe;
     public static Unsafe unFlaggedUnsafe = FSTUtil.getUnsafe(); // even if unsafe is disabled, use it for memoffset computation
@@ -84,24 +84,29 @@ public class FSTUtil {
     public final static long floatscal;
     public final static long doublescal;
 
-    static void clear(int[] arr) {
+    public static void clear(int[] arr) {
         int count = 0;
         final int length = EmptyIntArray.length;
         while( arr.length - count > length) {
             System.arraycopy(EmptyIntArray,0,arr,count, length);
             count += length;
         }
-        System.arraycopy(EmptyIntArray,0,arr,count,arr.length-count);
+        System.arraycopy(EmptyIntArray, 0, arr, count, arr.length - count);
     }
 
-    static void clear(Object[] arr) {
+    public static void clear(Object[] arr) {
+        final int arrlen = arr.length;
+        clear(arr, arrlen);
+    }
+
+    public static void clear(Object[] arr, int arrlen) {
         int count = 0;
         final int length = EmptyObjArray.length;
-        while( arr.length - count > length) {
+        while( arrlen - count > length) {
             System.arraycopy(EmptyObjArray,0,arr,count, length);
             count += length;
         }
-        System.arraycopy(EmptyObjArray,0,arr,count,arr.length-count);
+        System.arraycopy(EmptyObjArray,0,arr,count, arrlen -count);
     }
 
     public static String getPackage(Class clazz) {

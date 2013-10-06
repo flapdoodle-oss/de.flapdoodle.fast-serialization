@@ -10,7 +10,6 @@ import de.ruedigermoeller.serialization.testclasses.enterprise.ObjectOrientedInt
  * Time: 15:06
  * To change this template use File | Settings | File Templates.
  */
-@EqualnessIsIdentity
 public class UnmanagedManagingManager extends ObjectOrientedInt {
     public UnmanagedManagingManager() {
     }

@@ -36,9 +36,7 @@ import java.util.HashMap;
  */
 public class FrequentCollections implements Serializable, HasDescription {
 
-    @Predict({Short.class, Date.class}) @Flat
     HashMap map = new HashMap();
-    @Predict({Short.class, Date.class}) @Flat
     ArrayList list = new ArrayList();
 
     public FrequentCollections() {

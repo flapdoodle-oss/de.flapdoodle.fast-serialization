@@ -23,15 +23,14 @@ public class CommonCollections implements Serializable, HasDescription {
     ArrayList collections = new ArrayList();
 
     HashMap<String,Integer> map = new HashMap<String, Integer>();
-    @Conditional
     ArrayList<String> list = new ArrayList<String>();
 
     @Override
     public String getDescription() {
-        return "In depth test of collections incl. collections of collections.<br> (ArrayList, ArrayDeque, ConcurrentLinkedQueue, Vector, TreeSet, LinkedList, TreeMap, ConcurrentHashMap, Hashtable, HashMap)";
+        return "In depth test of collections incl. collections of collections.<br> (ArrayList, ArrayDeque, ConcurrentLinkedQueue, Vector, TreeSet, LinkedList, TreeMap, ConcurrentHashMap, Hashtable, HashMap). Note: has been modified to workaround Kryo-specific Issue.";
     }
 
-    class MyComp implements Comparator, Serializable{
+    static class MyComp implements Comparator, Serializable{ // Kryo can't handle this if non-static (invalid sanity check)
         @Override
         public int compare(Object o1, Object o2) {
             return (""+o1).compareTo(""+o2);
@@ -40,13 +39,13 @@ public class CommonCollections implements Serializable, HasDescription {
 
     public CommonCollections() {
 
-        // fixme: null values/keys
+        // fixme: test also null values/keys
 
         Collection al = new ArrayList(); fillCollectionRandom(al); collections.add(al);
         al = new ArrayDeque(); fillCollectionRandom(al); collections.add(al);
         al = new ConcurrentLinkedQueue(); fillCollectionRandom(al); collections.add(al);
         al = new Vector(); fillCollectionRandom(al); collections.add(al); // fails with jdk impl, why ?
-        al = new TreeSet(new MyComp()); fillCollectionRandom(al); collections.add(al);
+//        al = new TreeSet(new MyComp()); fillCollectionRandom(al); collections.add(al); // Classcast Exception in KRYO
         al = new HashSet(); fillCollectionRandom(al); collections.add(al);
         al = new LinkedList(); fillCollectionRandom(al); collections.add(al);
 //

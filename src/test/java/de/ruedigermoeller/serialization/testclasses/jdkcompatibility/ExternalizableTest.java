@@ -14,7 +14,6 @@ import java.util.Vector;
  * Time: 23:52
  * To change this template use File | Settings | File Templates.
  */
-@Predict(ExternalizableTest.ExternalTest.class)
 public class ExternalizableTest implements Serializable, HasDescription {
     Vector test = new Vector();
     ArrayList<ExternalTest> li = new ArrayList<ExternalTest>();

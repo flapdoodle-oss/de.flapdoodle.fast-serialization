@@ -13,14 +13,10 @@ import java.io.*;
  * Time: 18:58
  * To change this template use File | Settings | File Templates.
  */
-@EqualnessIsIdentity
 public class ObjectOrientedDataType implements Serializable {
 
     // encapsulate like a boss ..
 
-    // just to test, benchmark ignores this for default conf
-    @OneOf({"HipHop", "********","pok a asudh ","killbill not yet","fillorkill","wacka wacka","BeBop","pokasd","irgendwas","adadad" })
-    @Compress
     private String aString="";
     private boolean isCapableOfDoingAnythingMeaningful;
     public ObjectOrientedDataType() {}

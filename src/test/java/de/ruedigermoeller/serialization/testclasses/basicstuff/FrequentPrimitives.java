@@ -49,8 +49,8 @@ public class FrequentPrimitives implements Serializable, HasDescription {
         str1 = "R.Moeller1"+index;
     }
 
-    String str;
-    String str1;
+    String str = "Bla";
+    String str1 = "Blubb";
     boolean b0 = true;
     boolean b1 = false;
     boolean b2 = true;

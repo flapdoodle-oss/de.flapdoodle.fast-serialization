@@ -12,7 +12,6 @@ import java.util.*;
  * Time: 19:07
  * To change this template use File | Settings | File Templates.
  */
-@EqualnessIsBinary
 public class SimpleOrder implements Serializable {
 
     public static SimpleOrder generateOrder(int randomSeed) {

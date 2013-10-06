@@ -27,7 +27,7 @@ import java.io.Serializable;
  * Time: 02:58
  * To change this template use File | Settings | File Templates.
  */
-@Flat
+
 public class SmallThing implements Serializable {
     String name = "Ruediger";
     String otherName = "Felix,Emil";
