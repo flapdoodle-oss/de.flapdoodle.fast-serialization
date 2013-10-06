@@ -144,7 +144,7 @@ public class TestRunner {
 
 
     public static void main( String[] arg ) throws Exception {
-        System.setProperty("fst.unsafe","true");
+        System.setProperty("fst.unsafe","false");
 
         try {
             ReadResolve.main(null);
@@ -161,7 +161,7 @@ public class TestRunner {
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
 
 //        SerTest.WarmUP = 40000; SerTest.Run = SerTest.WarmUP*1+1;
-        SerTest.WarmUP = 50000; SerTest.Run = 50000;
+        SerTest.WarmUP = 100; SerTest.Run = 100;
         runner.runAll(FrequentPrimitives.getArray(100));
         runner.runAll(new FrequentCollections());
         runner.runAll(new LargeNativeArrays());

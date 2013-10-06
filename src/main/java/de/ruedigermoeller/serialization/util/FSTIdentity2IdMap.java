@@ -68,7 +68,6 @@ public class FSTIdentity2IdMap
     }
 
     final int putOrGetHash(Object key, int value, int hash, FSTIdentity2IdMap parent) {
-        final Object[] mKeys = this.mKeys;
         if (mNumberOfElements*GROFAC > mKeys.length)
         {
             if ( parent != null ) {
@@ -83,6 +82,7 @@ public class FSTIdentity2IdMap
             }
         }
 
+        Object[] mKeys = this.mKeys;
         int idx = hash % mKeys.length;
 
         if (mKeys[idx] == null ) // new
@@ -103,7 +103,7 @@ public class FSTIdentity2IdMap
 
     final int putOrGetNext(final int hash, final Object key, final int value) {
         if ( next == null ) { // new
-            int newSiz = mKeys.length/10;
+            int newSiz = mNumberOfElements/3;
             next = new FSTIdentity2IdMap(newSiz);
             next.putHash(key,value,hash,this);
             return Integer.MIN_VALUE;
@@ -119,7 +119,6 @@ public class FSTIdentity2IdMap
     }
 
     final void putHash(Object key, int value, int hash, FSTIdentity2IdMap parent) {
-        Object[] mKeys = this.mKeys;
         if (mNumberOfElements*GROFAC > mKeys.length)
         {
             if ( parent != null ) {
@@ -135,6 +134,7 @@ public class FSTIdentity2IdMap
             }
         }
 
+        Object[] mKeys = this.mKeys;
         int idx = hash % mKeys.length;
 
         if (mKeys[idx] == null ) // new
@@ -169,6 +169,7 @@ public class FSTIdentity2IdMap
         //return getHash(key,hash); inline =>
         final int idx = hash % mKeys.length;
 
+        Object[] mKeys = this.mKeys;
         final Object mapsKey = mKeys[idx];
         if (mapsKey == null ) // not found
         {
