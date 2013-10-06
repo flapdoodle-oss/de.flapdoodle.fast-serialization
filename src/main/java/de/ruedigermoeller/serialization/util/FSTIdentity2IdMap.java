@@ -155,7 +155,7 @@ public class FSTIdentity2IdMap
 
     final void putNext(final int hash, final Object key, final int value) {
         if ( next == null ) {
-            int newSiz = mNumberOfElements/3;
+            int newSiz = mKeys.length/10;
             next = new FSTIdentity2IdMap(newSiz);
         }
         next.putHash(key,value,hash, this);
