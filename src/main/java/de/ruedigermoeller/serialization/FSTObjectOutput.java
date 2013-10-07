@@ -235,7 +235,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     FSTClazzInfo.FSTFieldInfo refs[] = new FSTClazzInfo.FSTFieldInfo[20];
 
     FSTClazzInfo.FSTFieldInfo getCachedFI( Class... possibles ) {
-        if ( curDepth > refs.length ) {
+        if ( curDepth >= refs.length ) {
             return new FSTClazzInfo.FSTFieldInfo(possibles, null, true);
         } else {
             FSTClazzInfo.FSTFieldInfo inf = refs[curDepth];
