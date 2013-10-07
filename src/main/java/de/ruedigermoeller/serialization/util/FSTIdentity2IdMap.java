@@ -31,6 +31,22 @@ import java.util.HashMap;
  */
 public class FSTIdentity2IdMap
 {
+    static int[] prim = {
+            3,5,7, 11, 13, 17, 19, 23, 29, 37, 67, 97, 139,
+            211, 331, 641, 1097, 1531, 2207, 3121, 5059, 7607, 10891,
+            15901, 19993, 30223, 50077, 74231,99991, 150001, 300017,
+            1000033,1500041,200033,3000077,5000077,10000019
+
+    };
+    static int adjustSize(int size) {
+        for (int i = 0; i < prim.length-1; i++) {
+            if ( size < prim[i] ) {
+                return prim[i]+4;
+            }
+        }
+        return size+4;
+    }
+
     private static final int GROFAC = 2;
 
     private Object  mKeys[];
@@ -48,7 +64,7 @@ public class FSTIdentity2IdMap
             initialSize = 2;
         }
 
-        initialSize = FSTObject2IntMap.adjustSize(initialSize*2);
+        initialSize = adjustSize(initialSize*2);
 
         mKeys = new Object[initialSize];
         mValues = new int[initialSize];
@@ -83,9 +99,11 @@ public class FSTIdentity2IdMap
         }
 
         Object[] mKeys = this.mKeys;
-        int idx = hash % mKeys.length;
+//        int idx = calcIndexFromHash(hash, mKeys);
+        int idx = hash % (mKeys.length-4);
 
-        if (mKeys[idx] == null ) // new
+        Object mKeyAtIdx = mKeys[idx];
+        if (mKeyAtIdx == null ) // new
         {
             bloom|=hash;
             mNumberOfElements++;
@@ -93,17 +111,49 @@ public class FSTIdentity2IdMap
             mKeys[idx]   = key;
             return Integer.MIN_VALUE;
         }
-        else if (mKeys[idx]==key)    // present ?
+        else if (mKeyAtIdx==key)    // present ?
         {
             return mValues[idx];
         } else {
-            return putOrGetNext(hash, key, value);
+            Object mKeyAtIdxPlus1 = mKeys[idx + 1];
+            if (mKeyAtIdxPlus1 == null ) // new
+            {
+                bloom|=hash;
+                mNumberOfElements++;
+                mValues[idx+1] = value;
+                mKeys[idx+1]   = key;
+                return Integer.MIN_VALUE;
+            }
+            else if (mKeyAtIdxPlus1==key)    // present ?
+            {
+                return mValues[idx+1];
+            } else {
+                Object mKeysAtIndexPlus2 = mKeys[idx + 2];
+                if (mKeysAtIndexPlus2 == null ) // new
+                {
+                    bloom|=hash;
+                    mNumberOfElements++;
+                    mValues[idx+2] = value;
+                    mKeys[idx+2]   = key;
+                    return Integer.MIN_VALUE;
+                }
+                else if (mKeysAtIndexPlus2==key)    // present ?
+                {
+                    return mValues[idx+2];
+                } else {
+                    return putOrGetNext(hash, key, value);
+                }
+            }
         }
+    }
+
+    final static int calcIndexFromHash(int hash, Object[] mKeys) {
+        return hash % (mKeys.length-4);
     }
 
     final int putOrGetNext(final int hash, final Object key, final int value) {
         if ( next == null ) { // new
-            int newSiz = mNumberOfElements/3;
+            int newSiz = mKeys.length/10;
             next = new FSTIdentity2IdMap(newSiz);
             next.putHash(key,value,hash,this);
             return Integer.MIN_VALUE;
@@ -113,8 +163,7 @@ public class FSTIdentity2IdMap
 
     final public void put(Object key, int value)
     {
-        int h = System.identityHashCode(key);
-        int hash = ((h << 1) - (h << 8))&0x7FFFFFFF;
+        int hash = calcHash(key);
         putHash(key, value, hash, this);
     }
 
@@ -135,7 +184,7 @@ public class FSTIdentity2IdMap
         }
 
         Object[] mKeys = this.mKeys;
-        int idx = hash % mKeys.length;
+        int idx = calcIndexFromHash(hash, mKeys);
 
         if (mKeys[idx] == null ) // new
         {
@@ -149,7 +198,33 @@ public class FSTIdentity2IdMap
             bloom|=hash;
             mValues[idx] = value;
         } else {
-            putNext(hash, key, value);
+            if (mKeys[idx+1] == null ) // new
+            {
+                bloom|=hash;
+                mNumberOfElements++;
+                mValues[idx+1] = value;
+                mKeys[idx+1]   = key;
+            }
+            else if (mKeys[idx+1]==key)    // overwrite
+            {
+                bloom|=hash;
+                mValues[idx+1] = value;
+            } else {
+                if (mKeys[idx+2] == null ) // new
+                {
+                    bloom|=hash;
+                    mNumberOfElements++;
+                    mValues[idx+2] = value;
+                    mKeys[idx+2]   = key;
+                }
+                else if (mKeys[idx+2]==key)    // overwrite
+                {
+                    bloom|=hash;
+                    mValues[idx+2] = value;
+                } else {
+                    putNext(hash, key, value);
+                }
+            }
         }
     }
 
@@ -162,39 +237,17 @@ public class FSTIdentity2IdMap
     }
 
     final public int get(final Object key) {
-        int h = System.identityHashCode(key);
-        int hash = ((h << 1) - (h << 8))&0x7FFFFFFF;
+        int hash = calcHash(key);
         if ( (bloom&hash) != hash )
             return Integer.MIN_VALUE;
-        //return getHash(key,hash); inline =>
-        final int idx = hash % mKeys.length;
-
-        Object[] mKeys = this.mKeys;
-        final Object mapsKey = mKeys[idx];
-        if (mapsKey == null ) // not found
-        {
-            return Integer.MIN_VALUE;
-        }
-        else if (mapsKey == key )  // found
-        {
-            return mValues[idx];
-        } else {
-            if ( next == null ) {
-                return Integer.MIN_VALUE;
-            }
-            int res = next.getHash(key, hash);
-            return res;
-        }
-        // <== inline
+        return getHash(key,hash);
     }
 
-    static int miss = 0;
-    static int hit = 0;
     final int getHash(final Object key, final int hash)
     {
-        final int idx = hash % mKeys.length;
+        final int idx = calcIndexFromHash(hash, mKeys);
 
-        final Object mapsKey = mKeys[idx];
+        Object mapsKey = mKeys[idx];
         if (mapsKey == null ) // not found
         {
             return Integer.MIN_VALUE;
@@ -203,17 +256,36 @@ public class FSTIdentity2IdMap
         {
             return mValues[idx];
         } else {
-            if ( next == null ) {
+            mapsKey = mKeys[idx+1];
+            if (mapsKey == null ) // not found
+            {
                 return Integer.MIN_VALUE;
             }
-            int res = next.getHash(key, hash);
-            return res;
+            else if (mapsKey == key)  // found
+            {
+                return mValues[idx+1];
+            } else {
+                mapsKey = mKeys[idx+2];
+                if (mapsKey == null ) // not found
+                {
+                    return Integer.MIN_VALUE;
+                }
+                else if (mapsKey == key)  // found
+                {
+                    return mValues[idx+2];
+                } else {
+                    if ( next == null ) {
+                        return Integer.MIN_VALUE;
+                    }
+                    return next.getHash(key, hash);
+                }
+            }
         }
     }
 
     final void resize(int newSize)
     {
-        newSize = FSTObject2IntMap.adjustSize(newSize);
+        newSize = adjustSize(newSize);
         Object[]    oldTabKey = mKeys;
         int[] oldTabVal = mValues;
 
@@ -248,7 +320,7 @@ public class FSTIdentity2IdMap
         }
     }
 
-    private static int _hash(Object x) {
+    private static int calcHash(Object x) {
         int h = System.identityHashCode(x);
         return ((h << 1) - (h << 8))&0x7FFFFFFF;
     }
@@ -260,6 +332,8 @@ public class FSTIdentity2IdMap
         bloom = 0;
         FSTUtil.clear(mKeys);
         FSTUtil.clear(mValues);
+//        Arrays.fill(mKeys,null);
+//        Arrays.fill(mValues,0);
         mNumberOfElements = 0;
         if ( next != null ) {
             next.clear();
@@ -267,5 +341,88 @@ public class FSTIdentity2IdMap
     }
 
     public static void main( String arg[] ) {
+        String strings[] = new String[5000];
+        for (int i = 0; i < strings.length; i++) {
+            strings[i] = ""+Math.random();
+        }
+
+
+        FSTIdentity2IdMap map = new FSTIdentity2IdMap(97);
+
+        // warm
+        for ( int j = 0; j < 50000; j++ ) {
+            testNewPut(strings,map);
+            map.clear();
+        }
+
+        long tim = System.currentTimeMillis();
+        for ( int j = 0; j < 50000; j++ ) {
+            testNewPut(strings, map);
+            map.clear();
+        }
+
+        testNewPut(strings, map);
+        testGet(strings, map);
+        map.clear();
+        testPut(strings, map);
+        testGet(strings, map);
+        testWrongGet(map);
+        long now = System.currentTimeMillis();
+        System.out.println("time new "+(now-tim));
+
+        tim = System.currentTimeMillis();
+        for ( int j = 0; j < 50000; j++ ) {
+            testExistPut(strings, map);
+        }
+        now = System.currentTimeMillis();
+        System.out.println("time exist "+(now-tim));
+
+
+
+    }
+
+    private static void testExistPut(String[] strings, FSTIdentity2IdMap map) {
+        for (int i = 0; i < strings.length; i++) {
+            String string = strings[i];
+            int fieldId = map.putOrGet(string, i);
+            if ( fieldId != i ) {
+                throw new RuntimeException("möp 1 "+i+" "+fieldId);
+            }
+        }
+    }
+
+    private static void testPut(String[] strings, FSTIdentity2IdMap map) {
+        for (int i = 0; i < strings.length; i++) {
+            String string = strings[i];
+            map.put(string, i);
+        }
+    }
+
+    private static void testGet(String[] strings, FSTIdentity2IdMap map) {
+        for (int i = 0; i < strings.length; i++) {
+            String string = strings[i];
+            int fieldId = map.get(string);
+            if ( fieldId != i ) {
+                throw new RuntimeException("möp 2 "+i+" "+fieldId);
+            }
+        }
+    }
+
+    private static void testWrongGet(FSTIdentity2IdMap map) {
+        for (int i = 0; i < 1000; i++) {
+            int fieldId = map.get(new String("pok"+i));
+            if ( fieldId != Integer.MIN_VALUE ) {
+                throw new RuntimeException("möp 3 "+i+" "+fieldId);
+            }
+        }
+    }
+
+    private static void testNewPut(String[] strings, FSTIdentity2IdMap map) {
+        for (int i = 0; i < strings.length; i++) {
+            String string = strings[i];
+            if ( map.putOrGet(string,i) > 0 ) {
+                throw new RuntimeException("möp");
+            }
+        }
     }
 }
