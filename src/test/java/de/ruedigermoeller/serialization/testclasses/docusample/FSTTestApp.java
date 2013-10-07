@@ -43,18 +43,11 @@ import java.util.concurrent.Executors;
  */
 public class FSTTestApp {
 
-    static FSTConfiguration singletonConf;
-    static {
-        singletonConf = FSTConfiguration.createDefaultConfiguration();
-        singletonConf.getCLInfoRegistry().setIgnoreAnnotations(true);
-    }
-
     public void test(int i) throws IOException {
         FileOutputStream fout = null;
         FileInputStream in = null;
         try {
-            String finam = "/tmp/test" + i + ".tmp";
-            fout = new FileOutputStream(finam);
+            fout = new FileOutputStream("/test-"+i+".tmp");
             Object[] toWrite = {
                     PrimitiveArrays.createPrimArray(),
                     Trader.generateTrader(i, true),
@@ -62,9 +55,10 @@ public class FSTTestApp {
                     new LargeNativeArrays(),
                     Primitives.createPrimArray()
             };
+
             mywriteMethod(fout, toWrite);
 
-            in = new FileInputStream(finam);
+            in = new FileInputStream("/test-"+i+".tmp");
             Object read = myreadMethod(in);
             in.close();
             System.out.println(i+" SUCCESS:" + DeepEquals.deepEquals(read, toWrite));
@@ -79,19 +73,16 @@ public class FSTTestApp {
     }
 
     public Object myreadMethod(InputStream stream) throws IOException, ClassNotFoundException {
-        FSTObjectInput in = singletonConf.getObjectInput(stream);
+        FSTObjectInput in = new FSTObjectInput(stream);
         Object result = in.readObject();
-        // DON'T: in.close(); prevents reuse and will result in an exception
-        stream.close();
+        in.close();
         return result;
     }
 
     public void mywriteMethod( OutputStream stream, Object toWrite ) throws IOException {
-        FSTObjectOutput out = singletonConf.getObjectOutput(stream);
-        out.writeObject( toWrite, Object.class );
-        // DON'T out.close();
-        out.flush();
-        stream.close();
+        FSTObjectOutput out = new FSTObjectOutput(stream);
+        out.writeObject( toWrite );
+        out.close();
     }
 
     public static void main(String arg[]) throws IOException, InterruptedException {

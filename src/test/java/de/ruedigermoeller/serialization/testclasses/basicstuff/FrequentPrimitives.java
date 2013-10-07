@@ -49,20 +49,20 @@ public class FrequentPrimitives implements Serializable, HasDescription {
         str1 = "R.Moeller1"+index;
     }
 
-    String str = "Bla";
-    String str1 = "Blubb";
-    boolean b0 = true;
-    boolean b1 = false;
-    boolean b2 = true;
-    int test1 = 123456;
-    int test2 = 234234;
-    int test3 = 456456;
-    int test4 = -234234344;
-    int test5 = -1;
-    int test6 = 0;
-    long l1 = -38457359987788345l;
-    long l2 = 0l;
-    double d = 122.33;
+    private String str;
+    private String str1;
+    private boolean b0 = true;
+    private boolean b1 = false;
+    private boolean b2 = true;
+    private int test1 = 123456;
+    private int test2 = 234234;
+    private int test3 = 456456;
+    private int test4 = -234234344;
+    private int test5 = -1;
+    private int test6 = 0;
+    private long l1 = -38457359987788345l;
+    private long l2 = 0l;
+    private double d = 122.33;
 
     @Override
     public String getDescription() {

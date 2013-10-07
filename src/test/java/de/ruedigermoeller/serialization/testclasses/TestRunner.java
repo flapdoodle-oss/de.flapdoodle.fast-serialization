@@ -32,11 +32,11 @@ public class TestRunner {
         System.setProperty("fst.unsafe","true");
     }
 
-    SerTest kryotest = new KryoTest("Kryo 2.2.2 NO Unsafe");
-    SerTest kryoUnsTest = new KryoUnsafeTest("Kryo 2.2.2 Unsafe");
-    SerTest speedFST = new FSTTest("FST (Unsafe, preferSpeed=true)",true,true);
-    SerTest defFST = new FSTTest("FST (Unsafe)",true,false);
-    SerTest defFSTNoUns = new FSTTest("FST (NO Unsafe)",false,false);
+    SerTest kryotest = new KryoTest("Kryo 2.2.2");
+    SerTest kryoUnsTest = new KryoUnsafeTest("Kryo 2.2.2 UnsafeIn/Output");
+    SerTest speedFST = new FSTTest("FST (preferSpeed=true)",true,true);
+    SerTest defFST = new FSTTest("FST",true,false);
+    SerTest defFSTNoUns = new FSTTest("FST (Disabled Unsafe)",false,false); // unpublished as kryo always uses unsafe
     SerTest defser = new JavaSerTest("Java built in");
 //    SerTest gridgain = new GridGainTest("GridGain 4.5"); cannot redistribute ..
 
@@ -55,11 +55,12 @@ public class TestRunner {
         System.out.println();
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
-        SerTest tests[] = { speedFST, defFST, kryoUnsTest, defFSTNoUns, kryotest, defser };
+        SerTest tests[] = { speedFST, kryoUnsTest, defFST, kryotest, defser };
 //        SerTest tests[] = { speedFST, kryotest, kryoUnsTest };
 //        SerTest tests[] = { speedFST,kryoUnsTest };
 //        SerTest tests[] = { speedFST };
-//        SerTest tests[] = { defFSTNoUns,kryotest };
+//        SerTest tests[] = { defFST, kryotest };
+//        SerTest tests[] = { kryotest };
         if ( toSer instanceof BigObject ) {
             SerTest.Run/=100;
             SerTest.WarmUP/=100;
@@ -144,8 +145,6 @@ public class TestRunner {
 
 
     public static void main( String[] arg ) throws Exception {
-        System.setProperty("fst.unsafe","false");
-
         try {
             ReadResolve.main(null);
             SpecialsTest.main(null);
@@ -159,10 +158,18 @@ public class TestRunner {
         runner.charter.openDoc();
         runner.charter.text("<i>intel i7 3770K 3,4 ghz, 4 core, 8 threads</i>");
         runner.charter.text("<i>"+System.getProperty("java.runtime.version")+","+System.getProperty("java.vm.name")+","+System.getProperty("os.name")+"</i>");
+        runner.charter.text("<p>With recent 1.7u40 and Kryo 2.2.2 things have changed a bit. JDK has become somewhat faster, Kryo improved in many areas, however has some weird outliers. " +
+                "<br><bR>If fast serialization is run" +
+                " with 'FSTConfiguration.preferSpeedOverSize=true' little performance gain is traded against significant output size increase. IMO, the best overall size/performance ratio is given by plain FST default configuration. " +
+                "<br><br>Both Kryo-Default and FST-Default " +
+                "use Unsafe for field access which yields about 10-30% performance compared to reflection/asm."+
+                "<br><br>Besides outliers, FST and Kryo are quite near to each other performance wise, which indicates that there is not too much potential left." +
+                "</p>"
+        );
 
 //        SerTest.WarmUP = 40000; SerTest.Run = SerTest.WarmUP*1+1;
-        SerTest.WarmUP = 50000; SerTest.Run = 50000;
-        runner.runAll(FrequentPrimitives.getArray(100));
+        SerTest.WarmUP = 5000; SerTest.Run = 5000;
+        runner.runAll(FrequentPrimitives.getArray(200));
         runner.runAll(new FrequentCollections());
         runner.runAll(new LargeNativeArrays());
         runner.runAll(new StringPerformance());
@@ -173,6 +180,7 @@ public class TestRunner {
         runner.runAll(ManyClasses.getArray() );
         runner.runAll(new ExternalizableTest());
         runner.runAll(new BigObject());
+        runner.runAll(HeavyNesting.createNestedObject(1000));
         runner.charter.closeDoc();
         FSTTestApp.main(new String[0]);
     }
