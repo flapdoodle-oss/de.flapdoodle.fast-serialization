@@ -1223,6 +1223,16 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         }
     }
 
+    void resetAndClearRefs() {
+        try {
+            reset();
+            objects.clearForRead();
+            clnames.clear();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void reset() throws IOException {
         input.reset();
     }
@@ -1559,6 +1569,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     public void close() throws IOException {
         super.close();
         closed = true;
+        resetAndClearRefs();
         conf.returnObject(objects, clnames);
     }
 

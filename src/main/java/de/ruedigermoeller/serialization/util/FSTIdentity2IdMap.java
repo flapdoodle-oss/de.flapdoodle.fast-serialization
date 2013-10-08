@@ -31,6 +31,7 @@ import java.util.HashMap;
  */
 public class FSTIdentity2IdMap
 {
+    private static final int RESERVE = 4;
     static int[] prim = {
             3,5,7, 11, 13, 17, 19, 23, 29, 37, 67, 97, 139,
             211, 331, 641, 1097, 1531, 2207, 3121, 5059, 7607, 10891,
@@ -42,10 +43,10 @@ public class FSTIdentity2IdMap
     static int adjustSize(int size) {
         for (int i = 0; i < prim.length-1; i++) {
             if ( size < prim[i] ) {
-                return prim[i]+4;
+                return prim[i]+RESERVE;
             }
         }
-        return size+4;
+        return size+RESERVE;
     }
 
     private static final int GROFAC = 2;
@@ -282,7 +283,7 @@ public class FSTIdentity2IdMap
         mValues           = new int[newSize];
         mNumberOfElements = 0;
         mask = (Integer.highestOneBit(newSize)<<1)-1;
-        klen = newSize-4;
+        klen = newSize-RESERVE;
 
         for (int n = 0; n < oldTabKey.length; n++)
         {
@@ -312,8 +313,8 @@ public class FSTIdentity2IdMap
 
     final int calcIndexFromHash(int hash, Object[] mKeys) {
         int res = hash & mask;
-        if ( res > klen ) {
-            return res>>>1;
+        while ( res >= klen ) {
+            res = res>>>1;
         }
         return res;
     }

@@ -204,6 +204,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         flush();
         closed = true;
         super.close();
+        resetAndClearRefs();
         conf.returnObject(buffout,objects,clnames);
     }
 
@@ -1530,6 +1531,12 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         written = 0;
         buffout.reset();
         unsafe = FSTUtil.unsafe;
+    }
+
+    void resetAndClearRefs() {
+        reset();
+        objects.clearForWrite();
+        clnames.clear();
     }
 
     /**

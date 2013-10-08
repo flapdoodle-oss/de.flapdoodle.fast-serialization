@@ -88,8 +88,9 @@ public class FSTTestApp {
     public static void main(String arg[]) throws IOException, InterruptedException {
         System.setProperty("fst.unsafe","true");
         ExecutorService executorService = Executors.newFixedThreadPool(501);
-        final CountDownLatch latch = new CountDownLatch(200);
-        for ( int i = 0; i < 500;  i++) {
+        int count = 500;
+        final CountDownLatch latch = new CountDownLatch(count);
+        for ( int i = 0; i < count;  i++) {
             final int finalI = i;
             executorService.execute(new Runnable() {
                 @Override
