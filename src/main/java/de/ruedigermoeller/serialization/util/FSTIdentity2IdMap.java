@@ -64,7 +64,7 @@ public class FSTIdentity2IdMap
             initialSize = 2;
         }
 
-        initialSize = adjustSize(initialSize*2);
+        initialSize = adjustSize(initialSize*GROFAC);
 
         mKeys = new Object[initialSize];
         mValues = new int[initialSize];
