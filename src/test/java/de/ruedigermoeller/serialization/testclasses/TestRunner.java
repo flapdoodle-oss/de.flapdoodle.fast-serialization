@@ -153,6 +153,7 @@ public class TestRunner {
         }
 
         TestRunner runner = new TestRunner();
+        runner.charter.setAsc(new AsciiCharter("./result.txt"));
 
 
         runner.charter.openDoc();
@@ -161,14 +162,11 @@ public class TestRunner {
         runner.charter.text("<p>With recent 1.7u40 and Kryo 2.2.2 things have changed a bit. JDK has become somewhat faster, Kryo improved in many areas, however has some weird outliers. " +
                 "<br><bR>If fast serialization is run" +
                 " with 'FSTConfiguration.preferSpeedOverSize=true' little performance gain is traded against significant output size increase. IMO, the best overall size/performance ratio is given by plain FST default configuration. " +
-                "<br><br>Both Kryo-Default and FST-Default " +
-                "use Unsafe for field access which yields about 10-30% performance compared to reflection/asm."+
-                "<br><br>Besides outliers, FST and Kryo are quite near to each other performance wise, which indicates that there is not too much potential left." +
                 "</p>"
         );
 
 //        SerTest.WarmUP = 40000; SerTest.Run = SerTest.WarmUP*1+1;
-        SerTest.WarmUP = 5000; SerTest.Run = 5000;
+        SerTest.WarmUP = 50000; SerTest.Run = 50000;
         runner.runAll(FrequentPrimitives.getArray(200));
         runner.runAll(new FrequentCollections());
         runner.runAll(new LargeNativeArrays());

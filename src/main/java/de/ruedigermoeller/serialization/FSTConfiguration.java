@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created with IntelliJ IDEA.
@@ -65,26 +66,19 @@ public final class FSTConfiguration {
         }
     }
 
+    static AtomicBoolean lock = new AtomicBoolean(false);
+    static FSTConfiguration singleton;
+    public static FSTConfiguration getDefaultConfiguration() {
+        do { } while ( !lock.compareAndSet(false, true) );
+        if ( singleton == null )
+            singleton = createDefaultConfiguration();
+        lock.set(false);
+        return singleton;
+    }
+
     public static FSTConfiguration createDefaultConfiguration() {
         FSTConfiguration conf = new FSTConfiguration();
         conf.addDefaultClazzes();
-
-//        conf.registerAsEqualnessReplaceable(String.class);
-//        conf.registerAsEqualnessReplaceable(BigDecimal.class);
-//        conf.registerAsEqualnessReplaceable(BigInteger.class);
-//        conf.registerAsEqualnessReplaceable(Currency.class);
-//        conf.registerAsEqualnessReplaceable(Date.class);
-
-//        conf.registerAsEqualnessCopyable(Dimension.class);
-//        conf.registerAsEqualnessCopyable(Rectangle.class);
-//        conf.registerAsEqualnessCopyable(Point.class);
-//        conf.registerAsEqualnessCopyable(URI.class);
-//        conf.registerAsEqualnessCopyable(URL.class);
-//        conf.registerAsEqualnessCopyable(BitSet.class);
-//        conf.registerAsEqualnessCopyable(AtomicBoolean.class);
-//        conf.registerAsEqualnessCopyable(AtomicInteger.class);
-//        conf.registerAsEqualnessCopyable(AtomicLong.class);
-//        conf.registerAsEqualnessCopyable(SimpleDateFormat.class);
 
         conf.copier = new FSTObjectCopy()
         { // FIXME: move copying to serializers ?
@@ -141,23 +135,6 @@ public final class FSTConfiguration {
     public static FSTConfiguration createStructConfiguration() {
         FSTConfiguration conf = new FSTConfiguration();
         conf.setIgnoreSerialInterfaces(true);
-        return conf;
-    }
-
-    public static FSTConfiguration createMinimalConfiguration() {
-        FSTConfiguration conf = new FSTConfiguration();
-        conf.addDefaultClazzes();
-        // serializers
-        FSTSerializerRegistry reg = conf.serializationInfoRegistry.serializerRegistry;
-        reg.putSerializer(Class.class, new FSTClassSerializer(), false);
-        reg.putSerializer(EnumSet.class, new FSTEnumSetSerializer(), true);
-        reg.putSerializer(String.class, new FSTStringSerializer(), false);
-        reg.putSerializer(Byte.class, new FSTBigNumberSerializers.FSTByteSerializer(), false);
-        reg.putSerializer(Character.class, new FSTBigNumberSerializers.FSTCharSerializer(), false);
-        reg.putSerializer(Short.class, new FSTBigNumberSerializers.FSTShortSerializer(), false);
-        reg.putSerializer(Float.class, new FSTBigNumberSerializers.FSTFloatSerializer(), false);
-        reg.putSerializer(Double.class, new FSTBigNumberSerializers.FSTDoubleSerializer(), false);
-        reg.putSerializer(ConcurrentHashMap.class, new FSTMapSerializer(), false); // subclass should register manually
         return conf;
     }
 
@@ -301,6 +278,10 @@ public final class FSTConfiguration {
         return shareReferences;
     }
 
+    /**
+     * if false, identical objects will get serialized twice. Gains speed as long there are no double objects/cyclic references (typical for small snippets as used in e.g. RPC)
+     * @param shareReferences
+     */
     public void setShareReferences(boolean shareReferences) {
         this.shareReferences = shareReferences;
     }
@@ -435,13 +416,15 @@ public final class FSTConfiguration {
      * This is safe for a lot of immutable classes (A.equals(B) transformed to A == B), e.g. for Number subclasses
      * and String class. See also the EqualnessIsIdentity Annotation
      */
-    public void registerAsEqualnessReplaceable(Class cl) {
-        getCLInfoRegistry().getCLInfo(cl).equalIsIdentity = true;
-    }
+    // needs more testing
+//    public void registerAsEqualnessReplaceable(Class cl) {
+//        getCLInfoRegistry().getCLInfo(cl).equalIsIdentity = true;
+//    }
 
-    public void registerAsFlat(Class cl) {
-        getCLInfoRegistry().getCLInfo(cl).flat = true;
-    }
+    // needs more testing
+//    public void registerAsFlat(Class cl) {
+//        getCLInfoRegistry().getCLInfo(cl).flat = true;
+//    }
 
     /**
      * mark the given class as being replaced by a copy of an equal instance.
@@ -451,9 +434,10 @@ public final class FSTConfiguration {
      * Note that in addition to equalsness, it is required that A.class == B.class.
      * WARNING: adding collection classes might decrease performance significantly (trade cpu efficiency against size)
      */
-    public void registerAsEqualnessCopyable(Class cl) {
-        getCLInfoRegistry().getCLInfo(cl).equalIsBinary = true;
-    }
+     // needs more testing
+//    public void registerAsEqualnessCopyable(Class cl) {
+//        getCLInfoRegistry().getCLInfo(cl).equalIsBinary = true;
+//    }
 
 
     public ClassLoader getClassLoader() {

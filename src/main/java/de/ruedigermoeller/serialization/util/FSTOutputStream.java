@@ -130,7 +130,8 @@ public final class FSTOutputStream extends OutputStream {
 
     public void close() throws IOException {
         flush();
-        outstream.close();
+        if ( outstream != this )
+            outstream.close();
     }
 
     public void flush() throws IOException {

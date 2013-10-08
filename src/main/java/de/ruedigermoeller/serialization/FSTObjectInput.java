@@ -109,6 +109,10 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         public boolean shouldSkip(Object halfDecoded, int streamPosition, Field field);
     }
 
+    public FSTObjectInput() throws IOException {
+        this(empty, FSTConfiguration.getDefaultConfiguration());
+    }
+
     public FSTObjectInput(FSTConfiguration conf) throws IOException {
         this(empty, conf);
     }
@@ -116,6 +120,19 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     /**
      * Creates a FSTObjectInput that uses the specified
      * underlying InputStream.
+     *
+     * @param in the specified input stream
+     */
+    public FSTObjectInput(InputStream in) throws IOException {
+        this(in,FSTConfiguration.getDefaultConfiguration());
+    }
+
+    /**
+     * Creates a FSTObjectInput that uses the specified
+     * underlying InputStream.
+     *
+     * Don't create a FSTConfiguration with each stream, just create one global static configuration and reuseit.
+     * FSTConfiguration is threadsafe.
      *
      * @param in the specified input stream
      */
@@ -162,7 +179,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
      * since the stock readXX methods on InputStream are final, i can't ensure sufficient readAhead on the inputStream
      * before calling readExternal. Default value is 16000 bytes. If you make use of the externalizable interfac
      * and write larger Objects a) cast the ObjectInput in readExternal to FSTObjectInput and call ensureReadAhead on this
-     * in your readExternal method b) statically set a sufficient maximum using this method.
+     * in your readExternal method b) set a sufficient maximum using this method before serializing.
      * @param readExternalReadAHead
      */
     public void setReadExternalReadAHead(int readExternalReadAHead) {

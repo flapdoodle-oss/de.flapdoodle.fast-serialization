@@ -232,7 +232,12 @@ public class FSTClazzNameRegistry {
         while( ! classCacheLock.compareAndSet(false,true) );
         Class res = classCache.get(clName);
         if ( res == null ) {
-            res = Class.forName(clName, false, conf.getClassLoader() );
+            try {
+                res = Class.forName(clName, false, conf.getClassLoader() );
+            } catch ( Throwable th ) {
+                System.out.println("CLASSNAME:"+clName);
+                throw new RuntimeException(th);
+            }
             if ( res != null ) {
                 classCache.put(clName, res);
             }

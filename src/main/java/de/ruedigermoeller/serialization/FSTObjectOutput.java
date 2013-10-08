@@ -107,8 +107,19 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 
     /**
      * Creates a new FSTObjectOutput stream to write data to the specified
+     * underlying output stream.
+     * uses Default Configuration singleton
+     */
+    public FSTObjectOutput(OutputStream out) {
+        this(out, FSTConfiguration.getDefaultConfiguration());
+    }
+
+    /**
+     * Creates a new FSTObjectOutput stream to write data to the specified
      * underlying output stream. The counter <code>written</code> is
      * set to zero.
+     * Don't create a FSTConfiguration with each stream, just create one global static configuration and reuse it.
+     * FSTConfiguration is threadsafe.
      *
      * @param out the underlying output stream, to be saved for later
      *            use.
@@ -143,6 +154,33 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     }
 
     /**
+     * serialize without an underlying stream, the resulting byte array of writing to
+     * this FSTObjectOutput can be accessed using getBuffer(), the size using getWritten().
+     *
+     * Don't create a FSTConfiguration with each stream, just create one global static configuration and reuseit.
+     * FSTConfiguration is threadsafe.
+     * @param conf
+     * @throws IOException
+     */
+    public FSTObjectOutput(FSTConfiguration conf) {
+        this(null,conf);
+        buffout.setOutstream(buffout);
+    }
+
+    /**
+     * serialize without an underlying stream, the resulting byte array of writing to
+     * this FSTObjectOutput can be accessed using getBuffer(), the size using getWritten().
+     *
+     * uses default configuration singleton
+     *
+     * @throws IOException
+     */
+    public FSTObjectOutput() {
+        this(null, FSTConfiguration.getDefaultConfiguration());
+        buffout.setOutstream(buffout);
+    }
+
+    /**
      * Flushes this data output stream. This forces any buffered output
      * bytes to be written out to the stream.
      * <p/>
@@ -156,22 +194,9 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     @Override
     public void flush() throws IOException {
         buffout.flush();
-        super.flush();
     }
 
     static ByteArrayOutputStream empty = new ByteArrayOutputStream(0);
-
-    /**
-     * serialize without an underlying stream, the resulting byte array of writing to
-     * this FSTObjectOutput can be accessed using getBuffer(), the size using getWritten()
-     * @param conf
-     * @throws IOException
-     */
-
-    public FSTObjectOutput(FSTConfiguration conf) {
-        this(null,conf);
-        buffout.setOutstream(buffout);
-    }
 
     boolean closed = false;
     @Override
@@ -191,6 +216,12 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
 //        written = 0;
 //    }
 
+    /**
+     * since the stock writeXX methods on InputStream are final, i can't ensure sufficient bufferSize on the output buffer
+     * before calling writeExternal. Default value is 5000 bytes. If you make use of the externalizable interface
+     * and write larger Objects a) cast the ObjectOutput in readExternal to FSTObjectOutput and call ensureFree on this
+     * in your writeExternal method or b) statically set a sufficient maximum using this method.
+     */
     public int getWriteExternalWriteAhead() {
         return writeExternalWriteAhead;
     }
@@ -558,8 +589,8 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                                 case FSTClazzInfo.FSTFieldInfo.BYTE:  writeFByteUnsafe(unsafe.getByte(toWrite,subInfo.memOffset)); break;
                                 case FSTClazzInfo.FSTFieldInfo.CHAR:  writeCChar(unsafe.getChar(toWrite,subInfo.memOffset)); break;
                                 case FSTClazzInfo.FSTFieldInfo.SHORT: writeCShort(unsafe.getShort(toWrite,subInfo.memOffset)); break;
-                                case FSTClazzInfo.FSTFieldInfo.FLOAT: writeCFloat(unsafe.getFloat(toWrite,subInfo.memOffset)); break;
-                                case FSTClazzInfo.FSTFieldInfo.DOUBLE: writeCDouble(unsafe.getDouble(toWrite,subInfo.memOffset)); break;
+                                case FSTClazzInfo.FSTFieldInfo.FLOAT: writeCFloatUnsafe(unsafe.getFloat(toWrite,subInfo.memOffset)); break;
+                                case FSTClazzInfo.FSTFieldInfo.DOUBLE: writeCDoubleUnsafe(unsafe.getDouble(toWrite,subInfo.memOffset)); break;
                             }
                         } else {
                             switch (integralType) {
@@ -567,7 +598,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                                 case FSTClazzInfo.FSTFieldInfo.CHAR:  writeFChar(unsafe.getChar(toWrite,subInfo.memOffset)); break;
                                 case FSTClazzInfo.FSTFieldInfo.SHORT: writeFShort(unsafe.getShort(toWrite,subInfo.memOffset)); break;
                                 case FSTClazzInfo.FSTFieldInfo.FLOAT: writeFFloat(unsafe.getFloat(toWrite,subInfo.memOffset)); break;
-                                case FSTClazzInfo.FSTFieldInfo.DOUBLE: writeFDouble(unsafe.getDouble(toWrite,subInfo.memOffset)); break;
+                                case FSTClazzInfo.FSTFieldInfo.DOUBLE: writeFDoubleUnsafe(unsafe.getDouble(toWrite,subInfo.memOffset)); break;
                             }
                         }
                     }
@@ -1429,11 +1460,20 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     }
 
     /** Writes a 4 byte float. */
+    public void writeCFloatUnsafe(float value) throws IOException {
+        writeFIntUnsafe(Float.floatToIntBits(value));
+    }
+
+    /** Writes a 4 byte float. */
     public void writeFFloat (float value) throws IOException {
         writeFInt(Float.floatToIntBits(value));
     }
     public void writeCDouble (double value) throws IOException {
         writeFLong(Double.doubleToLongBits(value));
+    }
+
+    public void writeCDoubleUnsafe(double value) throws IOException {
+        writeFLongUnsafe(Double.doubleToLongBits(value));
     }
 
     public void writeFDouble (double value) throws IOException {
@@ -1447,6 +1487,23 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         buffout.pos += 8;
         written += 8;
 //        writeFLongUnsafe(Double.doubleToLongBits(value));
+    }
+
+    public void writeCLongUnsafe(long anInt) throws IOException {
+// -128 = short byte, -127 == 4 byte
+        if ( anInt > -126 && anInt <=127 ) {
+            writeFByteUnsafe((int) anInt);
+        } else
+        if ( anInt >= Short.MIN_VALUE && anInt <= Short.MAX_VALUE ) {
+            writeFByteUnsafe(-128);
+            writeFShort((int) anInt);
+        } else if ( anInt >= Integer.MIN_VALUE && anInt <= Integer.MAX_VALUE ) {
+            writeFByteUnsafe(-127);
+            writeFIntUnsafe((int) anInt);
+        } else {
+            writeFByteUnsafe(-126);
+            writeFLongUnsafe(anInt);
+        }
     }
 
     public void writeCLong(long anInt) throws IOException {

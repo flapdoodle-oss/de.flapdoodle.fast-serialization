@@ -12,8 +12,9 @@ import java.io.PrintStream;
  * To change this template use File | Settings | File Templates.
  */
 public class HtmlCharter {
-    PrintStream out;
+    protected PrintStream out;
     String color = "#a04040";
+    AsciiCharter asc;
 
     public HtmlCharter(String file) {
         try {
@@ -25,19 +26,27 @@ public class HtmlCharter {
 
     public void openDoc() {
         out.println("<html>");
+        if ( asc != null )
+            asc.openDoc();
     }
 
     public void text(String s) {
         out.println(s+"<br>");
+        if ( asc != null )
+            asc.text(s);
     }
 
     public void heading(String title) {
         out.println("<br><h4>" + title + "</h4>");
+        if ( asc != null )
+            asc.heading(title);
     }
 
     public void openChart(String title) {
         out.println("<b>"+title+"</b>");
         out.println("<table border=0 cellpadding=0 cellspacing=0>");
+        if ( asc != null )
+            asc.openChart(title);
     }
 
     public void chartBar(String text, int value, int div, String cl) {
@@ -60,6 +69,8 @@ public class HtmlCharter {
         }
         out.print("</font>&nbsp;<font size=2><b>"+text+" ("+value+")</b></font>");
         out.println("</td></tr>");
+        if ( asc != null )
+            asc.chartBar(text, value, div, cl);
     }
 
     public String getChartColor() {
@@ -68,10 +79,18 @@ public class HtmlCharter {
 
     public void closeChart() {
         out.println("</table><br>");
+        if ( asc != null )
+            asc.closeChart();
     }
 
     public void closeDoc() {
         out.println("</html>");
+        if ( asc != null )
+            asc.closeDoc();
+    }
+
+    public void setAsc(AsciiCharter asc) {
+        this.asc = asc;
     }
 
     public static void main( String arg[] ) {
