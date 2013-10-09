@@ -86,6 +86,11 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     ArrayList<CallbackEntry> callbacks;
     FSTConfiguration conf;
     FSTInputStream input;
+    // mirrored from conf
+    boolean ignoreAnnotations;
+    FSTClazzInfoRegistry clInfoRegistry;
+    boolean preferSpeed;
+    // done
     ConditionalCallback conditionalCallback;
     int readExternalReadAHead = 16000;
 
@@ -146,6 +151,10 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     void initRegistries() {
+        ignoreAnnotations = conf.getCLInfoRegistry().isIgnoreAnnotations();
+        clInfoRegistry = conf.getCLInfoRegistry();
+        preferSpeed = conf.isPreferSpeed();
+
         objects = (FSTObjectRegistry) conf.getCachedObject(FSTObjectRegistry.class);
         if (objects == null) {
             objects = new FSTObjectRegistry(conf);
@@ -260,7 +269,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 //            throw new RuntimeException("do not call this directly. only for internal use (incl. Serializers)");
 //        }
         try {
-            FSTClazzInfo.FSTFieldInfo info = new FSTClazzInfo.FSTFieldInfo(expected, null, conf.getCLInfoRegistry().isIgnoreAnnotations());
+            FSTClazzInfo.FSTFieldInfo info = new FSTClazzInfo.FSTFieldInfo(expected, null, ignoreAnnotations);
             return readObjectWithHeader(info);
         } catch (Throwable t) {
             throw new IOException(t);
@@ -272,71 +281,23 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         final int readPos = input.pos-input.off; // incase of pointing to larger array => general issue in both in and output stream when start is !=0 !
         byte code = readFByte();
         FSTClazzInfo clzSerInfo = null;
-        Class c = null;
+        Class c;
         switch (code) {
-            case FSTObjectOutput.BIG_INT: {
-                int val = readCInt();
-                if (val >= 0 && val < FSTConfiguration.intObjects.length) {
-                    return FSTConfiguration.intObjects[val];
-                }
-                return new Integer(val);
-            }
-            case FSTObjectOutput.BIG_LONG: {
-                long val = readCLong();
-                return new Long(val);
-            }
-            case FSTObjectOutput.BIG_BOOLEAN_FALSE: {
-                return Boolean.FALSE;
-            }
-            case FSTObjectOutput.BIG_BOOLEAN_TRUE: {
-                return Boolean.TRUE;
-            }
-            case FSTObjectOutput.ONE_OF: {
-                int index = readFByte();
-                return referencee.getOneOf()[index];// in case of exceptions here => version conflict
-            }
-            case FSTObjectOutput.NULL: {
-                return null;
-            }
-            case FSTObjectOutput.HANDLE: {
-                int handle = readCInt();
-//                System.out.println("READ HANDLE "+handle+" "+referencee.getDesc());
-                Object res = objects.getReadRegisteredObject(handle);
-                if (res == null) {
-                    throw new IOException("unable to ressolve handle " + handle + " " + referencee.getDesc() + " " + input.pos);
-                }
-                return res;
-            }
-            case FSTObjectOutput.COPYHANDLE: {
-                int handle = readCInt(); // = streamposition
-                Object res = objects.getReadRegisteredObject(handle);
-                if (res == null) {
-                    throw new IOException("unable to ressolve handle " + handle);
-                }
-                Object copy = copy(res, handle);
-                //objects.registerObjectForWrite(copy,true, readPos, null); //fixme:no need
-                return copy;
-            }
-            case FSTObjectOutput.ARRAY: {
-                Object res = readArray(referencee);
-                if ( ! referencee.isFlat() ) {
-                    objects.registerObjectForRead(res, readPos);
-                }
-                return res;
-            }
+            case FSTObjectOutput.BIG_INT: { return instantiateBigInt(); }
+            case FSTObjectOutput.BIG_LONG: { return new Long(readCLong()); }
+            case FSTObjectOutput.BIG_BOOLEAN_FALSE: { return Boolean.FALSE; }
+            case FSTObjectOutput.BIG_BOOLEAN_TRUE: { return Boolean.TRUE; }
+            case FSTObjectOutput.ONE_OF: { return referencee.getOneOf()[readFByte()]; }
+            case FSTObjectOutput.NULL: { return null; }
+            case FSTObjectOutput.HANDLE: { return instantiateHandle(referencee); }
+            case FSTObjectOutput.COPYHANDLE: { return instantiateCopyHandle(); }
+            case FSTObjectOutput.ARRAY: { return instantiateArray(referencee, readPos); }
+            case FSTObjectOutput.ENUM: { return instantiateEnum(referencee, readPos); }
+
             case FSTObjectOutput.TYPED: {
                 c = referencee.getType();
+                clzSerInfo = getClazzInfo(c, referencee);
                 break;
-            }
-            case FSTObjectOutput.ENUM: {
-                clzSerInfo = readClass();
-                c = clzSerInfo.getClazz();
-                int ordinal = readCInt();
-                Object res = c.getEnumConstants()[ordinal];
-                if ( ! referencee.isFlat() ) {
-                    objects.registerObjectForRead(res, readPos);
-                }
-                return res;
             }
             case FSTObjectOutput.OBJECT: {
                 // class name
@@ -346,65 +307,139 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             }
             default:
                 c = referencee.getPossibleClasses()[code - 1];
+                clzSerInfo = getClazzInfo(c, referencee);
         }
         if (DEBUGSTACK) {
             debugStack.push("" + referencee.getDesc() + " code:" + code);
             debugStack.push("" + referencee.getDesc() + " " + c);
         }
-        if ( clzSerInfo == null ) {
-            if ( referencee.lastInfo != null && referencee.lastInfo.clazz == c) {
-                clzSerInfo = referencee.lastInfo;
-            } else {
-                clzSerInfo = conf.getCLInfoRegistry().getCLInfo(c);
-            }
-        }
         try {
-            Object newObj = null;
             FSTObjectSerializer ser = clzSerInfo.getSer();
-            boolean serInstance = false;
             if (ser != null) {
-                newObj = ser.instantiate(c, this, clzSerInfo, referencee, readPos);
-            }
-            if (newObj == null) {
-                newObj = clzSerInfo.newInstance();
-            } else
-                serInstance = true;
-            if (newObj == null) {
-                throw new IOException(referencee.getDesc() + ":Failed to instantiate '" + c.getName() + "'. Register a custom serializer implementing instantiate.");
-            }
-            if (newObj.getClass() != c) {//FIXME
-                c = newObj.getClass();
-                clzSerInfo = conf.getCLInfoRegistry().getCLInfo(c);
-            }
-            if ( ! referencee.isFlat() && ! clzSerInfo.isFlat() && (ser==null||!ser.alwaysCopy())) {
-                objects.registerObjectForRead(newObj, readPos);
-            }
-            if (ser != null) {
-                if ( !serInstance )
-                    ser.readObject(this, newObj, clzSerInfo, referencee);
-            } else if ( clzSerInfo.isExternalizable() ) {
-                ensureReadAhead(readExternalReadAHead);
-                ((Externalizable)newObj).readExternal(this);
-            } else if (clzSerInfo.useCompatibleMode()) {
-                Object replaced = readObjectCompatible(referencee, clzSerInfo, newObj);
-                if (replaced != null && replaced != newObj) {
-                    objects.replace(newObj, replaced, readPos);
-                    newObj = replaced;
-                }
+                return instantiateAndReadWithSer(c, ser, clzSerInfo, referencee, readPos);
             } else {
-                FSTClazzInfo.FSTFieldInfo[] fieldInfo = clzSerInfo.getFieldInfo();
-                readObjectFields(referencee, clzSerInfo, fieldInfo, newObj);
+                return instantiateAndReadNoSer(c, clzSerInfo, referencee, readPos);
             }
-            if (DEBUGSTACK) {
-                debugStack.pop();
-                debugStack.pop();
-            }
-            return newObj;
-        } catch (IllegalAccessException e) {
-            throw new IOException(e);
-        } catch (InstantiationException e) {
+        } catch (Exception e) {
             throw new IOException(e);
         }
+    }
+
+    private FSTClazzInfo getClazzInfo(Class c, FSTClazzInfo.FSTFieldInfo referencee) {
+        FSTClazzInfo clzSerInfo;
+        if ( referencee.lastInfo != null && referencee.lastInfo.clazz == c) {
+            clzSerInfo = referencee.lastInfo;
+        } else {
+            clzSerInfo = clInfoRegistry.getCLInfo(c);
+        }
+        return clzSerInfo;
+    }
+
+    private Object instantiateHandle(FSTClazzInfo.FSTFieldInfo referencee) throws IOException {
+        int handle = readCInt();
+//                System.out.println("READ HANDLE "+handle+" "+referencee.getDesc());
+        Object res = objects.getReadRegisteredObject(handle);
+        if (res == null) {
+            throw new IOException("unable to ressolve handle " + handle + " " + referencee.getDesc() + " " + input.pos);
+        }
+        return res;
+    }
+
+    private Object instantiateCopyHandle() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        int handle = readCInt(); // = streamposition
+        Object res = objects.getReadRegisteredObject(handle);
+        if (res == null) {
+            throw new IOException("unable to ressolve handle " + handle);
+        }
+        Object copy = copy(res, handle);
+        //objects.registerObjectForWrite(copy,true, readPos, null); //fixme:no need
+        return copy;
+    }
+
+    private Object instantiateArray(FSTClazzInfo.FSTFieldInfo referencee, int readPos) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        Object res = readArray(referencee);
+        if ( ! referencee.isFlat() ) {
+            objects.registerObjectForRead(res, readPos);
+        }
+        return res;
+    }
+
+    private Object instantiateEnum(FSTClazzInfo.FSTFieldInfo referencee, int readPos) throws IOException, ClassNotFoundException {
+        FSTClazzInfo clzSerInfo;
+        Class c;
+        clzSerInfo = readClass();
+        c = clzSerInfo.getClazz();
+        int ordinal = readCInt();
+        Object res = c.getEnumConstants()[ordinal];
+        if ( ! referencee.isFlat() ) { // fixme: unnecessary
+            objects.registerObjectForRead(res, readPos);
+        }
+        return res;
+    }
+
+    private Object instantiateBigInt() throws IOException {
+        int val = readCInt();
+        if (val >= 0 && val < FSTConfiguration.intObjects.length) {
+            return FSTConfiguration.intObjects[val];
+        }
+        return new Integer(val);
+    }
+
+    private Object instantiateAndReadWithSer(Class c, FSTObjectSerializer ser, FSTClazzInfo clzSerInfo, FSTClazzInfo.FSTFieldInfo referencee, int readPos) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        boolean serInstance = false;
+        Object newObj = ser.instantiate(c, this, clzSerInfo, referencee, readPos);
+        if (newObj == null) {
+            newObj = clzSerInfo.newInstance();
+        } else
+            serInstance = true;
+        if (newObj == null) {
+            throw new IOException(referencee.getDesc() + ":Failed to instantiate '" + c.getName() + "'. Register a custom serializer implementing instantiate.");
+        }
+        if (newObj.getClass() != c) {//FIXME
+            c = newObj.getClass();
+            clzSerInfo = clInfoRegistry.getCLInfo(c);
+        }
+        if ( ! referencee.isFlat() && ! clzSerInfo.isFlat() && !ser.alwaysCopy()) {
+            objects.registerObjectForRead(newObj, readPos);
+        }
+        if ( !serInstance )
+            ser.readObject(this, newObj, clzSerInfo, referencee);
+        if (DEBUGSTACK) {
+            debugStack.pop();
+            debugStack.pop();
+        }
+        return newObj;
+    }
+
+    private Object instantiateAndReadNoSer(Class c, FSTClazzInfo clzSerInfo, FSTClazzInfo.FSTFieldInfo referencee, int readPos) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        Object newObj;
+        newObj = clzSerInfo.newInstance();
+        if (newObj == null) {
+            throw new IOException(referencee.getDesc() + ":Failed to instantiate '" + c.getName() + "'. Register a custom serializer implementing instantiate.");
+        }
+        if ( ! referencee.isFlat() && ! clzSerInfo.isFlat() ) {
+            objects.registerObjectForRead(newObj, readPos);
+        }
+        if ( clzSerInfo.isExternalizable() )
+        {
+            ensureReadAhead(readExternalReadAHead);
+            ((Externalizable)newObj).readExternal(this);
+        } else if (clzSerInfo.useCompatibleMode())
+        {
+            Object replaced = readObjectCompatible(referencee, clzSerInfo, newObj);
+            if (replaced != null && replaced != newObj) {
+                objects.replace(newObj, replaced, readPos);
+                newObj = replaced;
+            }
+        } else {
+            FSTClazzInfo.FSTFieldInfo[] fieldInfo = clzSerInfo.getFieldInfo();
+            readObjectFields(referencee, clzSerInfo, fieldInfo, newObj);
+        }
+        if (DEBUGSTACK) {
+            debugStack.pop();
+            debugStack.pop();
+        }
+        return newObj;
     }
 
     protected Object copy(Object res, int streamPosition) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -508,7 +543,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     void readObjectFields(FSTClazzInfo.FSTFieldInfo referencee, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo[] fieldInfo, Object newObj) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-        final boolean preferSpeed = conf.isPreferSpeed();
         if ( FSTUtil.unsafe != null ) {
             if (preferSpeed)
                 readObjectFieldsUnsafeSpeed(referencee,serializationInfo,fieldInfo,newObj);
@@ -665,7 +699,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         int boolcount = 8;
         final int length = fieldInfo.length;
         int conditional = 0;
-        final boolean preferSpeed = conf.isPreferSpeed();
         for (int i = 0; i < length; i++) {
             try {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
@@ -845,7 +878,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 
     char[] charBuf;
     public String readStringUTF() throws IOException {
-        if ( conf.isPreferSpeed()) {
+        if ( preferSpeed ) {
             return readStringUTFSpeed();
         }
         if ( FSTUtil.unsafe != null && UNSAFE_READ_UTF ) {
@@ -1140,7 +1173,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 //                }
 //            } else
             {
-                FSTClazzInfo.FSTFieldInfo ref1 = new FSTClazzInfo.FSTFieldInfo(referencee.getPossibleClasses(), null, conf.getCLInfoRegistry().isIgnoreAnnotations());
+                FSTClazzInfo.FSTFieldInfo ref1 = new FSTClazzInfo.FSTFieldInfo(referencee.getPossibleClasses(), null, clInfoRegistry.isIgnoreAnnotations());
                 for (int i = 0; i < len; i++) {
                     Object subArray = readArray(ref1);
                     array[i] = subArray;
@@ -1153,7 +1186,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     public void readLongArrUnsafe(long[] arr) {
         final byte buf[] = input.buf;
         int siz = (int) (arr.length * longscal);
-        FSTUtil.unsafe.copyMemory(buf,input.pos+bufoff,arr,longoff,siz);
+        FSTUtil.unsafe.copyMemory(buf, input.pos + bufoff, arr, longoff, siz);
         input.pos += siz;
     }
 

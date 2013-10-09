@@ -56,10 +56,11 @@ public class TestRunner {
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
 //        SerTest tests[] = { speedFST, kryoUnsTest, defFST, kryotest, defser };
+        SerTest tests[] = { speedFST, kryoUnsTest, defFST, kryotest};
 //        SerTest tests[] = { speedFST, kryotest, kryoUnsTest };
-//        SerTest tests[] = { speedFST,kryoUnsTest };
+//        SerTest tests[] = { speedFST, kryoUnsTest };
 //        SerTest tests[] = { defFST };
-        SerTest tests[] = { defFST, kryotest };
+//        SerTest tests[] = { defFST, kryotest };
 //        SerTest tests[] = { kryotest };
         if ( toSer instanceof BigObject ) {
             SerTest.Run/=100;
