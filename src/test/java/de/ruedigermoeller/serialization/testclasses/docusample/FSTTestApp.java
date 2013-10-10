@@ -47,7 +47,7 @@ public class FSTTestApp {
         FileOutputStream fout = null;
         FileInputStream in = null;
         try {
-            fout = new FileOutputStream("/test-"+i+".tmp");
+            fout = new FileOutputStream("/tmp/test-"+i+".tmp");
             Object[] toWrite = {
                     PrimitiveArrays.createPrimArray(),
                     Trader.generateTrader(i, true),
@@ -58,7 +58,7 @@ public class FSTTestApp {
 
             mywriteMethod(fout, toWrite);
 
-            in = new FileInputStream("/test-"+i+".tmp");
+            in = new FileInputStream("/tmp/test-"+i+".tmp");
             Object read = myreadMethod(in);
             in.close();
             System.out.println(i+" SUCCESS:" + DeepEquals.deepEquals(read, toWrite));
