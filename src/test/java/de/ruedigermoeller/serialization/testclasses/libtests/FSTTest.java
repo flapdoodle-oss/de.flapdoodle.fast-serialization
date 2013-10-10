@@ -38,8 +38,6 @@ public class FSTTest extends SerTest {
     FSTConfiguration defconf;
     {
         defconf = FSTConfiguration.createDefaultConfiguration();
-        // dont do this, just for testing
-        //defconf.getCLInfoRegistry().setIgnoreAnnotations(true);
     }
 
     public FSTTest(String desc,boolean uns,boolean preferSpeed) {

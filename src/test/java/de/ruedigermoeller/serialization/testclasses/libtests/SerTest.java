@@ -102,7 +102,7 @@ public abstract class SerTest {
     }
 
     public void dumpRes() {
-        System.out.println(title+" : Size:"+length+",  TimeRead: "+(timRead*1000/Run)+" microsec,   TimeWrite: "+(timWrite*1000/Run)+" microsec");
+        System.out.println(title+" : Size:"+length+",  TimeRead: "+(timRead*1000/Run)+" microsec ["+timRead+"],   TimeWrite: "+(timWrite*1000/Run)+" microsec ["+timWrite+"]");
     }
 
     public void runReadTest(Class cl) {

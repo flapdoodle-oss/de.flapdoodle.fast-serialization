@@ -80,7 +80,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     FSTObjectRegistry objects;
 
     Stack<String> debugStack;
-    final static boolean DEBUGSTACK = false;
     int curDepth;
 
     ArrayList<CallbackEntry> callbacks;
@@ -167,9 +166,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         } else {
             clnames.clear();
         }
-        if (DEBUGSTACK) {
-            debugStack = new Stack<String>();
-        }
     }
 
     public ConditionalCallback getConditionalCallback() {
@@ -232,12 +228,12 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     private void dumpDebugStack() {
-        if (DEBUGSTACK) {
-            for (int i = 0; i < debugStack.size(); i++) {
-                String s = debugStack.get(i);
-                System.err.println(i + ":" + s);
-            }
-        }
+//        if (DEBUGSTACK) {
+//            for (int i = 0; i < debugStack.size(); i++) {
+//                String s = debugStack.get(i);
+//                System.err.println(i + ":" + s);
+//            }
+//        }
     }
 
     public Object readObject(Class... possibles) throws Exception {
@@ -278,10 +274,40 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     public Object readObjectWithHeader(FSTClazzInfo.FSTFieldInfo referencee) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
+        FSTClazzInfo clzSerInfo;
+        Class c;
         final int readPos = input.pos-input.off; // incase of pointing to larger array => general issue in both in and output stream when start is !=0 !
         byte code = readFByte();
-        FSTClazzInfo clzSerInfo = null;
-        Class c;
+        if (code == FSTObjectOutput.OBJECT ) {
+            // class name
+            clzSerInfo = readClass();
+            c = clzSerInfo.getClazz();
+        } else if ( code == FSTObjectOutput.TYPED ) {
+            c = referencee.getType();
+            clzSerInfo = getClazzInfo(c, referencee);
+        } else if ( code >= 1 ) {
+            c = referencee.getPossibleClasses()[code - 1];
+            clzSerInfo = getClazzInfo(c, referencee);
+        } else {
+            return instantiateSpecialTag(referencee, readPos, code);
+        }
+//        if (DEBUGSTACK) {
+//            debugStack.push("" + referencee.getDesc() + " code:" + code);
+//            debugStack.push("" + referencee.getDesc() + " " + c);
+//        }
+        try {
+            FSTObjectSerializer ser = clzSerInfo.getSer();
+            if (ser != null) {
+                return instantiateAndReadWithSer(c, ser, clzSerInfo, referencee, readPos);
+            } else {
+                return instantiateAndReadNoSer(c, clzSerInfo, referencee, readPos);
+            }
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+
+    private Object instantiateSpecialTag(FSTClazzInfo.FSTFieldInfo referencee, int readPos, byte code) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         switch (code) {
             case FSTObjectOutput.BIG_INT: { return instantiateBigInt(); }
             case FSTObjectOutput.BIG_LONG: { return new Long(readCLong()); }
@@ -293,36 +319,8 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
             case FSTObjectOutput.COPYHANDLE: { return instantiateCopyHandle(); }
             case FSTObjectOutput.ARRAY: { return instantiateArray(referencee, readPos); }
             case FSTObjectOutput.ENUM: { return instantiateEnum(referencee, readPos); }
-
-            case FSTObjectOutput.TYPED: {
-                c = referencee.getType();
-                clzSerInfo = getClazzInfo(c, referencee);
-                break;
-            }
-            case FSTObjectOutput.OBJECT: {
-                // class name
-                clzSerInfo = readClass();
-                c = clzSerInfo.getClazz();
-                break;
-            }
-            default:
-                c = referencee.getPossibleClasses()[code - 1];
-                clzSerInfo = getClazzInfo(c, referencee);
         }
-        if (DEBUGSTACK) {
-            debugStack.push("" + referencee.getDesc() + " code:" + code);
-            debugStack.push("" + referencee.getDesc() + " " + c);
-        }
-        try {
-            FSTObjectSerializer ser = clzSerInfo.getSer();
-            if (ser != null) {
-                return instantiateAndReadWithSer(c, ser, clzSerInfo, referencee, readPos);
-            } else {
-                return instantiateAndReadNoSer(c, clzSerInfo, referencee, readPos);
-            }
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
+        throw new RuntimeException("unknown object tag "+code);
     }
 
     private FSTClazzInfo getClazzInfo(Class c, FSTClazzInfo.FSTFieldInfo referencee) {
@@ -404,10 +402,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         }
         if ( !serInstance )
             ser.readObject(this, newObj, clzSerInfo, referencee);
-        if (DEBUGSTACK) {
-            debugStack.pop();
-            debugStack.pop();
-        }
         return newObj;
     }
 
@@ -434,10 +428,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         } else {
             FSTClazzInfo.FSTFieldInfo[] fieldInfo = clzSerInfo.getFieldInfo();
             readObjectFields(referencee, clzSerInfo, fieldInfo, newObj);
-        }
-        if (DEBUGSTACK) {
-            debugStack.pop();
-            debugStack.pop();
         }
         return newObj;
     }
@@ -512,13 +502,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         if (!Serializable.class.isAssignableFrom(cl)) {
             return;
         }
-        if (DEBUGSTACK) {
-            debugStack.push("  compat:" + cl.getSimpleName());
-        }
         readObjectCompatibleRecursive(referencee, toRead, serializationInfo, cl.getSuperclass());
-        if (DEBUGSTACK) {
-            debugStack.pop();
-        }
         if (fstCompatibilityInfo != null && fstCompatibilityInfo.getReadMethod() != null) {
             try {
                 ObjectInputStream objectInputStream = getObjectInputStream(cl, serializationInfo, referencee, toRead);
@@ -562,9 +546,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         try {
             for (int i = 0; i < length; i++) {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                if (DEBUGSTACK) {
-                    debugStack.push(subInfo.getDesc() + " " + newObj.getClass().getSimpleName());
-                }
                 if (FSTObjectOutput.DUMP) {
                     System.out.println("READFIELD " + fieldInfo[i].getField().getName());
                 }
@@ -610,9 +591,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                     Object subObject = readObjectWithHeader(subInfo);
                     subInfo.setObjectValueUnsafe(newObj, subObject);
                 }
-                if (DEBUGSTACK) {
-                    debugStack.pop();
-                }
             }
         } catch (IllegalAccessException ex) {
             throw new IOException(ex);
@@ -628,9 +606,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         try {
             for (int i = 0; i < length; i++) {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                if (DEBUGSTACK) {
-                    debugStack.push(subInfo.getDesc() + " " + newObj.getClass().getSimpleName());
-                }
                 if (FSTObjectOutput.DUMP) {
                     System.out.println("READFIELD " + fieldInfo[i].getField().getName());
                 }
@@ -685,9 +660,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                     Object subObject = readObjectWithHeader(subInfo);
                     subInfo.setObjectValueUnsafe(newObj, subObject);
                 }
-                if (DEBUGSTACK) {
-                    debugStack.pop();
-                }
             }
         } catch (IllegalAccessException ex) {
             throw new IOException(ex);
@@ -702,9 +674,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         for (int i = 0; i < length; i++) {
             try {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                if (DEBUGSTACK) {
-                    debugStack.push(subInfo.getDesc() + " " + newObj.getClass().getSimpleName());
-                }
                 if (FSTObjectOutput.DUMP) {
                     System.out.println("READFIELD " + fieldInfo[i].getField().getName());
                 }
@@ -768,9 +737,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                     Object subObject = readObjectWithHeader(subInfo);
                     subInfo.setObjectValue(newObj, subObject);
                 }
-                if (DEBUGSTACK) {
-                    debugStack.pop();
-                }
             } catch (IllegalAccessException ex) {
                 throw new IOException(ex);
             }
@@ -824,9 +790,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                     // object
                     Object subObject = readObjectWithHeader(subInfo);
                     res.put(subInfo.getField().getName(), subObject);
-                }
-                if (DEBUGSTACK) {
-                    debugStack.pop();
                 }
             } catch (IllegalAccessException ex) {
                 throw new IOException(ex);
@@ -886,7 +849,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         }
         int len = readCInt();
         if (charBuf == null || charBuf.length < len * 3) {
-            charBuf = new char[len * 3];
+            charBuf = new char[Math.max(len,15) * 3];
         }
         ensureReadAhead(len * 3);
         byte buf[] = input.buf;
